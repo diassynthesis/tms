@@ -132,7 +132,7 @@ class tms_travel(osv.osv):
 #        'income': openerp.osv.fields.function(_get_income, method=True, string='To', type='float', digits=(14,4)),
         'notes': openerp.osv.fields.text('Descripción', required=False, states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
 
-#        'expense_id': openerp.osv.fields.many2one('tms.travel.expense', 'Travel Expenses Record', required=False),
+        'expense_id': openerp.osv.fields.many2one('tms.expense', 'Travel Expenses Record', required=False),
         'fuelvoucher_ids':openerp.osv.fields.one2many('tms.fuelvoucher', 'travel_id', string='Fuel Vouchers', states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
         'advance_ids':openerp.osv.fields.one2many('tms.advance', 'travel_id', string='Advances', states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
         'framework': openerp.osv.fields.function(_get_framework, string='Framework', method=True, store=True, type='char', size=15, multi='framework'),

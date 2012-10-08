@@ -41,6 +41,9 @@ class product_product(osv.osv):
                                           ('other','Other'),
                                           ('real_expense','Real Expense'),
                                           ('madeup_expense','Made-up Expense'),
+                                          ('salary','Salary'),
+                                          ('retention','Salary Retention'),
+                                          ('discount','Salary Discount'),
                                           ('fuel','Fuel'),
                                           ], 'TMS Product Type', required=True,
                                           help="""Product Type for using with TMS Module
