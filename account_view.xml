@@ -1,0 +1,42 @@
+<openerp>
+<data>
+
+<!-- Add field to account.journal object
+'tms_advance_journal'
+-->
+
+        <record id="view_account_journal_form_inherit_tms" model="ir.ui.view">
+            <field name="name">account.journal.form</field>
+            <field name="model">account.journal</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="account.view_account_journal_form"/>
+            <field name="arch" type="xml">
+                <field name="entry_posted" position="after">
+                    <field name="tms_advance_journal"  attrs="{'invisible':[('type','!=','purchase')]  }"/>
+                </field>
+            </field>
+        </record>
+
+
+        <record id="view_invoice_form_inherit_tms" model="ir.ui.view">
+            <field name="name">account.invoice.form.tms</field>
+            <field name="model">account.invoice</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+				<notebook position="inside">
+					<page string="TMS" attrs="{'invisible':[('waybill_ids','=',False)]  }">
+                    	<field name="tms_type"  />
+						<newline />
+                    	<field name="departure_address_id"  />
+                    	<field name="arrival_address_id"  />
+						<separator colspan="4" string="Waybills" />
+                    	<field name="waybill_ids" nolabel="1"  colspan="4"/>
+					</page>
+				</notebook>
+            </field>
+        </record>
+
+
+</data>
+</openerp>

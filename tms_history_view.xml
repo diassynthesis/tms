@@ -1,0 +1,200 @@
+<openerp>
+<data>
+
+<!-- 
+##############################
+TMS.EVENT.CATEGORY 
+##############################
+-->
+<!-- TREE View for tms.event.category --> 
+	<record model="ir.ui.view" id="view_tms_event_category_tree">
+        <field name="name">tms.event.category.tree</field>
+        <field name="model">tms.event.category</field>
+		<field name="type">tree</field>
+		<field name="arch" type="xml">
+            <tree string="TMS Event Categories">
+		        <field name="complete_name" />
+                <field name="name" />
+                <field name="parent_id" />
+                <field name="notes"/>
+                <field name="company_id" />
+		    </tree>
+		</field>
+	</record>
+
+
+<!-- FORM View for tms.event.category-->
+    
+        <record id="view_tms_event_category_form" model="ir.ui.view">
+            <field name="name">tms.event.category.form</field>
+            <field name="model">tms.event.category</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="TMS Unit Categories">
+                    <field name="name" select="1"/>
+                    <field name="parent_id" />
+                    <field name="active" select="1"/>
+                    <field name="company_id" />
+                    <field name="notes" colspan="4"/>
+                </form>
+            </field>
+        </record>
+
+<!-- Action for tms.event.category -->
+    <record model="ir.actions.act_window" id="open_view_tms_event_category_form">
+        <field name="name">TMS Unit Categories</field>
+        <field name="res_model">tms.event.category</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+<!-- Menu for tms.event.category  -->
+    <menuitem name="Event Categories" 
+              parent="menu_tms_config" 
+              id="menu_tms_config_event_category_form" 
+              action="open_view_tms_event_category_form"/>
+
+
+
+
+<!-- 
+##############################
+TMS.EVENT
+##############################
+-->
+<!-- SEARCH View for tms.event --> 
+        <record id="view_tms_event_search" model="ir.ui.view">
+            <field name="name">tms.event.search</field>
+            <field name="model">tms.event</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="TMS Events">
+                   <field name="name"/>
+                   <field name="date"/>
+                   <field name="category_id"/>
+                   <field name="travel_id" />
+                   <field name="unit_id" />
+                   <field name="employee_id" />
+                   <field name="route_id" />
+                   <newline/>
+                   <group  expand='0' string='More filters...'> <!--groups="base.group_extended" -->
+		               <field name="trailer1_id" />
+		               <field name="dolly_id" />
+		               <field name="trailer2_id" />
+		               <field name="departure_id" />
+		               <field name="arrival_id" />
+		               <field name="shop_id" />
+					</group>
+                   <newline/>
+                   <group  expand='0' string='Group by...'> <!--groups="base.group_extended" -->
+						<filter string="Date" icon="terp-go-month" domain="[]" context="{'group_by':'date'}"/>
+                        <filter string='Category' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'category_id'}" />
+                        <filter string='Travel' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'travel_id'}" />
+						<separator orientation="vertical"/>
+						<filter string='Unit' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'unit_id'}" />
+						<filter string='Driver' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'employee_id'}" />
+						<separator orientation="vertical"/>
+						<filter string='Route' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'route_id'}" />
+						<separator orientation="vertical"/>
+						<filter string='Shop' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'shop_id'}" />
+						<filter string='Company' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'company_id'}" />
+                   </group>
+                </search>
+            </field>
+        </record>
+
+<!-- TREE View for tms.event--> 
+	<record model="ir.ui.view" id="view_tms_event_tree">
+        <field name="name">tms.event.tree</field>
+        <field name="model">tms.event</field>
+		<field name="type">tree</field>
+		<field name="arch" type="xml">
+            <tree string="TMS Events">
+                   <field name="name"/>
+                   <field name="date"/>
+                   <field name="category_id"/>
+                   <field name="travel_id" />
+                   <field name="unit_id" />
+                   <field name="trailer1_id" />
+                   <field name="dolly_id" />
+                   <field name="trailer2_id" />
+                   <field name="employee_id" />
+                   <field name="route_id" />
+                   <field name="shop_id" />
+		    </tree>
+		</field>
+	</record>
+
+<!-- FORM View for tms.event 
+-->
+
+        <record id="view_tms_event_form" model="ir.ui.view">
+            <field name="name">tms.event.form</field>
+            <field name="model">tms.event</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="TMS Events">
+                   <field name="date"/>
+					<newline />
+                   <field name="category_id" colspan="4"/>
+                   <field name="name" colspan="4"/>
+                   <field name="travel_id" />
+					<newline />
+				  <group colspan="4" col="8">
+		               <field name="unit_id" />
+		               <field name="trailer1_id" />
+		               <field name="dolly_id" />
+		               <field name="trailer2_id" />
+					</group>
+                   <field name="employee_id" />
+                   <field name="route_id" />
+                   <field name="departure_id" />
+                   <field name="arrival_id" />
+                   <field name="shop_id" />
+                   <field name="company_id" />
+                </form>
+            </field>
+        </record>
+
+<!-- Action for tms.event-->
+    <record model="ir.actions.act_window" id="open_view_tms_event_form">
+        <field name="name">TMS Events</field>
+        <field name="res_model">tms.event</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+
+	<menuitem id="menu_tms_events" name="Events" parent="menu_tms" sequence="10"/>            
+
+<!-- Menu for tms.event -->
+    <menuitem name="Events" 
+              parent="menu_tms_events" 
+              id="menu_tms_event_form" 
+              action="open_view_tms_event_form"
+			  sequence="99"/>
+
+
+
+<!-- 
+##############################
+TMS.TRAVEL
+##############################
+ -->
+        <record model="ir.ui.view" id="view_tms_travel_event_form">
+            <field name="name">TMS tms.travel.event.form</field>
+            <field name="model">tms.travel</field>
+            <field name="type">form</field>
+            <field name="priority">50</field>
+            <field name="inherit_id" ref="view_tms_travel_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/notebook/page[@string='History']" position="inside" >
+                    <field name="event_ids" nolabel="1"/>
+                </xpath> 
+            </field>
+        </record>
+
+
+	
+</data>
+</openerp>

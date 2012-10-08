@@ -1,0 +1,2471 @@
+# Translation of OpenERP Server.
+# This file contains the translation of the following modules:
+#	* tms
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenERP Server 6.0.4\n"
+"Report-Msgid-Bugs-To: support@openerp.com\n"
+"POT-Creation-Date: 2012-09-10 18:28+0000\n"
+"PO-Revision-Date: 2012-09-10 18:28+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: tms
+#: code:addons/tms/tms_travel.py:244
+#, python-format
+msgid "Travel '%s' is set to progress."
+msgstr "Travel '%s' is set to progress."
+
+#. module: tms
+#: help:sale.order,amount_insurance:0
+#: help:tms.sale.order.template,amount_insurance:0
+msgid "Insurance without tax."
+msgstr "Insurance without tax."
+
+#. module: tms
+#: field:tms.advance,closed_by:0
+#: field:tms.fuelvoucher,closed_by:0
+#: field:tms.travel,closed_by:0
+msgid "Closed by"
+msgstr "Closed by"
+
+#. module: tms
+#: selection:tms.sale.order.line.template,layout_type:0
+msgid "Title"
+msgstr "Title"
+
+#. module: tms
+#: field:tms.advance,confirmed_by:0
+#: field:tms.fuelvoucher,confirmed_by:0
+msgid "Confirmed by"
+msgstr "Confirmed by"
+
+#. module: tms
+#: selection:product.product,tms_category:0
+msgid "Transportable"
+msgstr "Transportable"
+
+#. module: tms
+#: field:tms.sale.order.shipment,product_weight_estimated:0
+#: field:tms.sale.order.shipment.template,product_weight_estimated:0
+msgid "Estimated Weight (Tons)"
+msgstr "Estimated Weight (Tons)"
+
+#. module: tms
+#: code:addons/tms/tms_travel.py:226
+#, python-format
+msgid "You must first cancel all Advances for Drivers attached to this Travel."
+msgstr "You must first cancel all Advances for Drivers attached to this Travel."
+
+#. module: tms
+#: field:tms.sale.order.template,time_from_downloading_to_docs_sched:0
+msgid "Std Time for Download Document Release (Hrs)"
+msgstr "Std Time for Download Document Release (Hrs)"
+
+#. module: tms
+#: view:tms.route.tollstation:0
+msgid "Costs per axis"
+msgstr "Costs per axis"
+
+#. module: tms
+#: field:tms.travel,ended_by:0
+msgid "Ended by"
+msgstr "Ended by"
+
+#. module: tms
+#: sql_constraint:tms.route.fuelefficiency:0
+msgid "Motor + Type must be unique !"
+msgstr "Motor + Type must be unique !"
+
+#. module: tms
+#: selection:tms.unit,fleet_type:0
+msgid "Motorized Unit"
+msgstr "Motorized Unit"
+
+#. module: tms
+#: field:sale.order,date_down_end_sched:0
+msgid "Download End Sched"
+msgstr "Download End Sched"
+
+#. module: tms
+#: field:tms.advance.line,price_total:0
+msgid "Amount"
+msgstr "Amount"
+
+#. module: tms
+#: code:addons/tms/tms_advance.py:267
+#, python-format
+msgid "Warning !"
+msgstr "Warning !"
+
+#. module: tms
+#: help:sale.order,tons:0
+#: help:tms.sale.order.template,tons:0
+msgid "Tons sum."
+msgstr "Tons sum."
+
+#. module: tms
+#: field:tms.fuelvoucher,name:0
+msgid "Fuel Voucher"
+msgstr "Fuel Voucher"
+
+#. module: tms
+#: help:hr.employee,tms_category:0
+msgid "Used to define if this person will be used as a Driver (Frieghts related) or Mechanic (Maintenance related)"
+msgstr "Used to define if this person will be used as a Driver (Frieghts related) or Mechanic (Maintenance related)"
+
+#. module: tms
+#: view:tms.route:0
+msgid "Fuel Eff. 1 Trailer"
+msgstr "Fuel Eff. 1 Trailer"
+
+#. module: tms
+#: help:sale.order,partner_sender_id:0
+#: help:tms.sale.order.template,partner_sender_id:0
+msgid "Departure address for current Waybill."
+msgstr "Departure address for current Waybill."
+
+#. module: tms
+#: constraint:tms.unit.category:0
+msgid "Error ! You can not create recursive categories."
+msgstr "Error ! You can not create recursive categories."
+
+#. module: tms
+#: model:ir.model,name:tms.model_tms_sale_order_shipment
+msgid "TMS Waybill Shipment Line"
+msgstr "TMS Waybill Shipment Line"
+
+#. module: tms
+#: model:ir.model,name:tms.model_res_partner
+#: view:tms.fuelvoucher:0
+#: field:tms.route.tollstation,partner_id:0
+#: view:tms.sale.order.template:0
+msgid "Partner"
+msgstr "Empresa"
+
+#. module: tms
+#: field:tms.route,active:0
+#: field:tms.route.tollstation,active:0
+#: field:tms.sale.order.template,active:0
+#: field:tms.unit,active:0
+#: field:tms.unit.category,active:0
+msgid "Active"
+msgstr "Active"
+
+#. module: tms
+#: view:tms.advance:0
+#: field:tms.advance,state:0
+#: view:tms.fuelvoucher:0
+#: field:tms.fuelvoucher,state:0
+#: view:tms.travel:0
+#: field:tms.travel,state:0
+msgid "State"
+msgstr "State"
+
+#. module: tms
+#: view:tms.route:0
+msgid "Fuel Eff. 2 Trailer"
+msgstr "Fuel Eff. 2 Trailer"
+
+#. module: tms
+#: help:sale.order,volume:0
+#: help:tms.sale.order.template,volume:0
+msgid "Volume sum."
+msgstr "Volume sum."
+
+#. module: tms
+#: field:tms.sale.order.line.template,layout_type:0
+msgid "Layout Type"
+msgstr "Layout Type"
+
+#. module: tms
+#: field:sale.order,upload_place:0
+#: field:tms.sale.order.template,upload_place:0
+msgid "Upload place"
+msgstr "Upload place"
+
+#. module: tms
+#: code:addons/tms/tms_advance.py:123
+#, python-format
+msgid "You have not defined Advance Sequence for shop ' + shop.name))\n"
+"        return super(tms_advance, self).create(cr, uid, vals, context=context)\n"
+"\n"
+"\n"
+"    def action_cancel_draft(self, cr, uid, ids, *args):\n"
+"        if not len(ids):\n"
+"            return False\n"
+"        self.write(cr, uid, ids, {'state':'draft'})\n"
+"        for (id,name) in self.name_get(cr, uid, ids):\n"
+"            message = _(\"Advance '%s' has been set in draft state.\") % name\n"
+"            self.log(cr, uid, id, message)\n"
+"        return True\n"
+"    \n"
+"    def action_cancel(self, cr, uid, ids, context=None):\n"
+"        for advance in self.browse(cr, uid, ids, context=context):\n"
+"            if advance.invoiced and not advance.invoice_paid:\n"
+"                wf_service = netsvc.LocalService(\"workflow\")\n"
+"                wf_service.trg_validate(uid, 'account.invoice', advance.invoice_id.id, 'invoice_cancel', cr)\n"
+"                invoice_obj=self.pool.get('account.invoice"
+msgstr "You have not defined Advance Sequence for shop ' + shop.name))\n"
+"        return super(tms_advance, self).create(cr, uid, vals, context=context)\n"
+"\n"
+"\n"
+"    def action_cancel_draft(self, cr, uid, ids, *args):\n"
+"        if not len(ids):\n"
+"            return False\n"
+"        self.write(cr, uid, ids, {'state':'draft'})\n"
+"        for (id,name) in self.name_get(cr, uid, ids):\n"
+"            message = _(\"Advance '%s' has been set in draft state.\") % name\n"
+"            self.log(cr, uid, id, message)\n"
+"        return True\n"
+"    \n"
+"    def action_cancel(self, cr, uid, ids, context=None):\n"
+"        for advance in self.browse(cr, uid, ids, context=context):\n"
+"            if advance.invoiced and not advance.invoice_paid:\n"
+"                wf_service = netsvc.LocalService(\"workflow\")\n"
+"                wf_service.trg_validate(uid, 'account.invoice', advance.invoice_id.id, 'invoice_cancel', cr)\n"
+"                invoice_obj=self.pool.get('account.invoice"
+
+#. module: tms
+#: model:ir.model,name:tms.model_tms_fuelvoucher
+#: model:ir.ui.menu,name:tms.menu_tms_fuelvoucher_form
+#: view:tms.travel:0
+#: field:tms.travel,tms_fuelvoucher_ids:0
+msgid "Fuel Vouchers"
+msgstr "Fuel Vouchers"
+
+#. module: tms
+#: field:tms.sale.order.line.template,order_id:0
+msgid "Order Reference"
+msgstr "Order Reference"
+
+#. module: tms
+#: model:ir.model,name:tms.model_account_tax
+msgid "account.tax"
+msgstr "contabilidad.impuesto"
+
+#. module: tms
+#: field:tms.unit.category,parent_id:0
+msgid "Parent Category"
+msgstr "Parent Category"
+
+#. module: tms
+#: field:tms.sale.order.shipment,product_weight_real:0
+#: field:tms.sale.order.shipment.template,product_weight_real:0
+msgid "Weight (Tons)"
+msgstr "Weight (Tons)"
+
+#. module: tms
+#: field:tms.advance,tms_advance_line:0
+msgid "Advance Lines"
+msgstr "Advance Lines"
+
+#. module: tms
+#: code:addons/tms/tms_advance.py:146
+#, python-format
+msgid "This Advance is already paid"
+msgstr "This Advance is already paid"
+
+#. module: tms
+#: view:tms.sale.order.template:0
+msgid "Other info"
+msgstr "Other info"
+
+#. module: tms
+#: field:tms.route.fuelefficiency,motor_id:0
+#: view:tms.unit:0
+#: field:tms.unit,unit_motor_id:0
+#: selection:tms.unit.category,type:0
+msgid "Motor"
+msgstr "Motor"
+
+#. module: tms
+#: selection:sale.order,payment_type:0
+#: selection:tms.sale.order.template,payment_type:0
+msgid "Charge by Tons"
+msgstr "Charge by Tons"
+
+#. module: tms
+#: code:addons/tms/tms_advance.py:150
+#, python-format
+msgid "This Advance is already linked to Travel Expenses record"
+msgstr "This Advance is already linked to Travel Expenses record"
+
+#. module: tms
+#: field:tms.route.tollstation.costperaxis,tms_route_tollstation_id:0
+msgid "Toll Station"
+msgstr "Toll Station"
+
+#. module: tms
+#: view:tms.advance.invoice:0
+#: view:tms.fuelvoucher.invoice:0
+msgid "Conciliar y generar factura de los vales seleccionados ?"
+msgstr "Conciliar y generar factura de los vales seleccionados ?"
+
+#. module: tms
+#: field:sale.order,date_up_start_real:0
+msgid "UpLoad Start Real"
+msgstr "UpLoad Start Real"
+
+#. module: tms
+#: field:tms.travel,dolly_id:0
+#: selection:tms.unit,fleet_type:0
+msgid "Dolly"
+msgstr "Dolly"
+
+#. module: tms
+#: view:tms.fuelvoucher:0
+msgid "Invoice Info"
+msgstr "Invoice Info"
+
+#. module: tms
+#: field:tms.unit,plates:0
+msgid "Plates"
+msgstr "Plates"
+
+#. module: tms
+#: view:tms.advance:0
+#: view:tms.travel:0
+msgid "Log Info"
+msgstr "Log Info"
+
+#. module: tms
+#: field:tms.travel,employee2_id:0
+msgid "Driver 2"
+msgstr "Driver 2"
+
+#. module: tms
+#: code:addons/tms/tms_waybill.py:287
+#, python-format
+msgid "Product Travel Undefined !"
+msgstr "Product Travel Undefined !"
+
+#. module: tms
+#: view:tms.advance:0
+#: view:tms.fuelvoucher:0
+#: view:tms.travel:0
+msgid "Driver 1"
+msgstr "Driver 1"
+
+#. module: tms
+#: field:tms.route,route_fuelefficiency_ids:0
+msgid "Fuel Efficiency by Motor type"
+msgstr "Fuel Efficiency by Motor type"
+
+#. module: tms
+#: selection:hr.employee,tms_category:0
+#: selection:res.partner,tms_category:0
+#: field:tms.advance,employee_id:0
+#: field:tms.fuelvoucher,employee_id:0
+#: field:tms.travel,employee_id:0
+#: field:tms.unit,employee_id:0
+msgid "Driver"
+msgstr "Driver"
+
+#. module: tms
+#: field:tms.advance,approved_by:0
+#: field:tms.fuelvoucher,approved_by:0
+msgid "Approved by"
+msgstr "Approved by"
+
+#. module: tms
+#: field:sale.order,amount_declared:0
+#: field:tms.sale.order.template,amount_declared:0
+msgid "Amount Declared"
+msgstr "Amount Declared"
+
+#. module: tms
+#: help:product.product,tms_category:0
+msgid "Product Type for using with TMS Module\n"
+"  - No TMS Product: Not related to TMS\n"
+"  - Transportable: Transportable Product\n"
+"  - Travel: Represents Travel Price Concept\n"
+"  - Insurance: Represents Insurance for Load\n"
+"  - Highway: Represents Highway Tollstation\n"
+"  - Other: Represents any other charge for Travel Service\n"
+"  - Travel Expenses: Represent expenses related to Travel\n"
+""
+msgstr "Product Type for using with TMS Module\n"
+"  - No TMS Product: Not related to TMS\n"
+"  - Transportable: Transportable Product\n"
+"  - Travel: Represents Travel Price Concept\n"
+"  - Insurance: Represents Insurance for Load\n"
+"  - Highway: Represents Highway Tollstation\n"
+"  - Other: Represents any other charge for Travel Service\n"
+"  - Travel Expenses: Represent expenses related to Travel\n"
+""
+
+#. module: tms
+#: view:tms.travel:0
+msgid "TMS Travels"
+msgstr "TMS Travels"
+
+#. module: tms
+#: constraint:hr.employee:0
+msgid "Error ! You cannot create recursive Hierarchy of Employees."
+msgstr "¡Error! No se puede crear una jerarquía recursiva de empleados."
+
+#. module: tms
+#: help:tms.route.fuelefficiency,performance:0
+msgid "Fuel Efficiency for this motor type"
+msgstr "Fuel Efficiency for this motor type"
+
+#. module: tms
+#: view:tms.sale.order.template:0
+msgid "UpLoad Times"
+msgstr "UpLoad Times"
+
+#. module: tms
+#: help:sale.order,amount_highway:0
+#: help:tms.sale.order.template,amount_highway:0
+msgid "Highways amount without tax."
+msgstr "Highways amount without tax."
+
+#. module: tms
+#: selection:hr.employee,tms_category:0
+#: selection:res.partner,tms_category:0
+msgid "N/A"
+msgstr "N/A"
+
+#. module: tms
+#: field:tms.sale.shop.fuel.supplier.seq,fuel_sequence:0
+msgid "Fuel Sequence"
+msgstr "Fuel Sequence"
+
+#. module: tms
+#: model:ir.model,name:tms.model_tms_route
+#: model:ir.ui.menu,name:tms.menu_tms_config_route_form
+#: model:ir.ui.menu,name:tms.menu_tms_config_routes
+msgid "Routes"
+msgstr "Routes"
+
+#. module: tms
+#: view:tms.unit:0
+msgid "General Data"
+msgstr "General Data"
+
+#. module: tms
+#: model:ir.model,name:tms.model_tms_route_fuelefficiency
+msgid "Fuel Efficiency by Motor"
+msgstr "Fuel Efficiency by Motor"
+
+#. module: tms
+#: field:sale.order,quantity:0
+#: field:tms.fuelvoucher,product_uom_qty:0
+#: field:tms.sale.order.shipment,product_uom_qty:0
+#: field:tms.sale.order.shipment.template,product_uom_qty:0
+#: field:tms.sale.order.template,quantity:0
+msgid "Quantity"
+msgstr "Quantity"
+
+#. module: tms
+#: field:sale.order,date_down_start_real:0
+msgid "Download Start Real"
+msgstr "Download Start Real"
+
+#. module: tms
+#: view:tms.route.tollstation:0
+#: field:tms.route.tollstation,tms_route_ids:0
+msgid "Routes with this Toll Station"
+msgstr "Routes with this Toll Station"
+
+#. module: tms
+#: help:tms.route,distance:0
+msgid "Route distance (mi./kms)"
+msgstr "Route distance (mi./kms)"
+
+#. module: tms
+#: field:sale.order,date_start:0
+msgid "Load Appointment Sched"
+msgstr "Load Appointment Sched"
+
+#. module: tms
+#: view:tms.unit:0
+msgid "Dolly's"
+msgstr "Dolly's"
+
+#. module: tms
+#: code:addons/tms/tms_travel.py:214
+#: code:addons/tms/tms_travel.py:219
+#: code:addons/tms/tms_travel.py:225
+#, python-format
+msgid "Could not cancel Travel !"
+msgstr "Could not cancel Travel !"
+
+#. module: tms
+#: view:tms.travel:0
+#: selection:tms.travel,state:0
+msgid "In Progress"
+msgstr "In Progress"
+
+#. module: tms
+#: code:addons/tms/tms_fuelvoucher.py:180
+#, python-format
+msgid "Could not cancel Fuel Voucher !"
+msgstr "Could not cancel Fuel Voucher !"
+
+#. module: tms
+#: code:addons/tms/tms_advance.py:153
+#, python-format
+msgid "Advance '%s' is cancelled."
+msgstr "Advance '%s' is cancelled."
+
+#. module: tms
+#: code:addons/tms/tms_fuelvoucher.py:181
+#, python-format
+msgid "This Fuel Voucher is already linked to Travel Expenses record"
+msgstr "This Fuel Voucher is already linked to Travel Expenses record"
+
+#. module: tms
+#: field:tms.travel,distance_extraction:0
+msgid "Distance Extraction (mi./km)"
+msgstr "Distance Extraction (mi./km)"
+
+#. module: tms
+#: code:addons/tms/tms_travel.py:241
+#, python-format
+msgid "There is already a Travel in progress with Unit ' + travel.unit_id.name))\n"
+"        self.write(cr,uid,ids,{'state':'progress','date_start_real':time.strftime('%Y-%m-%d %H:%M:%S"
+msgstr "There is already a Travel in progress with Unit ' + travel.unit_id.name))\n"
+"        self.write(cr,uid,ids,{'state':'progress','date_start_real':time.strftime('%Y-%m-%d %H:%M:%S"
+
+#. module: tms
+#: model:ir.model,name:tms.model_account_journal
+msgid "Journal"
+msgstr "Diario"
+
+#. module: tms
+#: selection:sale.order,payment_type:0
+#: selection:tms.sale.order.template,payment_type:0
+msgid "Charge by Volume"
+msgstr "Charge by Volume"
+
+#. module: tms
+#: model:ir.ui.menu,name:tms.menu_tms_config_unit_category_form
+msgid "Unit Categories"
+msgstr "Unit Categories"
+
+#. module: tms
+#: view:tms.fuelvoucher:0
+msgid "TMS Fuel Vouchers"
+msgstr "TMS Fuel Vouchers"
+
+#. module: tms
+#: view:tms.travel:0
+msgid "Date and Times"
+msgstr "Date and Times"
+
+#. module: tms
+#: code:addons/tms/tms_fuelvoucher.py:58
+#: code:addons/tms/tms_fuelvoucher.py:140
+#, python-format
+msgid "You have to add taxes for this product. Para Mexico: Tiene que agregar el IVA que corresponda y el IEPS con factor 0.0."
+msgstr "You have to add taxes for this product. Para Mexico: Tiene que agregar el IVA que corresponda y el IEPS con factor 0.0."
+
+#. module: tms
+#: field:tms.travel,date_end_real:0
+msgid "End Real"
+msgstr "End Real"
+
+#. module: tms
+#: field:tms.fuelvoucher,product_uom:0
+msgid "UoM "
+msgstr "UoM "
+
+#. module: tms
+#: field:tms.unit.extradata,value:0
+msgid "Value"
+msgstr "Value"
+
+#. module: tms
+#: code:addons/tms/tms_fuelvoucher.py:159
+#, python-format
+msgid "You have not defined Fuel Voucher Sequence for shop ' + shop.name))\n"
+"        return super(tms_fuelvoucher, self).create(cr, uid, vals, context=context)\n"
+"\n"
+"\n"
+"    def action_cancel_draft(self, cr, uid, ids, *args):\n"
+"        if not len(ids):\n"
+"            return False\n"
+"        self.write(cr, uid, ids, {'state':'draft'})\n"
+"        for (id,name) in self.name_get(cr, uid, ids):\n"
+"            message = _(\"Fuel Voucher '%s' has been set in draft state.\") % name\n"
+"            self.log(cr, uid, id, message)\n"
+"        return True\n"
+"    \n"
+"    def action_cancel(self, cr, uid, ids, context=None):\n"
+"        for fuelvoucher in self.browse(cr, uid, ids, context=context):\n"
+"            if fuelvoucher.invoiced:\n"
+"                raise osv.except_osv(\n"
+"                        _('Could not cancel Fuel Voucher !"
+msgstr "You have not defined Fuel Voucher Sequence for shop ' + shop.name))\n"
+"        return super(tms_fuelvoucher, self).create(cr, uid, vals, context=context)\n"
+"\n"
+"\n"
+"    def action_cancel_draft(self, cr, uid, ids, *args):\n"
+"        if not len(ids):\n"
+"            return False\n"
+"        self.write(cr, uid, ids, {'state':'draft'})\n"
+"        for (id,name) in self.name_get(cr, uid, ids):\n"
+"            message = _(\"Fuel Voucher '%s' has been set in draft state.\") % name\n"
+"            self.log(cr, uid, id, message)\n"
+"        return True\n"
+"    \n"
+"    def action_cancel(self, cr, uid, ids, context=None):\n"
+"        for fuelvoucher in self.browse(cr, uid, ids, context=context):\n"
+"            if fuelvoucher.invoiced:\n"
+"                raise osv.except_osv(\n"
+"                        _('Could not cancel Fuel Voucher !"
+
+#. module: tms
+#: sql_constraint:tms.sale.shop.fuel.supplier.seq:0
+msgid "Partner must be unique !"
+msgstr "Partner must be unique !"
+
+#. module: tms
+#: view:tms.unit:0
+#: field:tms.unit,unit_model_id:0
+#: selection:tms.unit.category,type:0
+msgid "Model"
+msgstr "Model"
+
+#. module: tms
+#: model:ir.model,name:tms.model_tms_advance_invoice
+msgid "Make Invoices from Advances"
+msgstr "Make Invoices from Advances"
+
+#. module: tms
+#: field:tms.route,tms_route_tollstation_ids:0
+msgid "Toll Station in this Route"
+msgstr "Toll Station in this Route"
+
+#. module: tms
+#: selection:tms.travel,state:0
+msgid "Ended"
+msgstr "Ended"
+
+#. module: tms
+#: constraint:product.product:0
+msgid "Error: Invalid ean code"
+msgstr "Error: Código EAN no válido"
+
+#. module: tms
+#: model:ir.model,name:tms.model_tms_unit_extradata
+msgid "Extra Data for Units"
+msgstr "Extra Data for Units"
+
+#. module: tms
+#: sql_constraint:sale.order:0
+msgid "Order Reference must be unique !"
+msgstr "¡La referencia del pedido debe ser única!"
+
+#. module: tms
+#: model:ir.model,name:tms.model_tms_sale_shop_fuel_supplier_seq
+msgid "TMS Sale Shop Fuel Supplier Sequences"
+msgstr "TMS Sale Shop Fuel Supplier Sequences"
+
+#. module: tms
+#: selection:tms.route.fuelefficiency,type:0
+msgid "Single Trailer"
+msgstr "Single Trailer"
+
+#. module: tms
+#: field:tms.travel,fuel_efficiency_travel:0
+msgid "Fuel Efficiency Travel"
+msgstr "Fuel Efficiency Travel"
+
+#. module: tms
+#: field:tms.sale.order.line.template,price_subtotal:0
+#: field:tms.sale.order.template,amount_subtotal:0
+msgid "Subtotal"
+msgstr "Subtotal"
+
+#. module: tms
+#: field:tms.fuelvoucher,partner_id:0
+#: field:tms.sale.shop.fuel.supplier.seq,partner_id:0
+msgid "Fuel Supplier"
+msgstr "Fuel Supplier"
+
+#. module: tms
+#: field:tms.advance.line,product_uom:0
+#: field:tms.sale.order.line.template,product_uom:0
+msgid "Unit of Measure "
+msgstr "Unit of Measure "
+
+#. module: tms
+#: field:account.journal,tms_advance_journal:0
+msgid "TMS Advance Journal"
+msgstr "TMS Advance Journal"
+
+#. module: tms
+#: help:sale.order,quantity:0
+#: help:tms.sale.order.template,quantity:0
+msgid "Quantity sum."
+msgstr "Quantity sum."
+
+#. module: tms
+#: field:tms.travel,name:0
+msgid "Travel Number"
+msgstr "Travel Number"
+
+#. module: tms
+#: field:tms.place,longitude:0
+msgid "Longitude"
+msgstr "Longitude"
+
+#. module: tms
+#: model:ir.model,name:tms.model_tms_travel
+#: model:ir.ui.menu,name:tms.menu_tms_travel_form
+msgid "Travels"
+msgstr "Travels"
+
+#. module: tms
+#: code:addons/tms/tms_advance.py:145
+#: code:addons/tms/tms_advance.py:149
+#, python-format
+msgid "Could not cancel Advance !"
+msgstr "Could not cancel Advance !"
+
+#. module: tms
+#: field:tms.sale.order.template,partner_invoice_id:0
+msgid "Invoice Address"
+msgstr "Invoice Address"
+
+#. module: tms
+#: code:addons/tms/tms_fuelvoucher.py:153
+#: code:addons/tms/tms_fuelvoucher.py:159
+#, python-format
+msgid "Fuel Voucher Sequence Error !"
+msgstr "Fuel Voucher Sequence Error !"
+
+#. module: tms
+#: field:tms.travel,distance_empty:0
+msgid "Distance Empty (mi./km)"
+msgstr "Distance Empty (mi./km)"
+
+#. module: tms
+#: field:tms.unit,vin:0
+msgid "VIN"
+msgstr "VIN"
+
+#. module: tms
+#: model:ir.model,name:tms.model_tms_advance
+msgid "Money advance payments for Travel expenses"
+msgstr "Money advance payments for Travel expenses"
+
+#. module: tms
+#: selection:tms.route.fuelefficiency,type:0
+msgid "Double Trailer"
+msgstr "Double Trailer"
+
+#. module: tms
+#: field:tms.route,name:0
+msgid "Route Name"
+msgstr "Route Name"
+
+#. module: tms
+#: field:sale.order,distance:0
+#: field:tms.sale.order.template,distance:0
+msgid "Distance"
+msgstr "Distance"
+
+#. module: tms
+#: field:sale.order,shipment_line:0
+#: field:tms.sale.order.template,shipment_line:0
+msgid "Shipment Details"
+msgstr "Shipment Details"
+
+#. module: tms
+#: selection:sale.order,payment_type:0
+#: selection:tms.sale.order.template,payment_type:0
+msgid "Charge by Travel"
+msgstr "Charge by Travel"
+
+#. module: tms
+#: field:tms.unit.category,child_id:0
+msgid "Child Categories"
+msgstr "Child Categories"
+
+#. module: tms
+#: field:sale.order,payment_factor:0
+#: field:tms.sale.order.template,payment_factor:0
+msgid "Factor"
+msgstr "Factor"
+
+#. module: tms
+#: field:tms.place,latitude:0
+msgid "Latitude"
+msgstr "Latitude"
+
+#. module: tms
+#: field:tms.sale.order.template,order_line:0
+msgid "Order Lines"
+msgstr "Order Lines"
+
+#. module: tms
+#: field:tms.route.fuelefficiency,type:0
+#: selection:tms.unit.category,type:0
+msgid "Type"
+msgstr "Type"
+
+#. module: tms
+#: field:tms.advance.line,product_uom_qty:0
+#: field:tms.sale.order.line.template,product_uom_qty:0
+msgid "Quantity (UoM)"
+msgstr "Quantity (UoM)"
+
+#. module: tms
+#: help:tms.unit.category,sequence:0
+msgid "Gives the sequence order when displaying this list of categories."
+msgstr "Gives the sequence order when displaying this list of categories."
+
+#. module: tms
+#: field:tms.sale.order.template,pricelist_id:0
+msgid "Pricelist"
+msgstr "Pricelist"
+
+#. module: tms
+#: view:tms.sale.order.template:0
+msgid "Detailed Info"
+msgstr "Detailed Info"
+
+#. module: tms
+#: field:sale.order,date_down_docs_real:0
+msgid "Download Docs Release Real"
+msgstr "Download Docs Release Real"
+
+#. module: tms
+#: model:ir.ui.menu,name:tms.menu_tms_config_route_place_form
+msgid "Places"
+msgstr "Places"
+
+#. module: tms
+#: code:addons/tms/tms_fuelvoucher.py:193
+#, python-format
+msgid "Fuel Voucher '%s' is set to approved."
+msgstr "Fuel Voucher '%s' is set to approved."
+
+#. module: tms
+#: code:addons/tms/tms_advance.py:166
+#, python-format
+msgid "Advance '%s' is set to approved."
+msgstr "Advance '%s' is set to approved."
+
+#. module: tms
+#: selection:tms.route.fuelefficiency,type:0
+msgid "Drive Unit"
+msgstr "Drive Unit"
+
+#. module: tms
+#: field:tms.sale.order.shipment,product_volume:0
+#: field:tms.sale.order.shipment.template,product_volume:0
+msgid "Estimated Volume (m3)"
+msgstr "Estimated Volume (m3)"
+
+#. module: tms
+#: field:tms.fuelvoucher,currency_id:0
+msgid "Currency"
+msgstr "Currency"
+
+#. module: tms
+#: field:tms.sale.order.template,time_for_uploading_std:0
+msgid "Std Time for loading (Hrs)"
+msgstr "Std Time for loading (Hrs)"
+
+#. module: tms
+#: field:tms.advance,total_amount:0
+msgid "Total Amount"
+msgstr "Total Amount"
+
+#. module: tms
+#: view:tms.advance:0
+msgid "Detail"
+msgstr "Detail"
+
+#. module: tms
+#: field:tms.travel,fuel_efficiency_extraction:0
+msgid "Fuel Efficiency Extraction"
+msgstr "Fuel Efficiency Extraction"
+
+#. module: tms
+#: code:addons/tms/tms_travel.py:229
+#, python-format
+msgid "Travel '%s' is cancelled."
+msgstr "Travel '%s' is cancelled."
+
+#. module: tms
+#: model:ir.actions.act_window,name:tms.open_view_tms_route_tollstation_form
+#: view:tms.route.tollstation:0
+msgid "TMS Toll Stations"
+msgstr "TMS Toll Stations"
+
+#. module: tms
+#: view:product.product:0
+msgid "TMS Transportable"
+msgstr "TMS Transportable"
+
+#. module: tms
+#: selection:product.product,tms_category:0
+msgid "Combustible"
+msgstr "Combustible"
+
+#. module: tms
+#: view:tms.sale.order.template:0
+msgid "Partner Departure"
+msgstr "Partner Departure"
+
+#. module: tms
+#: field:tms.advance,date:0
+#: field:tms.fuelvoucher,date:0
+msgid "Date"
+msgstr "Date"
+
+#. module: tms
+#: field:tms.travel,date_ended:0
+msgid "Date Ended"
+msgstr "Date Ended"
+
+#. module: tms
+#: model:ir.actions.act_window,name:tms.open_view_tms_sale_order_template_form
+#: view:tms.sale.order.template:0
+msgid "TMS Waybill Templates"
+msgstr "TMS Waybill Templates"
+
+#. module: tms
+#: code:addons/tms/tms_advance.py:163
+#, python-format
+msgid "Total Amount must be greater than zero."
+msgstr "Total Amount must be greater than zero."
+
+#. module: tms
+#: selection:product.product,tms_category:0
+msgid "Seguro"
+msgstr "Seguro"
+
+#. module: tms
+#: field:sale.order,date_down_start_sched:0
+msgid "Download Start Sched"
+msgstr "Download Start Sched"
+
+#. module: tms
+#: model:ir.ui.menu,name:tms.menu_tms_travels
+msgid "Freights"
+msgstr "Freights"
+
+#. module: tms
+#: help:tms.sale.order.template,partner_order_id:0
+msgid "The name and address of the contact who requested the order or quotation."
+msgstr "The name and address of the contact who requested the order or quotation."
+
+#. module: tms
+#: field:tms.sale.order.template,time_from_appointment_to_downloading_std:0
+msgid "Std Time from Download Appointment to Downloading (Hrs)"
+msgstr "Std Time from Download Appointment to Downloading (Hrs)"
+
+#. module: tms
+#: field:tms.travel,framework_count:0
+msgid "Framework Count"
+msgstr "Framework Count"
+
+#. module: tms
+#: view:tms.sale.order.template:0
+msgid "Shipping Details"
+msgstr "Shipping Details"
+
+#. module: tms
+#: selection:tms.sale.order.line.template,layout_type:0
+msgid "Page Break"
+msgstr "Page Break"
+
+#. module: tms
+#: view:tms.advance:0
+#: view:tms.advance.invoice:0
+#: view:tms.fuelvoucher:0
+#: view:tms.fuelvoucher.invoice:0
+msgid "Cancel"
+msgstr "Cancel"
+
+#. module: tms
+#: view:tms.travel:0
+msgid "End Travel"
+msgstr "End Travel"
+
+#. module: tms
+#: view:tms.advance:0
+#: field:tms.advance,unit_id:0
+#: view:tms.fuelvoucher:0
+#: field:tms.fuelvoucher,unit_id:0
+#: view:tms.travel:0
+msgid "Unit"
+msgstr "Unit"
+
+#. module: tms
+#: code:addons/tms/tms_advance.py:162
+#, python-format
+msgid "Could not approve Advance !"
+msgstr "Could not approve Advance !"
+
+#. module: tms
+#: help:sale.order,amount_travel:0
+#: help:tms.sale.order.template,amount_travel:0
+#: help:tms.sale.order.template,amount_travel2:0
+msgid "Travel amount without tax."
+msgstr "Travel amount without tax."
+
+#. module: tms
+#: view:product.product:0
+msgid "TMS Related"
+msgstr "TMS Related"
+
+#. module: tms
+#: field:tms.unit.extradata,unit_extra_data_id:0
+msgid "Field"
+msgstr "Field"
+
+#. module: tms
+#: field:sale.order,amount_other:0
+#: view:tms.sale.order.template:0
+#: field:tms.sale.order.template,amount_other:0
+#: selection:tms.unit,fleet_type:0
+msgid "Other"
+msgstr "Other"
+
+#. module: tms
+#: field:tms.advance,date_approved:0
+#: field:tms.fuelvoucher,date_approved:0
+msgid "Date Approved"
+msgstr "Date Approved"
+
+#. module: tms
+#: view:tms.travel:0
+msgid "Statistics Data"
+msgstr "Statistics Data"
+
+#. module: tms
+#: field:tms.travel,date:0
+msgid "Date registered"
+msgstr "Date registered"
+
+#. module: tms
+#: code:addons/tms/tms_travel.py:240
+#, python-format
+msgid "Could not dispatch Travel !"
+msgstr "Could not dispatch Travel !"
+
+#. module: tms
+#: code:addons/tms/tms_waybill.py:288
+#, python-format
+msgid "You have not defined Travel Product"
+msgstr "You have not defined Travel Product"
+
+#. module: tms
+#: model:ir.ui.menu,name:tms.menu_tms_config_route_tollstation_form
+#: view:tms.route:0
+msgid "Toll Stations"
+msgstr "Toll Stations"
+
+#. module: tms
+#: field:sale.order,arrival:0
+#: view:tms.route:0
+#: field:tms.route,arrival_id:0
+#: view:tms.sale.order.template:0
+#: field:tms.sale.order.template,arrival:0
+#: view:tms.travel:0
+#: field:tms.travel,arrival:0
+msgid "Arrival"
+msgstr "Arrival"
+
+#. module: tms
+#: code:addons/tms/tms_advance.py:261
+#, python-format
+msgid "Los registros seleccionados no estan Aprobados o ya se encuentran Confirmados..."
+msgstr "Los registros seleccionados no estan Aprobados o ya se encuentran Confirmados..."
+
+#. module: tms
+#: field:tms.sale.order.template,partner_order_id:0
+msgid "Ordering Contact"
+msgstr "Ordering Contact"
+
+#. module: tms
+#: help:tms.sale.order.template,amount_subtotal:0
+msgid "Subtotal without tax."
+msgstr "Subtotal without tax."
+
+#. module: tms
+#: field:tms.travel,distance_route:0
+msgid "Route Distance (mi./km)"
+msgstr "Route Distance (mi./km)"
+
+#. module: tms
+#: field:tms.travel,unit_id:0
+msgid "Transportation Unit"
+msgstr "Transportation Unit"
+
+#. module: tms
+#: field:tms.route,distance:0
+msgid "Distance (mi./kms)"
+msgstr "Distance (mi./kms)"
+
+#. module: tms
+#: field:sale.order,download_place:0
+#: field:tms.sale.order.template,download_place:0
+msgid "Download place"
+msgstr "Download place"
+
+#. module: tms
+#: view:tms.sale.order.template:0
+msgid "Standard Times"
+msgstr "Standard Times"
+
+#. module: tms
+#: field:tms.travel,date_end:0
+msgid "End Scheduled"
+msgstr "End Scheduled"
+
+#. module: tms
+#: field:tms.unit,fleet_type:0
+msgid "Unit Fleet Type"
+msgstr "Unit Fleet Type"
+
+#. module: tms
+#: view:sale.shop:0
+msgid "Fuel Voucher Sequences"
+msgstr "Fuel Voucher Sequences"
+
+#. module: tms
+#: model:ir.module.module,shortdesc:tms.module_meta_information
+msgid "Transportation Management System"
+msgstr "Transportation Management System"
+
+#. module: tms
+#: code:addons/tms/tms_travel.py:205
+#, python-format
+msgid "Travel '%s' has been set in draft state."
+msgstr "Travel '%s' has been set in draft state."
+
+#. module: tms
+#: field:tms.route.tollstation,name:0
+#: field:tms.unit.category,name:0
+msgid "Name"
+msgstr "Name"
+
+#. module: tms
+#: view:tms.route:0
+msgid "Fuel Eff. by Unit"
+msgstr "Fuel Eff. by Unit"
+
+#. module: tms
+#: field:tms.advance.line,name:0
+msgid "Concepto"
+msgstr "Concepto"
+
+#. module: tms
+#: field:tms.sale.order.template,time_from_uploading_to_docs_sched:0
+msgid "Std Time from Load to Document Release (Hrs)"
+msgstr "Std Time from Load to Document Release (Hrs)"
+
+#. module: tms
+#: field:sale.order,date_start_real:0
+msgid "Load Appointment Real"
+msgstr "Load Appointment Real"
+
+#. module: tms
+#: field:tms.sale.order.template,time_for_downloading_sched:0
+msgid "Std Time for downloading (Hrs)"
+msgstr "Std Time for downloading (Hrs)"
+
+#. module: tms
+#: selection:product.product,tms_category:0
+msgid "No TMS Product"
+msgstr "No TMS Product"
+
+#. module: tms
+#: field:tms.sale.order.shipment,order_id:0
+#: field:tms.sale.order.shipment.template,order_id:0
+msgid "Waybill Reference"
+msgstr "Waybill Reference"
+
+#. module: tms
+#: model:ir.model,name:tms.model_tms_fuelvoucher_invoice
+msgid "Make Invoices from Fuel Vouchers"
+msgstr "Make Invoices from Fuel Vouchers"
+
+#. module: tms
+#: selection:tms.unit.category,type:0
+msgid "Unit Status"
+msgstr "Unit Status"
+
+#. module: tms
+#: field:tms.route.tollstation,tms_route_tollstation_costperaxis_ids:0
+msgid "Toll Cost per Axis"
+msgstr "Toll Cost per Axis"
+
+#. module: tms
+#: sql_constraint:account.journal:0
+msgid "The name of the journal must be unique per company !"
+msgstr "¡El nombre del diaro debe ser único por compañía!"
+
+#. module: tms
+#: help:tms.route,travel_time:0
+msgid "Route travel time (hours)"
+msgstr "Route travel time (hours)"
+
+#. module: tms
+#: view:tms.travel:0
+msgid "Waybills"
+msgstr "Waybills"
+
+#. module: tms
+#: code:addons/tms/tms_advance.py:260
+#: code:addons/tms/tms_fuelvoucher.py:253
+#, python-format
+msgid "Aviso !"
+msgstr "Aviso !"
+
+#. module: tms
+#: model:ir.model,name:tms.model_tms_advance_line
+msgid "Lines - Money advance payments for Travel expenses"
+msgstr "Lines - Money advance payments for Travel expenses"
+
+#. module: tms
+#: field:sale.order,tms_sale_order_template_id:0
+msgid "Template"
+msgstr "Template"
+
+#. module: tms
+#: field:tms.advance,date_confirmed:0
+#: field:tms.fuelvoucher,date_confirmed:0
+msgid "Date Confirmed"
+msgstr "Date Confirmed"
+
+#. module: tms
+#: model:ir.model,name:tms.model_tms_sale_order_template
+#: model:ir.ui.menu,name:tms.menu_tms_waybill_template_form
+msgid "Waybill Templates"
+msgstr "Waybill Templates"
+
+#. module: tms
+#: view:tms.unit:0
+#: field:tms.unit,unit_brand_id:0
+#: selection:tms.unit.category,type:0
+msgid "Brand"
+msgstr "Brand"
+
+#. module: tms
+#: view:tms.advance.invoice:0
+#: view:tms.fuelvoucher.invoice:0
+msgid "Generar facturas"
+msgstr "Generar facturas"
+
+#. module: tms
+#: view:tms.advance:0
+#: view:tms.fuelvoucher:0
+#: view:tms.travel:0
+msgid "Set to Draft"
+msgstr "Set to Draft"
+
+#. module: tms
+#: field:sale.shop,tms_fuel_sequence_ids:0
+msgid "Fuel Sequence per Supplier"
+msgstr "Fuel Sequence per Supplier"
+
+#. module: tms
+#: field:tms.route.tollstation.costperaxis,cost_credit:0
+msgid "Cost Credit"
+msgstr "Cost Credit"
+
+#. module: tms
+#: view:tms.unit:0
+msgid "Others"
+msgstr "Others"
+
+#. module: tms
+#: field:sale.order,date_up_start_sched:0
+msgid "UpLoad Start Sched"
+msgstr "UpLoad Start Sched"
+
+#. module: tms
+#: help:sale.order,amount_other:0
+#: help:tms.sale.order.template,amount_other:0
+msgid "Other concepts without tax."
+msgstr "Other concepts without tax."
+
+#. module: tms
+#: code:addons/tms/tms_advance.py:252
+#, python-format
+msgid "You have not defined Advance Purchase Journal..."
+msgstr "You have not defined Advance Purchase Journal..."
+
+#. module: tms
+#: view:tms.advance:0
+#: field:tms.advance,notes:0
+#: field:tms.advance.line,notes:0
+#: view:tms.fuelvoucher:0
+#: field:tms.fuelvoucher,notes:0
+#: view:tms.route:0
+#: field:tms.route,notes:0
+#: field:tms.sale.order.line.template,notes:0
+#: field:tms.sale.order.template,note:0
+#: view:tms.travel:0
+#: view:tms.unit:0
+#: field:tms.unit,notes:0
+#: field:tms.unit.category,notes:0
+msgid "Notes"
+msgstr "Notes"
+
+#. module: tms
+#: constraint:hr.employee:0
+msgid "Error ! You cannot select a department for which the employee is the manager."
+msgstr "¡Error! No puede seleccionar un departamento que tenga el empleado como responsable."
+
+#. module: tms
+#: view:tms.fuelvoucher:0
+#: field:tms.fuelvoucher,tax_amount:0
+msgid "Taxes"
+msgstr "Taxes"
+
+#. module: tms
+#: selection:tms.sale.order.line.template,layout_type:0
+msgid "Separator Line"
+msgstr "Separator Line"
+
+#. module: tms
+#: view:tms.fuelvoucher:0
+msgid "Not Invoiced"
+msgstr "Not Invoiced"
+
+#. module: tms
+#: field:tms.unit,registration:0
+msgid "Registration"
+msgstr "Registration"
+
+#. module: tms
+#: field:tms.route,fuel_efficiency_2trailer:0
+#: field:tms.unit.category,fuel_efficiency_2trailer:0
+msgid "Fuel Efficiency Two Trailer"
+msgstr "Fuel Efficiency Two Trailer"
+
+#. module: tms
+#: selection:sale.order,payment_type:0
+#: selection:tms.sale.order.template,payment_type:0
+msgid "Charge by Quantity"
+msgstr "Charge by Quantity"
+
+#. module: tms
+#: field:tms.sale.order.template,time_travel_sched:0
+msgid "Std Time for Travel (Hrs)"
+msgstr "Std Time for Travel (Hrs)"
+
+#. module: tms
+#: model:ir.model,name:tms.model_tms_route_tollstation_costperaxis
+msgid "Routes toll stations cost per axis"
+msgstr "Routes toll stations cost per axis"
+
+#. module: tms
+#: view:tms.sale.order.template:0
+msgid "Download Times"
+msgstr "Download Times"
+
+#. module: tms
+#: model:ir.ui.menu,name:tms.menu_tms_config_unit
+#: model:ir.ui.menu,name:tms.menu_tms_config_unit_form
+msgid "Units"
+msgstr "Units"
+
+#. module: tms
+#: field:tms.route.fuelefficiency,performance:0
+msgid "Performance"
+msgstr "Performance"
+
+#. module: tms
+#: field:hr.employee,tms_advance_account_id:0
+msgid "Advance Account"
+msgstr "Advance Account"
+
+#. module: tms
+#: view:tms.unit:0
+msgid "Fleet Unit Type"
+msgstr "Fleet Unit Type"
+
+#. module: tms
+#: help:tms.place,longitude:0
+msgid "GPS Longitude"
+msgstr "GPS Longitude"
+
+#. module: tms
+#: code:addons/tms/tms_advance.py:251
+#: code:addons/tms/tms_fuelvoucher.py:272
+#, python-format
+msgid "Error !"
+msgstr "Error !"
+
+#. module: tms
+#: model:ir.ui.menu,name:tms.menu_tms_advance_form
+#: view:tms.travel:0
+#: field:tms.travel,tms_advance_ids:0
+msgid "Advances"
+msgstr "Advances"
+
+#. module: tms
+#: view:tms.unit:0
+#: field:tms.unit,unit_type_id:0
+msgid "Unit Type"
+msgstr "Unit Type"
+
+#. module: tms
+#: field:tms.unit,name:0
+#: field:tms.unit.extradata,tms_unit_id:0
+msgid "Unit Name"
+msgstr "Unit Name"
+
+#. module: tms
+#: model:ir.actions.act_window,name:tms.open_view_tms_route_form
+#: view:tms.route:0
+msgid "TMS Routes"
+msgstr "TMS Routes"
+
+#. module: tms
+#: selection:product.product,tms_category:0
+msgid "Gasto de Viaje"
+msgstr "Gasto de Viaje"
+
+#. module: tms
+#: field:sale.order,payment_type:0
+#: field:tms.sale.order.template,payment_type:0
+msgid "Charge Type"
+msgstr "Charge Type"
+
+#. module: tms
+#: field:sale.order,date_up_end_sched:0
+msgid "UpLoad End Sched"
+msgstr "UpLoad End Sched"
+
+#. module: tms
+#: view:tms.sale.order.template:0
+msgid "Travel Time"
+msgstr "Travel Time"
+
+#. module: tms
+#: code:addons/tms/tms_fuelvoucher.py:206
+#, python-format
+msgid "Fuel Voucher '%s' is set to confirmed."
+msgstr "Fuel Voucher '%s' is set to confirmed."
+
+#. module: tms
+#: model:ir.actions.act_window,name:tms.action_view_fuelvoucher_invoice
+msgid "Crear Facturas"
+msgstr "Crear Facturas"
+
+#. module: tms
+#: code:addons/tms/tms_travel.py:220
+#, python-format
+msgid "You must first cancel all Waybills attached to this Travel."
+msgstr "You must first cancel all Waybills attached to this Travel."
+
+#. module: tms
+#: field:sale.order,departure:0
+#: view:tms.route:0
+#: field:tms.route,departure_id:0
+#: view:tms.sale.order.template:0
+#: field:tms.sale.order.template,departure:0
+#: view:tms.travel:0
+#: field:tms.travel,departure:0
+msgid "Departure"
+msgstr "Departure"
+
+#. module: tms
+#: selection:hr.employee,tms_category:0
+msgid "Mechanic"
+msgstr "Mechanic"
+
+#. module: tms
+#: model:ir.model,name:tms.model_tms_place
+msgid "Cities / Places"
+msgstr "Cities / Places"
+
+#. module: tms
+#: field:tms.unit,gps_id:0
+msgid "GPS Id"
+msgstr "GPS Id"
+
+#. module: tms
+#: field:sale.shop,tms_travel_expenses_seq:0
+msgid "Travel Expenses Sequence"
+msgstr "Travel Expenses Sequence"
+
+#. module: tms
+#: field:sale.order,date_appoint_down_sched:0
+msgid "Download Appointment Sched"
+msgstr "Download Appointment Sched"
+
+#. module: tms
+#: field:sale.order,date_up_end_real:0
+msgid "UpLoad End Real"
+msgstr "UpLoad End Real"
+
+#. module: tms
+#: view:tms.route:0
+#: field:tms.travel,fuel_efficiency_expected:0
+msgid "Fuel Efficiency Expected"
+msgstr "Fuel Efficiency Expected"
+
+#. module: tms
+#: code:addons/tms/tms_travel.py:251
+#, python-format
+msgid "Travel '%s' is ended."
+msgstr "Travel '%s' is ended."
+
+#. module: tms
+#: view:tms.advance:0
+#: view:tms.fuelvoucher:0
+#: view:tms.route:0
+#: view:tms.sale.order.template:0
+#: view:tms.travel:0
+#: view:tms.unit:0
+msgid "Group by..."
+msgstr "Group by..."
+
+#. module: tms
+#: model:ir.actions.act_window,name:tms.open_view_tms_place_form
+#: view:tms.place:0
+msgid "TMS Places"
+msgstr "TMS Places"
+
+#. module: tms
+#: field:tms.route.tollstation.costperaxis,axis:0
+msgid "Axis"
+msgstr "Axis"
+
+#. module: tms
+#: view:hr.employee:0
+#: view:sale.shop:0
+msgid "TMS"
+msgstr "TMS"
+
+#. module: tms
+#: field:sale.order,amount_travel:0
+#: field:tms.advance,travel_id:0
+#: field:tms.fuelvoucher,travel_id:0
+#: view:tms.sale.order.template:0
+#: field:tms.sale.order.template,amount_travel:0
+#: field:tms.sale.order.template,amount_travel2:0
+msgid "Travel"
+msgstr "Travel"
+
+#. module: tms
+#: field:tms.sale.order.template,time_from_appointment_to_uploading_std:0
+msgid "Std Time from Appointment to Loading (Hrs)"
+msgstr "Std Time from Appointment to Loading (Hrs)"
+
+#. module: tms
+#: view:tms.advance:0
+#: selection:tms.advance,state:0
+#: view:tms.fuelvoucher:0
+#: selection:tms.fuelvoucher,state:0
+#: view:tms.travel:0
+#: selection:tms.travel,state:0
+msgid "Closed"
+msgstr "Closed"
+
+#. module: tms
+#: help:tms.place,latitude:0
+msgid "GPS Latitude"
+msgstr "GPS Latitude"
+
+#. module: tms
+#: view:tms.travel:0
+#: selection:tms.travel,state:0
+msgid "Pending"
+msgstr "Pending"
+
+#. module: tms
+#: field:tms.travel,date_start_real:0
+msgid "Start Real"
+msgstr "Start Real"
+
+#. module: tms
+#: field:tms.advance,invoice_paid:0
+#: field:tms.fuelvoucher,invoice_paid:0
+msgid "Paid"
+msgstr "Paid"
+
+#. module: tms
+#: view:tms.sale.order.template:0
+msgid "."
+msgstr "."
+
+#. module: tms
+#: model:ir.actions.act_window,name:tms.action_view_advance_invoice
+msgid "Confirmar Anticipos"
+msgstr "Confirmar Anticipos"
+
+#. module: tms
+#: code:addons/tms/tms_fuelvoucher.py:273
+#, python-format
+msgid "There is no expense account defined for this product: \"%s\" (id:%d)"
+msgstr "There is no expense account defined for this product: \"%s\" (id:%d)"
+
+#. module: tms
+#: field:tms.route.tollstation,credit:0
+msgid "Credit"
+msgstr "Credit"
+
+#. module: tms
+#: model:ir.model,name:tms.model_ir_sequence
+msgid "ir.sequence"
+msgstr "ir.secuencia"
+
+#. module: tms
+#: model:ir.model,name:tms.model_tms_sale_order_shipment_template
+msgid "TMS Waybill Shipment Line Template"
+msgstr "TMS Waybill Shipment Line Template"
+
+#. module: tms
+#: field:tms.travel,distance_loaded:0
+msgid "Distance Loaded (mi./km)"
+msgstr "Distance Loaded (mi./km)"
+
+#. module: tms
+#: field:tms.advance,date_closed:0
+#: field:tms.fuelvoucher,date_closed:0
+#: field:tms.travel,date_closed:0
+msgid "Date Closed"
+msgstr "Date Closed"
+
+#. module: tms
+#: field:sale.order,date_appoint_down_real:0
+msgid "Download Appointment Real"
+msgstr "Download Appointment Real"
+
+#. module: tms
+#: field:tms.fuelvoucher,price_unit:0
+#: field:tms.sale.order.line.template,price_unit:0
+msgid "Unit Price"
+msgstr "Unit Price"
+
+#. module: tms
+#: view:tms.travel:0
+msgid "Done"
+msgstr "Done"
+
+#. module: tms
+#: view:tms.fuelvoucher:0
+#: field:tms.fuelvoucher,invoice_id:0
+msgid "Invoice"
+msgstr "Invoice"
+
+#. module: tms
+#: view:tms.travel:0
+msgid "Fuel Efficiency"
+msgstr "Fuel Efficiency"
+
+#. module: tms
+#: field:sale.shop,tms_advance_seq:0
+msgid "Advance Sequence"
+msgstr "Advance Sequence"
+
+#. module: tms
+#: view:tms.fuelvoucher:0
+#: field:tms.fuelvoucher,price_subtotal:0
+#: view:tms.sale.order.template:0
+msgid "SubTotal"
+msgstr "SubTotal"
+
+#. module: tms
+#: help:tms.sale.order.template,partner_shipping_id:0
+msgid "Arrival Address for current Waybill Template."
+msgstr "Arrival Address for current Waybill Template."
+
+#. module: tms
+#: field:tms.advance,date_cancelled:0
+#: field:tms.fuelvoucher,date_cancelled:0
+#: field:tms.travel,date_cancelled:0
+msgid "Date Cancelled"
+msgstr "Date Cancelled"
+
+#. module: tms
+#: selection:res.partner,tms_category:0
+msgid "Fuel"
+msgstr "Fuel"
+
+#. module: tms
+#: code:addons/tms/tms_advance.py:325
+#: code:addons/tms/tms_fuelvoucher.py:333
+#, python-format
+msgid "Supplier Invoices"
+msgstr "Supplier Invoices"
+
+#. module: tms
+#: model:ir.model,name:tms.model_product_product
+#: field:tms.advance.line,product_id:0
+#: field:tms.fuelvoucher,product_id:0
+#: selection:tms.sale.order.line.template,layout_type:0
+#: field:tms.sale.order.line.template,product_id:0
+#: field:tms.sale.order.shipment,product_id:0
+#: field:tms.sale.order.shipment.template,product_id:0
+msgid "Product"
+msgstr "Producto"
+
+#. module: tms
+#: code:addons/tms/tms_fuelvoucher.py:201
+#, python-format
+msgid "Could not confirm Fuel Voucher !"
+msgstr "Could not confirm Fuel Voucher !"
+
+#. module: tms
+#: field:tms.travel,distance_driver:0
+msgid "Distance traveled by driver (mi./km)"
+msgstr "Distance traveled by driver (mi./km)"
+
+#. module: tms
+#: help:tms.sale.order.template,pricelist_id:0
+msgid "Pricelist for current Waybill Template."
+msgstr "Pricelist for current Waybill Template."
+
+#. module: tms
+#: field:sale.order,date_down_docs_sched:0
+msgid "Download Docs Release Sched"
+msgstr "Download Docs Release Sched"
+
+#. module: tms
+#: sql_constraint:tms.fuelvoucher:0
+msgid "Fuel Voucher number must be unique !"
+msgstr "Fuel Voucher number must be unique !"
+
+#. module: tms
+#: field:tms.sale.order.shipment,product_uom:0
+#: field:tms.sale.order.shipment.template,product_uom:0
+msgid "Product UoM"
+msgstr "Product UoM"
+
+#. module: tms
+#: view:tms.advance:0
+#: view:tms.fuelvoucher:0
+msgid "Approve"
+msgstr "Approve"
+
+#. module: tms
+#: view:tms.travel:0
+msgid "Start Sched."
+msgstr "Start Sched."
+
+#. module: tms
+#: sql_constraint:tms.travel:0
+msgid "Travel number must be unique !"
+msgstr "Travel number must be unique !"
+
+#. module: tms
+#: help:tms.sale.order.template,partner_invoice_id:0
+msgid "Invoice Address for current Waybill Template."
+msgstr "Invoice Address for current Waybill Template."
+
+#. module: tms
+#: field:tms.advance,cancelled_by:0
+#: field:tms.fuelvoucher,cancelled_by:0
+#: field:tms.travel,cancelled_by:0
+msgid "Cancelled by"
+msgstr "Cancelled by"
+
+#. module: tms
+#: code:addons/tms/tms_fuelvoucher.py:184
+#, python-format
+msgid "Fuel Voucher '%s' is cancelled."
+msgstr "Fuel Voucher '%s' is cancelled."
+
+#. module: tms
+#: view:tms.sale.order.template:0
+msgid "Waybill Lines"
+msgstr "Waybill Lines"
+
+#. module: tms
+#: view:tms.travel:0
+msgid "Distances (mi./kms)"
+msgstr "Distances (mi./kms)"
+
+#. module: tms
+#: field:tms.route,travel_time:0
+msgid "Travel Time (hrs)"
+msgstr "Travel Time (hrs)"
+
+#. module: tms
+#: field:tms.sale.order.template,client_order_ref:0
+msgid "Customer Reference"
+msgstr "Customer Reference"
+
+#. module: tms
+#: view:tms.fuelvoucher:0
+#: view:tms.sale.order.template:0
+#: view:tms.travel:0
+msgid "More filters..."
+msgstr "More filters..."
+
+#. module: tms
+#: selection:product.product,tms_category:0
+msgid "Otros"
+msgstr "Otros"
+
+#. module: tms
+#: view:tms.advance:0
+#: view:tms.fuelvoucher:0
+#: field:tms.fuelvoucher,price_total:0
+msgid "Total"
+msgstr "Total"
+
+#. module: tms
+#: field:tms.advance,invoice_id:0
+msgid "Registro Factura"
+msgstr "Registro Factura"
+
+#. module: tms
+#: view:tms.fuelvoucher:0
+#: field:tms.fuelvoucher,special_tax_amount:0
+msgid "IEPS"
+msgstr "IEPS"
+
+#. module: tms
+#: field:tms.unit,year_model:0
+msgid "Year Model"
+msgstr "Year Model"
+
+#. module: tms
+#: view:tms.sale.order.template:0
+msgid "Partner Arrival"
+msgstr "Partner Arrival"
+
+#. module: tms
+#: model:ir.ui.menu,name:tms.menu_tms
+msgid "Freight Management"
+msgstr "Freight Management"
+
+#. module: tms
+#: model:ir.actions.act_window,name:tms.open_view_tms_fuelvoucher_form
+msgid "TMS Fuel Voucher"
+msgstr "TMS Fuel Voucher"
+
+#. module: tms
+#: field:sale.order,volume:0
+#: field:tms.sale.order.template,volume:0
+msgid "Volume"
+msgstr "Volume"
+
+#. module: tms
+#: field:tms.place,company_id:0
+#: field:tms.route,company_id:0
+#: field:tms.route.tollstation,company_id:0
+#: field:tms.sale.order.template,company_id:0
+#: view:tms.travel:0
+#: field:tms.travel,company_id:0
+#: field:tms.unit,company_id:0
+#: field:tms.unit.category,company_id:0
+msgid "Company"
+msgstr "Company"
+
+#. module: tms
+#: code:addons/tms/tms_fuelvoucher.py:254
+#, python-format
+msgid "Los registros seleccionados no estan confirmados o ya tienen factura asignada..."
+msgstr "Los registros seleccionados no estan confirmados o ya tienen factura asignada..."
+
+#. module: tms
+#: view:tms.unit:0
+msgid "Trailers"
+msgstr "Trailers"
+
+#. module: tms
+#: view:tms.travel:0
+#: field:tms.travel,framework:0
+msgid "Framework"
+msgstr "Framework"
+
+#. module: tms
+#: field:tms.unit,serial_number:0
+msgid "Serial Number"
+msgstr "Serial Number"
+
+#. module: tms
+#: model:ir.model,name:tms.model_tms_unit
+msgid "All motor/trailer units"
+msgstr "All motor/trailer units"
+
+#. module: tms
+#: view:product.product:0
+msgid "TMS Expense"
+msgstr "TMS Expense"
+
+#. module: tms
+#: field:sale.order,date_up_docs_real:0
+msgid "Load Docs Release Real"
+msgstr "Load Docs Release Real"
+
+#. module: tms
+#: selection:product.product,tms_category:0
+msgid "Autopista"
+msgstr "Autopista"
+
+#. module: tms
+#: view:tms.advance:0
+#: selection:tms.advance,state:0
+#: view:tms.fuelvoucher:0
+#: selection:tms.fuelvoucher,state:0
+msgid "Approved"
+msgstr "Approved"
+
+#. module: tms
+#: help:res.partner,tms_category:0
+msgid "This is used in TMS Module                 \n"
+"* N/A    => Useless                 \n"
+"* Fuel   => It's for fuel suppliers.                 \n"
+"* Driver => It's for Drivers, used in Money Advance for Travel Expenses."
+msgstr "This is used in TMS Module                 \n"
+"* N/A    => Useless                 \n"
+"* Fuel   => It's for fuel suppliers.                 \n"
+"* Driver => It's for Drivers, used in Money Advance for Travel Expenses."
+
+#. module: tms
+#: field:product.product,tms_category:0
+msgid "TMS Product Type"
+msgstr "TMS Product Type"
+
+#. module: tms
+#: field:sale.order,date_up_docs_sched:0
+msgid "Load Docs Release Sched"
+msgstr "Load Docs Release Sched"
+
+#. module: tms
+#: view:tms.sale.order.template:0
+msgid "Departure and Arrival"
+msgstr "Departure and Arrival"
+
+#. module: tms
+#: view:tms.advance:0
+#: selection:tms.advance,state:0
+#: view:tms.fuelvoucher:0
+#: selection:tms.fuelvoucher,state:0
+#: view:tms.travel:0
+#: selection:tms.travel,state:0
+msgid "Cancelled"
+msgstr "Cancelled"
+
+#. module: tms
+#: field:tms.advance,shop_id:0
+#: field:tms.fuelvoucher,shop_id:0
+#: field:tms.sale.shop.fuel.supplier.seq,shop_id:0
+#: view:tms.travel:0
+#: field:tms.travel,shop_id:0
+msgid "Shop"
+msgstr "Shop"
+
+#. module: tms
+#: selection:tms.sale.order.line.template,layout_type:0
+#: view:tms.sale.order.template:0
+msgid "Note"
+msgstr "Note"
+
+#. module: tms
+#: view:tms.travel:0
+msgid "Dispatch Travel"
+msgstr "Dispatch Travel"
+
+#. module: tms
+#: field:tms.travel,trailer1_id:0
+msgid "Trailer1"
+msgstr "Trailer1"
+
+#. module: tms
+#: sql_constraint:account.journal:0
+msgid "The code of the journal must be unique per company !"
+msgstr "¡El código del diario debe ser único por compañía!"
+
+#. module: tms
+#: model:ir.model,name:tms.model_sale_order
+msgid "Sales Order"
+msgstr "Pedido de venta"
+
+#. module: tms
+#: selection:tms.sale.order.line.template,layout_type:0
+msgid "Sub Total"
+msgstr "Sub Total"
+
+#. module: tms
+#: view:tms.advance:0
+#: selection:tms.advance,state:0
+#: view:tms.fuelvoucher:0
+#: selection:tms.fuelvoucher,state:0
+msgid "Confirmed"
+msgstr "Confirmed"
+
+#. module: tms
+#: view:tms.advance:0
+#: view:tms.advance.invoice:0
+#: view:tms.fuelvoucher:0
+#: view:tms.fuelvoucher.invoice:0
+msgid "Confirm"
+msgstr "Confirm"
+
+#. module: tms
+#: model:ir.actions.act_window,name:tms.open_view_tms_advance_form
+#: view:tms.advance:0
+msgid "TMS Advances"
+msgstr "TMS Advances"
+
+#. module: tms
+#: code:addons/tms/tms_fuelvoucher.py:154
+#, python-format
+msgid "You have not defined Fuel Voucher Sequence for shop ' + shop.name + ' and Supplier' + str(vals['partner_id'])))\n"
+"        if seq_id:\n"
+"            seq_number = self.pool.get('ir.sequence"
+msgstr "You have not defined Fuel Voucher Sequence for shop ' + shop.name + ' and Supplier' + str(vals['partner_id'])))\n"
+"        if seq_id:\n"
+"            seq_number = self.pool.get('ir.sequence"
+
+#. module: tms
+#: sql_constraint:tms.advance:0
+msgid "Advance number must be unique !"
+msgstr "Advance number must be unique !"
+
+#. module: tms
+#: view:tms.advance:0
+msgid "travel_id"
+msgstr "travel_id"
+
+#. module: tms
+#: code:addons/tms/tms_advance.py:175
+#, python-format
+msgid "Advance '%s' is set to confirmed."
+msgstr "Advance '%s' is set to confirmed."
+
+#. module: tms
+#: model:ir.model,name:tms.model_hr_employee
+msgid "Employee"
+msgstr "Empleado"
+
+#. module: tms
+#: code:addons/tms/tms_fuelvoucher.py:202
+#, python-format
+msgid "Product quantity must be greater than zero."
+msgstr "Product quantity must be greater than zero."
+
+#. module: tms
+#: field:tms.travel,trailer2_id:0
+msgid "Trailer2"
+msgstr "Trailer2"
+
+#. module: tms
+#: field:tms.advance,name:0
+#: field:tms.advance.line,tms_advance_id:0
+msgid "Anticipo"
+msgstr "Anticipo"
+
+#. module: tms
+#: field:tms.travel,date_start:0
+msgid "Start Scheduled"
+msgstr "Start Scheduled"
+
+#. module: tms
+#: model:ir.ui.menu,name:tms.menu_tms_config
+msgid "Configuration"
+msgstr "Configuración"
+
+#. module: tms
+#: field:tms.unit.category,complete_name:0
+msgid "Complete Name"
+msgstr "Complete Name"
+
+#. module: tms
+#: code:addons/tms/tms_travel.py:197
+#, python-format
+msgid "You have not defined Travel Sequence for shop ' + shop.name))\n"
+"        return super(tms_travel, self).create(cr, uid, vals, context=context)\n"
+"\n"
+"    def action_cancel_draft(self, cr, uid, ids, *args):\n"
+"        if not len(ids):\n"
+"            return False\n"
+"        self.write(cr, uid, ids, {'state':'draft'})\n"
+"        for (id,name) in self.name_get(cr, uid, ids):\n"
+"            message = _(\"Travel '%s' has been set in draft state.\") % name\n"
+"            self.log(cr, uid, id, message)\n"
+"        return True\n"
+"    \n"
+"    def action_cancel(self, cr, uid, ids, context=None):\n"
+"        for travel in self.browse(cr, uid, ids, context=context):\n"
+"            for fuelvouchers in travel.tms_fuelvoucher_ids:\n"
+"                if fuelvouchers.state not in ('cancel"
+msgstr "You have not defined Travel Sequence for shop ' + shop.name))\n"
+"        return super(tms_travel, self).create(cr, uid, vals, context=context)\n"
+"\n"
+"    def action_cancel_draft(self, cr, uid, ids, *args):\n"
+"        if not len(ids):\n"
+"            return False\n"
+"        self.write(cr, uid, ids, {'state':'draft'})\n"
+"        for (id,name) in self.name_get(cr, uid, ids):\n"
+"            message = _(\"Travel '%s' has been set in draft state.\") % name\n"
+"            self.log(cr, uid, id, message)\n"
+"        return True\n"
+"    \n"
+"    def action_cancel(self, cr, uid, ids, context=None):\n"
+"        for travel in self.browse(cr, uid, ids, context=context):\n"
+"            for fuelvouchers in travel.tms_fuelvoucher_ids:\n"
+"                if fuelvouchers.state not in ('cancel"
+
+#. module: tms
+#: field:sale.shop,tms_travel_seq:0
+msgid "Travel Sequence"
+msgstr "Travel Sequence"
+
+#. module: tms
+#: field:tms.travel,date_dispatched:0
+msgid "Date Dispatched"
+msgstr "Date Dispatched"
+
+#. module: tms
+#: view:tms.travel:0
+msgid "End Sched."
+msgstr "End Sched."
+
+#. module: tms
+#: field:tms.place,name:0
+#: field:tms.route.tollstation,place_id:0
+msgid "Place"
+msgstr "Place"
+
+#. module: tms
+#: view:tms.travel:0
+msgid "Cancel Travel"
+msgstr "Cancel Travel"
+
+#. module: tms
+#: field:hr.employee,tms_category:0
+#: field:res.partner,tms_category:0
+msgid "TMS Category"
+msgstr "TMS Category"
+
+#. module: tms
+#: view:tms.unit:0
+#: field:tms.unit,tms_unit_extradata_ids:0
+#: selection:tms.unit.category,type:0
+msgid "Extra Data"
+msgstr "Extra Data"
+
+#. module: tms
+#: field:tms.place,state_id:0
+msgid "State Name"
+msgstr "State Name"
+
+#. module: tms
+#: help:account.journal,tms_advance_journal:0
+msgid "If set to True then it will be used for TMS Advance Invoices. It must be a Purchase Type Journal"
+msgstr "If set to True then it will be used for TMS Advance Invoices. It must be a Purchase Type Journal"
+
+#. module: tms
+#: model:ir.actions.act_window,name:tms.open_view_tms_unit_form
+#: view:tms.unit:0
+msgid "TMS Units"
+msgstr "TMS Units"
+
+#. module: tms
+#: field:tms.route,fuel_efficiency_drive_unit:0
+#: field:tms.unit.category,fuel_efficiency_drive_unit:0
+msgid "Fuel Efficiency Drive Unit"
+msgstr "Fuel Efficiency Drive Unit"
+
+#. module: tms
+#: field:sale.order,date_down_end_real:0
+msgid "Download End Real"
+msgstr "Download End Real"
+
+#. module: tms
+#: field:tms.sale.order.template,user_id:0
+msgid "Salesman"
+msgstr "Salesman"
+
+#. module: tms
+#: field:tms.advance,invoiced:0
+#: view:tms.fuelvoucher:0
+#: field:tms.fuelvoucher,invoiced:0
+msgid "Invoiced"
+msgstr "Invoiced"
+
+#. module: tms
+#: view:tms.sale.order.template:0
+msgid "Payment Type"
+msgstr "Payment Type"
+
+#. module: tms
+#: view:tms.advance:0
+#: selection:tms.advance,state:0
+#: view:tms.fuelvoucher:0
+#: selection:tms.fuelvoucher,state:0
+msgid "Draft"
+msgstr "Draft"
+
+#. module: tms
+#: selection:sale.order,payment_type:0
+#: selection:tms.sale.order.template,payment_type:0
+msgid "Charge by Distance (mi./kms)"
+msgstr "Charge by Distance (mi./kms)"
+
+#. module: tms
+#: field:tms.travel,dispatched_by:0
+msgid "Dispatched by"
+msgstr "Dispatched by"
+
+#. module: tms
+#: model:ir.model,name:tms.model_sale_shop
+msgid "Sales Shop"
+msgstr "Tienda ventas"
+
+#. module: tms
+#: view:tms.sale.order.template:0
+msgid "Compute"
+msgstr "Compute"
+
+#. module: tms
+#: model:ir.actions.act_window,name:tms.open_view_tms_unit_category_form
+#: view:tms.unit.category:0
+msgid "TMS Unit Categories"
+msgstr "TMS Unit Categories"
+
+#. module: tms
+#: help:tms.sale.order.line.template,sequence:0
+#: help:tms.sale.order.shipment,sequence:0
+#: help:tms.sale.order.shipment.template,sequence:0
+msgid "Gives the sequence order when displaying a list of sales order lines."
+msgstr "Gives the sequence order when displaying a list of sales order lines."
+
+#. module: tms
+#: code:addons/tms/tms_fuelvoucher.py:58
+#: code:addons/tms/tms_fuelvoucher.py:140
+#, python-format
+msgid "No taxes defined in product !"
+msgstr "No taxes defined in product !"
+
+#. module: tms
+#: field:sale.order,partner_sender_id:0
+#: field:tms.sale.order.template,partner_sender_id:0
+msgid "Departure Address"
+msgstr "Departure Address"
+
+#. module: tms
+#: model:ir.model,name:tms.model_tms_route_tollstation
+msgid "Routes toll stations"
+msgstr "Routes toll stations"
+
+#. module: tms
+#: code:addons/tms/tms_advance.py:123
+#: code:addons/tms/tms_travel.py:197
+#, python-format
+msgid "Travel Sequence Error !"
+msgstr "Travel Sequence Error !"
+
+#. module: tms
+#: selection:product.product,tms_category:0
+msgid "Flete"
+msgstr "Flete"
+
+#. module: tms
+#: field:tms.travel,travel_duration_real:0
+msgid "Travel Duration (Hrs) Real"
+msgstr "Travel Duration (Hrs) Real"
+
+#. module: tms
+#: selection:tms.unit,fleet_type:0
+msgid "Trailer"
+msgstr "Trailer"
+
+#. module: tms
+#: view:tms.advance:0
+#: view:tms.fuelvoucher:0
+#: view:tms.travel:0
+msgid "Not Cancelled"
+msgstr "Not Cancelled"
+
+#. module: tms
+#: model:ir.actions.act_window,name:tms.open_view_tms_travel_form
+msgid "TMS Travel"
+msgstr "TMS Travel"
+
+#. module: tms
+#: selection:product.product,tms_category:0
+msgid "Maniobra"
+msgstr "Maniobra"
+
+#. module: tms
+#: field:sale.order,amount_highway:0
+#: view:tms.sale.order.template:0
+#: field:tms.sale.order.template,amount_highway:0
+msgid "Highways"
+msgstr "Highways"
+
+#. module: tms
+#: field:sale.order,tons:0
+#: field:tms.sale.order.template,tons:0
+msgid "Tons"
+msgstr "Tons"
+
+#. module: tms
+#: field:tms.advance,currency_id:0
+msgid "Moneda"
+msgstr "Moneda"
+
+#. module: tms
+#: code:addons/tms/tms_fuelvoucher.py:177
+#, python-format
+msgid "This Fuel Voucher is already Invoiced"
+msgstr "This Fuel Voucher is already Invoiced"
+
+#. module: tms
+#: field:sale.order,amount_move:0
+#: view:tms.sale.order.template:0
+#: field:tms.sale.order.template,amount_move:0
+msgid "Moves"
+msgstr "Moves"
+
+#. module: tms
+#: field:sale.order,amount_insurance:0
+#: view:tms.sale.order.template:0
+#: field:tms.sale.order.template,amount_insurance:0
+msgid "Insurance"
+msgstr "Insurance"
+
+#. module: tms
+#: view:tms.fuelvoucher:0
+msgid "Quatity"
+msgstr "Quatity"
+
+#. module: tms
+#: field:tms.route,fuel_efficiency_1trailer:0
+#: field:tms.unit.category,fuel_efficiency_1trailer:0
+msgid "Fuel Efficiency One Trailer"
+msgstr "Fuel Efficiency One Trailer"
+
+#. module: tms
+#: model:ir.module.module,description:tms.module_meta_information
+msgid "Basic Transportation Management System."
+msgstr "Basic Transportation Management System."
+
+#. module: tms
+#: code:addons/tms/tms_advance.py:132
+#, python-format
+msgid "Advance '%s' has been set in draft state."
+msgstr "Advance '%s' has been set in draft state."
+
+#. module: tms
+#: field:tms.route.tollstation.costperaxis,cost_cash:0
+msgid "Cost Cash"
+msgstr "Cost Cash"
+
+#. module: tms
+#: model:ir.model,name:tms.model_tms_unit_category
+msgid "Types, Brands, Models, Motor Type for Transport Units"
+msgstr "Types, Brands, Models, Motor Type for Transport Units"
+
+#. module: tms
+#: help:sale.order,distance:0
+#: help:tms.sale.order.template,distance:0
+msgid "Route Distance."
+msgstr "Route Distance."
+
+#. module: tms
+#: view:tms.unit:0
+msgid "Motorized Units"
+msgstr "Motorized Units"
+
+#. module: tms
+#: field:tms.sale.order.line.template,name:0
+#: field:tms.sale.order.shipment,name:0
+#: field:tms.sale.order.shipment.template,name:0
+#: field:tms.sale.order.template,name:0
+msgid "Description"
+msgstr "Description"
+
+#. module: tms
+#: code:addons/tms/tms_advance.py:268
+#, python-format
+msgid "There is no advance account defined for this driver: \"%s\" (id:%d)"
+msgstr "There is no advance account defined for this driver: \"%s\" (id:%d)"
+
+#. module: tms
+#: field:tms.sale.order.template,partner_shipping_id:0
+msgid "Arrival Address"
+msgstr "Arrival Address"
+
+#. module: tms
+#: help:sale.order,amount_move:0
+#: help:tms.sale.order.template,amount_move:0
+msgid "Moves amount without tax."
+msgstr "Moves amount without tax."
+
+#. module: tms
+#: code:addons/tms/tms_fuelvoucher.py:168
+#, python-format
+msgid "Fuel Voucher '%s' has been set in draft state."
+msgstr "Fuel Voucher '%s' has been set in draft state."
+
+#. module: tms
+#: model:ir.model,name:tms.model_tms_sale_order_line_template
+msgid "TMS Sales Order Line Template"
+msgstr "TMS Sales Order Line Template"
+
+#. module: tms
+#: field:tms.sale.order.template,partner_id:0
+msgid "Customer"
+msgstr "Customer"
+
+#. module: tms
+#: field:tms.place,country_name:0
+msgid "Country"
+msgstr "Country"
+
+#. module: tms
+#: field:sale.order,tms_route_id:0
+#: field:tms.route.fuelefficiency,tms_route_id:0
+#: view:tms.sale.order.template:0
+#: field:tms.sale.order.template,tms_route_id:0
+#: field:tms.travel,route_id:0
+msgid "Route"
+msgstr "Route"
+
+#. module: tms
+#: field:tms.travel,travel_duration:0
+msgid "Travel Duration (Hrs) Scheduled"
+msgstr "Travel Duration (Hrs) Scheduled"
+
+#. module: tms
+#: field:tms.travel,notes:0
+msgid "Descripción"
+msgstr "Descripción"
+
+#. module: tms
+#: field:tms.sale.order.line.template,sequence:0
+#: field:tms.sale.order.shipment,sequence:0
+#: field:tms.sale.order.shipment.template,sequence:0
+#: field:tms.unit.category,sequence:0
+msgid "Sequence"
+msgstr "Sequence"
+
+#. module: tms
+#: view:tms.route:0
+msgid "Route Fuel Efficiency Expected"
+msgstr "Route Fuel Efficiency Expected"
+
+#. module: tms
+#: code:addons/tms/tms_travel.py:215
+#, python-format
+msgid "You must first cancel all Fuel Vouchers attached to this Travel."
+msgstr "You must first cancel all Fuel Vouchers attached to this Travel."
+
+#. module: tms
+#: field:tms.sale.order.template,payment_term:0
+msgid "Payment Term"
+msgstr "Payment Term"
+
+#. module: tms
+#: field:tms.unit.category,type:0
+msgid "Category Type"
+msgstr "Category Type"
+

@@ -1,0 +1,170 @@
+<openerp>
+<data>
+
+<!-- 
+##############################
+TMS.ADVANCE
+##############################
+-->
+<!-- SEARCH View for tms.advance  --> 
+        <record id="view_tms_advance_search" model="ir.ui.view">
+            <field name="name">tms.advance.search</field>
+            <field name="model">tms.advance</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="TMS Advances">
+                   <filter string="Draft" icon="terp-gtk-media-pause" domain="[('state','=','draft')]"/>
+                   <separator orientation="vertical"/>
+                   <filter string="Approved" icon="terp-gtk-jump-to-ltr" domain="[('state','=','approved')]"/>
+                   <separator orientation="vertical"/>
+                   <filter string="Confirmed" icon="terp-gtk-jump-to-ltr" domain="[('state','=','confirm')]"/>
+                   <separator orientation="vertical"/>
+                   <filter string="Closed" icon="terp-check" domain="[('state','=','closed')]"/>
+                   <separator orientation="vertical"/>
+                   <filter string="Cancelled" icon="terp-dialog-close" domain="[('state','=','cancel')]"/>
+                   <filter string="Not Cancelled" icon="terp-stock_symbol-selection" domain="[('state','!=','cancel')]"/>
+                   <newline/>
+                   <field name="date"/>
+                   <field name="name"/>
+                   <field name="travel_id" />
+                   <field name="unit_id"/>
+                   <field name="employee_id"/>
+                   <field name="product_id"/>
+                   <newline/>
+                   <group  expand='0' string='Group by...'>
+                       <filter string='travel_id' icon="terp-gdu-smart-failing" domain="[]" context="{'group_by' : 'travel_id'}" />
+                       <filter string='Unit' icon="terp-gdu-smart-failing" domain="[]" context="{'group_by' : 'unit_id'}" />
+                       <filter string='Driver 1' icon="terp-personal" domain="[]" context="{'group_by' : 'employee_id'}" />
+                       <separator orientation="vertical"/>                                                                
+                       <filter string='State' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'state'}" />
+                       <separator orientation="vertical"/>                                                                
+                       <filter string='Product' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'product_id'}" />
+                   </group>
+                </search>
+            </field>
+        </record>
+
+<!-- TREE View for tms.advance  -->
+	<record model="ir.ui.view" id="view_tms_advance_tree">
+		<field name="name">tms.advance.tree</field>
+		<field name="model">tms.advance</field>
+		<field name="type">tree</field>
+		<field name="arch" type="xml">
+            <tree string="TMS Advances">
+                <button name="action_cancel" states="draft,approved" string="Cancel" type="object" icon="gtk-cancel"/>
+                <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
+                <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-ok"/>
+                <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok"/>
+                <field name="state" />
+                <field name="name" />
+                <field name="date" />
+                <field name="travel_id" />
+                <field name="unit_id" />
+                <field name="employee_id" />
+                <field name="product_id" />
+				<field name="product_uom_qty" />
+				<field name="total_amount" sum="Total"/>
+                <field name="invoice_paid" />
+	    </tree>
+		</field>
+	</record>
+
+<!-- FORM View for tms.advance -->
+        <record id="view_tms_advance_form" model="ir.ui.view">
+            <field name="name">tms.advance.form</field>
+            <field name="model">tms.advance</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="TMS Advances">
+                    <field name="name" readonly="1"/>
+                    <field name="shop_id" />
+                    <field name="travel_id" domain="[('state','!=','cancel'),('state','!=','closed')]" on_change="on_change_travel_id(travel_id)"/>
+                    <field name="date" />
+                    <field name="unit_id" readonly="1"/>
+                    <field name="employee_id" readonly="1"/>
+					<field name="product_id" on_change="on_change_product_id(product_id)"
+											context="{'default_tms_category': 'real_expense', 'default_type': 'service', 'default_procure_method':'make_to_stock', 'default_supply_method': 'buy'}"/>
+					<field name="product_uom_qty" />
+					<field name="product_uom" invisible="1"/>
+					<field name="total_amount" sum="Total"/>
+                    <field name="currency_id" />
+                	<notebook colspan="4">
+                        <page string="Notes">
+                            <field name="notes" nolabel="1" />
+                        </page>
+                        <page string="Log Info">
+                            <field name="create_uid" readonly="1" />
+                            <field name="create_date" readonly="1" />
+                            <field name="approved_by" readonly="1" />
+                            <field name="date_approved" readonly="1" />
+                            <field name="confirmed_by" readonly="1" />
+                            <field name="date_confirmed" readonly="1" />
+                            <field name="closed_by" readonly="1" />
+                            <field name="date_closed" readonly="1" />
+                            <field name="cancelled_by" readonly="1" />
+                            <field name="date_cancelled" readonly="1" />
+                            <field name="drafted_by" readonly="1" />
+                            <field name="date_drafted" readonly="1" />
+							<group colspan="4" col="6">
+									<field name="invoiced"/>  
+									<field name="invoice_id" />
+									<field name="invoice_paid"/>  
+							</group>
+                        </page>
+                    </notebook>
+                    <group col="6" colspan="4">
+                        <field name="state" readonly="1"/>
+                        <button name="action_cancel" states="draft,approved,confirm" string="Cancel" type="object" icon="gtk-cancel"/>
+                        <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
+                        <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
+                        <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+<!-- Action for tms.advance -->
+    <record model="ir.actions.act_window" id="open_view_tms_advance_form">
+        <field name="name">TMS Advances</field>
+        <field name="res_model">tms.advance</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+<!-- Menu for tms.advance -->
+    <menuitem name="Advances" sequence="10"
+              parent="menu_tms_travels" 
+              id="menu_tms_advance_form" 
+              action="open_view_tms_advance_form"/>
+
+
+<!--  Make the invoice -->
+
+	<record id="view_advance_invoice" model="ir.ui.view">
+	<field name="name">Crear Facturas</field>
+	<field name="model">tms.advance.invoice</field>
+	<field name="type">form</field>
+	<field name="arch" type="xml">
+	<form string="Requier payment">
+			    <separator colspan="4" string="Are you sure you want to require payment for these advances ?" />
+			    <group col="2" colspan="4">
+			<button icon='gtk-cancel' special="cancel"
+				string="Cancel" />
+			<button name="makeInvoices" string="Confirm"
+				colspan="1" type="object" icon="gtk-ok" />
+		</group>
+	</form>
+	</field>
+	</record>
+
+	<act_window name="Confirm Advances"		    
+	    res_model="tms.advance.invoice"
+	    src_model="tms.advance"
+	    view_mode="form"
+	    target="new"
+		key2="client_action_multi"    
+	    id="action_view_advance_invoice"/>	
+
+	
+</data>
+</openerp>

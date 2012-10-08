@@ -1,0 +1,500 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+<!-- 
+##############################
+TMS.WAYBILL.EXTRADATA
+##############################
+-->
+<!-- TREE View for tms.waybill.extradata 
+	<record model="ir.ui.view" id="view_tms_waybill_extradata_tree">
+        <field name="name">tms.waybill.extradata.tree</field>
+        <field name="model">tms.waybill.extradata</field>
+		<field name="type">tree</field>
+		<field name="arch" type="xml">
+            <tree string="TMS Waybill Extra Fields">
+                <field name="name" select="1"/>
+                <field name="notes"/>
+                <field name="active" />
+		    </tree>
+		</field>
+	</record>
+-->
+<!-- FORM View for tms.waybill.extradata  
+    
+        <record id="view_tms_waybill_extradata_form" model="ir.ui.view">
+            <field name="name">tms.waybill.extradata.form</field>
+            <field name="model">tms.waybill.extradata</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="TMS Waybill Extra Fields">
+		            <field name="name" />
+		            <field name="notes"/>
+		            <field name="active" />
+                </form>
+            </field>
+        </record>
+-->
+<!-- Action for tms.waybill.extradata 
+    <record model="ir.actions.act_window" id="open_view_tms_waybill_extradata_form">
+        <field name="name">TMS Waybill Extra Fields</field>
+        <field name="res_model">tms.waybill.extradata</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+-->
+
+
+
+<!--  tms.waybill.cancel wizard-->
+
+	<record id="view_waybill_cancel" model="ir.ui.view">
+	<field name="name">Create copy from Waybill on Cancell</field>
+	<field name="model">tms.waybill.cancel</field>
+	<field name="type">form</field>
+	<field name="arch" type="xml">
+	<form string="Create a copy">
+            <field name="copy_waybill" />
+            <newline />
+            <field name="company_id" invisible="1"/>
+            <field name="date_order" attrs="{'invisible':[('copy_waybill','=',0)]}" />
+            <field name="sequence_id" attrs="{'invisible':[('copy_waybill','=',0)]}" domain="[('tms_waybill_sequence','=',1),('company_id','=',company_id)]" />
+      
+        <separator colspan="4" string="Cancel this Waybill ?" />
+        <group col="2" colspan="4">
+            <button icon='gtk-cancel' special="cancel" string="Cancel" />
+            <button name="make_copy" string="Confirm Cancellation" colspan="1" type="object" icon="gtk-ok" />
+        </group>
+	</form>
+	</field>
+	</record>
+
+
+    <record id="action_waybill_cancel" model="ir.actions.act_window">
+        <field name="name">Cancel Waybill</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">tms.waybill.cancel</field>
+        <field name="src_model">tms.waybill</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+   </record>
+
+<!-- 
+##############################
+TMS.WAYBILL
+##############################
+ -->
+        <record id="view_tms_waybill_tree" model="ir.ui.view">
+            <field name="name">tms.waybill.tree</field>
+            <field name="model">tms.waybill</field>
+            <field name="type">tree</field>
+            <field name="priority">2</field>
+            <field name="arch" type="xml">
+                <tree string="Waybills" colors="red:state=='cancel';green:state=='approve';blue:state=='confirm';">
+                    <button name="%(action_waybill_cancel)d" states="draft,approve,confirm" string="Cancel" icon="gtk-cancel"  type="action" /> 
+		            <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
+		            <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
+		            <button name="action_confirm" states="approve" string="Confirm" type="object" icon="gtk-ok"/>
+                    <field name="state"/>
+                    <field name="name"/>
+                    <field name="date_order"/>
+                    <field name="travel_id" />
+                    <field name="client_order_ref"/>
+                    <field name="partner_id"/>
+                    <field name="product_uom_type"/>
+                    <field name="product_qty" sum="Product Quantity"/>
+                    <field name="amount_freight" sum="Freight"/>
+                    <field name="amount_move" sum="Moves"/>
+                    <field name="amount_insurance" sum="Insurance"/>
+                    <field name="amount_highway_tolls" sum="Highway Tolls"/>
+                    <field name="amount_other" sum="Other"/>
+                    <field name="amount_untaxed" sum="Amount Untaxed"/>
+                    <field name="amount_tax" sum="Taxes"/>
+                    <field name="amount_total" sum="Total "/>
+                    <field name="invoice_id" invisible="1"/>
+                    <field name="invoice_name"/>
+                    <field name="user_id" />
+                    <field name="shop_id" />
+
+                </tree> 
+            </field>
+        </record>
+
+        <record id="view_tms_waybill_form" model="ir.ui.view">
+            <field name="name">tms.waybill.form</field>
+            <field name="model">tms.waybill</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Waybill">
+					<field name="company_id" readonly="1" invisible="1"/>
+                    <group col="8" colspan="4">
+                        <field name="name" readonly="1"/>
+                        <field name="date_order"/>
+                        <field name="shop_id" />                        
+                        <field name="sequence_id" on_change="onchange_sequence_id(sequence_id)" required="1" 
+								context="{'default_tms_waybill_sequence': 1,'default_shop_id': shop_id}"
+								domain="[('shop_id','=',shop_id)]" />
+
+					</group>
+                    <field name="partner_id" on_change="onchange_partner_id(partner_id)" domain="[('customer','=',True)]" context="{'search_default_customer':1}" required="1"/>
+                    <field name="pricelist_id" />
+<!--	                    <field name="account_analytic_id"
+								context="{'partner_id':partner_id, 'contact_id':partner_order_id, 'pricelist_id':pricelist_id, 'default_name':name}"
+                                groups="analytic.group_analytic_accounting" domain="[('parent_id','!=',False)]" /> -->
+
+                    <field name="partner_order_id" domain="[('partner_id','=',partner_id)]" />
+                    <field name="partner_invoice_id" domain="[('partner_id','=',partner_id)]" />
+					<field name="departure_address_id" />
+					<field name="arrival_address_id" />
+					<field name="upload_point" />
+					<field name="download_point" />
+
+					
+                    <notebook colspan="4">
+						<page string="Shipped Product">
+							<field name="waybill_shipped_product" context="{'default_waybill_id': active_id}" colspan="4" nolabel="1">
+								<tree string="Shipped Product" editable="bottom">
+									<field name="name" invisible="1" />
+									<field name="product_id" 
+													on_change="on_change_product_id(product_id)"
+													domain="[('tms_category','=','transportable')]"
+											 context="{'default_purchase_ok':0, 'default_sale_ok':0,'default_tms_category': 'transportable','default_type': 'service', 'default_procure_method':'make_to_stock', 'default_supply_method': 'buy'}"/>
+									<field name="product_uom" />
+									<field name="product_uom_qty" sum="Quantity"/>
+									<field name="notes" />
+									<field name="sequence" />
+								</tree>
+								<form string="Shipped Product" >
+									<field name="product_id" on_change="on_change_product_id(product_id)" 
+											 domain="[('tms_category','=','transportable')]"
+											 context="{'default_purchase_ok':0, 'default_sale_ok':0,'default_tms_category': 'transportable','default_type': 'service', 'default_procure_method':'make_to_stock', 'default_supply_method': 'buy'}"/>
+									<field name="name" invisible="1" />
+									<field name="product_uom" />
+									<field name="product_uom_qty" />
+									<field name="notes" colspan="4"/>
+									<field name="sequence" />
+								</form>
+							</field>
+						</page>
+						<page string="Lines">
+							<field name="waybill_line" context="{'default_waybill_id': active_id}" colspan="4" nolabel="1">
+								<tree string="Waybill Lines">
+									<field name="line_type" />
+									<field name="name" />
+									<field name="product_id" />
+									<field name="product_uom" />
+									<field name="product_uom_qty" />
+									<field name="price_unit" />
+									<field name="price_amount" sum="Price Amount"/>
+									<field name="discount" />
+									<field name="price_discount" sum="Price Discount"/>
+									<field name="price_subtotal" sum="Price Subtotal"/>
+									<field name="tax_amount" sum="Tax Amount"/>
+									<field name="price_total" sum="Price Total"/>
+									<field name="sequence" />
+								</tree>
+								<form string="Waybill Lines">
+									<field name="line_type" />
+									<newline />
+									<field name="product_id" attrs="{'invisible':[('line_type','!=','product')],'required':[('line_type','=','product')]}" 
+													on_change="on_change_product_id(product_id)"
+													domain="[('tms_category','in',('freight', 'move','insurance','highway_tolls', 'other'))]"
+													context="{'default_tms_category': 'freight','default_type': 'service', 'default_procure_method':'make_to_stock', 'default_supply_method': 'buy'}"/>
+									<field name="product_uom" attrs="{'invisible':[('line_type','!=','product')],'required':[('line_type','=','product')]}" />
+									<field name="product_uom_qty" on_change="on_change_amount(product_uom_qty, price_unit, discount, product_id)" 
+																attrs="{'invisible':[('line_type','!=','product')],'required':[('line_type','=','product')]}" />
+									<field name="price_unit" on_change="on_change_amount(product_uom_qty, price_unit, discount, product_id)" 
+																attrs="{'invisible':[('line_type','!=','product')],'required':[('line_type','=','product')]}" />
+
+									<field name="price_amount" readonly="1" sum="Price Amount" 
+																attrs="{'invisible':[('line_type','!=','product')]}" />
+
+									<field name="discount" on_change="on_change_amount(product_uom_qty, price_unit, discount, product_id)" 
+																attrs="{'invisible':[('line_type','!=','product')],'required':[('line_type','=','product')]}" />
+									<field name="price_discount" readonly="1" attrs="{'invisible':[('line_type','!=','product')]}" />
+									<field name="price_subtotal" readonly="1" attrs="{'invisible':[('line_type','!=','product')]}" />
+									<field name="tax_amount" readonly="1" attrs="{'invisible':[('line_type','!=','product')]}" />
+									<field name="price_total" readonly="1" attrs="{'invisible':[('line_type','!=','product')]}" />
+
+									<field name="name" colspan="4"/>
+
+									<field name="sequence" />
+								</form>
+							</field>								
+						</page>
+						<page string="Extra Fields">
+	                        <field name="waybill_type"/>
+				            <field name="client_order_ref" />
+					        <field name="origin" />
+				            <field name="amount_declared" />
+				            <field name="billing_policy"/>
+
+							<field name="waybill_extradata" context="{'default_waybill_id': active_id, 'default_mandatory': 1}" colspan="4" nolabel="1">
+								<tree string="Extra Fields">
+									<field name="mandatory" />
+									<field name="type_extra"/>
+									<field name="name" />
+									<field name="value_extra"/>
+									<field name="sequence" />
+								</tree>
+								<form string="Extra Fields" >
+									<field name="name" colspan="4" required="1"/>
+									<field name="type_extra"/>
+									<newline />
+									<field name="mandatory" invisible="1"/>
+									<field name="value_extra" invisible="1"/>
+
+									<field name="value_char" 	attrs="{'invisible':[('type_extra','!=','char')],'required':[('type_extra','=','char'),('mandatory','=',1)]}"
+																on_change="on_change_value(type_extra, value_char)" colspan="4"/>
+									<field name="value_text" 	attrs="{'invisible':[('type_extra','!=','text')],'required':[('type_extra','=','text'),('mandatory','=',1)]}"
+																on_change="on_change_value(type_extra, value_text)" colspan="4"/>
+									<field name="value_integer" attrs="{'invisible':[('type_extra','!=','integer')],'required':[('type_extra','=','integer'),('mandatory','=',1)]}"
+																on_change="on_change_value(type_extra, value_integer)" colspan="4"/>
+									<field name="value_float" 	attrs="{'invisible':[('type_extra','!=','float')],'required':[('type_extra','=','float'),('mandatory','=',1)]}"
+																on_change="on_change_value(type_extra, value_float)" colspan="4"/>
+									<field name="value_date" 	attrs="{'invisible':[('type_extra','!=','date')],'required':[('type_extra','=','date'),('mandatory','=',1)]}"
+																on_change="on_change_value(type_extra, value_date)" colspan="4"/>
+									<field name="value_datetime" attrs="{'invisible':[('type_extra','!=','datetime')],'required':[('type_extra','=','datetime'),('mandatory','=',1)]}"
+																on_change="on_change_value(type_extra, value_datetime)" colspan="4"/>
+									<field name="sequence" />
+								</form>
+							</field>
+						</page>
+						<page string="Travel">
+							<field name="travel_ids" colspan="4" nolabel="1" on_change="onchange_travel_ids(travel_ids)"/>
+			                <field name="travel_id" readonly="1" colspan="2"/>
+			                
+							<field name="route_id" colspan="4" invisible="1"/>
+							<field name="employee_id" colspan="4" invisible="1"/>
+				            <field name="departure_id" invisible="1"/>
+				            <field name="arrival_id" invisible="1"/>
+
+					        <field name="unit_id" invisible="1"/>
+					        <field name="trailer1_id" invisible="1"/>
+					        <field name="dolly_id" invisible="1"/>
+					        <field name="trailer2_id" invisible="1"/>
+
+						</page>
+						<page string="Factor Client">
+							<separator string="Waybill Customer Factors" colspan="4"/>
+							<field name="waybill_customer_factor" 
+									context="{'default_waybill_id': active_id,'default_category':'customer'}" 
+									domain="[('category','=','customer')]"
+									colspan="4" nolabel="1" />
+						</page>
+						<page string="Factor Driver">
+							<separator string="Waybill Driver Factors" colspan="4"/>
+							<field name="waybill_driver_factor" 
+									context="{'default_waybill_id': active_id,'default_category':'driver'}" 
+									domain="[('category','=','driver')]"
+									colspan="4" nolabel="1"/>
+						</page>
+						<page string="Factor Supplier">
+							<separator string="Waybill Supplier Factors" colspan="4"/>
+							<field name="waybill_supplier_factor" 
+									context="{'default_waybill_id': active_id,'default_category':'supplier'}" 
+									domain="[('category','=','supplier')]"
+									colspan="4" nolabel="1" />
+						</page>
+                        <page string="Times">
+							<group colspan="2" col="2">
+								<separator string="Scheduled" colspan="2"/>
+								<field name="date_start" />
+								<field name="date_up_start_sched" />
+								<field name="date_up_end_sched" />
+								<field name="date_up_docs_sched" />
+								<field name="date_appoint_down_sched" />
+								<field name="date_down_start_sched" />
+								<field name="date_down_end_sched" />
+								<field name="date_down_docs_sched" />
+								<field name="date_end" />
+							</group>						
+							<group colspan="2" col="2">
+								<separator string="Real"  colspan="2"/>
+								<field name="date_start_real" />
+								<field name="date_up_start_real" />
+								<field name="date_up_end_real" />
+								<field name="date_up_docs_real" />
+								<field name="date_appoint_down_real" />
+								<field name="date_down_start_real" />
+								<field name="date_down_end_real" />
+								<field name="date_down_docs_real" />
+								<field name="date_end_real" />
+							</group>
+						</page>
+                        <page string="Notes">
+                            <field colspan="4" name="notes" nolabel="1"/>
+                        </page>
+                        <page string="Log">
+							<group colspan="4" col="10">
+		                        <field name="invoiced"/>
+		                        <field name="invoice_id" readonly="1"/>
+		                        <field name="invoice_name" readonly="1"/>
+		                        <field name="invoice_paid" readonly="1"/>
+		                        <field name="shipped" />
+							</group>
+                            <field name="create_uid" readonly="1" />
+                            <field name="create_date" readonly="1" />
+                            <field name="approved_by" readonly="1" />
+                            <field name="date_approved" readonly="1" />
+                            <field name="confirmed_by" readonly="1" />
+                            <field name="date_confirmed" readonly="1" />
+                            <field name="cancelled_by" readonly="1" />
+                            <field name="date_cancelled" readonly="1" />
+                            <field name="drafted_by" readonly="1" />
+                            <field name="date_drafted" readonly="1" />
+                        </page>
+					</notebook>
+                    <group col="13" colspan="4">
+                        <field name="state"/>
+                        <button name="%(action_waybill_cancel)d" states="draft,approve,confirm" string="Cancel" icon="gtk-cancel"  type="action"/> 
+				        <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
+				        <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
+				        <button name="action_confirm" states="approve" string="Confirm" type="object" icon="gtk-ok"/> 
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_tms_waybill_filter" model="ir.ui.view">
+            <field name="name">tms.waybill.list.select</field>
+            <field name="model">tms.waybill</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Search Waybills">
+                    <filter icon="terp-gtk-media-pause" string="Pending" domain="[('state','=','draft')]"/>
+                    <filter icon="terp-gtk-jump-to-ltr" string="Approved" domain="[('state','=','approved')]"/>
+                    <filter icon="terp-check" string="Confirmed" domain="[('state','=','confirmed')]"/>
+                    <separator orientation="vertical"/>
+                    <filter icon="terp-dialog-close" string="Without Travel" domain="[('travel_id','=',False)]"/>
+					<filter string="Invoiced" icon="terp-stock_symbol-selection" domain="[('invoice_id','!=', False)]"/>
+					<filter string="Not Invoiced" icon="terp-dialog-close" domain="[('invoice_id','=', False)]"/>
+                    <newline/>
+                    <field name="partner_id" />
+                    <field name="date_order" string="Waybill date" />
+                    <field name="name" select="1"/>
+
+                    <field name="client_order_ref"/>
+	                <field name="user_id" select="1">
+	                    <filter domain="[('user_id','=',uid)]" help="My Waybills" icon="terp-personal"/>
+	                </field>
+					<newline />
+                    <group expand="0" string="More filters..." colspan="11" col="8" groups="base.group_extended">
+		                <field name="route_id" />
+		                <field name="departure_id" />
+		                <field name="arrival_id" />
+		                <field name="product_uom_type" />
+					</group>
+                    <newline/>
+                    <group expand="0" string="Group By..." colspan="11" col="11" groups="base.group_extended">
+                        <filter string="Customer" icon="terp-personal" domain="[]" context="{'group_by':'partner_id'}"/>
+                        <filter string="Salesman" icon="terp-personal" domain="[]" context="{'group_by':'user_id'}"/>
+                        <separator orientation="vertical"/>
+                        <filter string="State" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'state'}"/>
+                        <filter string="Product UoM Type" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'product_uom_type'}"/>
+                        <separator orientation="vertical"/>
+                        <filter string="Order Date" icon="terp-go-month" domain="[]" context="{'group_by':'date_order'}"/>
+                        <filter string='Invoice' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'invoice_name'}" />
+
+
+                    </group>
+               </search>
+            </field>
+        </record>
+
+        <record id="view_tms_waybill_calendar" model="ir.ui.view">
+            <field name="name">tms.waybill.calendar</field>
+            <field name="model">tms.waybill</field>
+            <field name="type">calendar</field>
+            <field name="arch" type="xml">
+                <calendar string="Waybills" color="state" date_start="date_order">
+                    <field name="partner_id"/>
+                    <field name="amount_untaxed"/>
+                </calendar>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_tms_waybill_graph">
+            <field name="name">tms.waybill.graph</field>
+            <field name="model">tms.waybill</field>
+            <field name="type">graph</field>
+            <field name="arch" type="xml">
+                <graph string="Waybill" type="bar">
+                    <field name="partner_id"/>
+                    <field name="amount_untaxed" operator="+"/>
+                </graph>
+            </field>
+        </record>
+
+
+
+        <record id="action_tms_waybill_form" model="ir.actions.act_window">
+            <field name="name">Waybills</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">tms.waybill</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,calendar,graph</field>
+            <field name="search_view_id" ref="view_tms_waybill_filter"/>
+            <field name="context">{"search_default_user_id":uid}</field>
+            <field name="help">TMS Waybills</field>
+        </record>
+
+        <menuitem action="action_tms_waybill_form" id="menu_tms_waybill" parent="menu_tms_travels" sequence="2" />
+
+
+<!--  Make the invoice-->
+
+	<record id="view_waybill_invoice" model="ir.ui.view">
+	<field name="name">Create Invoice from Waybills</field>
+	<field name="model">tms.waybill.invoice</field>
+	<field name="type">form</field>
+	<field name="arch" type="xml">
+	<form string="Create Invoice">
+			    <separator colspan="4" string="Create Customer Invoice from selected Waybills ?" />
+			    <group col="2" colspan="4">
+			<button icon='gtk-cancel' special="cancel"
+				string="Cancel" />
+			<button name="makeInvoices" string="Confirm"
+				colspan="1" type="object" icon="gtk-ok" />
+		</group>
+	</form>
+	</field>
+	</record>
+
+	<act_window name="Create Invoice"		    
+	    res_model="tms.waybill.invoice"
+	    src_model="tms.waybill"
+	    view_mode="form"
+	    target="new"
+		key2="client_action_multi"    
+	    id="action_view_waybill_invoice"/>	
+
+
+<!-- 
+##############################
+TMS.TRAVEL
+##############################
+ -->
+
+<!-- Add fields to res.partner object
+'tms_fuel_supplier'
+-->
+        <record model="ir.ui.view" id="view_tms_travel_waybill_form">
+            <field name="name">TMS tms.travel.form</field>
+            <field name="model">tms.travel</field>
+            <field name="type">form</field>
+            <field name="priority">50</field>
+            <field name="inherit_id" ref="view_tms_travel_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/notebook/page[@string='Waybills']" position="inside" >
+                    <field name="waybill_ids" nolabel="1"/>
+                </xpath> 
+            </field>
+        </record>
+
+
+    </data>
+</openerp>

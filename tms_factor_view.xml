@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+<!-- 
+##############################
+TMS.WAYBILL.FACTOR
+##############################
+ -->
+
+        <record id="view_tms_factor_tree" model="ir.ui.view">
+            <field name="name">tms.factor.tree</field>
+            <field name="model">tms.factor</field>
+            <field name="type">tree</field>
+            <field name="priority">2</field>
+            <field name="arch" type="xml">
+				<tree string="Billing Factors">
+					<field name="waybill_id" invisible="1"/>
+					<field name="category" invisible="1" /> 
+					<field name="name" />
+					<field name="factor_type" />
+					<field name="factor" />
+					<field name="range_start"  />
+					<field name="range_end" />
+					<field name="fixed_amount" />
+					<field name="mixed"   />
+					<field name="special_formula" />
+					<field name="sequence" />
+					<field name="notes" />
+				</tree>
+            </field>
+        </record>
+
+        <record id="view_tms_factor_form" model="ir.ui.view">
+            <field name="name">tms.factor.form</field>
+            <field name="model">tms.factor</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+				<form string="Billing Factors" >
+					<field name="waybill_id" invisible="1" />
+					<field name="category" invisible="1" />
+					<field name="name" />
+					<field name="factor_type" />
+					<field name="factor" 
+							attrs="{'invisible'	:[('factor_type','in',('special','travel'))],
+									'required'	:[('factor_type','in',('distance','weight','qty','volume','percent'))]}" />
+					<newline />
+					<field name="range_start" 
+						attrs="{'invisible'	:[('factor_type','in',('special','travel','percent'))],
+								'required'	:[('factor_type','in',('distance','weight','qty','volume'))]}"/>
+					<field name="range_end" 
+						attrs="{'invisible'	:[('factor_type','in',('special','travel','percent'))],
+								'required'	:[('factor_type','in',('distance','weight','qty','volume'))]}"/>
+					<field name="mixed"	attrs="{'invisible'	:[('factor_type','=','travel')]}" />
+					<newline/>
+					<field name="fixed_amount" required="1"/>
+					<newline />
+					<field name="special_formula"  colspan="4"
+							attrs="{'invisible':[('factor_type','!=','special')],'required':[('factor_type','=','special')]}"/>
+					<field name="sequence" />
+					<newline />
+					<field name="notes" colspan="4" />
+				</form>
+			</field>
+		</record>
+		
+
+		
+
+    </data>
+</openerp>

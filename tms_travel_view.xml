@@ -1,0 +1,203 @@
+<openerp>
+<data>
+
+<!-- 
+##############################
+TMS.travel
+##############################
+-->
+<!-- SEARCH View for tms.travel  --> 
+        <record id="view_tms_travel_search" model="ir.ui.view">
+            <field name="name">tms.travel.search</field>
+            <field name="model">tms.travel</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="TMS Travels">
+                   <filter string="Pending" icon="terp-gtk-media-pause" domain="[('state','=','draft')]"/>
+                   <separator orientation="vertical"/>
+                   <filter string="In Progress" icon="terp-gtk-go-back-rtl" domain="[('state','=','progress')]"/>
+                   <separator orientation="vertical"/>
+                   <filter string="Done" icon="terp-gtk-jump-to-ltr" domain="[('state','=','done')]"/>
+                   <separator orientation="vertical"/>
+                   <filter string="Closed" icon="terp-check" domain="[('state','=','closed')]"/>
+                   <separator orientation="vertical"/>
+                   <filter string="Cancelled" icon="terp-dialog-close" domain="[('state','=','cancel')]"/>
+                   <filter string="Not Cancelled" icon="terp-dialog-close" domain="[('state','!=','cancel')]"/>
+                   <newline/>
+                   <field name="date"/>
+                   <field name="name"/>
+                   <field name="unit_id" string="Unit"/>
+                   <field name="employee_id"/>
+                   <field name="route_id"/>
+                   <field name="departure"/>
+                   <field name="arrival"/>
+                   <newline/>
+                   <group expand="0" string="More filters..." colspan="4" col="8">
+                       <field name="trailer1_id" />
+                       <field name="dolly_id" />
+                       <field name="trailer2_id" />
+                       <field name="framework" />						
+                       <field name="date_start"/>
+                       <field name="date_end"/>
+						<newline />
+                       <field name="company_id" />
+                       <field name="shop_id" />
+                       <!-- <field name="tms_waybill_ids" string="Data from waybill" /> -->
+                   </group>   
+                   <newline/>
+                   <group  expand='0' string='Group by...'>
+                       <filter string='Unit' icon="terp-gdu-smart-failing" domain="[]" context="{'group_by' : 'unit_id'}" />
+                       <filter string='Driver 1' icon="terp-personal" domain="[]" context="{'group_by' : 'employee_id'}" />
+                       <!--<filter string='Driver 2' icon="terp-personal" domain="[]" context="{'group_by' : 'employee2_id'}" /> -->
+                       <separator orientation="vertical"/>                                                                
+                       <filter string='Departure' icon="terp-gtk-go-back-rtl" domain="[]" context="{'group_by' : 'departure'}" />
+                       <filter string='Arrival' icon="terp-gtk-jump-to-ltr" domain="[]" context="{'group_by' : 'arrival'}" />
+                       <separator orientation="vertical"/>                                                                
+                       <filter string='Company' icon="terp-go-home" domain="[]" context="{'group_by' : 'company_id'}" />
+                       <filter string='Shop' icon="terp-go-home" domain="[]" context="{'group_by' : 'shop_id'}" />
+                       <separator orientation="vertical"/>                                                                
+                       <filter string='State' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'state'}" />
+                       <filter string='Framework' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'framework'}" />
+                   </group>
+                </search>
+            </field>
+        </record>
+
+<!-- TREE View for tms.travel --> 
+	<record model="ir.ui.view" id="view_tms_travel_tree">
+        <field name="name">tms.travel.tree</field>
+        <field name="model">tms.travel</field>
+		<field name="type">tree</field>
+		<field name="arch" type="xml">
+            <tree string="TMS Travels">
+                <button name="action_cancel" states="draft,progress,done" string="Cancel Travel" type="object" icon="gtk-cancel"/>
+                <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
+                <button name="action_dispatch" states="draft" string="Dispatch Travel" type="object" icon="gtk-go-forward"/>
+                <button name="action_end" states="progress" string="End Travel" type="object" icon="gtk-ok"/>
+                <field name="state" />
+                <field name="name" />
+                <field name="date" />
+                <field name="unit_id" string="Unit" />
+                <field name="trailer1_id" />
+                <field name="dolly_id" />
+                <field name="trailer2_id" />
+                <field name="framework" invisible="1"/> 
+                <field name="employee_id" />
+                <field name="route_id" />
+                <field name="departure" />
+                <field name="arrival" />
+                <field name="date_start" string="Start Sched."/>
+                <field name="date_end" string="End Sched." />
+                <field name="shop_id" />
+		    </tree>
+		</field>
+	</record>
+
+<!-- FORM View for tms.travel -->
+        <record id="view_tms_travel_form" model="ir.ui.view">
+            <field name="name">tms.travel.form</field>
+            <field name="model">tms.travel</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="TMS Travels">
+                    <field name="shop_id" />
+                    <field name="name" readonly="1"/>
+                    <field name="company_id" />
+                    <field name="date" />
+                    <field name="route_id" colspan="4" on_change="onchange_route_id(route_id, unit_id, trailer1_id, dolly_id, trailer2_id)"/> 
+                    <field name="departure" readonly="1"/>
+                    <field name="arrival" readonly="1"/>
+                    <group colspan="4" col="10">
+                		<field name="kit_id" on_change="onchange_kit_id(kit_id)"/>
+                        <field name="unit_id" />
+                        <field name="trailer1_id" 	domain="[('id','!=',trailer2_id), ('fleet_type','=','trailer')]" 
+													context="{'default_fleet_type': 'trailer'}"
+												  	attrs="{'required':['|', ('dolly_id','!=',False),('trailer2_id','!=',False)]}"/>
+                        <field name="dolly_id" 	domain="[('fleet_type','=','dolly')]" 
+												context="{'default_fleet_type': 'dolly'}"
+												attrs="{'required':[('trailer2_id','!=',False)]}"/>
+                        <field name="trailer2_id" 	domain="[('id','!=',trailer1_id), ('fleet_type','=','trailer')]" 
+													context="{'default_fleet_type': 'trailer'}"
+													attrs="{'required':[('dolly_id','!=',False)]}"/>
+                    </group>
+                    <field name="employee_id" context="{'default_tms_category': 'driver'}"/>
+                    <field name="employee2_id"  context="{'default_tms_category': 'driver'}"/>
+                    
+                    <notebook colspan="4">
+                        <page string="Fuel Vouchers">
+                            <field name="fuelvoucher_ids" nolabel="1" context="{'default_travel_id': active_id}" />	
+                        </page>                        
+                        <page string="Advances">
+                        	<field name="advance_ids" nolabel="1"  context="{'default_travel_id': active_id}" />
+                        </page>
+                        <page string="Waybills">
+                        </page>
+                        <page string="History">
+                        </page>
+                        <page string="Notes">
+                                <field name="notes" nolabel="1" />
+                        </page>
+                        <page string="Statistics Data">
+                            <separator colspan="4" string="Distances (mi./kms)"/>
+                            <field name="distance_route" readonly="1"/>
+                            <field name="distance_driver" readonly="1"/>
+                            <field name="distance_loaded" readonly="1"/>
+                            <field name="distance_empty" readonly="1"/>
+                            <field name="distance_extraction" readonly="1"/>
+                            <separator colspan="4" string="Fuel Efficiency"/>
+                            <field name="fuel_efficiency_expected" readonly="1"/>
+                            <field name="fuel_efficiency_travel" readonly="1"/>
+                            <field name="fuel_efficiency_extraction" readonly="1"/>
+                            <separator colspan="4" string="Date and Times"/>
+                            <group colspan="4" col="6">
+                                <field name="date_start" on_change="onchange_dates(date_start, date_end, date_start_real, date_end_real)"/>
+                                <field name="date_end" on_change="onchange_dates(date_start, date_end, date_start_real, date_end_real)"/>
+                                <field name="travel_duration" widget="float_time"/>
+                                <field name="date_start_real" on_change="onchange_dates(date_start, date_end, date_start_real, date_end_real)"/>
+                                <field name="date_end_real" on_change="onchange_dates(date_start, date_end, date_start_real, date_end_real)"/>
+                                <field name="travel_duration_real" widget="float_time"/>
+                            </group>
+                        </page>
+                        <page string="Log Info">
+                            <field name="create_uid" readonly="1" />
+                            <field name="create_date" readonly="1" />
+                            <field name="dispatched_by" readonly="1" />
+                            <field name="date_dispatched" readonly="1" />
+                            <field name="ended_by" readonly="1" />
+                            <field name="date_ended" readonly="1" />
+                            <field name="closed_by" readonly="1" />
+                            <field name="date_closed" readonly="1" />
+                            <field name="cancelled_by" readonly="1" />
+                            <field name="date_cancelled" readonly="1" />
+                            <field name="drafted_by" readonly="1" />
+                            <field name="date_drafted" readonly="1" />
+                        </page>
+                    </notebook>
+                    <group col="6" colspan="4">
+                        <field name="state" readonly="1"/>
+                        <button name="action_cancel" states="draft,progress,done" string="Cancel Travel" type="object" icon="gtk-cancel"/>
+                        <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
+                        <button name="action_dispatch" states="draft" string="Dispatch Travel" type="object" icon="gtk-go-forward"/>
+                        <button name="action_end" states="progress" string="End Travel" type="object" icon="gtk-ok"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+<!-- Action for tms.travel -->
+    <record model="ir.actions.act_window" id="open_view_tms_travel_form">
+        <field name="name">TMS Travel</field>
+        <field name="res_model">tms.travel</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+<!-- Menu for tms.travel -->
+    <menuitem name="Travels" sequence="10"
+              parent="menu_tms_travels" 
+              id="menu_tms_travel_form" 
+              action="open_view_tms_travel_form"/>
+
+
+</data>
+</openerp>

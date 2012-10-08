@@ -1,0 +1,29 @@
+<openerp>
+<data>
+
+<!-- Add fields to ir.sequence object
+-->
+
+        <record model="ir.ui.view" id="tms_ir_sequence_form_view">
+            <field name="name">TMS ir.sequence.form</field>
+            <field name="model">ir.sequence</field>
+            <field name="type">form</field>
+            <field name="priority">50</field>
+            <field name="inherit_id" ref="base.sequence_view"/>
+            <field name="arch" type="xml">
+				<notebook position="inside">
+                    <page string="TMS">
+						<group col="6" colspan="4">
+							<field name="tms_waybill_sequence" />
+							<field name="tms_waybill_automatic" />
+							<field name="shop_id" attrs="{'required':[('tms_waybill_sequence','=',True)]}" domain="[('company_id','=', company_id)]"/>
+						</group>
+					</page>
+			    </notebook> 
+            </field>
+        </record>
+
+
+
+</data>
+</openerp>

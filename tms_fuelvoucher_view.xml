@@ -1,0 +1,195 @@
+<openerp>
+<data>
+
+<!-- 
+##############################
+TMS.FUELVOUCHER
+##############################
+-->
+<!-- SEARCH View for tms.fuelvoucher  --> 
+        <record id="view_tms_fuelvoucher_search" model="ir.ui.view">
+            <field name="name">tms.fuelvoucher.search</field>
+            <field name="model">tms.fuelvoucher</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="TMS Fuel Vouchers">
+                   <filter string="Draft" icon="terp-gtk-media-pause" domain="[('state','=','draft')]"/>
+                   <separator orientation="vertical"/>
+                   <filter string="Approved" icon="terp-gtk-jump-to-ltr" domain="[('state','=','approved')]"/>
+                   <separator orientation="vertical"/>
+                   <filter string="Confirmed" icon="terp-gtk-jump-to-ltr" domain="[('state','=','confirm')]"/>
+                   <separator orientation="vertical"/>
+                   <filter string="Closed" icon="terp-check" domain="[('state','=','closed')]"/>
+                   <separator orientation="vertical"/>
+                   <filter string="Cancelled" icon="terp-dialog-close" domain="[('state','=','cancel')]"/>
+                   <filter string="Not Cancelled" icon="terp-stock_symbol-selection" domain="[('state','!=','cancel')]"/>
+                   <filter string="Invoiced" icon="terp-stock_symbol-selection" domain="[('invoice_id','!=', False)]"/>
+                   <filter string="Not Invoiced" icon="terp-dialog-close" domain="[('invoice_id','=', False)]"/>
+                   <newline/>
+                   <field name="date"/>
+                   <field name="name"/>
+                   <field name="travel_id" />
+                   <field name="unit_id"/>
+                   <field name="employee_id"/>
+                   <newline/>
+                   <group expand="0" string="More filters...">
+                        <field name="partner_id"/>
+                        <field name="invoice_id" domain="[('type', '=', 'invoice_in')]"/>
+                        <field name="product_id"/>
+                   </group>   
+                   <newline/>
+                   <group  expand='0' string='Group by...'>
+                       <filter string='Unit' icon="terp-gdu-smart-failing" domain="[]" context="{'group_by' : 'unit_id'}" />
+                       <filter string='Driver 1' icon="terp-personal" domain="[]" context="{'group_by' : 'employee_id'}" />
+                       <separator orientation="vertical"/>                                                                
+                       <filter string='Partner' icon="terp-personal" domain="[]" context="{'group_by' : 'partner_id'}" />
+                       <filter string='Invoice' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'invoice_name'}" />
+                       <separator orientation="vertical"/>                                                                
+                       <filter string='State' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'state'}" />
+                   </group>
+                </search>
+            </field>
+        </record>
+
+<!-- TREE View for tms.fuelvoucher --> 
+	<record model="ir.ui.view" id="view_tms_fuelvoucher_tree">
+        <field name="name">tms.fuelvoucher.tree</field>
+        <field name="model">tms.fuelvoucher</field>
+		<field name="type">tree</field>
+		<field name="arch" type="xml">
+            <tree string="TMS Fuel Vouchers">
+                <button name="action_cancel" states="draft,approved" string="Cancel" type="object" icon="gtk-cancel"/>
+                <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
+                <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-ok"/>
+                <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok"/>
+                <field name="state" />
+                <field name="name" />
+                <field name="date" />
+                <field name="travel_id" />
+                <field name="unit_id" />
+                <field name="employee_id" />
+                <field name="partner_id" />
+				<field name="price_unit" />
+				<field name="product_uom_qty" sum="Quatity"/>
+				<field name="product_uom" />
+				<field name="price_subtotal" sum="SubTotal"/>
+				<field name="tax_amount" sum="Taxes"/>
+				<field name="special_tax_amount" sum="IEPS"/>
+				<field name="price_total" sum="Total"/>			
+                <field name="invoice_id" invisible="1"/>
+                <field name="invoice_name" />
+                <field name="invoice_paid"/>
+                <field name="shop_id" />
+		    </tree>
+		</field>
+	</record>
+
+<!-- FORM View for tms.fuelvoucher -->
+        <record id="view_tms_fuelvoucher_form" model="ir.ui.view">
+            <field name="name">tms.fuelvoucher.form</field>
+            <field name="model">tms.fuelvoucher</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="TMS Fuel Vouchers">
+                    <field name="name" readonly="1"/>
+                    <field name="shop_id" />
+                    <field name="travel_id" domain="[('state','!=','cancel'),('state','!=','closed')]" on_change="on_change_travel_id(travel_id)"/>
+                    <field name="date" />
+                    <field name="unit_id" readonly="1"/>
+                    <field name="employee_id" readonly="1"/>
+                    <field name="partner_id" 	domain="[('supplier','=',1),('tms_category','=','fuel')]" 
+											 	context="{'default_supplier': 1, 'default_customer': 0, 'default_tms_category': 'fuel'}"/>
+                    <field name="currency_id" />
+                    <group colspan="4" col="10">
+		    			<field name="product_id" 	domain="[('purchase_ok', '=', True),('tms_category','=','fuel')]"
+													context="{'default_tms_category': 'fuel', 'default_type': 'service', 'default_procure_method':'make_to_stock', 'default_supply_method': 'buy'}"
+													on_change="on_change_product_id(product_id)" colspan="8"/>
+                        <field name="product_uom" invisible="1" />
+                        <field name="product_uom_qty" on_change="on_change_amount(product_uom_qty, price_total, tax_amount, product_id)"/>
+                        <field name="price_unit"  readonly="1"/>
+                        <field name="price_subtotal" readonly="1"/>
+                        <field name="tax_amount" on_change="on_change_amount(product_uom_qty, price_total, tax_amount, product_id)"/>
+                        <field name="special_tax_amount" readonly="1"/>
+                        <field name="price_total" on_change="on_change_amount(product_uom_qty, price_total, tax_amount, product_id)"/>
+                    </group>
+                    <notebook colspan="4">
+                        <page string="Notes">
+                            <field name="notes" nolabel="1" />
+                        </page>
+                        <page string="Log Info">
+                            <field name="create_uid" readonly="1" />
+                            <field name="create_date" readonly="1" />
+                            <field name="approved_by" readonly="1" />
+                            <field name="date_approved" readonly="1" />
+                            <field name="confirmed_by" readonly="1" />
+                            <field name="date_confirmed" readonly="1" />
+                            <field name="closed_by" readonly="1" />
+                            <field name="date_closed" readonly="1" />
+                            <field name="cancelled_by" readonly="1" />
+                            <field name="date_cancelled" readonly="1" />
+                            <field name="drafted_by" readonly="1" />
+                            <field name="date_drafted" readonly="1" />
+							<group colspan="4" col="8">
+									<field name="invoiced"/>  
+									<field name="invoice_id" />
+									<field name="invoice_name" />
+									<field name="invoice_paid"/>  
+							</group>
+                        </page>
+                    </notebook>
+                    <group col="6" colspan="4">
+                        <field name="state" readonly="1"/>
+                        <button name="action_cancel" states="draft,approved,confirm" string="Cancel" type="object" icon="gtk-cancel"/>
+                        <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
+                        <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
+                        <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+<!-- Action for tms.fuelvoucher -->
+    <record model="ir.actions.act_window" id="open_view_tms_fuelvoucher_form">
+        <field name="name">TMS Fuel Voucher</field>
+        <field name="res_model">tms.fuelvoucher</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+<!-- Menu for tms.fuelvoucher -->
+    <menuitem name="Fuel Vouchers" sequence="10"
+              parent="menu_tms_travels" 
+              id="menu_tms_fuelvoucher_form" 
+              action="open_view_tms_fuelvoucher_form"/>
+
+
+<!--  Make the invoice-->
+
+	<record id="view_fuelvoucher_invoice" model="ir.ui.view">
+	<field name="name">Crear Facturas</field>
+	<field name="model">tms.fuelvoucher.invoice</field>
+	<field name="type">form</field>
+	<field name="arch" type="xml">
+	<form string="Create Invoice">
+			    <separator colspan="4" string="Create Supplier Invoice from selected Fuel Vouchers ?" />
+			    <group col="2" colspan="4">
+			<button icon='gtk-cancel' special="cancel"
+				string="Cancel" />
+			<button name="makeInvoices" string="Confirm"
+				colspan="1" type="object" icon="gtk-ok" />
+		</group>
+	</form>
+	</field>
+	</record>
+
+	<act_window name="Create Invoice"		    
+	    res_model="tms.fuelvoucher.invoice"
+	    src_model="tms.fuelvoucher"
+	    view_mode="form"
+	    target="new"
+	key2="client_action_multi"    
+	    id="action_view_fuelvoucher_invoice"/>	
+
+
+</data>
+</openerp>

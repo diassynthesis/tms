@@ -1,0 +1,28 @@
+<openerp>
+<data>
+
+
+<!-- Agregamos el campo <<tms_category>> al formulario de Empleados para saber si la persona es usada 
+    como Operador de unidad (Viajes) o como Mecanico (Mantenimiento)
+-->
+        <record model="ir.ui.view" id="view_employee_form_tms">
+            <field name="name">Employee - TMS</field>
+            <field name="model">hr.employee</field>
+            <field name="type">form</field>
+            <field name="priority">50</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <notebook position="inside">
+                    <page string="TMS">
+						<field name="tms_category" />
+						<field name="tms_advance_account_id" attrs="{'required':[('tms_category','=','driver')],'invisible':[('tms_category','!=','driver')]  }"/>
+						<field name="tms_supplier_driver" />
+						<field name="tms_supplier_id" attrs="{'required':[('tms_supplier_driver','=',1)],'invisible':[('tms_supplier_driver','!=',1)]  }"/>
+					</page>
+                </notebook> 
+            </field>
+        </record>
+
+</data>
+</openerp>
+
