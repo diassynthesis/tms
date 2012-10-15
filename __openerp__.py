@@ -43,6 +43,7 @@
                     'tms_advance_view.xml',
                     'tms_fuelvoucher_view.xml',
                     'tms_waybill_view.xml',
+                    'tms_expense_view.xml',
                     'tms_factor_view.xml',
                     'tms_history_view.xml',
                     ],

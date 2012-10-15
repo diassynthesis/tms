@@ -31,6 +31,7 @@ import tms_travel
 import tms_fuelvoucher
 import tms_advance
 import tms_waybill
+import tms_expense
 import tms_factor
 import tms_history
 #import logistic_sale

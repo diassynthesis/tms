@@ -156,13 +156,11 @@ class tms_waybill(osv.osv):
 
     _columns = {
         'name': openerp.osv.fields.char('Name', size=64, readonly=True, select=True),
-        'shop_id': openerp.osv.fields.many2one('sale.shop', 'Shop', required=True, readonly=False, states={'confirm': [('readonly', True)],'closed':[('readonly',True)]}),
-        'sequence_id': openerp.osv.fields.many2one('ir.sequence', 'Sequence', required=True, readonly=False, states={'confirm': [('readonly', True)],'closed':[('readonly',True)]}),
-        'travel_ids': openerp.osv.fields.many2many('tms.travel', 'tms_waybill_travel_rel', 'waybill_id', 'travel_id', 'Travels', readonly=False, states={'confirm': [('readonly', True)],'closed':[('readonly',True)]}),
+        'shop_id': openerp.osv.fields.many2one('sale.shop', 'Shop', required=True, readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
+        'sequence_id': openerp.osv.fields.many2one('ir.sequence', 'Sequence', required=True, readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
+        'travel_ids': openerp.osv.fields.many2many('tms.travel', 'tms_waybill_travel_rel', 'waybill_id', 'travel_id', 'Travels', readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
 
-#        'travel_id': openerp.osv.fields.many2one('tms.travel', 'Travel'),
-
-        'travel_id': openerp.osv.fields.function(_get_newer_travel_id, method=True, relation='tms.travel', type="many2one", string='Actual Travel', readonly=True),
+        'travel_id': openerp.osv.fields.function(_get_newer_travel_id, method=True, relation='tms.travel', type="many2one", string='Actual Travel', readonly=True, store=True),
 
         'unit_id': openerp.osv.fields.related('travel_id', 'unit_id', type='many2one', relation='tms.unit', string='Unit', store=True, readonly=True),                
         'trailer1_id': openerp.osv.fields.related('travel_id', 'trailer1_id', type='many2one', relation='tms.unit', string='Trailer 1', store=True, readonly=True),                
@@ -173,18 +171,18 @@ class tms_waybill(osv.osv):
         'departure_id': openerp.osv.fields.related('route_id', 'departure_id', type='many2one', relation='tms.place', string='Departure', store=True, readonly=True),                
         'arrival_id': openerp.osv.fields.related('route_id', 'arrival_id', type='many2one', relation='tms.place', string='Arrival', store=True, readonly=True),                
 
-        'origin': openerp.osv.fields.char('Source Document', size=64, help="Reference of the document that generated this Waybill request.",readonly=False, states={'confirm': [('readonly', True)],'closed':[('readonly',True)]}),
-        'client_order_ref': openerp.osv.fields.char('Customer Reference', size=64, readonly=False, states={'confirm': [('readonly', True)],'closed':[('readonly',True)]}),
+        'origin': openerp.osv.fields.char('Source Document', size=64, help="Reference of the document that generated this Waybill request.",readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
+        'client_order_ref': openerp.osv.fields.char('Customer Reference', size=64, readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
         'state': openerp.osv.fields.selection([
             ('draft', 'Pending'),
-            ('approve', 'Approved'),
-            ('confirm', 'Confirmed'),
+            ('approved', 'Approved'),
+            ('confirmed', 'Confirmed'),
             ('cancel', 'Cancelled')
             ], 'Waybill State', readonly=True, help="Gives the state of the Waybill. \n -The exception state is automatically set when a cancel operation occurs in the invoice validation (Invoice Exception) or in the picking list process (Shipping Exception). \nThe 'Waiting Schedule' state is set when the invoice is confirmed but waiting for the scheduler to run on the date 'Ordered Date'.", select=True),
         'billing_policy': openerp.osv.fields.selection([
             ('manual', 'Manual'),
             ('automatic', 'Automatic'),
-            ], 'Billing Policy', readonly=False, states={'confirm': [('readonly', True)],'closed':[('readonly',True)]},
+            ], 'Billing Policy', readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]},
             help="Gives the state of the Waybill. \n -The exception state is automatically set when a cancel operation occurs in the invoice validation (Invoice Exception) or in the picking list process (Shipping Exception). \nThe 'Waiting Schedule' state is set when the invoice is confirmed but waiting for the scheduler to run on the date 'Ordered Date'.", select=True),
 
 
@@ -193,18 +191,18 @@ class tms_waybill(osv.osv):
                                         string='Waybill Type', store=True, help=" - Self: Travel with our own units. \n - Outsourced: Travel without our own units."),
 
 
-        'date_order': openerp.osv.fields.date('Date', required=True, select=True,readonly=False, states={'confirm': [('readonly', True)],'closed':[('readonly',True)]}),
-        'user_id': openerp.osv.fields.many2one('res.users', 'Salesman', select=True, readonly=False, states={'confirm': [('readonly', True)],'closed':[('readonly',True)]}),
+        'date_order': openerp.osv.fields.date('Date', required=True, select=True,readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
+        'user_id': openerp.osv.fields.many2one('res.users', 'Salesman', select=True, readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
 
-        'partner_id': openerp.osv.fields.many2one('res.partner', 'Customer', required=True, change_default=True, select=True, readonly=False, states={'confirm': [('readonly', True)],'closed':[('readonly',True)]}),
-        'pricelist_id': openerp.osv.fields.many2one('product.pricelist', 'Pricelist', required=True, help="Pricelist for Waybill.", readonly=False, states={'confirm': [('readonly', True)],'closed':[('readonly',True)]}),
-        'partner_invoice_id': openerp.osv.fields.many2one('res.partner.address', 'Invoice Address', required=True, help="Invoice address for current Waybill.", readonly=False, states={'confirm': [('readonly', True)],'closed':[('readonly',True)]}),
-        'partner_order_id': openerp.osv.fields.many2one('res.partner.address', 'Ordering Contact', required=True,  help="The name and address of the contact who requested the order or quotation.", readonly=False, states={'confirm': [('readonly', True)],'closed':[('readonly',True)]}),
-        'account_analytic_id': openerp.osv.fields.many2one('account.analytic.account', 'Analytic Account',  help="The analytic account related to a Waybill.", readonly=False, states={'confirm': [('readonly', True)],'closed':[('readonly',True)]}),
-        'departure_address_id': openerp.osv.fields.many2one('res.partner.address', 'Departure Address', required=True, help="Departure address for current Waybill.", readonly=False, states={'confirm': [('readonly', True)],'closed':[('readonly',True)]}),
-        'arrival_address_id': openerp.osv.fields.many2one('res.partner.address', 'Arrival Address', required=True, help="Arrival address for current Waybill.", readonly=False, states={'confirm': [('readonly', True)],'closed':[('readonly',True)]}),
-        'upload_point': openerp.osv.fields.char('Upload Point', size=128, readonly=False, states={'confirm': [('readonly', True)],'closed':[('readonly',True)]}),
-        'download_point': openerp.osv.fields.char('Download Point', size=128, required=False, readonly=False, states={'confirm': [('readonly', True)],'closed':[('readonly',True)]}),
+        'partner_id': openerp.osv.fields.many2one('res.partner', 'Customer', required=True, change_default=True, select=True, readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
+        'pricelist_id': openerp.osv.fields.many2one('product.pricelist', 'Pricelist', required=True, help="Pricelist for Waybill.", readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
+        'partner_invoice_id': openerp.osv.fields.many2one('res.partner.address', 'Invoice Address', required=True, help="Invoice address for current Waybill.", readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
+        'partner_order_id': openerp.osv.fields.many2one('res.partner.address', 'Ordering Contact', required=True,  help="The name and address of the contact who requested the order or quotation.", readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
+        'account_analytic_id': openerp.osv.fields.many2one('account.analytic.account', 'Analytic Account',  help="The analytic account related to a Waybill.", readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
+        'departure_address_id': openerp.osv.fields.many2one('res.partner.address', 'Departure Address', required=True, help="Departure address for current Waybill.", readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
+        'arrival_address_id': openerp.osv.fields.many2one('res.partner.address', 'Arrival Address', required=True, help="Arrival address for current Waybill.", readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
+        'upload_point': openerp.osv.fields.char('Upload Point', size=128, readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
+        'download_point': openerp.osv.fields.char('Download Point', size=128, required=False, readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
         'shipped': openerp.osv.fields.boolean('Delivered', readonly=True, help="It indicates that the Waybill has been delivered. This field is updated only after the scheduler(s) have been launched."),
 
         'invoice_id': openerp.osv.fields.many2one('account.invoice','Invoice Record', readonly=True),
@@ -212,14 +210,14 @@ class tms_waybill(osv.osv):
         'invoice_paid':  openerp.osv.fields.function(_invoiced, method=True, string='Paid', type='boolean', multi='invoiced', store=True),
         'invoice_name':  openerp.osv.fields.function(_invoiced, method=True, string='Invoice', type='char', size=64, multi='invoiced', store=True),
 
-        'waybill_line': openerp.osv.fields.one2many('tms.waybill.line', 'waybill_id', 'Waybill Lines', readonly=False, states={'confirm': [('readonly', True)],'closed':[('readonly',True)]}),
-        'waybill_shipped_product': openerp.osv.fields.one2many('tms.waybill.shipped_product', 'waybill_id', 'Shipped Products', readonly=False, states={'confirm': [('readonly', True)],'closed':[('readonly',True)]}),
+        'waybill_line': openerp.osv.fields.one2many('tms.waybill.line', 'waybill_id', 'Waybill Lines', readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
+        'waybill_shipped_product': openerp.osv.fields.one2many('tms.waybill.shipped_product', 'waybill_id', 'Shipped Products', readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
         'product_qty':openerp.osv.fields.function(_shipped_product, method=True, string='Product Qty', type='float', digits=(20, 6),  store=True, multi='product_qty'),
         'product_volume':openerp.osv.fields.function(_shipped_product, method=True, string='Product Volume', type='float', digits=(20, 6),  store=True, multi='product_qty'),
         'product_weight':openerp.osv.fields.function(_shipped_product, method=True, string='Product Weight', type='float', digits=(20, 6),  store=True, multi='product_qty'),
         'product_uom_type':openerp.osv.fields.function(_shipped_product, method=True, string='Product UoM Type', type='char', size=64, store=True, multi='product_qty'),
 
-        'waybill_extradata': openerp.osv.fields.one2many('tms.waybill.extradata', 'waybill_id', 'Extra Data Fields', readonly=False, states={'confirm': [('readonly', True)],'closed':[('readonly',True)]}),
+        'waybill_extradata': openerp.osv.fields.one2many('tms.waybill.extradata', 'waybill_id', 'Extra Data Fields', readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
 
 
         'amount_freight': openerp.osv.fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='Freight', type='float',
@@ -256,11 +254,11 @@ class tms_waybill(osv.osv):
         'drafted_by' : openerp.osv.fields.many2one('res.users', 'Drafted by', readonly=True),
         'date_drafted': openerp.osv.fields.datetime('Date Drafted', readonly=True),
 
-        'notes': openerp.osv.fields.text('Notes', readonly=False, states={'confirm': [('readonly', True)],'closed':[('readonly',True)]}),
+        'notes': openerp.osv.fields.text('Notes', readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
 
         
-        'payment_term': openerp.osv.fields.many2one('account.payment.term', 'Payment Term', readonly=False, states={'confirm': [('readonly', True)],'closed':[('readonly',True)]}),
-        'fiscal_position': openerp.osv.fields.many2one('account.fiscal.position', 'Fiscal Position', readonly=False, states={'confirm': [('readonly', True)],'closed':[('readonly',True)]}),
+        'payment_term': openerp.osv.fields.many2one('account.payment.term', 'Payment Term', readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
+        'fiscal_position': openerp.osv.fields.many2one('account.fiscal.position', 'Fiscal Position', readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
         'company_id': openerp.osv.fields.related('shop_id','company_id',type='many2one',relation='res.company',string='Company',store=True,readonly=True),
 
 
@@ -359,7 +357,7 @@ class tms_waybill(osv.osv):
             for line in waybill.waybill_line:
                 if line.control:
                     line_obj.unlink(cr, uid, [line.id])
-            result = factor.calculate(cr, uid, 'waybill', ids)
+            result = factor.calculate(cr, uid, 'waybill', ids, 'client')
             print result
 
             xline = {
@@ -387,7 +385,6 @@ class tms_waybill(osv.osv):
 
     def create(self, cr, uid, vals, context=None):
         res = super(tms_waybill, self).create(cr, uid, vals, context=context)
-        print res
         return res
 
 
@@ -512,7 +509,7 @@ class tms_waybill(osv.osv):
                 wf_service.trg_validate(uid, 'account.invoice', waybill.invoice_id.id, 'invoice_cancel', cr)
                 invoice_obj=self.pool.get('account.invoice')
                 invoice_obj.unlink(cr, uid, [waybill.invoice_id.id], context=None)
-#            elif waybill.state in ('draft','approved','confirm') and waybill.travel_id.state in ('closed'):
+#            elif waybill.state in ('draft','approved','confirmed') and waybill.travel_id.state in ('closed'):
 #                raise osv.except_osv(
 #                        _('Could not cancel Advance !'),
 #                        _('This Waybill is already linked to Travel Expenses record'))
@@ -534,7 +531,7 @@ class tms_waybill(osv.osv):
                 else:
                     seq_number = waybill.name
 
-                self.write(cr, uid, ids, {'name':seq_number, 'state':'approve', 'approved_by' : uid, 'date_approved':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
+                self.write(cr, uid, ids, {'name':seq_number, 'state':'approved', 'approved_by' : uid, 'date_approved':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
                 for (id,name) in self.name_get(cr, uid, ids):
                     message = _("Waybill '%s' is set to approved.") % name
                 self.log(cr, uid, id, message)
@@ -546,9 +543,10 @@ class tms_waybill(osv.osv):
             if waybill.amount_untaxed <= 0.0:
                 raise osv.except_osv(_('Could not confirm Waybill !'),_('Total Amount must be greater than zero.'))
             elif waybill.billing_policy == 'automatic':
+                print "Entrando para generar la factura en automatico..."
                 wb_invoice = self.pool.get('tms.waybill.invoice')
-                wb_invoice.makeInvoices(cr, uid, ids, context=None)
-            self.write(cr, uid, ids, {'state':'confirm', 'confirmed_by' : uid, 'date_confirmed':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
+                wb_invoice.makeWaybillInvoices(cr, uid, ids, context=None)
+            self.write(cr, uid, ids, {'state':'confirmed', 'confirmed_by' : uid, 'date_confirmed':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
             for (id,name) in self.name_get(cr, uid, ids, context=None):
                 message = _("Waybill '%s' is set to confirmed.") % name
                 self.log(cr, uid, id, message)
@@ -891,7 +889,7 @@ class tms_waybill_cancel(osv.osv_memory):
                         wf_service.trg_validate(uid, 'account.invoice', waybill.invoice_id.id, 'invoice_cancel', cr)
                         invoice_obj=self.pool.get('account.invoice')
                         invoice_obj.unlink(cr, uid, [waybill.invoice_id.id], context=None)
-        #            elif waybill.state in ('draft','approved','confirm') and waybill.travel_id.state in ('closed'):
+        #            elif waybill.state in ('draft','approved','confirmed') and waybill.travel_id.state in ('closed'):
         #                raise osv.except_osv(
         #                        _('Could not cancel Advance !'),
         #                        _('This Waybill is already linked to Travel Expenses record'))
@@ -922,7 +920,7 @@ class tms_waybill_invoice(osv.osv_memory):
     _name = 'tms.waybill.invoice'
     _description = 'Make Invoices from Waybill'
 
-    def makeInvoices(self, cr, uid, ids, context=None):
+    def makeWaybillInvoices(self, cr, uid, ids, context=None):
 
         """
              To get Waybills and create Invoices
@@ -958,7 +956,7 @@ class tms_waybill_invoice(osv.osv_memory):
 #            partner = partner_obj.browse(cr,uid,user_obj.browse(cr,uid,[uid])[0].company_id.partner_id.id)
 
 
-            cr.execute("select distinct partner_id, pricelist_id from tms_waybill where invoice_id is null and (state='confirm' or (state='approve' and billing_policy='automatic')) and id IN %s",(tuple(record_ids),))
+            cr.execute("select distinct partner_id, pricelist_id from tms_waybill where invoice_id is null and (state='confirmed' or (state='approved' and billing_policy='automatic')) and id IN %s",(tuple(record_ids),))
             data_ids = cr.fetchall()
             if not len(data_ids):
                 raise osv.except_osv(_('Warning !'),
@@ -968,7 +966,7 @@ class tms_waybill_invoice(osv.osv_memory):
             for data in data_ids:
                 partner = partner_obj.browse(cr,uid,data[0])
  
-                cr.execute("select id from tms_waybill where invoice_id is null and (state='confirm' or (state='approve' and billing_policy='automatic')) and partner_id=" + str(data[0]) + ' and pricelist_id=' + str(data[1]) + " and id IN %s", (tuple(record_ids),))
+                cr.execute("select id from tms_waybill where invoice_id is null and (state='confirmed' or (state='approved' and billing_policy='automatic')) and partner_id=" + str(data[0]) + ' and pricelist_id=' + str(data[1]) + " and id IN %s", (tuple(record_ids),))
                 waybill_ids = filter(None, map(lambda x:x[0], cr.fetchall()))
                 
                 inv_lines = []
@@ -1044,7 +1042,7 @@ class tms_waybill_invoice(osv.osv_memory):
                 invoices.append(inv_id)
 
                 waybill_obj.write(cr,uid,waybill_ids, {'invoice_id': inv_id})   
-                waybill_obj.write(cr,uid,waybill_ids, {'invoice_id': inv_id, 'state':'confirm', 'confirmed_by':uid, 'date_confirmed':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})               
+                waybill_obj.write(cr,uid,waybill_ids, {'invoice_id': inv_id, 'state':'confirmed', 'confirmed_by':uid, 'date_confirmed':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})               
 
 
 

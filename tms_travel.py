@@ -55,7 +55,42 @@ class tms_travel(osv.osv):
             }
         return res
 
-    
+    def _validate_for_expense_rec(self, cr, uid, ids, field_name, arg, context=None):
+        res = {}
+        for record in self.browse(cr, uid, ids, context=context):
+            res[record.id] = {
+                'waybill_income': 0.0,
+            }
+
+            advance_ok = False
+            fuelvoucher_ok = False
+            waybill_ok = False
+            waybill_income = 0.0
+
+            cr.execute("select id from tms_advance where travel_id=%s and state not in ('cancel','confirmed')",ids)
+            data_ids = cr.fetchall()
+            advance_ok = not len(data_ids)
+
+            cr.execute("select id from tms_fuelvoucher where travel_id=%s and state not in ('cancel','confirmed')",ids)
+            data_ids = cr.fetchall()
+            fuelvoucher_ok = not len(data_ids)
+
+            cr.execute("select id from tms_waybill where travel_id=%s and state not in ('cancel','confirmed')",ids)
+            data_ids = cr.fetchall()
+            waybill_ok = not len(data_ids)
+
+            cr.execute("select sum(amount_untaxed) from tms_waybill where travel_id=%s and state='confirmed'",ids)
+            data_ids= filter(None, map(lambda x:x[0], cr.fetchall()))
+            print data_ids
+            waybill_income = 0.0 if not len(data_ids) else data_ids[0]
+                        
+            res[record.id] = {
+                    'advance_ok_for_expense_rec': advance_ok,
+                    'fuelvoucher_ok_for_expense_rec': fuelvoucher_ok,
+                    'waybill_ok_for_expense_rec': waybill_ok,
+                    'waybill_income': waybill_income,
+            }
+        return res
     
     def _travel_duration(self, cr, uid, ids, field_name, arg, context=None):
         res = {}
@@ -93,10 +128,10 @@ class tms_travel(osv.osv):
         return res
     
     _columns = {
-        'shop_id': openerp.osv.fields.many2one('sale.shop', 'Shop', required=True, readonly=False, states={'cancel':[('readonly',True)], 'ended':[('readonly',True)], 'closed':[('readonly',True)]}),
+        'shop_id': openerp.osv.fields.many2one('sale.shop', 'Shop', required=True, readonly=False, states={'cancel':[('readonly',True)], 'done':[('readonly',True)], 'closed':[('readonly',True)]}),
         'company_id': openerp.osv.fields.related('shop_id','company_id',type='many2one',relation='res.company',string='Company',store=True,readonly=True),
         'name': openerp.osv.fields.char('Travel Number', size=64, required=False),
-        'state': openerp.osv.fields.selection([('draft','Pending'), ('progress','In Progress'), ('ended','Ended'), ('closed','Closed'), ('cancel','Cancelled')], 'State', readonly=True),
+        'state': openerp.osv.fields.selection([('draft','Pending'), ('progress','In Progress'), ('done','Done'), ('closed','Closed'), ('cancel','Cancelled')], 'State', readonly=True),
         'route_id': openerp.osv.fields.many2one('tms.route', 'Route', required=True, states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
         'kit_id': openerp.osv.fields.many2one('tms.unit.kit', 'Kit', required=False, states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
         'unit_id': openerp.osv.fields.many2one('tms.unit', 'Transportation Unit', required=True, domain=[('fleet_type', '=', 'tractor')], states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
@@ -114,10 +149,13 @@ class tms_travel(osv.osv):
                                                             help="Travel Scheduled duration in hours"),
         'travel_duration_real': openerp.osv.fields.function(_travel_duration, string='Duration Real', method=True, store=True, type='float', digits=(18,6), multi='travel_duration',
                                                                 help="Travel Real duration in hours"),
-
-
         'distance_route': openerp.osv.fields.function(_route_data, string='Route Distance (mi./km)', method=True, store=True, type='float', digits=(18,6), multi='distance_route'),
         'fuel_efficiency_expected': openerp.osv.fields.function(_route_data, string='Fuel Efficiency Expected', method=True, store=True, type='float', digits=(18,6), multi='distance_route'),
+
+        'advance_ok_for_expense_rec': openerp.osv.fields.function(_validate_for_expense_rec, string='Advance OK', method=True, type='boolean',  multi='advance_ok_for_expense_rec'),
+        'fuelvoucher_ok_for_expense_rec': openerp.osv.fields.function(_validate_for_expense_rec, string='Fuel Voucher OK', method=True,  type='boolean',  multi='advance_ok_for_expense_rec'),
+        'waybill_ok_for_expense_rec': openerp.osv.fields.function(_validate_for_expense_rec, string='Waybill OK', method=True,  type='boolean',  multi='advance_ok_for_expense_rec'),
+        'waybill_income': openerp.osv.fields.function(_validate_for_expense_rec, string='Income', method=True, type='float', digits=(18,6), multi='advance_ok_for_expense_rec'),
 
         'distance_driver': openerp.osv.fields.float('Distance traveled by driver (mi./km)', required=False, digits=(14,4), states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
         'distance_loaded': openerp.osv.fields.float('Distance Loaded (mi./km)', required=False, digits=(14,4), states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
@@ -144,8 +182,8 @@ class tms_travel(osv.osv):
         'date_cancelled': openerp.osv.fields.datetime('Date Cancelled', readonly=True),
         'dispatched_by' : openerp.osv.fields.many2one('res.users', 'Dispatched by', readonly=True),
         'date_dispatched': openerp.osv.fields.datetime('Date Dispatched', readonly=True),
-        'ended_by' : openerp.osv.fields.many2one('res.users', 'Ended by', readonly=True),
-        'date_ended': openerp.osv.fields.datetime('Date Ended', readonly=True),
+        'done_by' : openerp.osv.fields.many2one('res.users', 'Ended by', readonly=True),
+        'date_done': openerp.osv.fields.datetime('Date Ended', readonly=True),
         'closed_by' : openerp.osv.fields.many2one('res.users', 'Closed by', readonly=True),
         'date_closed': openerp.osv.fields.datetime('Date Closed', readonly=True),
         'drafted_by' : openerp.osv.fields.many2one('res.users', 'Drafted by', readonly=True),
@@ -175,18 +213,66 @@ class tms_travel(osv.osv):
         kit = self.pool.get('tms.unit.kit').browse(cr, uid, kit_id)
         return {'value' : {'unit_id': kit.unit_id.id, 'trailer1_id': kit.trailer1_id.id, 'dolly_id': kit.dolly_id.id, 'trailer2_id': kit.trailer2_id.id}}
 
-    
+
+    def get_factors_from_route(self, cr, uid, ids, context=None):        
+        factor_obj = self.pool.get('tms.factor')
+        factor_ids = factor_obj.search(cr, uid, [('travel_id', '=', ids[0])], context=None)
+        if factor_ids:
+            res = factor_obj.unlink(cr, uid, factor_ids)
+        factors = []
+        for factor in self.browse(cr, uid, ids)[0].route_id.expense_driver_factor:
+            x = {
+                        'name'          : factor.name,
+                        'category'      : 'driver',
+                        'factor_type'   : factor.factor_type,
+                        'range_start'   : factor.range_start,
+                        'range_end'     : factor.range_end,
+                        'factor'        : factor.factor,
+                        'fixed_amount'  : factor.fixed_amount,
+                        'mixed'         : factor.mixed,
+                        'special_formula': factor.special_formula,
+                        'travel_id'     : ids[0],
+                        }
+            factor_obj.create(cr, uid, x)
+        return True
+
+
+    def write(self, cr, uid, ids, vals, context=None):
+        super(tms_travel, self).write(cr, uid, ids, vals, context=context)
+        self.get_factors_from_route(cr, uid, ids, context=context)
+        return True
+
+
     def onchange_route_id(self, cr, uid, ids, route_id, unit_id, trailer1_id, dolly_id, trailer2_id):
         if not route_id:
             return {'value': {'distance_route': 0.00, 'fuel_efficiency_expected': 0.00}}
-        
+        val = {}        
         route = self.pool.get('tms.route').browse(cr, uid, route_id)
         distance  = route.distance
         fuel_efficiency_expected = route.fuel_efficiency_drive_unit if not trailer1_id else route.fuel_efficiency_1trailer if not trailer2_id else route.fuel_efficiency_2trailer
+        
+        factors = []
+        for factor in route.expense_driver_factor:
+            x = (0,0, {
+                        'name'          : factor.name,
+                        'category'      : 'driver',
+                        'factor_type'   : factor.factor_type,
+                        'range_start'   : factor.range_start,
+                        'range_end'     : factor.range_end,
+                        'factor'        : factor.factor,
+                        'fixed_amount'  : factor.fixed_amount,
+                        'mixed'         : factor.mixed,
+                        'special_formula': factor.special_formula,
+#                        'travel_id'     : ids[0],
+                        })
+            factors.append(x)
+
+
         val = {
-            'distance_route': distance,
-            'fuel_efficiency_expected': fuel_efficiency_expected,
-        }
+            'distance_route'            : distance,
+            'fuel_efficiency_expected'  : fuel_efficiency_expected,
+            'expense_driver_factor'     : factors,
+            }
         return {'value': val}
 
     def onchange_dates(self, cr, uid, ids, date_start, date_end, date_start_real, date_end_real):
@@ -267,7 +353,7 @@ class tms_travel(osv.osv):
 
     def action_end(self, cr, uid, ids, context=None):
 
-        self.write(cr,uid,ids,{ 'state':'ended',
+        self.write(cr,uid,ids,{ 'state':'done',
                                 'ended_by':uid,
                                 'date_ended':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT),
                                 'date_end_real':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})

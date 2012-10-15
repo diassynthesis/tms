@@ -74,22 +74,22 @@ class tms_fuelvoucher(osv.osv):
     
     _columns = {
         'name': openerp.osv.fields.char('Fuel Voucher', size=64, required=False),
-        'state': openerp.osv.fields.selection([('draft','Draft'), ('approve','Approved'), ('confirm','Confirmed'), ('closed','Closed'), ('cancel','Cancelled')], 'State', readonly=True),
-        'date': openerp.osv.fields.date('Date', states={'cancel':[('readonly',True)], 'confirm':[('readonly',True)],'closed':[('readonly',True)]}, required=True),
-        'travel_id':openerp.osv.fields.many2one('tms.travel', 'Travel', required=True, states={'cancel':[('readonly',True)], 'confirm':[('readonly',True)],'closed':[('readonly',True)]}),
+        'state': openerp.osv.fields.selection([('draft','Draft'), ('approved','Approved'), ('confirmed','Confirmed'), ('closed','Closed'), ('cancel','Cancelled')], 'State', readonly=True),
+        'date': openerp.osv.fields.date('Date', states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}, required=True),
+        'travel_id':openerp.osv.fields.many2one('tms.travel', 'Travel', required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
         'unit_id': openerp.osv.fields.related('travel_id', 'unit_id', type='many2one', relation='tms.unit', string='Unit', store=True, readonly=True),                
         'employee_id': openerp.osv.fields.related('travel_id', 'employee_id', type='many2one', relation='hr.employee', string='Driver', store=True, readonly=True),                
         'shop_id': openerp.osv.fields.related('travel_id', 'shop_id', type='many2one', relation='sale.shop', string='Shop', store=True, readonly=True),                
-        'partner_id': openerp.osv.fields.many2one('res.partner', 'Fuel Supplier', domain=[('tms_category', '=', 'fuel')],  required=True, states={'cancel':[('readonly',True)], 'confirm':[('readonly',True)],'closed':[('readonly',True)]}),
-        'product_id': openerp.osv.fields.many2one('product.product', 'Product', domain=[('purchase_ok', '=', True),('tms_category','=','fuel')],  required=True, states={'cancel':[('readonly',True)], 'confirm':[('readonly',True)],'closed':[('readonly',True)]}),
-        'product_uom_qty': openerp.osv.fields.float('Quantity', digits=(16, 4), required=True, states={'cancel':[('readonly',True)], 'confirm':[('readonly',True)],'closed':[('readonly',True)]}),
+        'partner_id': openerp.osv.fields.many2one('res.partner', 'Fuel Supplier', domain=[('tms_category', '=', 'fuel')],  required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
+        'product_id': openerp.osv.fields.many2one('product.product', 'Product', domain=[('purchase_ok', '=', True),('tms_category','=','fuel')],  required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
+        'product_uom_qty': openerp.osv.fields.float('Quantity', digits=(16, 4), required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
         'product_uom': openerp.osv.fields.many2one('product.uom', 'UoM ', required=True),
         'price_unit': openerp.osv.fields.function(_amount_calculation, method=True, string='Unit Price', type='float', digits_compute= dp.get_precision('Sale Price'), multi='price_unit', store=True),
         'price_subtotal': openerp.osv.fields.function(_amount_calculation, method=True, string='SubTotal', type='float', digits_compute= dp.get_precision('Sale Price'), multi='price_unit', store=True),
-        'tax_amount': openerp.osv.fields.float('Taxes', required=True, digits_compute= dp.get_precision('Sale Price'), states={'cancel':[('readonly',True)], 'confirm':[('readonly',True)],'closed':[('readonly',True)]}),
+        'tax_amount': openerp.osv.fields.float('Taxes', required=True, digits_compute= dp.get_precision('Sale Price'), states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
         'special_tax_amount' : openerp.osv.fields.function(_amount_calculation, method=True, string='IEPS', type='float', digits_compute= dp.get_precision('Sale Price'), multi='price_unit', store=True),
-        'price_total': openerp.osv.fields.float('Total', required=True, digits_compute= dp.get_precision('Sale Price'), states={'cancel':[('readonly',True)], 'confirm':[('readonly',True)],'closed':[('readonly',True)]}),
-        'notes': openerp.osv.fields.text('Notes', states={'cancel':[('readonly',True)], 'confirm':[('readonly',True)],'closed':[('readonly',True)]}),
+        'price_total': openerp.osv.fields.float('Total', required=True, digits_compute= dp.get_precision('Sale Price'), states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
+        'notes': openerp.osv.fields.text('Notes', states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
 
         'create_uid' : openerp.osv.fields.many2one('res.users', 'Created by', readonly=True),
         'create_date': openerp.osv.fields.datetime('Creation Date', readonly=True, select=True),        
@@ -107,7 +107,7 @@ class tms_fuelvoucher(osv.osv):
         'invoiced':  openerp.osv.fields.function(_invoiced, method=True, string='Invoiced', type='boolean', multi='invoiced'),               
         'invoice_paid':  openerp.osv.fields.function(_invoiced, method=True, string='Paid', type='boolean', multi='invoiced'),
         'invoice_name':  openerp.osv.fields.function(_invoiced, method=True, string='Invoice', type='char', size=64, multi='invoiced', store=True),
-        'currency_id': openerp.osv.fields.many2one('res.currency', 'Currency', required=True, states={'cancel':[('readonly',True)], 'confirm':[('readonly',True)],'closed':[('readonly',True)]}),
+        'currency_id': openerp.osv.fields.many2one('res.currency', 'Currency', required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
         }
     
     _defaults = {
@@ -204,7 +204,7 @@ class tms_fuelvoucher(osv.osv):
     def action_approve(self, cr, uid, ids, context=None):
         for fuelvoucher in self.browse(cr, uid, ids, context=context):
             if fuelvoucher.state in ('draft'):
-                self.write(cr, uid, ids, {'state':'approve', 'approved_by' : uid, 'date_approved':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
+                self.write(cr, uid, ids, {'state':'approved', 'approved_by' : uid, 'date_approved':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
                 for (id,name) in self.name_get(cr, uid, ids):
                     message = _("Fuel Voucher '%s' is set to approve.") % name
                 self.log(cr, uid, id, message)
@@ -217,7 +217,7 @@ class tms_fuelvoucher(osv.osv):
                         _('Could not confirm Fuel Voucher !'),
                         _('Product quantity must be greater than zero.'))
 
-            self.write(cr,uid,ids,{'state':'confirm', 'confirmed_by':uid, 'date_confirmed':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
+            self.write(cr,uid,ids,{'state':'confirmed', 'confirmed_by':uid, 'date_confirmed':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
             for (id,name) in self.name_get(cr, uid, ids):
                 message = _("Fuel Voucher '%s' is set to confirmed.") % name
                 self.log(cr, uid, id, message)
@@ -282,7 +282,7 @@ class tms_fuelvoucher_invoice(osv.osv_memory):
             journal_id = account_jrnl_obj.search(cr, uid, [('type', '=', 'purchase')], context=None)
             journal_id = journal_id and journal_id[0] or False
 
-            cr.execute("select distinct partner_id, currency_id from tms_fuelvoucher where invoice_id is null and state='confirm' and id IN %s",(tuple(record_ids),))
+            cr.execute("select distinct partner_id, currency_id from tms_fuelvoucher where invoice_id is null and state='confirmed' and id IN %s",(tuple(record_ids),))
 
             data_ids = cr.fetchall()
             if not len(data_ids):
@@ -293,13 +293,13 @@ class tms_fuelvoucher_invoice(osv.osv_memory):
             for data in data_ids:
                 partner = partner_obj.browse(cr,uid,data[0])
 
-                cr.execute("select id from tms_fuelvoucher where invoice_id is null and state='confirm' and partner_id=" + str(data[0]) + ' and currency_id=' + str(data[1]) + " and id IN %s", (tuple(record_ids),))
+                cr.execute("select id from tms_fuelvoucher where invoice_id is null and state='confirmed' and partner_id=" + str(data[0]) + ' and currency_id=' + str(data[1]) + " and id IN %s", (tuple(record_ids),))
                 fuelvoucher_ids = filter(None, map(lambda x:x[0], cr.fetchall()))
                 
                 inv_lines = []
                 notes = "Conciliacion de Vales de Combustible. "
                 for line in fuelvoucher_obj.browse(cr,uid,fuelvoucher_ids):
-                    if (not line.invoiced) and (line.state not in ('draft','approve','cancel')):                      
+                    if (not line.invoiced) and (line.state not in ('draft','approved','cancel')):                      
                         if line.product_id:
                             a = line.product_id.product_tmpl_id.property_account_expense.id
                             if not a:

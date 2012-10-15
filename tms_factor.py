@@ -26,14 +26,25 @@ import decimal_precision as dp
 from tools.translate import _
 import openerp
 
-# Extra data fields for Waybills & Negotiations
+# Extra data fields for Waybills & Agreement
 # Factors
 class tms_factor(osv.osv):
     _name = "tms.factor"
     _description = "Factors to calculate Payment (Driver/Supplier) & Client charge"
 
+    def _get_total(self, cr, uid, ids, field_name, arg, context=None):
+        res = {}
+        total = 0.0
+        for factor in self.browse(cr, uid, ids, context=context):
+            if factor.factor_type != 'special':
+                res[factor.id] = factor.factor * factor.variable_amount + (factor.fixed_amount if factor.mixed else 0.0)
+            else: 
+                res[factor.id] = 0.0 # Pendiente generar cálculo especial
+        return res
+
+
     _columns = {        
-        'name': openerp.osv.fields.char('Name', size=30, required=True),
+        'name': openerp.osv.fields.char('Name', size=64, required=True),
         'category': openerp.osv.fields.selection([
             ('driver', 'Driver'),
             ('customer', 'Customer'),
@@ -69,30 +80,52 @@ For next option you only have to type Special Python Code:
         'mixed'         : openerp.osv.fields.boolean('Mixed'),
         'special_formula': openerp.osv.fields.text('Special (Python Code)'),
 
+        'variable_amount' : openerp.osv.fields.float('Variable',  digits=(16, 4)),
+        'total_amount'  : openerp.osv.fields.function(_get_total, method=True, digits_compute=dp.get_precision('Sale Price'), string='Total', type='float',
+                                            store=True),
+
         'waybill_id': openerp.osv.fields.many2one('tms.waybill', 'Waybill', required=False, ondelete='cascade'), #, select=True, readonly=True),
-#        'route_id': openerp.osv.fields.many2one('tms.route', 'Route', required=False, ondelete='cascade'), #, select=True, readonly=True),
-#        'travel_id': openerp.osv.fields.many2one('tms.travel', 'Travel', required=False, ondelete='cascade'), #, select=True, readonly=True),
-#        'negotiation_id': openerp.osv.fields.many2one('tms.negotiation', 'Negotiation', required=False, ondelete='cascade'),# select=True, readonly=True),
+        'expense_id': openerp.osv.fields.many2one('tms.expense', 'Expense', required=False, ondelete='cascade'), #, select=True, readonly=True),
+        'route_id': openerp.osv.fields.many2one('tms.route', 'Route', required=False, ondelete='cascade'), #, select=True, readonly=True),
+        'travel_id': openerp.osv.fields.many2one('tms.travel', 'Travel', required=False, ondelete='cascade'), #, select=True, readonly=True),
+#        'agreement_id': openerp.osv.fields.many2one('tms.negotiation', 'Negotiation', required=False, ondelete='cascade'),# select=True, readonly=True),
         'sequence': openerp.osv.fields.integer('Sequence', help="Gives the sequence calculation for these factors."),
         'notes': openerp.osv.fields.text('Notes'),
 
     }
 
     _defaults = {
-        'mixed': False,
-        'sequence': 10,
+        'mixed'             : False,
+        'sequence'          : 10,
+        'variable_amount'   : 0.0,
     }
 
     _order = "sequence"
 
+    def on_change_factor_type(self, cr, uid, ids, factor_type):
+        if not factor_type:
+            return {'value': {'name': False}}
+        values = {
+                    'distance'  : _('Distance (Km/Mi)'),
+                    'weight'    : _('Weight'),
+                    'travel'    : _('Travel'),
+                    'qty'       : _('Quantity'),
+                    'volume'    : _('Volume'),
+                    'percent'   : _('Income Percent'),
+                    'special'   : _('Special'),
+            }
+        return {'value': {'name': values[factor_type]}}
 
-    def calculate(self, cr, uid, calc_type, record_ids, context=None):
+    def calculate(self, cr, uid, record_type, record_ids, calc_type=None,  context=None):
         result = 0.0
-        if calc_type == 'waybill':
-            waybills = self.pool.get('tms.waybill')
-            for waybill in waybills.browse(cr, uid, record_ids, context=context):
+
+        if record_type == 'waybill':
+            print "==================================="
+            print "Calculando"
+            waybill_obj = self.pool.get('tms.waybill')
+            for waybill in waybill_obj.browse(cr, uid, record_ids, context=context):
                 print "Recorriendo Waybills"
-                for factor in waybill.waybill_customer_factor:
+                for factor in (waybill.waybill_customer_factor if calc_type=='client' else waybill.expense_driver_factor if calc_type=='driver' else waybill.waybill_supplier_factor):
                     print "Recorriendo factors"
                     print "Tipo de factor: ", factor.factor_type
                     if factor.factor_type == 'distance':
@@ -100,7 +133,7 @@ For next option you only have to type Special Python Code:
                         if not waybill.travel_id.id:
                             raise osv.except_osv(
                                 _('Could calculate Freight amount for Waybill !'),
-                                _('Waybill %s is not assigned to a Travel') % (waybill.name))                        
+                                _('Waybill %s is not assigned to a Travel') % (waybill.name))
                         print waybill.travel_id.route_id.distance
                         x = float(waybill.travel_id.route_id.distance)
 
@@ -133,9 +166,70 @@ For next option you only have to type Special Python Code:
                         x = 0.0
 
                     elif factor.factor_type == 'special':
-                        x = 0.0 # To do: Make calculation
+                        x = 0.0 # To do
 
                     result += ((factor.fixed_amount if (factor.mixed or factor.factor_type=='travel') else 0.0) + (factor.factor * x)) if ((x >= factor.range_start and x <= factor.range_end) or (factor.range_start == factor.range_end == 0.0)) else 0.0
+
+
+        elif record_type == 'expense':
+            print "Entrando a calcular sueldo del Operador..."
+            expense = self.pool.get('tms.expense').browse(cr, uid, record_ids)[0]
+            waybill_obj = self.pool.get('tms.waybill')
+            travel_obj = self.pool.get('tms.travel')
+            travel_ids = travel_obj.search(cr, uid, [('expense_id', '=', record_ids[0])])
+            print "record_ids ", record_ids
+            print "record_ids[0] ", record_ids[0]
+            print "travel_ids ", travel_ids
+            for travel in travel_obj.browse(cr, uid, travel_ids, context=context):
+                print "Recorriendo Viajes"
+                res1 = res2 = weight = qty = volume = x = 0.0
+                if travel.waybill_ids:    
+                    for waybill in travel.waybill_ids:
+                        res1 += self.calculate(cr, uid, 'waybill', [waybill.id], 'driver')
+                        print "res1 :", res1                        
+                        weight  += waybill.product_weight
+                        qty     += waybill.product_qty
+                        volume  += waybill.product_volume
+                print "not res1 :", not res1
+                if not res1:
+                    for factor in travel.expense_driver_factor:                        
+                        print "Recorriendo factors"
+                        print "Tipo de factor: ", factor.factor_type
+                        if factor.factor_type == 'distance':
+                            print "Tipo Distancia"                                                  
+                            print travel.route_id.distance
+                            x = float(travel.route_id.distance)
+
+                        elif factor.factor_type == 'weight':                            
+                            if not weight:
+                                raise osv.except_osv(
+                                    _('Could calculate Freight Amount !'),
+                                    _('Waybills related to Travel %s has no Products with UoM Category = Weight or Product Qty = 0.0') % (travel.name))
+                            x = float(weight)
+
+                        elif factor.factor_type == 'qty':
+                            if not qty:
+                                raise osv.except_osv(
+                                    _('Could calculate Freight Amount !'),
+                                    _('Waybills related to Travel %s has no Products with Quantity > 0.0') % (travel.name))
+                            x = float(qty)
+
+                        elif factor.factor_type == 'volume':
+                            if not volume:
+                                raise osv.except_osv(
+                                    _('Could calculate Freight Amount !'),
+                                    _('Waybills related to Travel %s has no Products with UoM Category = Volume or Product Qty = 0.0') % (travel.name))
+                            x = float(volume)
+
+                        elif factor.factor_type == 'travel':
+                            x = 0.0
+
+                        elif factor.factor_type == 'special':
+                            x = 0.0 # To do: Make calculation
+                        res2 = ((factor.fixed_amount if (factor.mixed or factor.factor_type=='travel') else 0.0) + (factor.factor * x)) if ((x >= factor.range_start and x <= factor.range_end) or (factor.range_start == factor.range_end == 0.0)) else 0.0
+                result += res1 + res2
+                print "result :", result
+
         return result
     
 tms_factor()
@@ -147,13 +241,35 @@ class tms_waybill(osv.osv):
     _columns = {
 
         'waybill_customer_factor': openerp.osv.fields.one2many('tms.factor', 'waybill_id', 'Waybill Customer Charge Factors', domain=[('category', '=', 'customer')],
-                                readonly=False, states={'confirm': [('readonly', True)],'closed':[('readonly',True)]}), 
+                                readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}), 
         'waybill_supplier_factor': openerp.osv.fields.one2many('tms.factor', 'waybill_id', 'Waybill Supplier Payment Factors', domain=[('category', '=', 'supplier')],
-                                readonly=False, states={'confirm': [('readonly', True)],'closed':[('readonly',True)]}),
-        'waybill_driver_factor': openerp.osv.fields.one2many('tms.factor', 'waybill_id', 'Waybill Driver Payment Factors', domain=[('category', '=', 'driver')],
-                                readonly=False, states={'confirm': [('readonly', True)],'closed':[('readonly',True)]}),
+                                readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
+        'expense_driver_factor': openerp.osv.fields.one2many('tms.factor', 'travel_id', 'Travel Driver Payment Factors', domain=[('category', '=', 'driver')],
+                                readonly=False, states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
 
     }
 
 tms_waybill()
+
+class tms_travel(osv.osv):
+    _inherit = 'tms.travel'
+
+    _columns = {
+        'expense_driver_factor': openerp.osv.fields.one2many('tms.factor', 'travel_id', 'Travel Driver Payment Factors', domain=[('category', '=', 'driver')],
+                                readonly=False, states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
+
+    }
+
+tms_travel()
+
+class tms_route(osv.osv):
+    _inherit = 'tms.route'
+
+    _columns = {
+        'expense_driver_factor': openerp.osv.fields.one2many('tms.factor', 'route_id', 'Travel Driver Payment Factors', domain=[('category', '=', 'driver')],
+                                readonly=False),
+
+    }
+
+tms_travel()
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

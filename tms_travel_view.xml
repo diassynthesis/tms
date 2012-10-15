@@ -132,6 +132,13 @@ TMS.travel
                         </page>
                         <page string="Waybills">
                         </page>
+						<page string="Factor Driver">
+                            <separator string="Driver Salary Factors" colspan="4"/>
+                            <field name="expense_driver_factor" 
+                                    context="{'default_travel_id': active_id,'default_category':'driver'}" 
+                                    domain="[('category','=','driver')]"
+                                    colspan="4" nolabel="1"/>
+						</page>
                         <page string="History">
                         </page>
                         <page string="Notes">
@@ -163,8 +170,8 @@ TMS.travel
                             <field name="create_date" readonly="1" />
                             <field name="dispatched_by" readonly="1" />
                             <field name="date_dispatched" readonly="1" />
-                            <field name="ended_by" readonly="1" />
-                            <field name="date_ended" readonly="1" />
+                            <field name="done_by" readonly="1" />
+                            <field name="date_done" readonly="1" />
                             <field name="closed_by" readonly="1" />
                             <field name="date_closed" readonly="1" />
                             <field name="cancelled_by" readonly="1" />

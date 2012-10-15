@@ -55,18 +55,18 @@ class tms_advance(osv.osv):
     
     _columns = {
         'name': openerp.osv.fields.char('Anticipo', size=64, required=False),
-        'state': openerp.osv.fields.selection([('draft','Draft'), ('approved','Approved'), ('confirm','Confirmed'), ('closed','Closed'), ('cancel','Cancelled')], 'State', readonly=True),
-        'date': openerp.osv.fields.date('Date', states={'cancel':[('readonly',True)], 'confirm':[('readonly',True)],'closed':[('readonly',True)]}, required=True),
-        'travel_id':openerp.osv.fields.many2one('tms.travel', 'Travel', required=True, states={'cancel':[('readonly',True)], 'confirm':[('readonly',True)],'closed':[('readonly',True)]}),
+        'state': openerp.osv.fields.selection([('draft','Draft'), ('approved','Approved'), ('confirmed','Confirmed'), ('closed','Closed'), ('cancel','Cancelled')], 'State', readonly=True),
+        'date': openerp.osv.fields.date('Date', states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}, required=True),
+        'travel_id':openerp.osv.fields.many2one('tms.travel', 'Travel', required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
         'unit_id': openerp.osv.fields.related('travel_id', 'unit_id', type='many2one', relation='tms.unit', string='Unit', store=True, readonly=True),                
         'employee_id': openerp.osv.fields.related('travel_id', 'employee_id', type='many2one', relation='hr.employee', string='Driver', store=True, readonly=True),                
         'shop_id': openerp.osv.fields.related('travel_id', 'shop_id', type='many2one', relation='sale.shop', string='Shop', store=True, readonly=True),
-        'product_id': openerp.osv.fields.many2one('product.product', 'Product', domain=[('purchase_ok', '=', 1),('tms_category','=','real_expense')],  required=True, states={'cancel':[('readonly',True)], 'confirm':[('readonly',True)],'closed':[('readonly',True)]}),
-        'product_uom_qty': openerp.osv.fields.float('Quantity', digits=(16, 4), required=True, states={'cancel':[('readonly',True)], 'confirm':[('readonly',True)],'closed':[('readonly',True)]}),
-        'product_uom': openerp.osv.fields.many2one('product.uom', 'Unit of Measure ', required=True, states={'cancel':[('readonly',True)], 'confirm':[('readonly',True)],'closed':[('readonly',True)]}),
-        'total_amount': openerp.osv.fields.float('Amount', required=True, digits_compute= dp.get_precision('Sale Price'), states={'cancel':[('readonly',True)], 'confirm':[('readonly',True)],'closed':[('readonly',True)]}),
+        'product_id': openerp.osv.fields.many2one('product.product', 'Product', domain=[('purchase_ok', '=', 1),('tms_category','=','real_expense')],  required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
+        'product_uom_qty': openerp.osv.fields.float('Quantity', digits=(16, 4), required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
+        'product_uom': openerp.osv.fields.many2one('product.uom', 'Unit of Measure ', required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
+        'total_amount': openerp.osv.fields.float('Amount', required=True, digits_compute= dp.get_precision('Sale Price'), states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
 
-        'notes': openerp.osv.fields.text('Notes', states={'cancel':[('readonly',True)], 'confirm':[('readonly',True)],'closed':[('readonly',True)]}),
+        'notes': openerp.osv.fields.text('Notes', states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
         
         'create_uid' : openerp.osv.fields.many2one('res.users', 'Created by', readonly=True),
         'create_date': openerp.osv.fields.datetime('Creation Date', readonly=True, select=True),
@@ -83,7 +83,7 @@ class tms_advance(osv.osv):
         'invoice_id': openerp.osv.fields.many2one('account.invoice','Invoice Record', readonly=True),
         'invoiced':  openerp.osv.fields.function(_invoiced, method=True, string='Invoiced', type='boolean', multi='invoiced'),               
         'invoice_paid':  openerp.osv.fields.function(_invoiced, method=True, string='Paid', type='boolean', multi='invoiced'),
-        'currency_id': openerp.osv.fields.many2one('res.currency', 'Currency', required=True, states={'cancel':[('readonly',True)], 'confirm':[('readonly',True)],'closed':[('readonly',True)]}),
+        'currency_id': openerp.osv.fields.many2one('res.currency', 'Currency', required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
         }
     
     _defaults = {
@@ -160,7 +160,7 @@ class tms_advance(osv.osv):
                 raise osv.except_osv(
                         _('Could not cancel Advance !'),
                         _('This Advance is already paid'))
-            elif advance.state in ('draft','approved','confirm') and advance.travel_id.state in ('closed'):
+            elif advance.state in ('draft','approved','confirmed') and advance.travel_id.state in ('closed'):
                 raise osv.except_osv(
                         _('Could not cancel Advance !'),
                         _('This Advance is already linked to Travel Expenses record'))
@@ -214,7 +214,7 @@ class tms_advance(osv.osv):
 tms_advance()
 
 
-# Wizard que permite conciliar los Vales de combustible en una factura
+# Wizard que permite generar la factura a pagar correspondiente al Anticipo del Operador
 
 class tms_advance_invoice(osv.osv_memory):
 
@@ -326,7 +326,7 @@ class tms_advance_invoice(osv.osv_memory):
                     'address_contact_id': self.pool.get('res.partner').address_get(cr, uid, [partner.id], ['default'])['default'],
                     'invoice_line'      : [x for x in inv_lines],
                     'currency_id'       : data[1],
-                    'comment'           : 'TMS-Conciliacion de Vales de Combustible',
+                    'comment'           : 'TMS-Advance',
                     'payment_term'      : pay_term,
                     'fiscal_position'   : partner.property_account_position.id,
                     'comment'           : notes,
@@ -340,7 +340,7 @@ class tms_advance_invoice(osv.osv_memory):
 
                 invoices.append(inv_id)
 
-                advance_obj.write(cr,uid,advance_ids, {'invoice_id': inv_id, 'state':'confirm', 'confirmed_by':uid, 'date_confirmed':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})               
+                advance_obj.write(cr,uid,advance_ids, {'invoice_id': inv_id, 'state':'confirmed', 'confirmed_by':uid, 'date_confirmed':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})               
 
 
 

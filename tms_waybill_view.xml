@@ -93,11 +93,11 @@ TMS.WAYBILL
             <field name="type">tree</field>
             <field name="priority">2</field>
             <field name="arch" type="xml">
-                <tree string="Waybills" colors="red:state=='cancel';green:state=='approve';blue:state=='confirm';">
-                    <button name="%(action_waybill_cancel)d" states="draft,approve,confirm" string="Cancel" icon="gtk-cancel"  type="action" /> 
+                <tree string="Waybills" colors="red:state=='cancel';green:state=='approved';blue:state=='confirmed';">
+                    <button name="%(action_waybill_cancel)d" states="draft,approved,confirmed" string="Cancel" icon="gtk-cancel"  type="action" /> 
 		            <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
 		            <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
-		            <button name="action_confirm" states="approve" string="Confirm" type="object" icon="gtk-ok"/>
+		            <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok"/>
                     <field name="state"/>
                     <field name="name"/>
                     <field name="date_order"/>
@@ -285,19 +285,19 @@ TMS.WAYBILL
 									domain="[('category','=','customer')]"
 									colspan="4" nolabel="1" />
 						</page>
-						<page string="Factor Driver">
-							<separator string="Waybill Driver Factors" colspan="4"/>
-							<field name="waybill_driver_factor" 
-									context="{'default_waybill_id': active_id,'default_category':'driver'}" 
-									domain="[('category','=','driver')]"
-									colspan="4" nolabel="1"/>
-						</page>
-						<page string="Factor Supplier">
+						<page string="Factor Supplier" attrs="{'invisible':[('waybill_type','!=','outsourced')]}">
 							<separator string="Waybill Supplier Factors" colspan="4"/>
 							<field name="waybill_supplier_factor" 
 									context="{'default_waybill_id': active_id,'default_category':'supplier'}" 
 									domain="[('category','=','supplier')]"
 									colspan="4" nolabel="1" />
+						</page>
+						<page string="Factor Driver">
+							<separator string="Driver Salary Factors" colspan="4"/>
+					        <field name="expense_driver_factor" 
+							        context="{'default_travel_id': active_id,'default_category':'driver'}" 
+							        domain="[('category','=','driver')]"
+							        colspan="4" nolabel="1"/>
 						</page>
                         <page string="Times">
 							<group colspan="2" col="2">
@@ -350,10 +350,10 @@ TMS.WAYBILL
 					</notebook>
                     <group col="13" colspan="4">
                         <field name="state"/>
-                        <button name="%(action_waybill_cancel)d" states="draft,approve,confirm" string="Cancel" icon="gtk-cancel"  type="action"/> 
+                        <button name="%(action_waybill_cancel)d" states="draft,approved,confirmed" string="Cancel" icon="gtk-cancel"  type="action"/> 
 				        <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
 				        <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
-				        <button name="action_confirm" states="approve" string="Confirm" type="object" icon="gtk-ok"/> 
+				        <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok"/> 
                     </group>
                 </form>
             </field>

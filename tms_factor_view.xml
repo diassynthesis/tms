@@ -38,8 +38,8 @@ TMS.WAYBILL.FACTOR
 				<form string="Billing Factors" >
 					<field name="waybill_id" invisible="1" />
 					<field name="category" invisible="1" />
+					<field name="factor_type" on_change="on_change_factor_type(factor_type)"/>
 					<field name="name" />
-					<field name="factor_type" />
 					<field name="factor" 
 							attrs="{'invisible'	:[('factor_type','in',('special','travel'))],
 									'required'	:[('factor_type','in',('distance','weight','qty','volume','percent'))]}" />
@@ -62,8 +62,6 @@ TMS.WAYBILL.FACTOR
 				</form>
 			</field>
 		</record>
-		
-
 		
 
     </data>

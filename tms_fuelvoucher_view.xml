@@ -17,7 +17,7 @@ TMS.FUELVOUCHER
                    <separator orientation="vertical"/>
                    <filter string="Approved" icon="terp-gtk-jump-to-ltr" domain="[('state','=','approved')]"/>
                    <separator orientation="vertical"/>
-                   <filter string="Confirmed" icon="terp-gtk-jump-to-ltr" domain="[('state','=','confirm')]"/>
+                   <filter string="Confirmed" icon="terp-gtk-jump-to-ltr" domain="[('state','=','confirmed')]"/>
                    <separator orientation="vertical"/>
                    <filter string="Closed" icon="terp-check" domain="[('state','=','closed')]"/>
                    <separator orientation="vertical"/>
@@ -58,7 +58,7 @@ TMS.FUELVOUCHER
 		<field name="type">tree</field>
 		<field name="arch" type="xml">
             <tree string="TMS Fuel Vouchers">
-                <button name="action_cancel" states="draft,approved" string="Cancel" type="object" icon="gtk-cancel"/>
+                <button name="action_cancel" states="draft,approved,confirmed" string="Cancel" type="object" icon="gtk-cancel"/>
                 <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
                 <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-ok"/>
                 <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok"/>
@@ -139,7 +139,7 @@ TMS.FUELVOUCHER
                     </notebook>
                     <group col="6" colspan="4">
                         <field name="state" readonly="1"/>
-                        <button name="action_cancel" states="draft,approved,confirm" string="Cancel" type="object" icon="gtk-cancel"/>
+                        <button name="action_cancel" states="draft,approved,confirmed" string="Cancel" type="object" icon="gtk-cancel"/>
                         <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
                         <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
                         <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok"/>

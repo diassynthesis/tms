@@ -470,6 +470,14 @@ TMS.ROUTE
                         <page string="Toll Stations">
                             <field name="tms_route_tollstation_ids"  nolabel="1"/>
                         </page>
+                        <page string="Factor Driver">
+                            <separator string="Driver Salary Factors" colspan="4"/>
+                            <field name="expense_driver_factor" 
+                                    context="{'default_travel_id': active_id,'default_category':'driver'}" 
+                                    domain="[('category','=','driver')]"
+                                    colspan="4" nolabel="1"/>
+                        </page>
+
                         <page string="Notes">
                             <field name="notes" nolabel="1"/>                            
                         </page>
