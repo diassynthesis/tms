@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+<!--  tms.expense.cancel wizard-->
+
+	<record id="view_expense_cancel" model="ir.ui.view">
+	<field name="name">Create copy from Waybill on Cancell</field>
+	<field name="model">tms.expense.cancel</field>
+	<field name="type">form</field>
+	<field name="arch" type="xml">
+	<form string="Create a copy">  
+        <separator colspan="4" string="Cancel this Expense Record ?" />
+        <group col="2" colspan="4">
+            <button icon='gtk-cancel' special="cancel" string="Cancel" />
+            <button name="action_cancel" string="Confirm Cancellation" colspan="1" type="object" icon="gtk-ok" />
+        </group>
+	</form>
+	</field>
+	</record>
+
+
+    <record id="action_expense_cancel" model="ir.actions.act_window">
+        <field name="name">Cancel Expense Record</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">tms.expense.cancel</field>
+        <field name="src_model">tms.expense</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+   </record>
+
+
+<!-- 
+##############################
+TMS.EXPENSE
+##############################
+ -->
+        <record id="view_tms_expense_tree" model="ir.ui.view">
+            <field name="name">tms.expense.tree</field>
+            <field name="model">tms.expense</field>
+            <field name="type">tree</field>
+            <field name="priority">2</field>
+            <field name="arch" type="xml">
+                <tree string="Waybills" colors="red:state=='cancel';green:state=='approve';blue:state=='confirm';">
+                    <button name="%(action_expense_cancel)d" states="draft,approve,confirm" string="Cancel" icon="gtk-cancel"  type="action" /> 
+		            <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
+		            <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
+		            <button name="action_confirm" states="approve" string="Confirm" type="object" icon="gtk-ok"/>
+                    <field name="state"/>
+                    <field name="name"/>
+                    <field name="date"/>
+                    <field name="employee_id"/>
+                    <field name="unit_id"/>                
+                    <field name="expense_policy"/>
+                    <field name="amount_advance" sum="Advances"/>
+                    <field name="amount_net_salary" sum="Net Salary"/>
+                    <field name="amount_subtotal_real" sum="SubTotal (Real)"/>
+                    <field name="amount_tax_real" sum="Tax Real"/>
+                    <field name="amount_total_real" sum="Total Real"/>
+                    <field name="invoice_id" invisible="1"/>
+                    <field name="shop_id" />
+
+                </tree> 
+            </field>
+        </record>
+
+        <record id="view_tms_expense_form" model="ir.ui.view">
+            <field name="name">tms.expense.form</field>
+            <field name="model">tms.expense</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Waybill">
+					<field name="company_id" readonly="1" invisible="1"/>
+                    <field name="name" readonly="1"/>
+                    <field name="date"/>
+                    <field name="shop_id" />
+                    <field name="currency_id" />
+                    <field name="employee_id" required="1" context="{'default_tms_category': 'driver'}"/>
+                    <field name="unit_id" />
+					
+                    <notebook colspan="4">
+
+                        <page string="Resume">
+                            <group col="2" colspan="2">
+                                <separator string="Travel Expenses Real" colspan="2" />                            
+							    <field name="amount_salary" />
+							    <field name="amount_salary_retention" />
+							    <field name="amount_salary_discount" />
+							    <field name="amount_real_expense" />
+							    <field name="amount_fuel" />
+							    <field name="amount_subtotal_real" />
+							    <field name="amount_tax_real" />
+							    <field name="amount_total_real" />
+							    <field name="amount_advance" />
+							    <field name="amount_balance" />
+                            </group>
+                            <group col="2" colspan="2">
+                                <separator string="Including Fuel Vouchers"  colspan="2" />
+							    <field name="amount_fuel_voucher" />
+							    <field name="amount_subtotal_total" />
+							    <field name="amount_tax_total" />       
+							    <field name="amount_total_total" />
+                                <separator string=""  colspan="2" />
+							    <field name="amount_madeup_expense" />
+                            </group>
+                        </page>
+						<page string="Travels">
+							<field name="travel_ids" colspan="4" nolabel="1" 
+                                domain="[('employee_id','=', employee_id), ('state','=', 'done'), ('advance_ok_for_expense_rec','=', 1), ('fuelvoucher_ok_for_expense_rec','=', 1), ('waybill_ok_for_expense_rec','=', 1), ('state','=','done')]" 
+                                />
+						</page>
+						<page string="Expense Lines">
+							<field name="expense_line" context="{'default_expense_id': active_id}" colspan="4" nolabel="1">
+								<tree string="Expense Lines" colors="blue:line_type=='salary';gray:line_type=='madeup_expense';red:price_total&lt;0;">
+									<field name="line_type" />
+									<field name="name" />
+									<field name="product_id" />
+									<field name="product_uom" />
+									<field name="product_uom_qty" />
+									<field name="price_unit" />
+									<field name="price_subtotal" sum="Price Subtotal" />
+									<field name="tax_amount" sum="Tax Amount"/>
+									<field name="price_total" sum="Price Total"/>
+									<field name="sequence" />
+								</tree>
+								<form string="Expense Lines">
+									<field name="line_type" required="1"/>
+									<newline />
+									<field name="product_id"
+													on_change="on_change_product_id(product_id)" required="1"
+													domain="[('tms_category','=', line_type)]"
+													context="{'default_tms_category': 'real_expense','default_type': 'service', 'default_procure_method':'make_to_stock', 'default_supply_method': 'buy'}"/>
+									<field name="product_uom" required="1" />
+									<field name="product_uom_qty" on_change="on_change_amount(product_uom_qty, price_unit, product_id)" required="1"/>
+									<newline />
+									<field name="price_unit" on_change="on_change_amount(product_uom_qty, price_unit, product_id)" required="1"/>
+									<newline />
+									<field name="price_subtotal" readonly="1"  />
+									<newline />
+									<field name="tax_amount" readonly="1" />
+									<newline />
+									<field name="price_total" readonly="1" />
+									<newline />
+									<field name="name" colspan="4"/>
+									<field name="sequence" />
+								</form>
+
+							</field>
+						</page>
+						<page string="Advances">
+							<field name="advance_ids" colspan="4" nolabel="1" readonly="1"/>
+						</page>
+						<page string="Fuel Vouchers">
+							<field name="fuelvoucher_ids" colspan="4" nolabel="1" readonly="1"/>
+						</page>
+
+
+
+						<page string="Extra Fields">
+	                        <field name="expense_policy"/>
+					        <field name="origin" />
+						</page>
+                        <page string="Notes">
+                            <field colspan="4" name="notes" nolabel="1"/>
+                        </page>
+                        <page string="Log">
+							<group colspan="4" col="10">
+		                        <field name="invoiced"/>
+		                        <field name="invoice_id" readonly="1"/>
+		                        <field name="invoice_name" readonly="1"/>
+		                        <field name="invoice_paid" readonly="1"/>
+							</group>
+                            <field name="create_uid" readonly="1" />
+                            <field name="create_date" readonly="1" />
+                            <field name="approved_by" readonly="1" />
+                            <field name="date_approved" readonly="1" />
+                            <field name="confirmed_by" readonly="1" />
+                            <field name="date_confirmed" readonly="1" />
+                            <field name="cancelled_by" readonly="1" />
+                            <field name="date_cancelled" readonly="1" />
+                            <field name="drafted_by" readonly="1" />
+                            <field name="date_drafted" readonly="1" />
+                        </page>
+					</notebook>
+                    <group col="13" colspan="4">
+                        <field name="state"/>
+                        <button name="%(action_expense_cancel)d" states="draft,approve,confirm" string="Cancel" icon="gtk-cancel"  type="action"/> 
+				        <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
+				        <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
+				        <button name="action_confirm" states="approve" string="Confirm" type="object" icon="gtk-ok"/> 
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_tms_expense_filter" model="ir.ui.view">
+            <field name="name">tms.expense.list.select</field>
+            <field name="model">tms.expense</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Search Waybills">
+                    <filter icon="terp-gtk-media-pause" string="Draft" domain="[('state','=','draft')]"/>
+                    <filter icon="terp-gtk-jump-to-ltr" string="Approved" domain="[('state','=','approved')]"/>
+                    <filter icon="terp-check" string="Confirmed" domain="[('state','=','confirmed')]"/>
+                    <newline/>
+                    <field name="employee_id" />
+                    <field name="date" string="Expense date" />
+                    <field name="name" select="1"/>
+                    <newline/>
+                    <group expand="0" string="Group By..." colspan="11" col="11" groups="base.group_extended">
+                        <filter string="Driver" icon="terp-personal" domain="[]" context="{'group_by':'employee_id'}"/>
+                        <filter string="Unit" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'unit_id'}"/>
+                        <separator orientation="vertical"/>
+                        <filter string="State" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'state'}"/>
+                        <filter string="Expense Date" icon="terp-go-month" domain="[]" context="{'group_by':'date_order'}"/>
+                    </group>
+               </search>
+            </field>
+        </record>
+
+        <record id="view_tms_expense_calendar" model="ir.ui.view">
+            <field name="name">tms.expense.calendar</field>
+            <field name="model">tms.expense</field>
+            <field name="type">calendar</field>
+            <field name="arch" type="xml">
+                <calendar string="Expense" color="state" date_start="date">
+                    <field name="employee_id"/>
+                    <field name="amount_untaxed"/>
+                </calendar>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_tms_expense_graph">
+            <field name="name">tms.expense.graph</field>
+            <field name="model">tms.expense</field>
+            <field name="type">graph</field>
+            <field name="arch" type="xml">
+                <graph string="Expense" type="bar">
+                    <field name="employee_id"/>
+                    <field name="amount_untaxed" operator="+"/>
+                </graph>
+            </field>
+        </record>
+
+
+
+        <record id="action_tms_expense_form" model="ir.actions.act_window">
+            <field name="name">Travel Expenses</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">tms.expense</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form,calendar,graph</field>
+            <field name="search_view_id" ref="view_tms_expense_filter"/>
+            <field name="help">TMS Travel Expenses</field>
+        </record>
+
+        <menuitem action="action_tms_expense_form" id="menu_tms_expense" parent="menu_tms_travels" sequence="99" />
+
+
+<!--  Make the invoice
+
+	<record id="view_expense_invoice" model="ir.ui.view">
+	<field name="name">Create Invoice from Waybills</field>
+	<field name="model">tms.expense.invoice</field>
+	<field name="type">form</field>
+	<field name="arch" type="xml">
+	<form string="Create Invoice">
+			    <separator colspan="4" string="Create Customer Invoice from selected Waybills ?" />
+			    <group col="2" colspan="4">
+			<button icon='gtk-cancel' special="cancel"
+				string="Cancel" />
+			<button name="makeInvoices" string="Confirm"
+				colspan="1" type="object" icon="gtk-ok" />
+		</group>
+	</form>
+	</field>
+	</record>
+
+	<act_window name="Create Invoice"		    
+	    res_model="tms.expense.invoice"
+	    src_model="tms.expense"
+	    view_mode="form"
+	    target="new"
+		key2="client_action_multi"    
+	    id="action_view_expense_invoice"/>	
+
+-->
+
+
+    </data>
+</openerp>
