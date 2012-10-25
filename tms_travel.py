@@ -215,25 +215,26 @@ class tms_travel(osv.osv):
 
 
     def get_factors_from_route(self, cr, uid, ids, context=None):        
-        factor_obj = self.pool.get('tms.factor')
-        factor_ids = factor_obj.search(cr, uid, [('travel_id', '=', ids[0])], context=None)
-        if factor_ids:
-            res = factor_obj.unlink(cr, uid, factor_ids)
-        factors = []
-        for factor in self.browse(cr, uid, ids)[0].route_id.expense_driver_factor:
-            x = {
-                        'name'          : factor.name,
-                        'category'      : 'driver',
-                        'factor_type'   : factor.factor_type,
-                        'range_start'   : factor.range_start,
-                        'range_end'     : factor.range_end,
-                        'factor'        : factor.factor,
-                        'fixed_amount'  : factor.fixed_amount,
-                        'mixed'         : factor.mixed,
-                        'special_formula': factor.special_formula,
-                        'travel_id'     : ids[0],
-                        }
-            factor_obj.create(cr, uid, x)
+        if len(ids):
+            factor_obj = self.pool.get('tms.factor')       
+            factor_ids = factor_obj.search(cr, uid, [('travel_id', '=', ids[0])], context=None)
+            if factor_ids:
+                res = factor_obj.unlink(cr, uid, factor_ids)
+            factors = []
+            for factor in self.browse(cr, uid, ids)[0].route_id.expense_driver_factor:
+                x = {
+                            'name'          : factor.name,
+                            'category'      : 'driver',
+                            'factor_type'   : factor.factor_type,
+                            'range_start'   : factor.range_start,
+                            'range_end'     : factor.range_end,
+                            'factor'        : factor.factor,
+                            'fixed_amount'  : factor.fixed_amount,
+                            'mixed'         : factor.mixed,
+                            'special_formula': factor.special_formula,
+                            'travel_id'     : ids[0],
+                            }
+                factor_obj.create(cr, uid, x)
         return True
 
 

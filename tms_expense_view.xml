@@ -43,10 +43,10 @@ TMS.EXPENSE
             <field name="priority">2</field>
             <field name="arch" type="xml">
                 <tree string="Waybills" colors="red:state=='cancel';green:state=='approve';blue:state=='confirm';">
-                    <button name="%(action_expense_cancel)d" states="draft,approve,confirm" string="Cancel" icon="gtk-cancel"  type="action" /> 
+                    <button name="%(action_expense_cancel)d" states="draft,approved,confirmed" string="Cancel" icon="gtk-cancel"  type="action" /> 
 		            <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
 		            <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
-		            <button name="action_confirm" states="approve" string="Confirm" type="object" icon="gtk-ok"/>
+		            <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok"/>
                     <field name="state"/>
                     <field name="name"/>
                     <field name="date"/>
@@ -70,13 +70,14 @@ TMS.EXPENSE
             <field name="model">tms.expense</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
-                <form string="Waybill">
+                <form string="Travel Expenses">
 					<field name="company_id" readonly="1" invisible="1"/>
                     <field name="name" readonly="1"/>
                     <field name="date"/>
                     <field name="shop_id" />
                     <field name="currency_id" />
-                    <field name="employee_id" required="1" context="{'default_tms_category': 'driver'}"/>
+                    <field name="employee_id" invisible="1"/>
+                    <field name="employee_id_control" required="1" context="{'default_tms_category': 'driver'}" on_change="on_change_employee_id(employee_id_control)"/>
                     <field name="unit_id" />
 					
                     <notebook colspan="4">
@@ -111,41 +112,7 @@ TMS.EXPENSE
                                 />
 						</page>
 						<page string="Expense Lines">
-							<field name="expense_line" context="{'default_expense_id': active_id}" colspan="4" nolabel="1">
-								<tree string="Expense Lines" colors="blue:line_type=='salary';gray:line_type=='madeup_expense';red:price_total&lt;0;">
-									<field name="line_type" />
-									<field name="name" />
-									<field name="product_id" />
-									<field name="product_uom" />
-									<field name="product_uom_qty" />
-									<field name="price_unit" />
-									<field name="price_subtotal" sum="Price Subtotal" />
-									<field name="tax_amount" sum="Tax Amount"/>
-									<field name="price_total" sum="Price Total"/>
-									<field name="sequence" />
-								</tree>
-								<form string="Expense Lines">
-									<field name="line_type" required="1"/>
-									<newline />
-									<field name="product_id"
-													on_change="on_change_product_id(product_id)" required="1"
-													domain="[('tms_category','=', line_type)]"
-													context="{'default_tms_category': 'real_expense','default_type': 'service', 'default_procure_method':'make_to_stock', 'default_supply_method': 'buy'}"/>
-									<field name="product_uom" required="1" />
-									<field name="product_uom_qty" on_change="on_change_amount(product_uom_qty, price_unit, product_id)" required="1"/>
-									<newline />
-									<field name="price_unit" on_change="on_change_amount(product_uom_qty, price_unit, product_id)" required="1"/>
-									<newline />
-									<field name="price_subtotal" readonly="1"  />
-									<newline />
-									<field name="tax_amount" readonly="1" />
-									<newline />
-									<field name="price_total" readonly="1" />
-									<newline />
-									<field name="name" colspan="4"/>
-									<field name="sequence" />
-								</form>
-
+							<field name="expense_line" context="{'default_expense_id': active_id, 'group_by_line_type': 1}" colspan="4" nolabel="1">
 							</field>
 						</page>
 						<page string="Advances">
@@ -154,9 +121,6 @@ TMS.EXPENSE
 						<page string="Fuel Vouchers">
 							<field name="fuelvoucher_ids" colspan="4" nolabel="1" readonly="1"/>
 						</page>
-
-
-
 						<page string="Extra Fields">
 	                        <field name="expense_policy"/>
 					        <field name="origin" />
@@ -170,6 +134,7 @@ TMS.EXPENSE
 		                        <field name="invoice_id" readonly="1"/>
 		                        <field name="invoice_name" readonly="1"/>
 		                        <field name="invoice_paid" readonly="1"/>
+		                        <field name="move_id"/>
 							</group>
                             <field name="create_uid" readonly="1" />
                             <field name="create_date" readonly="1" />
@@ -185,10 +150,10 @@ TMS.EXPENSE
 					</notebook>
                     <group col="13" colspan="4">
                         <field name="state"/>
-                        <button name="%(action_expense_cancel)d" states="draft,approve,confirm" string="Cancel" icon="gtk-cancel"  type="action"/> 
+                        <button name="%(action_expense_cancel)d" states="draft,approved,confirmed" string="Cancel" icon="gtk-cancel"  type="action"/> 
 				        <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
 				        <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
-				        <button name="action_confirm" states="approve" string="Confirm" type="object" icon="gtk-ok"/> 
+				        <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok"/> 
                     </group>
                 </form>
             </field>
@@ -243,8 +208,6 @@ TMS.EXPENSE
             </field>
         </record>
 
-
-
         <record id="action_tms_expense_form" model="ir.actions.act_window">
             <field name="name">Travel Expenses</field>
             <field name="type">ir.actions.act_window</field>
@@ -256,6 +219,86 @@ TMS.EXPENSE
         </record>
 
         <menuitem action="action_tms_expense_form" id="menu_tms_expense" parent="menu_tms_travels" sequence="99" />
+
+
+
+
+
+<!--
+#################################
+TMS.EXPENSE.LINE
+#################################
+-->
+        <record id="view_tms_expense_line_tree" model="ir.ui.view">
+            <field name="name">tms.expense.line.tree</field>
+            <field name="model">tms.expense.line</field>
+            <field name="type">tree</field>
+            <field name="priority">2</field>
+            <field name="arch" type="xml">
+                <tree string="Expense Lines" colors="blue:line_type=='salary';gray:line_type=='madeup_expense';red:price_total&lt;0;">
+				    <field name="line_type" />
+				    <field name="name" />
+				    <field name="product_id" />
+				    <field name="product_uom" />
+				    <field name="product_uom_qty" />
+				    <field name="price_unit" />
+				    <field name="price_subtotal" sum="Price Subtotal" />
+				    <field name="tax_amount" sum="Tax Amount"/>
+				    <field name="price_total" sum="Price Total"/>
+				    <field name="sequence" />
+				</tree>
+            </field>
+        </record>
+
+
+        <record id="view_tms_expense_line_form" model="ir.ui.view">
+            <field name="name">tms.expense.line.form</field>
+            <field name="model">tms.expense.line</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Expense Lines">
+                    <field name="control" invisible="1" />
+					<field name="line_type" required="1" attrs="{'readonly':[('control','!=',False)]}"/>
+					<newline />
+					<field name="product_id"
+									on_change="on_change_product_id(product_id)" required="1"
+									domain="[('tms_category','=', line_type)]"
+									context="{'default_tms_category': 'real_expense','default_type': 'service', 'default_procure_method':'make_to_stock', 'default_supply_method': 'buy'}"
+                                    attrs="{'readonly':[('control','!=',False)]}" />
+					<field name="product_uom" required="1" attrs="{'readonly':[('control','!=',False)]}" />
+					<field name="product_uom_qty" on_change="on_change_amount(product_uom_qty, price_unit, product_id)" required="1" attrs="{'readonly':[('control','!=',False)]}"/>
+					<newline />
+					<field name="price_unit" on_change="on_change_amount(product_uom_qty, price_unit, product_id)" required="1" attrs="{'readonly':[('control','!=',False)]}"/>
+					<newline />
+					<field name="price_subtotal" readonly="1"  />
+					<newline />
+					<field name="tax_amount" readonly="1" />
+					<newline />
+					<field name="price_total" readonly="1" />
+					<newline />
+					<field name="name" colspan="4" attrs="{'readonly':[('control','!=',False)]}"/>
+					<field name="sequence" attrs="{'readonly':[('control','!=',False)]}" />
+				</form>
+            </field>
+        </record>
+
+        <record id="view_tms_expense_line_filter" model="ir.ui.view">
+            <field name="name">tms.expense.line.list.select</field>
+            <field name="model">tms.expense.line</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Expense Lines" >
+                    <filter string="Line Type" icon="terp-check" domain="[]" context="{'group_by':'line_type'}"/>
+				</search>
+            </field>
+        </record>
+
+
+								
+
+
+
+
 
 
 <!--  Make the invoice

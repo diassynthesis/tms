@@ -38,6 +38,8 @@ class hr_employee(osv.osv):
     _columns = {
   	    'tms_category': openerp.osv.fields.selection([('none','N/A'),('driver','Driver'), ('mechanic','Mechanic'),], 'TMS Category', help='Used to define if this person will be used as a Driver (Frieghts related) or Mechanic (Maintenance related)',required=False),
         'tms_advance_account_id': openerp.osv.fields.many2one('account.account', 'Advance Account', domain=[('type', '=', 'other')]), 
+        'tms_expense_account_id': openerp.osv.fields.many2one('account.account', 'Expense Account', domain=[('type', '=', 'other')]), 
+        'tms_expense_negative_balance_account_id': openerp.osv.fields.many2one('account.account', 'Negative Balance Account', domain=[('type', '=', 'other')]), 
         'tms_supplier_driver': openerp.osv.fields.boolean('Supplier Driver'), 
         'tms_supplier_id':openerp.osv.fields.many2one('res.partner', 'Supplier', domain=[('supplier', '=', 1)]),
         }

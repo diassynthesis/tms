@@ -44,6 +44,7 @@ class product_product(osv.osv):
                                           ('salary','Salary'),
                                           ('salary_retention','Salary Retention'),
                                           ('salary_discount','Salary Discount'),
+                                          ('negative_balance','Negative Balance'),
                                           ('fuel','Fuel'),
                                           ], 'TMS Product Type', required=True,
                                           help="""Product Type for using with TMS Module
@@ -76,8 +77,8 @@ class product_product(osv.osv):
             elif record.tms_category in ['freight', 'move','insurance','highway_tolls','other'] and \
                 not(record.type=='service' and record.procure_method == 'make_to_stock' and record.supply_method =='buy' and record.sale_ok):
                 return True
-            elif record.tms_category in ['real_expense'] and \
-                    not(record.procure_method == 'make_to_stock' and record.supply_method =='buy' and record.purchase_ok):
+            elif record.tms_category in ['real_expense', 'madeup_expense', 'salary', 'salary_retention', 'salary_discount', 'negative_balance'] and \
+                    not(record.type=='service' and record.procure_method == 'make_to_stock' and record.supply_method =='buy' and record.purchase_ok):
                 return False
         return True
 
@@ -90,7 +91,7 @@ class product_product(osv.osv):
         val = {}
         if not tms_category or tms_category=='standard':
             return val
-        if tms_category in ['transportable', 'freight', 'move','insurance','highway_tolls','other','real_expense','madeup_expense']:
+        if tms_category in ['transportable', 'freight', 'move','insurance','highway_tolls','other','real_expense','madeup_expense', 'salary', 'salary_retention', 'salary_discount', 'negative_balance']:
             val = {
                 'type': 'service',
                 'procure_method':'make_to_stock',

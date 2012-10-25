@@ -368,6 +368,7 @@ TMS.PLACE
                     <field name="country_id" readonly="1"/>
                     <field name="latitude"/>
                     <field name="longitude" />
+                    <button name="button_open_google" string="Open Google" type="object" icon="gtk-go-forward"/>
                 </form>
             </field>
         </record>
@@ -453,6 +454,10 @@ TMS.ROUTE
                     <field name="travel_time" />
                     <field name="active" />
                     <notebook colspan="4">
+                        <page string="Intermediate Places">
+                            <separator string="Places in this route" colspan="4" />
+                            <field name="place_ids" nolabel="1" colspan="4"/>
+                        </page>
                         <page string="Fuel Efficiency Expected">
                             <field name="route_fuelefficiency_ids" nolabel="1" >
                                 <tree string="Route Fuel Efficiency Expected" editable="bottom">

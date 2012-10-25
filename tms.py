@@ -396,7 +396,12 @@ class tms_place(osv.osv):
         'country_id'    : openerp.osv.fields.related('state_id', 'country_id', type='many2one', relation='res.country', string='Country'),
         'latitude'      : openerp.osv.fields.float('Latitude', required=False, digits=(14,10), help='GPS Latitude'),
         'longitude'     : openerp.osv.fields.float('Longitude', required=False, digits=(14,10), help='GPS Longitude'),
+        'route_ids'     : openerp.osv.fields.many2many('tms.route', 'tms_route_places_rel', 'place_id', 'route_id', 'Routes with this Place'),
     }
+
+    def button_open_google(self, cr, uid, ids, context=None):
+        return { 'type': 'ir.actions.act_url', 'url': 'http://www.google.com', 'nodestroy': True, 'target': 'new' }
+            
 tms_place()
 
 
@@ -411,6 +416,7 @@ class tms_route(osv.osv):
         'departure_id': openerp.osv.fields.many2one('tms.place', 'Departure', required=True),
         'arrival_id': openerp.osv.fields.many2one('tms.place', 'Arrival', required=True),
         'distance':openerp.osv.fields.float('Distance (mi./kms)', required=True, digits=(14,4), help='Route distance (mi./kms)'),
+        'place_ids':openerp.osv.fields.many2many('tms.place', 'tms_route_places_rel', 'route_id', 'place_id', 'Places in this Route'),
         'travel_time':openerp.osv.fields.float('Travel Time (hrs)', required=True, digits=(14,4), help='Route travel time (hours)'),
         'route_fuelefficiency_ids' : openerp.osv.fields.one2many('tms.route.fuelefficiency', 'tms_route_id', 'Fuel Efficiency by Motor type'),
         'fuel_efficiency_drive_unit': openerp.osv.fields.float('Fuel Efficiency Drive Unit', required=False, digits=(14,4)),
@@ -418,12 +424,14 @@ class tms_route(osv.osv):
         'fuel_efficiency_2trailer': openerp.osv.fields.float('Fuel Efficiency Two Trailer', required=False, digits=(14,4)),
         'notes': openerp.osv.fields.text('Notes'),
         'active':openerp.osv.fields.boolean('Active'),
+
         }
 
     _defaults = {
         'active': True,
     }
 
+    
 tms_route()
 
 # Route Fuel Efficiency by Motor

@@ -116,7 +116,7 @@ For next option you only have to type Special Python Code:
             }
         return {'value': {'name': values[factor_type]}}
 
-    def calculate(self, cr, uid, record_type, record_ids, calc_type=None,  context=None):
+    def calculate(self, cr, uid, record_type, record_ids, calc_type=None, travel_ids=False, context=None):
         result = 0.0
 
         if record_type == 'waybill':
@@ -171,33 +171,24 @@ For next option you only have to type Special Python Code:
                     result += ((factor.fixed_amount if (factor.mixed or factor.factor_type=='travel') else 0.0) + (factor.factor * x)) if ((x >= factor.range_start and x <= factor.range_end) or (factor.range_start == factor.range_end == 0.0)) else 0.0
 
 
-        elif record_type == 'expense':
+        elif record_type == 'expense' and travel_ids:
             print "Entrando a calcular sueldo del Operador..."
-            expense = self.pool.get('tms.expense').browse(cr, uid, record_ids)[0]
-            waybill_obj = self.pool.get('tms.waybill')
             travel_obj = self.pool.get('tms.travel')
-            travel_ids = travel_obj.search(cr, uid, [('expense_id', '=', record_ids[0])])
-            print "record_ids ", record_ids
-            print "record_ids[0] ", record_ids[0]
             print "travel_ids ", travel_ids
             for travel in travel_obj.browse(cr, uid, travel_ids, context=context):
                 print "Recorriendo Viajes"
                 res1 = res2 = weight = qty = volume = x = 0.0
                 if travel.waybill_ids:    
                     for waybill in travel.waybill_ids:
-                        res1 += self.calculate(cr, uid, 'waybill', [waybill.id], 'driver')
-                        print "res1 :", res1                        
+                        res1 += self.calculate(cr, uid, 'waybill', [waybill.id], 'driver', travel_ids=False)
+                        print "res1 :", res1
                         weight  += waybill.product_weight
                         qty     += waybill.product_qty
                         volume  += waybill.product_volume
                 print "not res1 :", not res1
                 if not res1:
                     for factor in travel.expense_driver_factor:                        
-                        print "Recorriendo factors"
-                        print "Tipo de factor: ", factor.factor_type
                         if factor.factor_type == 'distance':
-                            print "Tipo Distancia"                                                  
-                            print travel.route_id.distance
                             x = float(travel.route_id.distance)
 
                         elif factor.factor_type == 'weight':                            
