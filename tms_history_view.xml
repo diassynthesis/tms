@@ -165,11 +165,11 @@ TMS.EVENT
     </record>
 
 
-	<menuitem id="menu_tms_events" name="Events" parent="menu_tms" sequence="10"/>            
+	<menuitem id="menu_tms_reporting" name="Reporting" parent="menu_tms" sequence="10"/>            
 
 <!-- Menu for tms.event -->
     <menuitem name="Events" 
-              parent="menu_tms_events" 
+              parent="menu_tms_reporting" 
               id="menu_tms_event_form" 
               action="open_view_tms_event_form"
 			  sequence="99"/>
