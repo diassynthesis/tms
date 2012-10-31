@@ -234,11 +234,12 @@ tms_unit_photo()
 class tms_unit_extradata(osv.osv):
     _name = "tms.unit.extradata"
     _description = "Extra Data for Units"
+    _rec_name = "extra_value"
 
     _columns = {
-        'unit_id' : openerp.osv.fields.many2one('tms.unit', 'Unit Name', required=True, ondelete='cascade', select=True,),        
-        'extra_data_id':openerp.osv.fields.many2one('tms.unit.category', 'Field', domain="[('type','=','extra_data')]", required=True),
-        'extra_value': openerp.osv.fields.char('Valor', size=64, required=True),
+        'unit_id'       : openerp.osv.fields.many2one('tms.unit', 'Unit Name', required=True, ondelete='cascade', select=True,),        
+        'extra_data_id' :openerp.osv.fields.many2one('tms.unit.category', 'Field', domain="[('type','=','extra_data')]", required=True),
+        'extra_value'   : openerp.osv.fields.char('Valor', size=64, required=True),
         }
 
     _sql_constraints = [
@@ -254,15 +255,18 @@ class tms_unit_expiry(osv.osv):
     _description = "Expiry Extra Data for Units"
 
     _columns = {
-        'unit_id' : openerp.osv.fields.many2one('tms.unit', 'Unit Name', required=True, ondelete='cascade', select=True,),        
-        'expiry_id':openerp.osv.fields.many2one('tms.unit.category', 'Field', domain="[('type','=','expiry')]", required=True),
-        'extra_value': openerp.osv.fields.date('Value', required=True),
+        'unit_id'       : openerp.osv.fields.many2one('tms.unit', 'Unit Name', required=True, ondelete='cascade', select=True,),        
+        'expiry_id'     :openerp.osv.fields.many2one('tms.unit.category', 'Field', domain="[('type','=','expiry')]", required=True),
+        'extra_value'   : openerp.osv.fields.date('Value', required=True),
+        'name'          : openerp.osv.fields.char('Valor', size=10, required=True),
         }
 
     _sql_constraints = [
         ('name_uniq', 'unique(unit_id,expiry_id)', 'Expiry Data Field must be unique for each unit !'),
         ]
 
+    def on_change_extra_value(self, cr, uid, ids, extra_value):
+        return {'value': {'name': extra_value[8:] + '/' + extra_value[5:-3] + '/' + extra_value[:-6]}}
 
 
 tms_unit_expiry()
@@ -400,7 +404,9 @@ class tms_place(osv.osv):
     }
 
     def button_open_google(self, cr, uid, ids, context=None):
-        return { 'type': 'ir.actions.act_url', 'url': 'http://www.google.com', 'nodestroy': True, 'target': 'new' }
+        for place in self.browse(cr, uid, ids):
+            url="http://localhost:8069/web/static/get_coords_from_place.html?" + place.name + ','+ place.state_id.name+','+ place.country_id.name
+        return { 'type': 'ir.actions.act_url', 'url': url, 'nodestroy': True, 'target': 'new' }
             
 tms_place()
 

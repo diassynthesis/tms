@@ -357,7 +357,8 @@ class tms_waybill(osv.osv):
             for line in waybill.waybill_line:
                 if line.control:
                     line_obj.unlink(cr, uid, [line.id])
-            result = factor.calculate(cr, uid, 'waybill', ids, 'client')
+            result = factor.calculate(cr, uid, 'waybill', ids, 'client', False)
+
             print result
 
             xline = {

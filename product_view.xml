@@ -15,7 +15,7 @@
                     <separator orientation="vertical"/>
                    <filter string="TMS Transportable" icon="terp-stock_effects-object-colorize" domain="[('tms_category','=','transportable')]"/>
                    <filter string="TMS Related" icon="terp-stage" 
-                        domain="[('tms_category','in',('travel','move','insurance','highway','other'))]"/>
+                        domain="[('tms_category','in',('freight', 'travel','move','insurance','highway','other'))]"/>
                    <filter string="TMS Expense" icon="terp-dolar" domain="[('tms_category','in',('real_expense','madeup_expense', 'salary', 'salary_retention', 'salary_discount', 'negative_balance'))]"/> 
                 </xpath> 
             </field>

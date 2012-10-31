@@ -93,12 +93,15 @@ TMS.UNIT
                    <filter string="Others" icon="terp-accessories-archiver" domain="[('fleet_type','=','other')]"/>
                    <separator orientation="vertical"/>
                    <field name="name"/>
-                   <field name="company_id"/>
-                   <field name="active" />
-                   <field name="plates" />
                    <field name="employee_id" />
                    <field name="unit_extradata_ids" />
                    <field name="unit_expiry_ids" />
+                   <newline/>
+                   <group  expand='0' string='More filters...'> 
+                   <field name="company_id"/>
+                   <field name="active" />
+                   <field name="plates" />
+                   </group>
                    <newline/>
                    <group  expand='0' string='Group by...'> <!--groups="base.group_extended" -->
                        <filter string='Fleet Unit Type' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'fleet_type'}" />
@@ -181,7 +184,8 @@ TMS.UNIT
                             <field name="unit_expiry_ids" nolabel="1" >
                                 <tree string="Expiry Data" editable="bottom">
                                     <field name="expiry_id" context="{'default_type':'expiry'}" />
-                                    <field name="extra_value" />
+                                    <field name="extra_value" on_change="on_change_extra_value(extra_value)"/>
+                                    <field name="name" invisible="1"/>
                                 </tree>
                                 <form string="Extra Data">
                                     <field name="expiry_id" context="{'default_type':'expiry'}" />

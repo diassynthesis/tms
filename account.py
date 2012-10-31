@@ -47,7 +47,7 @@ class account_tax(osv.osv):
 account_tax()
 
 
-# Additionat field to set Account Journal for Advances
+# Additionat field to set Account Journal for Advances and Travel Expenses
 class account_journal(osv.osv):
     _inherit ='account.journal'
 

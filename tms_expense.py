@@ -224,10 +224,10 @@ class tms_expense(osv.osv):
 
     }
     _defaults = {
-        'date'            : lambda *a: time.strftime(DEFAULT_SERVER_DATE_FORMAT),
-        'expense_policy'        : 'manual',
-        'state'                 : lambda *a: 'draft',
-        'currency_id': lambda self,cr,uid,c: self.pool.get('res.users').browse(cr, uid, uid, c).company_id.currency_id.id,
+        'date'              : lambda *a: time.strftime(DEFAULT_SERVER_DATE_FORMAT),
+        'expense_policy'    : 'manual',
+        'state'             : lambda *a: 'draft',
+        'currency_id'       : lambda self,cr,uid,c: self.pool.get('res.users').browse(cr, uid, uid, c).company_id.currency_id.id,
     }
     _sql_constraints = [
         ('name_uniq', 'unique(name)', 'Expense record must be unique !'),
@@ -365,7 +365,7 @@ class tms_expense(osv.osv):
         print "vals en metodo write:", vals
         super(tms_expense, self).write(cr, uid, ids, vals, context=context)
 
-        if 'state' in vals and vals['state'] != 'cancel':
+        if 'state' in vals and vals['state'] not in ('cancel', 'confirmed') :
             print "Antes,,,"
             self.get_salary_advances_and_fuel_vouchers(cr, uid, ids, vals)
             print "Despues,,,"
@@ -478,8 +478,8 @@ class tms_expense_line(osv.osv):
 
     _columns = {
 #        'agreement_id': openerp.osv.fields.many2one('tms.agreement', 'Agreement', required=False, ondelete='cascade', select=True, readonly=True),
-        'expense_id': openerp.osv.fields.many2one('tms.expense', 'Expense', required=False, ondelete='cascade', select=True, readonly=True),
-        'line_type': openerp.osv.fields.selection([
+        'expense_id'        : openerp.osv.fields.many2one('tms.expense', 'Expense', required=False, ondelete='cascade', select=True, readonly=True),
+        'line_type'         : openerp.osv.fields.selection([
                                           ('real_expense','Real Expense'),
                                           ('madeup_expense','Made-up Expense'),
                                           ('salary','Salary'),
@@ -488,26 +488,27 @@ class tms_expense_line(osv.osv):
                                           ('fuel','Fuel'),
                                     ], 'Line Type', require=True),
 
-        'name': openerp.osv.fields.char('Description', size=256, required=True),
-        'sequence': openerp.osv.fields.integer('Sequence', help="Gives the sequence order when displaying a list of sales order lines."),
-        'product_id': openerp.osv.fields.many2one('product.product', 'Product', 
-                            domain=[('tms_category', 'in', ('expense_real', 'madeup_expense', 'salary','salary_retention' ,'salary_discount'))]),
-        'price_unit': openerp.osv.fields.float('Price Unit', required=True, digits_compute= dp.get_precision('Sale Price')),
-        'price_subtotal'   : openerp.osv.fields.function(_amount_line, method=True, string='SubTotal', type='float', digits_compute= dp.get_precision('Sale Price'),  store=True, multi='price_subtotal'),
-        'price_total'   : openerp.osv.fields.function(_amount_line, method=True, string='Total', type='float', digits_compute= dp.get_precision('Sale Price'),  store=True, multi='price_subtotal'),
-        'tax_amount'   : openerp.osv.fields.function(_amount_line, method=True, string='Tax Amount', type='float', digits_compute= dp.get_precision('Sale Price'),  store=True, multi='price_subtotal'),
-        'tax_id': openerp.osv.fields.many2many('account.tax', 'expense_tax', 'tms_expense_line_id', 'tax_id', 'Taxes'),
-        'product_uom_qty': openerp.osv.fields.float('Quantity (UoM)', digits=(16, 2)),
-        'product_uom': openerp.osv.fields.many2one('product.uom', 'Unit of Measure '),
-        'notes': openerp.osv.fields.text('Notes'),
+        'name'              : openerp.osv.fields.char('Description', size=256, required=True),
+        'sequence'          : openerp.osv.fields.integer('Sequence', help="Gives the sequence order when displaying a list of sales order lines."),
+        'product_id'        : openerp.osv.fields.many2one('product.product', 'Product', 
+                                    domain=[('tms_category', 'in', ('expense_real', 'madeup_expense', 'salary','salary_retention' ,'salary_discount'))]),
+        'price_unit'        : openerp.osv.fields.float('Price Unit', required=True, digits_compute= dp.get_precision('Sale Price')),
+        'price_subtotal'    : openerp.osv.fields.function(_amount_line, method=True, string='SubTotal', type='float', digits_compute= dp.get_precision('Sale Price'),  store=True, multi='price_subtotal'),
+        'price_total'       : openerp.osv.fields.function(_amount_line, method=True, string='Total', type='float', digits_compute= dp.get_precision('Sale Price'),  store=True, multi='price_subtotal'),
+        'tax_amount'        : openerp.osv.fields.function(_amount_line, method=True, string='Tax Amount', type='float', digits_compute= dp.get_precision('Sale Price'),  store=True, multi='price_subtotal'),
+        'special_tax_amount': openerp.osv.fields.float('Special Tax', required=False, digits_compute= dp.get_precision('Sale Price')),
+        'tax_id'            : openerp.osv.fields.many2many('account.tax', 'expense_tax', 'tms_expense_line_id', 'tax_id', 'Taxes'),
+        'product_uom_qty'   : openerp.osv.fields.float('Quantity (UoM)', digits=(16, 2)),
+        'product_uom'       : openerp.osv.fields.many2one('product.uom', 'Unit of Measure '),
+        'notes'             : openerp.osv.fields.text('Notes'),
         'expense_employee_id': openerp.osv.fields.related('expense_id', 'employee_id', type='many2one', relation='res.partner', store=True, string='Driver'),
-        'shop_id': openerp.osv.fields.related('expense_id', 'shop_id', type='many2one', relation='sale.shop', string='Shop', store=True, readonly=True),
-        'company_id': openerp.osv.fields.related('expense_id', 'company_id', type='many2one', relation='res.company', string='Company', store=True, readonly=True),
-        'fuel_voucher': openerp.osv.fields.boolean('Fuel Voucher'),
-        'control': openerp.osv.fields.boolean('Control'), # Useful to mark those lines that must not be taken for Expense Record (like Fuel from Fuel Voucher, Toll Stations payed without cash (credit card, voucher, etc)
-        'automatic': openerp.osv.fields.boolean('Automatic', help="Check this if you want to create Advances and/or Fuel Vouchers for this line automatically"),
-        'credit': openerp.osv.fields.boolean('Credit', help="Check this if you want to create Fuel Vouchers for this line"),
-        'fuel_supplier_id': openerp.osv.fields.many2one('res.partner', 'Fuel Supplier', domain=[('tms_category', '=', 'fuel')],  required=False),
+        'shop_id'           : openerp.osv.fields.related('expense_id', 'shop_id', type='many2one', relation='sale.shop', string='Shop', store=True, readonly=True),
+        'company_id'        : openerp.osv.fields.related('expense_id', 'company_id', type='many2one', relation='res.company', string='Company', store=True, readonly=True),
+        'fuel_voucher'      : openerp.osv.fields.boolean('Fuel Voucher'),
+        'control'           : openerp.osv.fields.boolean('Control'), # Useful to mark those lines that must not be taken for Expense Record (like Fuel from Fuel Voucher, Toll Stations payed without cash (credit card, voucher, etc)
+        'automatic'         : openerp.osv.fields.boolean('Automatic', help="Check this if you want to create Advances and/or Fuel Vouchers for this line automatically"),
+        'credit'            : openerp.osv.fields.boolean('Credit', help="Check this if you want to create Fuel Vouchers for this line"),
+        'fuel_supplier_id'  : openerp.osv.fields.many2one('res.partner', 'Fuel Supplier', domain=[('tms_category', '=', 'fuel')],  required=False),
     }
     _order = 'sequence'
 
