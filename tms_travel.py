@@ -149,8 +149,8 @@ class tms_travel(osv.osv):
                                                             help="Travel Scheduled duration in hours"),
         'travel_duration_real': openerp.osv.fields.function(_travel_duration, string='Duration Real', method=True, store=True, type='float', digits=(18,6), multi='travel_duration',
                                                                 help="Travel Real duration in hours"),
-        'distance_route': openerp.osv.fields.function(_route_data, string='Route Distance (mi./km)', method=True, store=True, type='float', digits=(18,6), multi='distance_route'),
-        'fuel_efficiency_expected': openerp.osv.fields.function(_route_data, string='Fuel Efficiency Expected', method=True, store=True, type='float', digits=(18,6), multi='distance_route'),
+        'distance_route': openerp.osv.fields.function(_route_data, string='Route Distance (mi./km)', method=True, store=True, type='float', multi=True), #digits=(18,6), multi=True),
+        'fuel_efficiency_expected': openerp.osv.fields.function(_route_data, string='Fuel Efficiency Expected', method=True, store=True, type='float', multi=True), #digits=(18,6), multi=True),
 
         'advance_ok_for_expense_rec': openerp.osv.fields.function(_validate_for_expense_rec, string='Advance OK', method=True, type='boolean',  multi='advance_ok_for_expense_rec'),
         'fuelvoucher_ok_for_expense_rec': openerp.osv.fields.function(_validate_for_expense_rec, string='Fuel Voucher OK', method=True,  type='boolean',  multi='advance_ok_for_expense_rec'),
@@ -211,7 +211,7 @@ class tms_travel(osv.osv):
         if not kit_id:
             return {}        
         kit = self.pool.get('tms.unit.kit').browse(cr, uid, kit_id)
-        return {'value' : {'unit_id': kit.unit_id.id, 'trailer1_id': kit.trailer1_id.id, 'dolly_id': kit.dolly_id.id, 'trailer2_id': kit.trailer2_id.id}}
+        return {'value' : {'unit_id': kit.unit_id.id, 'trailer1_id': kit.trailer1_id.id, 'dolly_id': kit.dolly_id.id, 'trailer2_id': kit.trailer2_id.id, 'employee_id': kit.employee_id.id}}
 
 
     def get_factors_from_route(self, cr, uid, ids, context=None):        

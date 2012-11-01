@@ -78,7 +78,7 @@ class tms_waybill(osv.osv):
         
             res[waybill.id] = { 'amount_freight'   : cur_obj.round(cr, uid, cur, x_freight),
                                 'amount_move'       : cur_obj.round(cr, uid, cur, x_move),
-                                'amount_highway'    : cur_obj.round(cr, uid, cur, x_highway),
+                                'amount_highway_tolls'    : cur_obj.round(cr, uid, cur, x_highway),
                                 'amount_insurance'  : cur_obj.round(cr, uid, cur, x_insurance),
                                 'amount_other'      : cur_obj.round(cr, uid, cur, x_other),
                                 'amount_untaxed'    : cur_obj.round(cr, uid, cur, x_subtotal),
@@ -240,8 +240,8 @@ class tms_waybill(osv.osv):
 
 
 
-        'distance_route': openerp.osv.fields.function(_get_route_distance, string='Distance from route', method=True, type='float', digits=(18,6), help="Route Distance.", multi="distance_route"),
-        'distance_real':  openerp.osv.fields.float('Distance Real', digits=(18,6), help="Route obtained by electronic reading", multi="distance_real"),
+        'distance_route': openerp.osv.fields.function(_get_route_distance, string='Distance from route', method=True, type='float', digits=(18,6), help="Route Distance.", multi=False),
+        'distance_real':  openerp.osv.fields.float('Distance Real', digits=(18,6), help="Route obtained by electronic reading"),
        
         'create_uid' : openerp.osv.fields.many2one('res.users', 'Created by', readonly=True),
         'create_date': openerp.osv.fields.datetime('Creation Date', readonly=True, select=True),
@@ -381,7 +381,8 @@ class tms_waybill(osv.osv):
 
     def write(self, cr, uid, ids, vals, context=None):
         super(tms_waybill, self).write(cr, uid, ids, vals, context=context)
-        self.get_freight_from_factors(cr, uid, ids, context=context)
+        if 'state' in vals and vals['state'] in ('draft', 'approved', 'confirmed'):
+            self.get_freight_from_factors(cr, uid, ids, context=context)
         return True
 
     def create(self, cr, uid, vals, context=None):
@@ -456,10 +457,14 @@ class tms_waybill(osv.osv):
         return {'value': val}
 
 
-    def copy(self, cr, uid, id, default=None, context=None):
-        waybill = self.browse(cr, uid, id, context=context)
-        if not default:
-            default = {}
+    def copy(self, cr, uid, id, default=None, values=None, context=None):
+        print "values: ", values
+        print "cr: ", cr
+        print "uid: ", uid
+        print "id: ", id
+
+
+        default = default or {}
         default.update({
                         'name'			: False, 
                         'state'			: 'draft',
@@ -472,8 +477,17 @@ class tms_waybill(osv.osv):
                         'date_confirmed': False,
                         'drafted_by'    : False,
                         'date_drafted'  : False,
+
 						})
-        return super(tms_waybill, self).copy(cr, uid, id, default, context=context)
+        if values:
+            if 'replaced_waybill_id' in values:
+                default.update({'replaced_waybill_id': values['replaced_waybill_id'] })
+            if 'sequence_id' in values:
+                default.update({'sequence_id': values['sequence_id'] })
+            if 'date_order' in values:
+                default.update({'date_order': values['date_order'] })
+        print "default: ", default
+        return super(tms_waybill, self).copy(cr, uid, id, default, context)
 
 
     def action_cancel_draft(self, cr, uid, ids, *args):
@@ -894,21 +908,17 @@ class tms_waybill_cancel(osv.osv_memory):
         #                raise osv.except_osv(
         #                        _('Could not cancel Advance !'),
         #                        _('This Waybill is already linked to Travel Expenses record'))
-                    print "xxx"
+                    print "record_id:", record_id
                     waybill_obj.write(cr, uid, record_id, {'state':'cancel', 'cancelled_by':uid,'date_cancelled':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
-                    print "yyy"
-#                    message = "Waybill '%s' is cancelled." % waybill.name
-#                    print message
-#                    waybill_obj.log(cr, uid, record_id[0], message)
-                    print "www"
-                    if record.copy_waybill:
-                        default = {} 
+          
+                    if record.copy_waybill:                        
+                        default ={} 
                         default.update({'replaced_waybill_id': waybill.id })
                         if record.sequence_id.id:
                             default.update({'sequence_id': record.sequence_id.id })
                         if record.date_order:
                             default.update({'date_order': record.date_order })
-                        waybill=waybill_obj.copy(cr, uid, record_id, default)
+                        waybill=waybill_obj.copy(cr, uid, record_id[0], values=default)
         return {'type': 'ir.actions.act_window_close'}
 
 tms_waybill_cancel()

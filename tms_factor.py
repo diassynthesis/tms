@@ -235,7 +235,7 @@ class tms_waybill(osv.osv):
                                 readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}), 
         'waybill_supplier_factor': openerp.osv.fields.one2many('tms.factor', 'waybill_id', 'Waybill Supplier Payment Factors', domain=[('category', '=', 'supplier')],
                                 readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
-        'expense_driver_factor': openerp.osv.fields.one2many('tms.factor', 'travel_id', 'Travel Driver Payment Factors', domain=[('category', '=', 'driver')],
+        'expense_driver_factor': openerp.osv.fields.one2many('tms.factor', 'waybill_id', 'Travel Driver Payment Factors', domain=[('category', '=', 'driver')],
                                 readonly=False, states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
 
     }

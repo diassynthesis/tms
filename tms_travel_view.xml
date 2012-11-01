@@ -146,13 +146,13 @@ TMS.travel
                         </page>
                         <page string="Statistics Data">
                             <separator colspan="4" string="Distances (mi./kms)"/>
-                            <field name="distance_route" readonly="1"/>
+                            <field name="distance_route" readonly="1"/> 
                             <field name="distance_driver" readonly="1"/>
                             <field name="distance_loaded" readonly="1"/>
                             <field name="distance_empty" readonly="1"/>
                             <field name="distance_extraction" readonly="1"/>
                             <separator colspan="4" string="Fuel Efficiency"/>
-                            <field name="fuel_efficiency_expected" readonly="1"/>
+                            <field name="fuel_efficiency_expected" readonly="1"/> 
                             <field name="fuel_efficiency_travel" readonly="1"/>
                             <field name="fuel_efficiency_extraction" readonly="1"/>
                             <separator colspan="4" string="Date and Times"/>
