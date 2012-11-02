@@ -381,12 +381,14 @@ class tms_waybill(osv.osv):
 
     def write(self, cr, uid, ids, vals, context=None):
         super(tms_waybill, self).write(cr, uid, ids, vals, context=context)
-        if 'state' in vals and vals['state'] in ('draft', 'approved', 'confirmed'):
+        
+        if 'state' in vals and vals['state'] not in ('confirmed', 'cancel') or self.browse(cr, uid, ids)[0].state in ('draft', 'approved')  :
             self.get_freight_from_factors(cr, uid, ids, context=context)
         return True
 
     def create(self, cr, uid, vals, context=None):
         res = super(tms_waybill, self).create(cr, uid, vals, context=context)
+        self.get_freight_from_factors(cr, uid, [res], context=context)
         return res
 
 
@@ -560,7 +562,7 @@ class tms_waybill(osv.osv):
             elif waybill.billing_policy == 'automatic':
                 print "Entrando para generar la factura en automatico..."
                 wb_invoice = self.pool.get('tms.waybill.invoice')
-                wb_invoice.makeWaybillInvoices(cr, uid, ids, context=None)
+                wb_invoice.makeWaybillInvoicesq(cr, uid, ids, context=None)
             self.write(cr, uid, ids, {'state':'confirmed', 'confirmed_by' : uid, 'date_confirmed':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
             for (id,name) in self.name_get(cr, uid, ids, context=None):
                 message = _("Waybill '%s' is set to confirmed.") % name

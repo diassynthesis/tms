@@ -457,7 +457,7 @@ TMS.WAYBILL
 			    <group col="2" colspan="4">
 			<button icon='gtk-cancel' special="cancel"
 				string="Cancel" />
-			<button name="makeInvoices" string="Confirm"
+			<button name="makeWaybillInvoices" string="Confirm"
 				colspan="1" type="object" icon="gtk-ok" />
 		</group>
 	</form>
