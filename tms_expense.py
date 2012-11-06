@@ -495,7 +495,7 @@ class tms_expense_line(osv.osv):
 
 
     _columns = {
-#        'agreement_id': openerp.osv.fields.many2one('tms.agreement', 'Agreement', required=False, ondelete='cascade', select=True, readonly=True),
+        'agreement_id': openerp.osv.fields.many2one('tms.agreement', 'Agreement', required=False, ondelete='cascade', select=True, readonly=True),
         'travel_id'        : openerp.osv.fields.many2one('tms.travel', 'Travel', required=False),
         'expense_id'        : openerp.osv.fields.many2one('tms.expense', 'Expense', required=False, ondelete='cascade', select=True, readonly=True),
         'line_type'         : openerp.osv.fields.selection([
@@ -505,6 +505,7 @@ class tms_expense_line(osv.osv):
                                           ('salary_retention','Salary Retention'),
                                           ('salary_discount','Salary Discount'),
                                           ('fuel','Fuel'),
+                                          ('indirect','Indirect'),
                                     ], 'Line Type', require=True),
 
         'name'              : openerp.osv.fields.char('Description', size=256, required=True),
@@ -524,6 +525,7 @@ class tms_expense_line(osv.osv):
         'shop_id'           : openerp.osv.fields.related('expense_id', 'shop_id', type='many2one', relation='sale.shop', string='Shop', store=True, readonly=True),
         'company_id'        : openerp.osv.fields.related('expense_id', 'company_id', type='many2one', relation='res.company', string='Company', store=True, readonly=True),
         'fuel_voucher'      : openerp.osv.fields.boolean('Fuel Voucher'),
+
         'control'           : openerp.osv.fields.boolean('Control'), # Useful to mark those lines that must not be taken for Expense Record (like Fuel from Fuel Voucher, Toll Stations payed without cash (credit card, voucher, etc)
         'automatic'         : openerp.osv.fields.boolean('Automatic', help="Check this if you want to create Advances and/or Fuel Vouchers for this line automatically"),
         'credit'            : openerp.osv.fields.boolean('Credit', help="Check this if you want to create Fuel Vouchers for this line"),
