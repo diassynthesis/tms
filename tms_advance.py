@@ -51,39 +51,60 @@ class tms_advance(osv.osv):
                                 }
         return res
 
+    def _amount(self, cr, uid, ids, field_name, args, context=None):
+        res = {}
+        for record in self.browse(cr, uid, ids, context=context):          
+            tax_factor = 0.00
+            for line in record.product_id.supplier_taxes_id:
+                tax_factor = (tax_factor + line.amount) if line.amount <> 0.0 else tax_factor
+
+            subtotal = record.price_unit * record.product_uom_qty
+            tax_amount = subtotal * tax_factor
+            total = subtotal + tax_amount
+            res[record.id] =   {
+                            'subtotal'  :   subtotal,
+                            'tax_amount':   tax_amount,
+                            'total'     :   total,
+                    }
+        return res
+
 
     
     _columns = {
-        'name': openerp.osv.fields.char('Anticipo', size=64, required=False),
-        'state': openerp.osv.fields.selection([('draft','Draft'), ('approved','Approved'), ('confirmed','Confirmed'), ('closed','Closed'), ('cancel','Cancelled')], 'State', readonly=True),
-        'date': openerp.osv.fields.date('Date', states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}, required=True),
-        'travel_id':openerp.osv.fields.many2one('tms.travel', 'Travel', required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
-        'unit_id': openerp.osv.fields.related('travel_id', 'unit_id', type='many2one', relation='tms.unit', string='Unit', store=True, readonly=True),                
-        'employee_id': openerp.osv.fields.related('travel_id', 'employee_id', type='many2one', relation='hr.employee', string='Driver', store=True, readonly=True),                
-        'shop_id': openerp.osv.fields.related('travel_id', 'shop_id', type='many2one', relation='sale.shop', string='Shop', store=True, readonly=True),
-        'product_id': openerp.osv.fields.many2one('product.product', 'Product', domain=[('purchase_ok', '=', 1),('tms_category','=','real_expense')],  required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
+        'name'          : openerp.osv.fields.char('Anticipo', size=64, required=False),
+        'state'         : openerp.osv.fields.selection([('draft','Draft'), ('approved','Approved'), ('confirmed','Confirmed'), ('closed','Closed'), ('cancel','Cancelled')], 'State', readonly=True),
+        'date'          : openerp.osv.fields.date('Date', states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}, required=True),
+        'travel_id'     :openerp.osv.fields.many2one('tms.travel', 'Travel', required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
+        'unit_id'       : openerp.osv.fields.related('travel_id', 'unit_id', type='many2one', relation='tms.unit', string='Unit', store=True, readonly=True),                
+        'employee_id'   : openerp.osv.fields.related('travel_id', 'employee_id', type='many2one', relation='hr.employee', string='Driver', store=True, readonly=True),                
+        'shop_id'       : openerp.osv.fields.related('travel_id', 'shop_id', type='many2one', relation='sale.shop', string='Shop', store=True, readonly=True),
+        'product_id'    : openerp.osv.fields.many2one('product.product', 'Product', domain=[('purchase_ok', '=', 1),('tms_category','=','real_expense')],  required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
         'product_uom_qty': openerp.osv.fields.float('Quantity', digits=(16, 4), required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
-        'product_uom': openerp.osv.fields.many2one('product.uom', 'Unit of Measure ', required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
-        'total_amount': openerp.osv.fields.float('Amount', required=True, digits_compute= dp.get_precision('Sale Price'), states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
+        'product_uom'   : openerp.osv.fields.many2one('product.uom', 'Unit of Measure ', required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
+        'price_unit'    : openerp.osv.fields.float('Price Unit', required=True, digits_compute= dp.get_precision('Sale Price'), states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
+        'subtotal'      : openerp.osv.fields.function(_amount, method=True, string='Subtotal', type='float', digits_compute= dp.get_precision('Sale Price'), multi=True, store=True),
+        'tax_amount'    : openerp.osv.fields.function(_amount, method=True, string='Tax Amount', type='float', digits_compute= dp.get_precision('Sale Price'), multi=True, store=True),
+        'total'         : openerp.osv.fields.function(_amount, method=True, string='Total', type='float', digits_compute= dp.get_precision('Sale Price'), multi=True, store=True),
 
-        'notes': openerp.osv.fields.text('Notes', states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
+        'notes'         : openerp.osv.fields.text('Notes', states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
         
-        'create_uid' : openerp.osv.fields.many2one('res.users', 'Created by', readonly=True),
-        'create_date': openerp.osv.fields.datetime('Creation Date', readonly=True, select=True),
-        'cancelled_by' : openerp.osv.fields.many2one('res.users', 'Cancelled by', readonly=True),
+        'create_uid'    : openerp.osv.fields.many2one('res.users', 'Created by', readonly=True),
+        'create_date'   : openerp.osv.fields.datetime('Creation Date', readonly=True, select=True),
+        'cancelled_by'  : openerp.osv.fields.many2one('res.users', 'Cancelled by', readonly=True),
         'date_cancelled': openerp.osv.fields.datetime('Date Cancelled', readonly=True),
-        'approved_by' : openerp.osv.fields.many2one('res.users', 'Approved by', readonly=True),
-        'date_approved': openerp.osv.fields.datetime('Date Approved', readonly=True),
-        'confirmed_by' : openerp.osv.fields.many2one('res.users', 'Confirmed by', readonly=True),
+        'approved_by'   : openerp.osv.fields.many2one('res.users', 'Approved by', readonly=True),
+        'date_approved' : openerp.osv.fields.datetime('Date Approved', readonly=True),
+        'confirmed_by'  : openerp.osv.fields.many2one('res.users', 'Confirmed by', readonly=True),
         'date_confirmed': openerp.osv.fields.datetime('Date Confirmed', readonly=True),
-        'closed_by' : openerp.osv.fields.many2one('res.users', 'Closed by', readonly=True),
-        'date_closed': openerp.osv.fields.datetime('Date Closed', readonly=True),
-        'drafted_by' : openerp.osv.fields.many2one('res.users', 'Drafted by', readonly=True),
-        'date_drafted': openerp.osv.fields.datetime('Date Drafted', readonly=True),
-        'invoice_id': openerp.osv.fields.many2one('account.invoice','Invoice Record', readonly=True),
-        'invoiced':  openerp.osv.fields.function(_invoiced, method=True, string='Invoiced', type='boolean', multi='invoiced'),               
-        'invoice_paid':  openerp.osv.fields.function(_invoiced, method=True, string='Paid', type='boolean', multi='invoiced'),
-        'currency_id': openerp.osv.fields.many2one('res.currency', 'Currency', required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
+        'closed_by'     : openerp.osv.fields.many2one('res.users', 'Closed by', readonly=True),
+        'date_closed'   : openerp.osv.fields.datetime('Date Closed', readonly=True),
+        'drafted_by'    : openerp.osv.fields.many2one('res.users', 'Drafted by', readonly=True),
+        'date_drafted'  : openerp.osv.fields.datetime('Date Drafted', readonly=True),
+        'invoice_id'    : openerp.osv.fields.many2one('account.invoice','Invoice Record', readonly=True),
+        'invoiced'      :  openerp.osv.fields.function(_invoiced, method=True, string='Invoiced', type='boolean', multi='invoiced'),               
+        'invoice_paid'  :  openerp.osv.fields.function(_invoiced, method=True, string='Paid', type='boolean', multi='invoiced'),
+        'currency_id'   : openerp.osv.fields.many2one('res.currency', 'Currency', required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
+        'auto_expense'  : openerp.osv.fields.boolean('Auto Expense', help="Check this if you want this product and amount to be automatically created when Travel Expense Record is created."),
         }
     
     _defaults = {
@@ -98,6 +119,27 @@ class tms_advance(osv.osv):
         ]
     _order = "name desc, date desc"
 
+
+    def on_change_amount(self, cr, uid, ids, product_id, product_uom_qty, price_unit):
+        res = {'value': {'subtotal': 0.0, 'tax_amount': 0.0, 'total': 0.0, }}
+        if not (product_uom_qty and product_id and price_unit):
+            return res
+        tax_factor = 0.00
+        prod_obj = self.pool.get('product.product')
+        for line in prod_obj.browse(cr, uid, [product_id], context=None)[0].supplier_taxes_id:
+            tax_factor = (tax_factor + line.amount) if line.amount <> 0.0 else tax_factor
+        
+
+        subtotal    = price_unit * product_uom_qty
+        tax_amount  = subtotal * tax_factor
+        total       = subtotal * (1.0 + tax_factor)
+        print tax_factor
+        print price_unit
+        print subtotal
+        print tax_amount
+        print total
+
+        return {'value': {'subtotal': subtotal, 'total': total, 'tax_amount': tax_amount}}
 
 
     def on_change_product_id(self, cr, uid, ids, product_id):
@@ -173,7 +215,7 @@ class tms_advance(osv.osv):
     def action_approve(self, cr, uid, ids, context=None):
         for advance in self.browse(cr, uid, ids, context=context):            
             if advance.state in ('draft'):
-                if advance.total_amount <= 0.0:
+                if advance.total <= 0.0:
                      raise osv.except_osv(
                         _('Could not approve Advance !'),
                         _('Total Amount must be greater than zero.'))
@@ -292,7 +334,7 @@ class tms_advance_invoice(osv.osv_memory):
                         'name': line.product_id.name + ' - ' + line.travel_id.name + ' - ' + line.name,
                         'origin': line.name,
                         'account_id': a,
-                        'price_unit': line.total_amount / line.product_uom_qty,
+                        'price_unit': line.total / line.product_uom_qty,
                         'quantity': line.product_uom_qty,
                         'uos_id': line.product_uom.id,
                         'product_id': line.product_id.id,
@@ -301,7 +343,7 @@ class tms_advance_invoice(osv.osv_memory):
                         'account_analytic_id': False,
                         })
                     inv_lines.append(inv_line)
-                    inv_amount += line.total_amount
+                    inv_amount += line.total
                 
                     notes += '\n' + line.name
                     employee_name = line.employee_id.name + ' (' + str(line.employee_id.id) + ')' # + time.strftime(DEFAULT_SERVER_DATE_FORMAT)

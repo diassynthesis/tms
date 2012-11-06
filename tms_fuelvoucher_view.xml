@@ -100,10 +100,11 @@ TMS.FUELVOUCHER
                     <field name="partner_id" 	domain="[('supplier','=',1),('tms_category','=','fuel')]" 
 											 	context="{'default_supplier': 1, 'default_customer': 0, 'default_tms_category': 'fuel'}"/>
                     <field name="currency_id" />
-                    <group colspan="4" col="10">
-		    			<field name="product_id" 	domain="[('purchase_ok', '=', True),('tms_category','=','fuel')]"
-													context="{'default_tms_category': 'fuel', 'default_type': 'service', 'default_procure_method':'make_to_stock', 'default_supply_method': 'buy'}"
-													on_change="on_change_product_id(product_id)" colspan="8"/>
+	    			<field name="product_id" 	domain="[('purchase_ok', '=', True),('tms_category','=','fuel')]"
+												context="{'default_tms_category': 'fuel', 'default_type': 'service', 'default_procure_method':'make_to_stock', 'default_supply_method': 'buy'}"
+												on_change="on_change_product_id(product_id)" colspan="4"/>
+                    <newline />
+                    <group colspan="4" col="12">
                         <field name="product_uom" invisible="1" />
                         <field name="product_uom_qty" on_change="on_change_amount(product_uom_qty, price_total, tax_amount, product_id)"/>
                         <field name="price_unit"  readonly="1"/>

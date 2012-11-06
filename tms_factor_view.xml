@@ -3,7 +3,7 @@
     <data>
 <!-- 
 ##############################
-TMS.WAYBILL.FACTOR
+TMS.FACTOR
 ##############################
  -->
 
@@ -14,7 +14,6 @@ TMS.WAYBILL.FACTOR
             <field name="priority">2</field>
             <field name="arch" type="xml">
 				<tree string="Billing Factors">
-					<field name="waybill_id" invisible="1"/>
 					<field name="category" invisible="1" /> 
 					<field name="name" />
 					<field name="factor_type" />
@@ -36,7 +35,8 @@ TMS.WAYBILL.FACTOR
             <field name="type">form</field>
             <field name="arch" type="xml">
 				<form string="Billing Factors" >
-					<field name="waybill_id" invisible="1" />
+<!--					<field name="waybill_id" invisible="1" />
+					<field name="travel_id" /> -->
 					<field name="category" invisible="1" />
 					<field name="factor_type" on_change="on_change_factor_type(factor_type)"/>
 					<field name="name" />

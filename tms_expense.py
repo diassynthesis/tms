@@ -84,7 +84,7 @@ class tms_expense(osv.osv):
                     raise osv.except_osv(
                          _('Currency Error !'), 
                          _('You can not create a Travel Expense Record with Advances with different Currency. This Expense record was created with %s and Advance is with %s ') % (expense.currency_id.name, _advance.currency_id.name))
-                advance += _advance.total_amount
+                advance += _advance.total
 
             for _fuelvoucher in expense.fuelvoucher_ids:
                 if _fuelvoucher.currency_id.id != cur.id:
@@ -282,7 +282,7 @@ class tms_expense(osv.osv):
                             _('Missing configuration !'),
                             _('There is no product defined as Salary and/or Fuel !!!'))
             for product in prod_obj.browse(cr, uid, xid, context=None):        
-                products[xprod] = { 'id': product.id, 'uom': product.uom_id.id, 'name': product.name, 'taxes' : [(6, 0, [x.id for x in product.taxes_id])], 'category' : product.tms_category }
+                products[xprod] = { 'id': product.id, 'uom': product.uom_id.id, 'name': product.name, 'taxes' : [(6, 0, [x.id for x in product.supplier_taxes_id])], 'category' : product.tms_category }
 
 
         qty = amount_untaxed = 0.0
@@ -322,6 +322,7 @@ class tms_expense(osv.osv):
                 result = factor.calculate(cr, uid, 'expense', False, 'driver', [travel.id])
                 salary += result
                 xline = {
+                        'travel_id'         : travel.id,
                         'expense_id'        : expense.id,
                         'line_type'         : products['salary']['category'],
                         'name'              : products['salary']['name'] + ' - ' + _('Travel: ') + travel.name, 
@@ -342,6 +343,7 @@ class tms_expense(osv.osv):
 
                 if qty:
                     xline = {
+                            'travel_id'         : travel.id,
                             'expense_id'        : expense.id,
                             'line_type'         : products['fuel']['category'],
                             'name'              : products['fuel']['name'] + _(' from Fuel Vouchers - Travel: ') + travel.name,
@@ -356,6 +358,22 @@ class tms_expense(osv.osv):
                             }
                     res = expense_line_obj.create(cr, uid, xline)
                 for advance in travel.advance_ids:
+                    if advance.auto_expense:
+                        xline = {
+                            'travel_id'         : travel.id,
+                            'expense_id'        : expense.id,
+                            'line_type'         : advance.product_id.tms_category,
+                            'name'              : advance.product_id.name + ' - ' + _('Travel: ') + travel.name, 
+                            'sequence'          : 7,
+                            'product_id'        : advance.product_id.id,
+                            'product_uom'       : advance.product_id.uom_id.id,
+                            'product_uom_qty'   : advance.product_uom_qty,
+                            'price_unit'        : advance.price_unit,
+                            'control'           : True,
+                            'tax_id'            : [(6, 0, [x.id for x in advance.product_id.supplier_taxes_id])]
+                            }
+                        res = expense_line_obj.create(cr, uid, xline)
+
                     advance_obj.write(cr, uid, [advance.id], {'expense_id': expense.id, 'state':'closed','closed_by':uid,'date_closed':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
                 travel_obj.write(cr, uid, [travel.id], {'expense_id': expense.id, 'state':'closed','closed_by':uid,'date_closed':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
         return
@@ -478,6 +496,7 @@ class tms_expense_line(osv.osv):
 
     _columns = {
 #        'agreement_id': openerp.osv.fields.many2one('tms.agreement', 'Agreement', required=False, ondelete='cascade', select=True, readonly=True),
+        'travel_id'        : openerp.osv.fields.many2one('tms.travel', 'Travel', required=False),
         'expense_id'        : openerp.osv.fields.many2one('tms.expense', 'Expense', required=False, ondelete='cascade', select=True, readonly=True),
         'line_type'         : openerp.osv.fields.selection([
                                           ('real_expense','Real Expense'),

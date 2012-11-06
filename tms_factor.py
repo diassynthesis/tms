@@ -247,7 +247,7 @@ class tms_travel(osv.osv):
 
     _columns = {
         'expense_driver_factor': openerp.osv.fields.one2many('tms.factor', 'travel_id', 'Travel Driver Payment Factors', domain=[('category', '=', 'driver')],
-                                readonly=False, states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
+                                readonly=False, states={'cancel':[('readonly',True)], 'done':[('readonly',True)]}),
 
     }
 

@@ -134,7 +134,7 @@ class tms_travel(osv.osv):
         'state': openerp.osv.fields.selection([('draft','Pending'), ('progress','In Progress'), ('done','Done'), ('closed','Closed'), ('cancel','Cancelled')], 'State', readonly=True),
         'route_id': openerp.osv.fields.many2one('tms.route', 'Route', required=True, states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
         'kit_id': openerp.osv.fields.many2one('tms.unit.kit', 'Kit', required=False, states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
-        'unit_id': openerp.osv.fields.many2one('tms.unit', 'Transportation Unit', required=True, domain=[('fleet_type', '=', 'tractor')], states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
+        'unit_id': openerp.osv.fields.many2one('tms.unit', 'Unit', required=True, domain=[('fleet_type', '=', 'tractor')], states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
         'trailer1_id': openerp.osv.fields.many2one('tms.unit', 'Trailer1', required=False,  domain=[('fleet_type', '=', 'trailer')], states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
         'dolly_id': openerp.osv.fields.many2one('tms.unit', 'Dolly', required=False,        domain=[('fleet_type', '=', 'dolly')],   states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
         'trailer2_id': openerp.osv.fields.many2one('tms.unit', 'Trailer2', required=False,  domain=[('fleet_type', '=', 'trailer')], states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),

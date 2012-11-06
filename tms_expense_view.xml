@@ -164,7 +164,7 @@ TMS.EXPENSE
             <field name="model">tms.expense</field>
             <field name="type">search</field>
             <field name="arch" type="xml">
-                <search string="Search Waybills">
+                <search string="Search Expenses">
                     <filter icon="terp-gtk-media-pause" string="Draft" domain="[('state','=','draft')]"/>
                     <filter icon="terp-gtk-jump-to-ltr" string="Approved" domain="[('state','=','approved')]"/>
                     <filter icon="terp-check" string="Confirmed" domain="[('state','=','confirmed')]"/>
@@ -236,6 +236,7 @@ TMS.EXPENSE.LINE
             <field name="priority">2</field>
             <field name="arch" type="xml">
                 <tree string="Expense Lines" colors="blue:line_type=='salary';gray:line_type=='madeup_expense';red:price_total&lt;0;">
+				    <field name="travel_id" />
 				    <field name="line_type" />
 				    <field name="name" />
 				    <field name="product_id" />
@@ -257,6 +258,8 @@ TMS.EXPENSE.LINE
             <field name="type">form</field>
             <field name="arch" type="xml">
                 <form string="Expense Lines">
+				    <field name="travel_id" domain="[('id','in', tuple(parent.travel_ids[0][2]))]" />   
+                    <newline />
                     <field name="control" invisible="1" />
 					<field name="line_type" required="1" attrs="{'readonly':[('control','!=',False)]}"/>
 					<newline />

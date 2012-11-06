@@ -100,29 +100,32 @@ TMS.travel
             <field name="type">form</field>
             <field name="arch" type="xml">
                 <form string="TMS Travels">
-                    <field name="shop_id" />
-                    <field name="name" readonly="1"/>
-                    <field name="company_id" />
-                    <field name="date" />
-                    <field name="route_id" colspan="4" on_change="onchange_route_id(route_id, unit_id, trailer1_id, dolly_id, trailer2_id)"/> 
-                    <field name="departure" readonly="1"/>
-                    <field name="arrival" readonly="1"/>
-                    <group colspan="4" col="10">
-                		<field name="kit_id" on_change="onchange_kit_id(kit_id)"/>
-                        <field name="unit_id" />
+                    <group colspan="4" col="12" >
+                        <field name="shop_id" colspan="4"/>
+                        <field name="name" readonly="1" colspan="4"/>
+<!--                    <field name="company_id" /> -->
+                        <field name="date" colspan="4"/>
+                        <field name="route_id" colspan="12" on_change="onchange_route_id(route_id, unit_id, trailer1_id, dolly_id, trailer2_id)"/> 
+                		<field name="kit_id" on_change="onchange_kit_id(kit_id)" colspan="4"/>
+                        <field name="departure" readonly="1" colspan="4"/>
+                        <field name="arrival" readonly="1" colspan="4"/>
+                        <field name="unit_id" colspan="3"/>
                         <field name="trailer1_id" 	domain="[('id','!=',trailer2_id), ('fleet_type','=','trailer')]" 
 													context="{'default_fleet_type': 'trailer'}"
-												  	attrs="{'required':['|', ('dolly_id','!=',False),('trailer2_id','!=',False)]}"/>
+												  	attrs="{'required':['|', ('dolly_id','!=',False),('trailer2_id','!=',False)]}"
+                                                     colspan="3"/>
                         <field name="dolly_id" 	domain="[('fleet_type','=','dolly')]" 
 												context="{'default_fleet_type': 'dolly'}"
-												attrs="{'required':[('trailer2_id','!=',False)]}"/>
+												attrs="{'required':[('trailer2_id','!=',False)]}"
+                                                     colspan="3"/>
                         <field name="trailer2_id" 	domain="[('id','!=',trailer1_id), ('fleet_type','=','trailer')]" 
 													context="{'default_fleet_type': 'trailer'}"
-													attrs="{'required':[('dolly_id','!=',False)]}"/>
-                    </group>
-                    <field name="employee_id" context="{'default_tms_category': 'driver'}"/>
-                    <field name="employee2_id"  context="{'default_tms_category': 'driver'}"/>
-                    
+													attrs="{'required':[('dolly_id','!=',False)]}"
+                                                     colspan="3"/>
+
+                        <field name="employee_id" context="{'default_tms_category': 'driver'}"  colspan="6"/>
+                        <field name="employee2_id"  context="{'default_tms_category': 'driver'}"  colspan="6"/>
+                    </group>                    
                     <notebook colspan="4">
                         <page string="Fuel Vouchers">
                             <field name="fuelvoucher_ids" nolabel="1" context="{'default_travel_id': active_id}" />	
@@ -136,7 +139,7 @@ TMS.travel
                             <separator string="Driver Salary Factors" colspan="4"/>
                             <field name="expense_driver_factor" 
                                     context="{'default_travel_id': active_id,'default_category':'driver'}" 
-                                    domain="[('category','=','driver')]"
+                                    
                                     colspan="4" nolabel="1"/>
 						</page>
                         <page string="History">
