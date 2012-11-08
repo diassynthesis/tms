@@ -128,9 +128,16 @@ TMS.WAYBILL
             <field name="model">tms.waybill</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
-                <form string="Waybill">
+                <form string="Waybill" version="7.0">
+                    <header>
+                        <button name="%(action_waybill_cancel)d" states="draft,approved,confirmed" string="Cancel" icon="gtk-cancel"  type="action"/> 
+				        <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
+				        <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
+				        <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok"/> 
+                        <field name="state" widget="statusbar" statusbar_visible="draft,approved,confirmed,cancel"/> 
+                    </header>
 					<field name="company_id" readonly="1" invisible="1"/>
-                    <group col="8" colspan="4">
+                    <group col="8">
                         <field name="name" readonly="1"/>
                         <field name="date_order"/>
                         <field name="shop_id" />                        
@@ -139,23 +146,24 @@ TMS.WAYBILL
 								domain="[('shop_id','=',shop_id)]" />
 
 					</group>
-                    <field name="partner_id" on_change="onchange_partner_id(partner_id)" domain="[('customer','=',True)]" context="{'search_default_customer':1}" required="1"/>
-                    <field name="pricelist_id" />
-<!--	                    <field name="account_analytic_id"
-								context="{'partner_id':partner_id, 'contact_id':partner_order_id, 'pricelist_id':pricelist_id, 'default_name':name}"
-                                groups="analytic.group_analytic_accounting" domain="[('parent_id','!=',False)]" /> -->
-
-                    <field name="partner_order_id" domain="[('partner_id','=',partner_id)]" />
-                    <field name="partner_invoice_id" domain="[('partner_id','=',partner_id)]" />
-					<field name="departure_address_id" />
-					<field name="arrival_address_id" />
-					<field name="upload_point" />
-					<field name="download_point" />
-
+                    <group col="4">
+                        <field name="partner_id" on_change="onchange_partner_id(partner_id)" domain="[('customer','=',True)]" context="{'search_default_customer':1}" required="1"/>
+    <!--	                    <field name="account_analytic_id"
+								    context="{'partner_id':partner_id, 'contact_id':partner_order_id, 'pricelist_id':pricelist_id, 'default_name':name}"
+                                    groups="analytic.group_analytic_accounting" domain="[('parent_id','!=',False)]" /> -->
+                        <field name="pricelist_id" />
+                        <field name="partner_order_id" domain="[('partner_id','=',partner_id)]" />
+                        <field name="partner_invoice_id" domain="[('partner_id','=',partner_id)]" />
+					    <field name="departure_address_id" />
+					    <field name="arrival_address_id" />
+					    <field name="upload_point" />
+					    <field name="download_point" />
+                    </group>
+            
 					
                     <notebook colspan="4">
 						<page string="Shipped Product">
-							<field name="waybill_shipped_product" context="{'default_waybill_id': active_id}" colspan="4" nolabel="1">
+							<field name="waybill_shipped_product" > <!--context="{'default_waybill_id': active_id}" colspan="4" nolabel="1">-->
 								<tree string="Shipped Product" editable="bottom">
 									<field name="name" invisible="1" />
 									<field name="product_id" 
@@ -167,7 +175,7 @@ TMS.WAYBILL
 									<field name="notes" />
 									<field name="sequence" />
 								</tree>
-								<form string="Shipped Product" >
+								<!--<form string="Shipped Product" version="7.0">
 									<field name="product_id" on_change="on_change_product_id(product_id)" 
 											 domain="[('tms_category','=','transportable')]"
 											 context="{'default_purchase_ok':0, 'default_sale_ok':0,'default_tms_category': 'transportable','default_type': 'service', 'default_procure_method':'make_to_stock', 'default_supply_method': 'buy'}"/>
@@ -176,11 +184,19 @@ TMS.WAYBILL
 									<field name="product_uom_qty" />
 									<field name="notes" colspan="4"/>
 									<field name="sequence" />
-								</form>
+								</form>-->
 							</field>
+<!--                            <group class="oe_subtotal_footer oe_left" colspan="4" col="4" name="shipped_total"> -->
+                            <group class="oe_subtotal_footer" colspan="4" col="8" name="shipped_total">
+                                <field name="product_qty" />
+                                <field name="product_volume" />
+                                <field name="product_weight" />
+                                <field name="product_uom_type" />
+                            </group>
+
 						</page>
 						<page string="Lines">
-							<field name="waybill_line" context="{'default_waybill_id': active_id}" colspan="4" nolabel="1">
+							<field name="waybill_line"> <!--context="{'default_waybill_id': active_id}" colspan="4" nolabel="1"> -->
 								<tree string="Waybill Lines">
 									<field name="line_type" />
 									<field name="name" />
@@ -223,7 +239,25 @@ TMS.WAYBILL
 
 									<field name="sequence" />
 								</form>
-							</field>								
+							</field>
+                            <group class="oe_subtotal_footer oe_right" colspan="2" name="sale_total">
+                                <field name="amount_freight" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+                                <field name="amount_move" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+                                <field name="amount_highway_tolls" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+                                <field name="amount_insurance" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+                                <field name="amount_other" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+                                <div class="oe_subtotal_footer_separator oe_inline">
+                                    <label for="amount_untaxed" />
+                                </div>
+                                <field name="amount_untaxed"  nolabel="1" class="oe_subtotal_footer_separator"  widget='monetary' options="{'currency_field': 'currency_id'}"/>
+                                <field name="amount_tax" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+                                <div class="oe_subtotal_footer_separator oe_inline">
+                                    <label for="amount_total" />
+                                    <button name="button_dummy"
+                                        states="draft" string="(update)" type="object" class="oe_edit_only oe_link"/>
+                                </div>
+                                <field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+                            </group>
 						</page>
 						<page string="Extra Fields">
 	                        <field name="waybill_type"/>
@@ -300,30 +334,34 @@ TMS.WAYBILL
 							        colspan="4" nolabel="1" />
 						</page>
                         <page string="Times">
-							<group colspan="2" col="2">
-								<separator string="Scheduled" colspan="2"/>
-								<field name="date_start" />
-								<field name="date_up_start_sched" />
-								<field name="date_up_end_sched" />
-								<field name="date_up_docs_sched" />
-								<field name="date_appoint_down_sched" />
-								<field name="date_down_start_sched" />
-								<field name="date_down_end_sched" />
-								<field name="date_down_docs_sched" />
-								<field name="date_end" />
-							</group>						
-							<group colspan="2" col="2">
-								<separator string="Real"  colspan="2"/>
-								<field name="date_start_real" />
-								<field name="date_up_start_real" />
-								<field name="date_up_end_real" />
-								<field name="date_up_docs_real" />
-								<field name="date_appoint_down_real" />
-								<field name="date_down_start_real" />
-								<field name="date_down_end_real" />
-								<field name="date_down_docs_real" />
-								<field name="date_end_real" />
-							</group>
+                            <group colspan="4" col="4">
+                                <group colspan="2">
+								    <separator string="Scheduled" />
+                                    <newline/>
+								    <field name="date_start" />
+								    <field name="date_up_start_sched" />
+								    <field name="date_up_end_sched" />
+								    <field name="date_up_docs_sched" />
+								    <field name="date_appoint_down_sched" />
+								    <field name="date_down_start_sched" />
+								    <field name="date_down_end_sched" />
+								    <field name="date_down_docs_sched" />
+								    <field name="date_end" />
+                                </group>
+                                <group colspan="2">
+                                    <separator string="Real" />
+                                    <newline/>
+								    <field name="date_start_real" />
+								    <field name="date_up_start_real" />
+								    <field name="date_up_end_real" />
+								    <field name="date_up_docs_real" />
+								    <field name="date_appoint_down_real" />
+								    <field name="date_down_start_real" />
+								    <field name="date_down_end_real" />
+								    <field name="date_down_docs_real" />
+								    <field name="date_end_real" />
+                                </group>
+                            </group>
 						</page>
                         <page string="Notes">
                             <field colspan="4" name="notes" nolabel="1"/>
@@ -348,13 +386,6 @@ TMS.WAYBILL
                             <field name="date_drafted" readonly="1" />
                         </page>
 					</notebook>
-                    <group col="13" colspan="4">
-                        <field name="state"/>
-                        <button name="%(action_waybill_cancel)d" states="draft,approved,confirmed" string="Cancel" icon="gtk-cancel"  type="action"/> 
-				        <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
-				        <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
-				        <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok"/> 
-                    </group>
                 </form>
             </field>
         </record>

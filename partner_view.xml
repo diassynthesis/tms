@@ -11,8 +11,9 @@
             <field name="priority">50</field>
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
-                <xpath expr="/form/group/group/field[@name='lang']" position="after" >
+                <xpath expr="//field[@name='user_id']" position="before" >
                     <field name="tms_category" />
+                    <newline />
                 </xpath> 
             </field>
         </record>

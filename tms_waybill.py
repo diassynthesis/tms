@@ -212,9 +212,9 @@ class tms_waybill(osv.osv):
 
         'waybill_line': openerp.osv.fields.one2many('tms.waybill.line', 'waybill_id', 'Waybill Lines', readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
         'waybill_shipped_product': openerp.osv.fields.one2many('tms.waybill.shipped_product', 'waybill_id', 'Shipped Products', readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
-        'product_qty':openerp.osv.fields.function(_shipped_product, method=True, string='Product Qty', type='float', digits=(20, 6),  store=True, multi='product_qty'),
-        'product_volume':openerp.osv.fields.function(_shipped_product, method=True, string='Product Volume', type='float', digits=(20, 6),  store=True, multi='product_qty'),
-        'product_weight':openerp.osv.fields.function(_shipped_product, method=True, string='Product Weight', type='float', digits=(20, 6),  store=True, multi='product_qty'),
+        'product_qty':openerp.osv.fields.function(_shipped_product, method=True, string='Sum Qty', type='float', digits=(20, 6),  store=True, multi='product_qty'),
+        'product_volume':openerp.osv.fields.function(_shipped_product, method=True, string='Sum Volume', type='float', digits=(20, 6),  store=True, multi='product_qty'),
+        'product_weight':openerp.osv.fields.function(_shipped_product, method=True, string='Sum Weight', type='float', digits=(20, 6),  store=True, multi='product_qty'),
         'product_uom_type':openerp.osv.fields.function(_shipped_product, method=True, string='Product UoM Type', type='char', size=64, store=True, multi='product_qty'),
 
         'waybill_extradata': openerp.osv.fields.one2many('tms.waybill.extradata', 'waybill_id', 'Extra Data Fields', readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),

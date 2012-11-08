@@ -149,7 +149,7 @@ TMS.EXPENSE
                         </page>
 					</notebook>
                     <group col="13" colspan="4">
-                        <field name="state"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,approved,confirmed,cancel"/> 
                         <button name="%(action_expense_cancel)d" states="draft,approved,confirmed" string="Cancel" icon="gtk-cancel"  type="action"/> 
 				        <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
 				        <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
@@ -191,7 +191,7 @@ TMS.EXPENSE
             <field name="arch" type="xml">
                 <calendar string="Expense" color="state" date_start="date">
                     <field name="employee_id"/>
-                    <field name="amount_untaxed"/>
+                    <field name="amount_balance"/>
                 </calendar>
             </field>
         </record>
@@ -203,7 +203,7 @@ TMS.EXPENSE
             <field name="arch" type="xml">
                 <graph string="Expense" type="bar">
                     <field name="employee_id"/>
-                    <field name="amount_untaxed" operator="+"/>
+                    <field name="amount_balance" operator="+"/>
                 </graph>
             </field>
         </record>

@@ -495,7 +495,7 @@ class tms_expense_line(osv.osv):
 
 
     _columns = {
-        'agreement_id': openerp.osv.fields.many2one('tms.agreement', 'Agreement', required=False, ondelete='cascade', select=True, readonly=True),
+#        'agreement_id': openerp.osv.fields.many2one('tms.agreement', 'Agreement', required=False, ondelete='cascade', select=True, readonly=True),
         'travel_id'        : openerp.osv.fields.many2one('tms.travel', 'Travel', required=False),
         'expense_id'        : openerp.osv.fields.many2one('tms.expense', 'Expense', required=False, ondelete='cascade', select=True, readonly=True),
         'line_type'         : openerp.osv.fields.selection([
