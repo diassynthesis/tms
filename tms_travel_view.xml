@@ -182,7 +182,6 @@ TMS.travel
                                 <group>
                                     <field name="waybill_ids" nolabel="1">
                                         <tree string="Waybills" colors="red:state=='cancel';green:state=='approved';blue:state=='confirmed';">
-                                            <button name="%(action_waybill_cancel)d" states="draft,approved,confirmed" string="Cancel" icon="gtk-cancel"  type="action" />
                                             <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
                                             <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok"/>
                                             <field name="state"/>
