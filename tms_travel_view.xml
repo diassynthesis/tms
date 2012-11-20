@@ -84,11 +84,11 @@ TMS.travel
                 <field name="framework" invisible="1"/> 
                 <field name="employee_id" />
                 <field name="route_id" />
-                <field name="departure" />
-                <field name="arrival" />
+                <field name="departure" invisible="1"/>
+                <field name="arrival" invisible="1"/>
                 <field name="date_start" string="Start Sched."/>
                 <field name="date_end" string="End Sched." />
-                <field name="shop_id" />
+                <field name="shop_id" invisible="1"/>
 		    </tree>
 		</field>
 	</record>
@@ -107,89 +107,165 @@ TMS.travel
                         <button name="action_end" states="progress" string="End Travel" type="object" icon="gtk-ok"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,progress,done,closed,cancel"/> 
                     </header>
-
-                    <group col="6" >
-                        <field name="shop_id"/>
-                        <field name="name" readonly="1"/>
-                        <field name="date" />
-                        <group>
-                    		<field name="kit_id" on_change="onchange_kit_id(kit_id)"/>
+                    <sheet>
+                        <h1>
+                            <label string="TMS Travel"/>
+                            <field name="name" class="oe_inline" readonly="1"/>
+                        </h1>
+                        <group colspan="4" col="4">
+                            <field name="shop_id"/>
+                            <field name="date" />
+                            <field name="kit_id" on_change="onchange_kit_id(kit_id)"/>
+                            <newline />
                             <field name="unit_id" />
-                            <field name="trailer1_id" 	domain="[('id','!=',trailer2_id), ('fleet_type','=','trailer')]" 
-													    context="{'default_fleet_type': 'trailer'}"
-												      	attrs="{'required':['|', ('dolly_id','!=',False),('trailer2_id','!=',False)]}"/>
-                            <field name="dolly_id" 	domain="[('fleet_type','=','dolly')]" 
-												    context="{'default_fleet_type': 'dolly'}"
-												    attrs="{'required':[('trailer2_id','!=',False)]}"/>
-                            <field name="trailer2_id" 	domain="[('id','!=',trailer1_id), ('fleet_type','=','trailer')]" 
-													    context="{'default_fleet_type': 'trailer'}"
-													    attrs="{'required':[('dolly_id','!=',False)]}"/>
-                        </group>
-                        <group>
-                            <field name="route_id" on_change="onchange_route_id(route_id, unit_id, trailer1_id, dolly_id, trailer2_id)"/> 
+                            <field name="trailer1_id" 	domain="[('id','!=',trailer2_id), ('fleet_type','=','trailer')]"
+										                context="{'default_fleet_type': 'trailer'}"
+									                  	attrs="{'required':['|', ('dolly_id','!=',False),('trailer2_id','!=',False)]}"/>
+                            <field name="dolly_id" 	domain="[('fleet_type','=','dolly')]"
+									                context="{'default_fleet_type': 'dolly'}"
+									                attrs="{'required':[('trailer2_id','!=',False)]}"/>
+                            <field name="trailer2_id" 	domain="[('id','!=',trailer1_id), ('fleet_type','=','trailer')]"
+										                context="{'default_fleet_type': 'trailer'}"
+										                attrs="{'required':[('dolly_id','!=',False)]}"/>
+                            <field name="employee_id" context="{'default_tms_category': 'driver'}"/>
+                            <field name="employee2_id"  context="{'default_tms_category': 'driver'}"/> 
+                            <field name="route_id" on_change="onchange_route_id(route_id, unit_id, trailer1_id, dolly_id, trailer2_id)" colspan="4"/>
                             <field name="departure" readonly="1" />
                             <field name="arrival" readonly="1" />
-                            <field name="employee_id" context="{'default_tms_category': 'driver'}"/> 
-                            <field name="employee2_id"  context="{'default_tms_category': 'driver'}"/> 
-                        </group>
-                    </group>                    
-                    <notebook colspan="4">
-                        <page string="Fuel Vouchers">
-                            <field name="fuelvoucher_ids" nolabel="1" context="{'default_travel_id': active_id}" />	
-                        </page>                        
-                        <page string="Advances">
-                        	<field name="advance_ids" nolabel="1"  context="{'default_travel_id': active_id}" />
-                        </page>
-                        <page string="Waybills">
-                        </page>
-						<page string="Factor Driver">
-                            <separator string="Driver Salary Factors" colspan="4"/>
-                            <field name="expense_driver_factor" 
-                                    context="{'default_travel_id': active_id,'default_category':'driver'}" 
-                                    
-                                    colspan="4" nolabel="1"/>
-						</page>
-                        <page string="History">
-                        </page>
-                        <page string="Notes">
-                                <field name="notes" nolabel="1" />
-                        </page>
-                        <page string="Statistics Data">
-                            <separator colspan="4" string="Distances (mi./kms)"/>
-                            <field name="distance_route" readonly="1"/> 
-                            <field name="distance_driver" readonly="1"/>
-                            <field name="distance_loaded" readonly="1"/>
-                            <field name="distance_empty" readonly="1"/>
-                            <field name="distance_extraction" readonly="1"/>
-                            <separator colspan="4" string="Fuel Efficiency"/>
-                            <field name="fuel_efficiency_expected" readonly="1"/> 
-                            <field name="fuel_efficiency_travel" readonly="1"/>
-                            <field name="fuel_efficiency_extraction" readonly="1"/>
-                            <separator colspan="4" string="Date and Times"/>
-                            <group colspan="4" col="6">
-                                <field name="date_start" on_change="onchange_dates(date_start, date_end, date_start_real, date_end_real)"/>
-                                <field name="date_end" on_change="onchange_dates(date_start, date_end, date_start_real, date_end_real)"/>
-                                <field name="travel_duration" widget="float_time"/>
-                                <field name="date_start_real" on_change="onchange_dates(date_start, date_end, date_start_real, date_end_real)"/>
-                                <field name="date_end_real" on_change="onchange_dates(date_start, date_end, date_start_real, date_end_real)"/>
-                                <field name="travel_duration_real" widget="float_time"/>
-                            </group>
-                        </page>
-                        <page string="Log Info">
-                            <field name="create_uid" readonly="1" />
-                            <field name="create_date" readonly="1" />
-                            <field name="dispatched_by" readonly="1" />
-                            <field name="date_dispatched" readonly="1" />
-                            <field name="done_by" readonly="1" />
-                            <field name="date_done" readonly="1" />
-                            <field name="closed_by" readonly="1" />
-                            <field name="date_closed" readonly="1" />
-                            <field name="cancelled_by" readonly="1" />
-                            <field name="date_cancelled" readonly="1" />
-                            <field name="drafted_by" readonly="1" />
-                            <field name="date_drafted" readonly="1" />
-                        </page>
-                    </notebook>
+                        </group>                    
+                        <notebook colspan="4">
+                            <page string="Fuel Vouchers">
+                                <group>
+                                    <field name="fuelvoucher_ids" nolabel="1" context="{'default_travel_id': active_id}" >
+                                        <tree string="TMS Fuel Vouchers">
+                                            <button name="action_cancel" states="draft,approved,confirmed" string="Cancel" type="object" icon="gtk-cancel"/>
+                                            <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-ok"/>
+                                            <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok"/>
+                                            <field name="state" />
+                                            <field name="name" />
+                                            <field name="date" />
+                                            <field name="unit_id" />
+                                            <field name="employee_id" />
+                                            <field name="partner_id" />
+                                            <field name="product_uom_qty" sum="Quatity"/>
+                                            <field name="product_uom" />
+                                            <field name="price_total" sum="Total"/>
+                                        </tree>
+                                    </field>
+
+                                </group>
+                            </page>                        
+                            <page string="Advances">
+                                <group>
+                            	    <field name="advance_ids" nolabel="1"  context="{'default_travel_id': active_id}" >
+                                        <tree string="TMS Advances">
+                                            <button name="action_cancel" states="draft,approved,confirmed" string="Cancel" type="object" icon="gtk-cancel"/>
+                                            <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-ok"/>
+                                            <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok"/>
+                                            <field name="state" />
+                                            <field name="name" />
+                                            <field name="date" />
+                                            <field name="unit_id" />
+                                            <field name="employee_id" />
+                                            <field name="product_id" />
+                                            <field name="product_uom_qty" />
+                                            <field name="subtotal" sum="SubTotal" />
+                                            <field name="tax_amount" sum="Tax Amount"/>
+                                            <field name="total" sum="Total"/>
+                                            <field name="auto_expense" />
+                                            <field name="invoice_paid" />
+                                        </tree>
+                                    </field>
+                                </group>
+                            </page>
+                            <page string="Waybills">
+                                <group>
+                                    <field name="waybill_ids" nolabel="1">
+                                        <tree string="Waybills" colors="red:state=='cancel';green:state=='approved';blue:state=='confirmed';">
+                                            <button name="%(action_waybill_cancel)d" states="draft,approved,confirmed" string="Cancel" icon="gtk-cancel"  type="action" />
+                                            <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
+                                            <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok"/>
+                                            <field name="state"/>
+                                            <field name="name"/>
+                                            <field name="date_order"/>
+                                            <field name="client_order_ref"/>
+                                            <field name="partner_id"/>
+                                            <field name="product_uom_type"/>
+                                            <field name="product_qty" sum="Product Quantity"/>
+                                            <field name="amount_untaxed" sum="Amount Untaxed"/>
+                                            <field name="amount_tax" sum="Taxes"/>
+                                            <field name="amount_total" sum="Total "/>
+                                            <field name="user_id" />
+                                        </tree> 
+                                    </field>
+                                </group>
+                            </page>
+
+					        <page string="Factor Driver">
+                                <group>
+                                    <separator string="Driver Salary Factors" colspan="4"/>
+                                    <field name="expense_driver_factor" 
+                                            context="{'default_travel_id': active_id,'default_category':'driver'}"
+                                            colspan="4" nolabel="1"/>
+                                </group>
+					        </page>
+                            <page string="History">
+                                <group>
+                                    <field name="event_ids" nolabel="1"/>
+                                </group>
+                            </page>
+                            <page string="Notes">
+                                <group>
+                                    <field name="notes" nolabel="1" />
+                                </group>
+                            </page>
+                            <page string="Statistics Data">
+                                <group >
+                                    <group >
+                                        <separator string="Distances (mi./kms)"/>
+                                        <newline />
+                                        <field name="distance_route" readonly="1"/> 
+                                        <field name="distance_driver" readonly="1"/>
+                                        <field name="distance_loaded" readonly="1"/>
+                                        <field name="distance_empty" readonly="1"/>
+                                        <field name="distance_extraction" readonly="1"/>
+                                    </group>
+                                    <group  >
+                                        <separator colspan="4" string="Fuel Efficiency"/>
+                                        <newline />
+                                        <field name="fuel_efficiency_expected" readonly="1"/> 
+                                        <field name="fuel_efficiency_travel" readonly="1"/>
+                                        <field name="fuel_efficiency_extraction" readonly="1"/>
+                                    </group>
+                                </group>
+                                <separator colspan="4" string="Date and Times"/>
+                                <group colspan="4" col="6">
+                                    <field name="date_start" on_change="onchange_dates(date_start, date_end, date_start_real, date_end_real)"/>
+                                    <field name="date_end" on_change="onchange_dates(date_start, date_end, date_start_real, date_end_real)"/>
+                                    <field name="travel_duration" widget="float_time"/>
+                                    <field name="date_start_real" on_change="onchange_dates(date_start, date_end, date_start_real, date_end_real)"/>
+                                    <field name="date_end_real" on_change="onchange_dates(date_start, date_end, date_start_real, date_end_real)"/>
+                                    <field name="travel_duration_real" widget="float_time"/>
+                                </group>
+                            </page>
+                            <page string="Log Info">
+                                <group colspan="4" col="4">
+                                    <field name="create_uid" readonly="1" />
+                                    <field name="create_date" readonly="1" />
+                                    <field name="dispatched_by" readonly="1" />
+                                    <field name="date_dispatched" readonly="1" />
+                                    <field name="done_by" readonly="1" />
+                                    <field name="date_done" readonly="1" />
+                                    <field name="closed_by" readonly="1" />
+                                    <field name="date_closed" readonly="1" />
+                                    <field name="cancelled_by" readonly="1" />
+                                    <field name="date_cancelled" readonly="1" />
+                                    <field name="drafted_by" readonly="1" />
+                                    <field name="date_drafted" readonly="1" />
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
                 </form>
             </field>
         </record>

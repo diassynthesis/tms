@@ -405,7 +405,8 @@ class tms_place(osv.osv):
 
     def button_open_google(self, cr, uid, ids, context=None):
         for place in self.browse(cr, uid, ids):
-            url="http://localhost:8069/web/static/get_coords_from_place.html?" + place.name + ','+ place.state_id.name+','+ place.country_id.name
+            url="http://www.google.com"
+#            url="http://localhost:8069/web/static/src/googlemaps/get_coords_from_place.html?" + place.name + ','+ place.state_id.name+','+ place.country_id.name
         return { 'type': 'ir.actions.act_url', 'url': url, 'nodestroy': True, 'target': 'new' }
             
 tms_place()

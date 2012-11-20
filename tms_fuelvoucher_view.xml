@@ -90,61 +90,73 @@ TMS.FUELVOUCHER
             <field name="model">tms.fuelvoucher</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
-                <form string="TMS Fuel Vouchers">
-                    <field name="name" readonly="1"/>
-                    <field name="shop_id" />
-                    <field name="travel_id" domain="[('state','!=','cancel'),('state','!=','closed')]" on_change="on_change_travel_id(travel_id)"/>
-                    <field name="date" />
-                    <field name="unit_id" readonly="1"/>
-                    <field name="employee_id" readonly="1"/>
-                    <field name="partner_id" 	domain="[('supplier','=',1),('tms_category','=','fuel')]" 
-											 	context="{'default_supplier': 1, 'default_customer': 0, 'default_tms_category': 'fuel'}"/>
-                    <field name="currency_id" />
-	    			<field name="product_id" 	domain="[('purchase_ok', '=', True),('tms_category','=','fuel')]"
-												context="{'default_tms_category': 'fuel', 'default_type': 'service', 'default_procure_method':'make_to_stock', 'default_supply_method': 'buy'}"
-												on_change="on_change_product_id(product_id)" colspan="4"/>
-                    <newline />
-                    <group colspan="4" col="12">
-                        <field name="product_uom" invisible="1" />
-                        <field name="product_uom_qty" on_change="on_change_amount(product_uom_qty, price_total, tax_amount, product_id)"/>
-                        <field name="price_unit"  readonly="1"/>
-                        <field name="price_subtotal" readonly="1"/>
-                        <field name="tax_amount" on_change="on_change_amount(product_uom_qty, price_total, tax_amount, product_id)"/>
-                        <field name="special_tax_amount" readonly="1"/>
-                        <field name="price_total" on_change="on_change_amount(product_uom_qty, price_total, tax_amount, product_id)"/>
-                    </group>
-                    <notebook colspan="4">
-                        <page string="Notes">
-                            <field name="notes" nolabel="1" />
-                        </page>
-                        <page string="Log Info">
-                            <field name="create_uid" readonly="1" />
-                            <field name="create_date" readonly="1" />
-                            <field name="approved_by" readonly="1" />
-                            <field name="date_approved" readonly="1" />
-                            <field name="confirmed_by" readonly="1" />
-                            <field name="date_confirmed" readonly="1" />
-                            <field name="closed_by" readonly="1" />
-                            <field name="date_closed" readonly="1" />
-                            <field name="cancelled_by" readonly="1" />
-                            <field name="date_cancelled" readonly="1" />
-                            <field name="drafted_by" readonly="1" />
-                            <field name="date_drafted" readonly="1" />
-							<group colspan="4" col="8">
-									<field name="invoiced"/>  
-									<field name="invoice_id" />
-									<field name="invoice_name" />
-									<field name="invoice_paid"/>  
-							</group>
-                        </page>
-                    </notebook>
-                    <group col="6" colspan="4">
-                        <field name="state" widget="statusbar" statusbar_visible="draft,approved,confirmed,closed,cancel"/> 
+                <form string="TMS Fuel Vouchers" version="7.0">
+                    <header>
                         <button name="action_cancel" states="draft,approved,confirmed" string="Cancel" type="object" icon="gtk-cancel"/>
                         <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
                         <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
                         <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok"/>
-                    </group>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,approved,confirmed,closed,cancel"/> 
+                    </header>
+                    <sheet>
+                        <h1>
+                            <label string="TMS Fuel Voucher"/>
+                            <field name="name" class="oe_inline" readonly="1"/>
+                        </h1>
+                        <group colspan="4" col="4">
+                            <field name="shop_id" />
+                            <field name="date" />
+                            <field name="travel_id" domain="[('state','!=','cancel'),('state','!=','closed')]" on_change="on_change_travel_id(travel_id)"/>
+                            <newline />
+                            <field name="unit_id" readonly="1"/>
+                            <field name="employee_id" readonly="1"/>
+                            <field name="partner_id" 	domain="[('supplier','=',1),('tms_category','=','fuel')]" 
+											         	context="{'default_supplier': 1, 'default_customer': 0, 'default_tms_category': 'fuel'}"/>
+                            <field name="currency_id" />
+	            			<field name="product_id" 	domain="[('purchase_ok', '=', True),('tms_category','=','fuel')]"
+												        context="{'default_tms_category': 'fuel', 'default_type': 'service', 'default_procure_method':'make_to_stock', 'default_supply_method': 'buy'}"
+												        on_change="on_change_product_id(product_id)" colspan="4"/>
+                            <field name="product_uom" invisible="1" />
+                            <group colspan="2">
+
+                                <field name="product_uom_qty" on_change="on_change_amount(product_uom_qty, price_total, tax_amount, product_id)" class="oe_text_right"/>
+                                <field name="price_unit"  readonly="1" class="oe_text_right"/>
+                                <field name="price_subtotal" readonly="1" class="oe_text_right"/>
+                                <field name="tax_amount" on_change="on_change_amount(product_uom_qty, price_total, tax_amount, product_id)" class="oe_text_right"/>
+                                <field name="special_tax_amount" readonly="1" class="oe_text_right"/>
+                                <field name="price_total" on_change="on_change_amount(product_uom_qty, price_total, tax_amount, product_id)" class="oe_text_right"/>
+                            </group>
+                        </group>
+                        <notebook colspan="4">
+                            <page string="Notes">
+                                <group>
+                                    <field name="notes" nolabel="1" />
+                                </group>        
+                            </page>
+                            <page string="Log Info">
+                                <group colspan="4" col="4">
+                                    <field name="create_uid" readonly="1" />
+                                    <field name="create_date" readonly="1" />
+                                    <field name="approved_by" readonly="1" />
+                                    <field name="date_approved" readonly="1" />
+                                    <field name="confirmed_by" readonly="1" />
+                                    <field name="date_confirmed" readonly="1" />
+                                    <field name="closed_by" readonly="1" />
+                                    <field name="date_closed" readonly="1" />
+                                    <field name="cancelled_by" readonly="1" />
+                                    <field name="date_cancelled" readonly="1" />
+                                    <field name="drafted_by" readonly="1" />
+                                    <field name="date_drafted" readonly="1" />
+							        <group colspan="4" col="8">
+									        <field name="invoiced"/>  
+									        <field name="invoice_id" />
+									        <field name="invoice_name" />
+									        <field name="invoice_paid"/>  
+							        </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
                 </form>
             </field>
         </record>

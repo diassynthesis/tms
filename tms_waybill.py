@@ -27,6 +27,7 @@ from tools import DEFAULT_SERVER_DATE_FORMAT, DEFAULT_SERVER_DATETIME_FORMAT, fl
 import decimal_precision as dp
 import netsvc
 import openerp
+from pytz import timezone
 
  # TMS Waybills
 class tms_waybill(osv.osv):
@@ -837,9 +838,18 @@ class tms_waybill_extradata(osv.osv):
             xdate = filter(None, map(lambda x:int(x), value.split('-'))) 
             return {'value': {'value_extra' : date(xdate[0], xdate[1], xdate[2]).strftime(DEFAULT_SERVER_DATE_FORMAT)}}                
         elif type_extra == 'datetime':
+            print "value: ", value            
             xvalue = value.split(' ')
             xdate = filter(None, map(lambda x:int(x), xvalue[0].split('-'))) 
-            xtime = filter(None, map(lambda x:int(x), xvalue[1].split(':'))) 
+            xtime = map(lambda x:int(x), xvalue[1].split(':')) 
+
+            tzone = timezone(self.pool.get('res.users').browse(cr, uid, uid).tz)
+            value = tzone.localize(datetime(xdate[0], xdate[1], xdate[2], xtime[0], xtime[1], xtime[2]))
+
+            print value
+            xvalue = value.split(' ')
+            xdate = filter(None, map(lambda x:int(x), xvalue[0].split('-'))) 
+            xtime = map(lambda x:int(x), xvalue[1].split(':')) 
             return {'value': {'value_extra' : datetime(xdate[0], xdate[1], xdate[2], xtime[0], xtime[1], xtime[2]).strftime( DEFAULT_SERVER_DATETIME_FORMAT)}}                
         return False
 

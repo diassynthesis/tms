@@ -175,26 +175,6 @@ TMS.EVENT
 			  sequence="99"/>
 
 
-
-<!-- 
-##############################
-TMS.TRAVEL
-##############################
- -->
-        <record model="ir.ui.view" id="view_tms_travel_event_form">
-            <field name="name">TMS tms.travel.event.form</field>
-            <field name="model">tms.travel</field>
-            <field name="type">form</field>
-            <field name="priority">50</field>
-            <field name="inherit_id" ref="view_tms_travel_form"/>
-            <field name="arch" type="xml">
-                <xpath expr="/form/notebook/page[@string='History']" position="inside" >
-                    <field name="event_ids" nolabel="1"/>
-                </xpath> 
-            </field>
-        </record>
-
-
 	
 </data>
 </openerp>
