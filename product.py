@@ -46,6 +46,7 @@ class product_product(osv.osv):
                                           ('salary_discount','Salary Discount'),
                                           ('negative_balance','Negative Balance'),
                                           ('fuel','Fuel'),
+                                          ('indirect_expense','Indirect Expense (Agreements)'),
                                           ], 'TMS Type', required=True,
                                           help="""Product Type for using with TMS Module
   - No TMS Product: Not related to TMS
@@ -60,6 +61,7 @@ class product_product(osv.osv):
   - Fuel: Used for filtering products used in Fuel Vouchers.
   All of these products MUST be used as a service because they will never interact with Inventory.
 """),
+            'tms_account_ids' : fields.many2many('account.account', 'tms_product_account_rel', 'product_id', 'account_id', 'Accounts for this product'),
 
         }
 

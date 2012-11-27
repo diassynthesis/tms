@@ -35,6 +35,11 @@
                             <field name="tms_category" on_change="onchange_tms_category(tms_category)"/>
                         </group>
                 </xpath> 
+                <notebook position="inside">
+                    <page string="TMS Expense Accounts" attrs="{'invisible':[('tms_category','!=','indirect_expense')]}" >
+                        <field name="tms_account_ids" nolabel="1" />
+                    </page>
+                </notebook>
             </field>
         </record>
 
