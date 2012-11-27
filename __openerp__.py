@@ -26,7 +26,7 @@
     'complexity': "normal",
     "author" : "HESATEC",
     "website": "http://www.hesatecnica.com",
-    "depends" : ["hr", "account", "account_voucher", "sale"],
+    "depends" : ["hr", "account_voucher", "purchase","sale"],
     "description": "Transportation Management System",
     "demo_xml" : [],
     "init_xml" : [],

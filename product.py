@@ -46,7 +46,7 @@ class product_product(osv.osv):
                                           ('salary_discount','Salary Discount'),
                                           ('negative_balance','Negative Balance'),
                                           ('fuel','Fuel'),
-                                          ], 'TMS Product Type', required=True,
+                                          ], 'TMS Type', required=True,
                                           help="""Product Type for using with TMS Module
   - No TMS Product: Not related to TMS
   - Transportable: Transportable Product used in Waybills

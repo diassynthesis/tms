@@ -14,11 +14,13 @@
             <field name="arch" type="xml">
                 <notebook position="inside">
                     <page string="TMS">
-						<field name="tms_category" />
-						<field name="tms_advance_account_id" attrs="{'required':[('tms_category','=','driver')],'invisible':[('tms_category','!=','driver')]  }"/>
-                        <field name="tms_expense_negative_balance_account_id" attrs="{'required':[('tms_category','=','driver')],'invisible':[('tms_category','!=','driver')]  }"/>
-						<field name="tms_supplier_driver" />
-						<field name="tms_supplier_id" attrs="{'required':[('tms_supplier_driver','=',1)],'invisible':[('tms_supplier_driver','!=',1)]  }"/>
+                        <group>
+						    <field name="tms_category" />
+						    <field name="tms_advance_account_id" attrs="{'required':[('tms_category','=','driver')],'invisible':[('tms_category','!=','driver')]  }"/>
+                            <field name="tms_expense_negative_balance_account_id" attrs="{'required':[('tms_category','=','driver')],'invisible':[('tms_category','!=','driver')]  }"/>
+						    <field name="tms_supplier_driver" />
+						    <field name="tms_supplier_id" attrs="{'required':[('tms_supplier_driver','=',1)],'invisible':[('tms_supplier_driver','!=',1)]  }"/>
+                        </group>
 					</page>
                 </notebook> 
             </field>

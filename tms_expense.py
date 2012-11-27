@@ -31,6 +31,7 @@ import openerp
 # TMS Travel Expenses
 class tms_expense(osv.osv):
     _name = 'tms.expense'
+    _inherit = ['mail.thread', 'ir.needaction_mixin']
     _description = 'TMS Travel Expenses'
 
     def _invoiced(self, cr, uid, ids, field_name, args, context=None):
@@ -393,8 +394,6 @@ class tms_expense(osv.osv):
 
 
     def create(self, cr, uid, vals, context=None):
-        print "Entrando al metodo: create"
-        print "vals: ", vals
         if vals['shop_id']:
             shop = self.pool.get('sale.shop').browse(cr, uid, [vals['shop_id']])[0]
             seq_id = shop.tms_travel_expenses_seq.id
@@ -405,9 +404,7 @@ class tms_expense(osv.osv):
                 raise osv.except_osv(_('Expense Sequence Error !'), _('You have not defined Expense Sequence for shop ' + shop.name))
 
         res = super(tms_expense, self).create(cr, uid, vals, context=context)
-        print "Antes,,,"
         self.get_salary_advances_and_fuel_vouchers(cr, uid, [res], vals)
-        print "Despues,,,"
         return res
 
 
@@ -832,9 +829,12 @@ class tms_expense_invoice(osv.osv_memory):
                         if inv_id:
                             wf_service = netsvc.LocalService("workflow")
                             wf_service.trg_validate(uid, 'account.invoice', inv_id, 'invoice_open', cr)
+                            for new_inv in self.get.pool('accoiunt.invoice').browse(cr, uid, [inv_id]):
+                                invoice_name = new_inv.name                            
 
                         invoices.append(inv_id)
                         expense_obj.write(cr,uid,[expense.id], {'invoice_id': inv_id, 'state':'confirmed', 'confirmed_by':uid, 'date_confirmed':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})               
+                        expense_obj.message_post(cr, uid, [expense.id], body=_("Invoice %s is waiting to be paid</b>.") % (invoice_name), context=context)
 
                     else: # El operador quedó a deber o salio tablas (cero), se tiene que generar la póliza contable correspondiente.
                         move_lines = []

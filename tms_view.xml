@@ -39,24 +39,31 @@ TMS.UNIT.CATEGORY
             <field name="model">tms.unit.category</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
-                <form string="TMS Unit Categories">
-                    <field name="name" select="1"/>
-                    <field name="type" select="1"/>
-                    <field name="parent_id" />
-                    <field name="active" select="1"/>
-                    <field name="company_id" />
-                    <field name="sequence" />
-                    <field name="mandatory" attrs="{'invisible':[('type','!=','expiry')]}"/>
-                    <newline/>
-                    <group attrs="{'invisible':[('type','!=','motor')]}" colspan="2">
-                        <field name="fuel_efficiency_drive_unit"/>
-                        <newline/>
-                        <field name="fuel_efficiency_1trailer"/>
-                        <newline/>
-                        <field name="fuel_efficiency_2trailer"/>
-                    </group>
-                    <newline/>
-                    <field name="notes" colspan="4"/>
+                <form string="TMS Unit Categories" version="7.0">
+                    <sheet>
+                        <h1>
+                            <label string="Category"/>
+                            <field name="name" class="oe_inline"/>
+                        </h1>
+					    <group col="4" colspan="4">
+                            <field name="parent_id" />
+                            <field name="type" select="1"/>
+                            <field name="active" select="1"/>
+<!--                            <field name="company_id" />-->
+                            <field name="sequence" />
+                            <field name="mandatory" attrs="{'invisible':[('type','!=','expiry')]}"/>
+                            <newline/>
+                            <group attrs="{'invisible':[('type','!=','motor')]}" colspan="2">
+                                <field name="fuel_efficiency_drive_unit"/>
+                                <newline/>
+                                <field name="fuel_efficiency_1trailer"/>
+                                <newline/>
+                                <field name="fuel_efficiency_2trailer"/>
+                            </group>
+                            <newline/>
+                            <field name="notes" colspan="4"/>
+                        </group>
+                    </sheet>
                 </form>
             </field>
         </record>
@@ -148,71 +155,93 @@ TMS.UNIT
             <field name="model">tms.unit</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
-                <form string="TMS Units">
-                    <field name="name" />
-                    <field name="fleet_type"/>
-                    <field name="shop_id" />
-                    <field name="company_id"  readonly="1"/>
-					<field name="supplier_unit"/>
-					<field name="supplier_id" attrs="{'required':[('supplier_unit','=',True)], 'invisible':[('supplier_unit','=',False)]}"/>
-                    <field name="active" readonly="1"/>
-                    <notebook colspan="4">
-                        <page string="General Data">
-                            <field name="year_model" />
-                            <field name="unit_type_id" context="{'default_type':'unit_type'}"/>
-                            <field name="unit_brand_id" context="{'default_type':'brand'}"/>
-                            <field name="unit_model_id" context="{'default_type':'model'}" domain="[('parent_id', '=', unit_brand_id)]"/>
-                            <field name="unit_motor_id" context="{'default_type':'motor'}" />
-                            <field name="serial_number" />
-                            <field name="vin" />
-                            <field name="plates" />
-                            <field name="registration" />
-                            <field name="employee_id" context="{'default_tms_category':'driver'}" domain="[('tms_category', '=', 'driver')]"/>
-                            <field name="day_no_circulation"/>
-                        </page>
-                        <page string="Extra Data">                            
-                            <field name="unit_extradata_ids" nolabel="1" widget="one2many_list" >
-                                <tree string="Extra Data" editable="bottom">
-                                    <field name="extra_data_id" context="{'default_type':'extra_data'}" />
-                                    <field name="extra_value" />
-                                </tree>
-                                <form string="Extra Data">
-                                    <field name="extra_data_id" context="{'default_type':'extra_data'}" />
-                                    <field name="extra_value" />
-                                </form>
-                            </field>
-                            <field name="unit_expiry_ids" nolabel="1" >
-                                <tree string="Expiry Data" editable="bottom">
-                                    <field name="expiry_id" context="{'default_type':'expiry'}" />
-                                    <field name="extra_value" on_change="on_change_extra_value(extra_value)"/>
-                                    <field name="name" invisible="1"/>
-                                </tree>
-                                <form string="Extra Data">
-                                    <field name="expiry_id" context="{'default_type':'expiry'}" />
-                                    <field name="extra_value" />
-                                </form>
-                            </field>
-                        </page>
-						<page string="Images">
-                            <field name="unit_photo_ids" nolabel="1" >
-								<tree string="Unit Photos">
-									<field name="name"/>
-								</tree>
-								<form string="Unit Photos">
-									<separator string="Image Description" colspan="4"/>
-									<field name="name" colspan="4" nolabel="1"/>
-									<field name="photo" widget='image' nolabel="1" colspan="4"/>
-								</form>
-							</field>
-                        </page>
-                        <page string="GPS">
-                            <field name="gps_supplier_id"/>
-                            <field name="gps_id" attrs="{'required':[('gps_supplier_id','!=',False)]}"/>
-                        </page>
-                        <page string="Notes">
-                            <field name="notes" nolabel="1" />
-                        </page>
-                    </notebook>
+                <form string="TMS Units" version="7.0">
+                    <sheet>
+                        <h1>
+                            <label string="Unit"/>
+                            <field name="name" class="oe_inline"/>
+                        </h1>
+                        <group col="4">
+                            <field name="fleet_type"/>
+                            <field name="shop_id" />
+					        <field name="supplier_unit"/>
+					        <field name="supplier_id" attrs="{'required':[('supplier_unit','=',True)], 'invisible':[('supplier_unit','=',False)]}"/>
+                            <field name="active" readonly="1"/>
+                        </group>
+                        <notebook colspan="4">
+                            <page string="General Data">
+                                <group col="4">
+                                    <field name="year_model" />
+                                    <field name="unit_type_id" context="{'default_type':'unit_type'}"/>
+                                    <field name="unit_brand_id" context="{'default_type':'brand'}"/>
+                                    <field name="unit_model_id" context="{'default_type':'model'}" domain="[('parent_id', '=', unit_brand_id)]"/>
+                                    <field name="unit_motor_id" context="{'default_type':'motor'}" />
+                                    <field name="serial_number" />
+                                    <field name="vin" />
+                                    <field name="plates" />
+                                    <field name="registration" />
+                                    <field name="employee_id" context="{'default_tms_category':'driver'}" domain="[('tms_category', '=', 'driver')]"/>
+                                    <field name="day_no_circulation"/>
+                                </group>
+                            </page>
+                            <page string="Extra Data">
+                                <group colspan="4" col="4">
+                                    <field name="unit_extradata_ids" nolabel="1" widget="one2many_list" >
+                                        <tree string="Extra Data" editable="bottom">
+                                            <field name="extra_data_id" context="{'default_type':'extra_data'}" />
+                                            <field name="extra_value" />
+                                        </tree>
+                                        <form string="Extra Data">
+                                            <group colspan="4">
+                                                <field name="extra_data_id" context="{'default_type':'extra_data'}" />
+                                                <field name="extra_value" />
+                                            </group>
+                                        </form>
+                                    </field>
+                                    <field name="unit_expiry_ids" nolabel="1" >
+                                        <tree string="Expiry Data" editable="bottom">
+                                            <field name="expiry_id" context="{'default_type':'expiry'}" />
+                                            <field name="extra_value" on_change="on_change_extra_value(extra_value)"/>
+                                            <field name="name" invisible="1"/>
+                                        </tree>
+                                        <form string="Extra Data">
+                                            <group colspan="4">
+                                                <field name="expiry_id" context="{'default_type':'expiry'}" />
+                                                <field name="extra_value" />
+                                            </group>
+                                        </form>
+                                    </field>
+                                </group>
+                            </page>
+						    <page string="Images">
+                                <field name="unit_photo_ids" nolabel="1" >
+								    <tree string="Unit Photos">
+									    <field name="name"/>
+								    </tree>
+								    <form string="Unit Photos">
+                                        <group colspan="4">
+									        <separator string="Image Description" colspan="4"/>
+									        <field name="name" colspan="4" nolabel="1"/>
+									        <field name="photo" widget='image' nolabel="1" colspan="4"/>
+                                        </group>
+								    </form>
+							    </field>
+                            </page>
+                            <page string="GPS">
+                                <group col="4">
+                                    <field name="gps_supplier_id"/>
+                                    <field name="gps_id" attrs="{'required':[('gps_supplier_id','!=',False)]}"/>
+                                </group>
+                            </page>
+                            <page string="Notes">
+                                <field name="notes" nolabel="1" />
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread" placeholder="Share a message..."/>
+                    </div>
                 </form>
             </field>
         </record>
@@ -295,28 +324,34 @@ TMS.UNIT.KIT
             <field name="model">tms.unit.kit</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
-                <form string="TMS Units Kits">
-					<group col="8" colspan="4">
-                        <separator string="Kit Name" colspan="8"/>
-						<field name="name" colspan="4"/>
-						<newline />
-                        <separator string="Kit Framework" colspan="8"/> 
-						<field name="unit_id" domain="[('fleet_type', '=', 'tractor')]"/>
-		                <field name="trailer1_id" domain="[('id','!=',trailer2_id), ('fleet_type','=','trailer')]" attrs="{'required':['|', ('dolly_id','!=',False),('trailer2_id','!=',False)]}"/>
-		                <field name="dolly_id"  domain="[('fleet_type','=','dolly')]" attrs="{'required':[('trailer2_id','!=',False)]}"/>
-		                <field name="trailer2_id" domain="[('id','!=',trailer1_id), ('fleet_type','=','trailer')]" attrs="{'required':[('dolly_id','!=',False)]}"/>
-						<field name="unit_type" readonly="1"/>
-						<field name="trailer1_type" readonly="1" />
-						<field name="dolly_type" readonly="1" />
-						<field name="trailer2_type" readonly="1" />
-						<field name="employee_id" colspan="4"/>
-						<newline />
-                        <separator string="Validity" colspan="4"/>
-						<newline />
-						<field name="date_start" />
-						<field name="date_end"/>
-						<field name="active" on_change="on_change_active(active)"/>
-					</group>
+                <form string="TMS Units Kits" version="7.0">
+                    <sheet>
+                        <h1>
+                            <label string="Kit Name"/>
+                            <field name="name" class="oe_inline"/>
+                        </h1>
+					    <group col="4" colspan="4">
+                            <separator string="Kit Framework" colspan="4"/> 
+						    <field name="unit_id" domain="[('fleet_type', '=', 'tractor')]"/>
+						    <field name="unit_type" readonly="1"/>
+		                    <field name="trailer1_id" domain="[('id','!=',trailer2_id), ('fleet_type','=','trailer')]" attrs="{'required':['|', ('dolly_id','!=',False),('trailer2_id','!=',False)]}"/>
+						    <field name="trailer1_type" readonly="1" />
+		                    <field name="dolly_id"  domain="[('fleet_type','=','dolly')]" attrs="{'required':[('trailer2_id','!=',False)]}"/>
+						    <field name="dolly_type" readonly="1" />
+		                    <field name="trailer2_id" domain="[('id','!=',trailer1_id), ('fleet_type','=','trailer')]" attrs="{'required':[('dolly_id','!=',False)]}"/>
+						    <field name="trailer2_type" readonly="1" />
+						    <field name="employee_id" colspan="2"/>
+						    <newline />
+                            <separator string="Validity" colspan="4"/>
+						    <field name="date_start" />
+						    <field name="date_end"/>
+						    <field name="active" on_change="on_change_active(active)"/>
+					    </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread" placeholder="Share a message..."/>
+                    </div>
                 </form>
             </field>
         </record>
@@ -449,48 +484,59 @@ TMS.ROUTE
             <field name="model">tms.route</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
-                <form string="TMS Routes">
-                    <field name="name"/>
-                    <field name="company_id" />
-                    <field name="departure_id" />
-                    <field name="arrival_id" />
-                    <field name="distance" />
-                    <field name="travel_time" />
-                    <field name="active" />
-                    <notebook colspan="4">
-                        <page string="Intermediate Places">
-                            <separator string="Places in this route" colspan="4" />
-                            <field name="place_ids" nolabel="1" colspan="4"/>
-                        </page>
-                        <page string="Fuel Efficiency Expected">
-                            <field name="route_fuelefficiency_ids" nolabel="1" >
-                                <tree string="Route Fuel Efficiency Expected" editable="bottom">
-                                    <field name="motor_id" widget="selection" domain="[('type','=','motor')]"/>
-                                    <field name="type" />
-                                    <field name="performance" />
-                                </tree>
-                                <form string="Route Fuel Efficiency Expected">
-                                    <field name="motor_id" widget="selection" domain="[('type','=','motor')]"/>
-                                    <field name="type" />
-                                    <field name="performance" />
-                                </form>
-                            </field>
-                        </page>
-                        <page string="Toll Stations">
-                            <field name="tms_route_tollstation_ids"  nolabel="1"/>
-                        </page>
-                        <page string="Factor Driver">
-                            <separator string="Driver Salary Factors" colspan="4"/>
-                            <field name="expense_driver_factor" 
-                                    context="{'default_route_id': active_id,'default_category':'driver'}" 
-                                    domain="[('category','=','driver')]"
-                                    colspan="4" nolabel="1"/>
-                        </page>
+                <form string="TMS Routes" version="7.0">
+                    <sheet>
+                        <h1>
+                            <label string="Route"/>
+                            <field name="name" class="oe_inline"/>
+                        </h1>
+					    <group col="4" colspan="4">
+                            <field name="departure_id" />
+                            <field name="arrival_id" />
+                            <field name="distance" />
+                            <field name="travel_time" />
+                            <field name="active" />
+                            <field name="company_id" />
+                        </group>
+                        <notebook colspan="4">
+                            <page string="Intermediate Places">
+                                <separator string="Places in this route" colspan="4" />
+                                <field name="place_ids" nolabel="1" colspan="4"/>
+                            </page>
+                            <page string="Fuel Efficiency Expected">
+                                <field name="route_fuelefficiency_ids" nolabel="1" >
+                                    <tree string="Route Fuel Efficiency Expected" editable="bottom">
+                                        <field name="motor_id" widget="selection" domain="[('type','=','motor')]"/>
+                                        <field name="type" />
+                                        <field name="performance" />
+                                    </tree>
+                                    <form string="Route Fuel Efficiency Expected">
+                                        <field name="motor_id" widget="selection" domain="[('type','=','motor')]"/>
+                                        <field name="type" />
+                                        <field name="performance" />
+                                    </form>
+                                </field>
+                            </page>
+                            <page string="Toll Stations">
+                                <field name="tms_route_tollstation_ids"  nolabel="1"/>
+                            </page>
+                            <page string="Factor Driver">
+                                <separator string="Driver Salary Factors" colspan="4"/>
+                                <field name="expense_driver_factor" 
+                                        context="{'default_route_id': active_id,'default_category':'driver'}" 
+                                        domain="[('category','=','driver')]"
+                                        colspan="4" nolabel="1"/>
+                            </page>
 
-                        <page string="Notes">
-                            <field name="notes" nolabel="1"/>                            
-                        </page>
-                    </notebook>
+                            <page string="Notes">
+                                <field name="notes" nolabel="1"/>                            
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread" placeholder="Share a message..."/>
+                    </div>
                 </form>
             </field>
         </record>

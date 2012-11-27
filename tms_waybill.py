@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+﻿# -*- encoding: utf-8 -*-
 ##############################################################################
 #    
 #    OpenERP, Open Source Management Solution
@@ -32,6 +32,7 @@ from pytz import timezone
  # TMS Waybills
 class tms_waybill(osv.osv):
     _name = 'tms.waybill'
+    _inherit = ['mail.thread', 'ir.needaction_mixin']
     _description = 'Waybills'
 
 
@@ -154,6 +155,12 @@ class tms_waybill(osv.osv):
             res[waybill.id] = waybill_type
         return res
 
+    def _get_order(self, cr, uid, ids, context=None):
+        result = {}
+        for line in self.pool.get('tms.waybill.line').browse(cr, uid, ids, context=context):
+            result[line.waybill_id.id] = True
+        return result.keys()
+
 
     _columns = {
         'name': openerp.osv.fields.char('Name', size=64, readonly=True, select=True),
@@ -221,23 +228,14 @@ class tms_waybill(osv.osv):
         'waybill_extradata': openerp.osv.fields.one2many('tms.waybill.extradata', 'waybill_id', 'Extra Data Fields', readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
 
 
-        'amount_freight': openerp.osv.fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='Freight', type='float',
-                                            store=True, multi='amount_freight'),
-        'amount_move': openerp.osv.fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='Moves', type='float',
-                                            store=True, multi='amount_freight'),
-        'amount_highway_tolls': openerp.osv.fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='Highway Tolls', type='float',
-                                            store=True, multi='amount_freight'),
-        'amount_insurance': openerp.osv.fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='Insurance', type='float',
-                                            store=True, multi='amount_freight'),
-        'amount_other': openerp.osv.fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='Other', type='float',
-                                            store=True, multi='amount_freight'),
-        'amount_untaxed': openerp.osv.fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='SubTotal', type='float',
-                                            store=True, multi='amount_freight'),
-        'amount_tax': openerp.osv.fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='Taxes', type='float',
-                                            store=True, multi='amount_freight'),
-
-        'amount_total': openerp.osv.fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='Total', type='float',
-                                            store=True, multi='amount_freight'),
+        'amount_freight': openerp.osv.fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='Freight', type='float', store=False, multi=True),
+        'amount_move': openerp.osv.fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='Moves', type='float', store=False, multi=True),
+        'amount_highway_tolls': openerp.osv.fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='Highway Tolls', type='float', store=False, multi=True),
+        'amount_insurance': openerp.osv.fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='Insurance', type='float', store=False, multi=True),
+        'amount_other': openerp.osv.fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='Other', type='float', store=False, multi=True),
+        'amount_untaxed': openerp.osv.fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='SubTotal', type='float', store=False, multi=True),
+        'amount_tax': openerp.osv.fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='Taxes', type='float', store=False, multi=True),
+        'amount_total': openerp.osv.fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='Total', type='float', store=False, multi=True),
 
 
 
@@ -389,7 +387,9 @@ class tms_waybill(osv.osv):
 
     def create(self, cr, uid, vals, context=None):
         res = super(tms_waybill, self).create(cr, uid, vals, context=context)
+        print res
         self.get_freight_from_factors(cr, uid, [res], context=context)
+        self.message_post(cr, uid, [res], body=_("Waybill for <em>%s</em> <b>created</b>.") % (self.pool.get('tms.waybill').browse(cr, uid, [res])[0].partner_id.name), context=context)
         return res
 
 
@@ -482,6 +482,7 @@ class tms_waybill(osv.osv):
                         'date_drafted'  : False,
 
 						})
+
         if values:
             if 'replaced_waybill_id' in values:
                 default.update({'replaced_waybill_id': values['replaced_waybill_id'] })
@@ -503,40 +504,13 @@ class tms_waybill(osv.osv):
                         _('Could not set to draft this Waybill !'),
                         _('Travel is Cancelled !!!'))
             else:
-		        self.write(cr, uid, ids, {'state':'draft', 'drafted_by':uid,'date_drafted':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
+                self.write(cr, uid, ids, {'state':'draft', 'drafted_by':uid,'date_drafted':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
+#                self.message_post(cr, uid, ids, body=_("Waybill has been set to <b>Draft</b> state by <em>%s (id: %s)</em>.") % (self.pool.get('res.users').browse(cr, uid, [uid])[0].name, uid), context=None)
         for (id,name) in self.name_get(cr, uid, ids):
             message = "Waybill '%s' has been set to draft state." % name
             self.log(cr, uid, id, message)
         return True
     
-
-    def action_cancel(self, cr, uid, ids, context=None):
-        for waybill in self.browse(cr, uid, ids, context=context):
-            if waybill.invoiced and waybill.invoice_paid:
-                raise osv.except_osv(
-                        _('Could not cancel Waybill !'),
-                        _('This Waybill\'s Invoice is already paid'))
-
-            elif waybill.invoiced and waybill.billing_policy=='manual':
-                raise osv.except_osv(
-                        _('Could not cancel Waybill !'),
-                        _('This Waybill is already Invoiced'))
-
-            elif waybill.billing_policy=='automatic' and waybill.invoiced and not waybill.invoice_paid:
-                wf_service = netsvc.LocalService("workflow")
-                wf_service.trg_validate(uid, 'account.invoice', waybill.invoice_id.id, 'invoice_cancel', cr)
-                invoice_obj=self.pool.get('account.invoice')
-                invoice_obj.unlink(cr, uid, [waybill.invoice_id.id], context=None)
-#            elif waybill.state in ('draft','approved','confirmed') and waybill.travel_id.state in ('closed'):
-#                raise osv.except_osv(
-#                        _('Could not cancel Advance !'),
-#                        _('This Waybill is already linked to Travel Expenses record'))
-            self.write(cr, uid, ids, {'state':'cancel', 'cancelled_by':uid,'date_cancelled':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
-            for (id,name) in self.name_get(cr, uid, ids):
-                message = "Waybill '%s' is cancelled." % name
-            self.log(cr, uid, id, message)
-        return True
-
     def action_approve(self, cr, uid, ids, context=None):
         print "action_approve"
         for waybill in self.browse(cr, uid, ids, context=context):            
@@ -550,6 +524,7 @@ class tms_waybill(osv.osv):
                     seq_number = waybill.name
 
                 self.write(cr, uid, ids, {'name':seq_number, 'state':'approved', 'approved_by' : uid, 'date_approved':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
+#                self.message_post(cr, uid, ids, body=_("Waybill has been set to <b>Approved</b> state by <em>%s (id: %s)</em>.") % (self.pool.get('res.users').browse(cr, uid, [uid])[0].name, uid), context=None)
                 for (id,name) in self.name_get(cr, uid, ids):
                     message = _("Waybill '%s' is set to approved.") % name
                 self.log(cr, uid, id, message)
@@ -565,6 +540,7 @@ class tms_waybill(osv.osv):
                 wb_invoice = self.pool.get('tms.waybill.invoice')
                 wb_invoice.makeWaybillInvoicesq(cr, uid, ids, context=None)
             self.write(cr, uid, ids, {'state':'confirmed', 'confirmed_by' : uid, 'date_confirmed':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
+#            self.message_post(cr, uid, ids, body=_("Waybill has been set to <b>Confirmed</b> state by <em>%s (id: %s)</em>.") % (self.pool.get('res.users').browse(cr, uid, [uid])[0].name, uid), context=None)
             for (id,name) in self.name_get(cr, uid, ids, context=None):
                 message = _("Waybill '%s' is set to confirmed.") % name
                 self.log(cr, uid, id, message)
@@ -593,6 +569,8 @@ class tms_waybill(osv.osv):
 #        print default
 #        print id
 #        return super(tms_waybill, self).copy(cr, uid, id, default, context=context)
+
+
 
 tms_waybill()
 
@@ -922,6 +900,7 @@ class tms_waybill_cancel(osv.osv_memory):
         #                        _('This Waybill is already linked to Travel Expenses record'))
                     print "record_id:", record_id
                     waybill_obj.write(cr, uid, record_id, {'state':'cancel', 'cancelled_by':uid,'date_cancelled':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
+                    waybill_obj.message_post(cr, uid, record_id, body=_("Waybill has been set to <b>Cancel</b> state by <em>%s (id: %s)</em>.") % (self.pool.get('res.users').browse(cr, uid, [uid])[0].name, uid), context=None)                    
           
                     if record.copy_waybill:                        
                         default ={} 
@@ -1063,9 +1042,9 @@ class tms_waybill_invoice(osv.osv_memory):
 
                 inv_id = invoice_obj.create(cr, uid, inv)
                 invoices.append(inv_id)
-
-                waybill_obj.write(cr,uid,waybill_ids, {'invoice_id': inv_id})   
+   
                 waybill_obj.write(cr,uid,waybill_ids, {'invoice_id': inv_id, 'state':'confirmed', 'confirmed_by':uid, 'date_confirmed':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})               
+                waybill_obj.message_post(cr, uid, waybill_ids, body=_("Draft Invoice is waiting for validation</b>."), context=context)
 
 
 

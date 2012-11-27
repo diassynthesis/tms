@@ -37,6 +37,7 @@ import openerp
 
 class tms_fuelvoucher(osv.osv):
     _name ='tms.fuelvoucher'
+    _inherit = ['mail.thread', 'ir.needaction_mixin']
     _description = 'Fuel Vouchers'
 
     def _invoiced(self, cr, uid, ids, field_name, args, context=None):

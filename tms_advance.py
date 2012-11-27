@@ -39,6 +39,7 @@ import openerp
 
 class tms_advance(osv.osv):
     _name ='tms.advance'
+    _inherit = ['mail.thread', 'ir.needaction_mixin']
     _description = 'Money advance payments for Travel expenses'
 
     def _invoiced(self, cr, uid, ids, field_name, args, context=None):
@@ -109,7 +110,7 @@ class tms_advance(osv.osv):
     
     _defaults = {
         'date': lambda *a: time.strftime(DEFAULT_SERVER_DATE_FORMAT),
-        'state': 'draft',
+        'state': lambda *a: 'draft',
         'currency_id': lambda self,cr,uid,c: self.pool.get('res.users').browse(cr, uid, uid, c).company_id.currency_id.id,
         'product_uom_qty': 1,
         }

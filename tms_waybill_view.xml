@@ -95,7 +95,6 @@ TMS.WAYBILL
             <field name="arch" type="xml">
                 <tree string="Waybills" colors="red:state=='cancel';green:state=='approved';blue:state=='confirmed';">
                     <button name="%(action_waybill_cancel)d" states="draft,approved,confirmed" string="Cancel" icon="gtk-cancel"  type="action" /> 
-		            <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
 		            <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
 		            <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok"/>
                     <field name="state"/>
@@ -130,7 +129,7 @@ TMS.WAYBILL
             <field name="arch" type="xml">
                 <form string="Waybill" version="7.0">
                     <header>
-                        <button name="%(action_waybill_cancel)d" states="draft,approved,confirmed" string="Cancel" icon="gtk-cancel"  type="action"/> 
+                        <button name="%(action_waybill_cancel)d" states="draft,approved,confirmed" string="Cancel" type="action"/> 
 				        <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
 				        <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
 				        <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok"/> 
@@ -359,7 +358,7 @@ TMS.WAYBILL
                                 </group>
 						    </page>
                             <page string="Notes">
-                                <field colspan="4" name="notes" nolabel="1"/>
+                                <field colspan="4" name="notes" nolabel="1" placeholder="Notes..."/>
                             </page>
                             <page string="Log">
 							    <group colspan="4" col="10">
@@ -384,6 +383,10 @@ TMS.WAYBILL
                             </page>
 					    </notebook>
                     </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread" placeholder="Share a message..."/>
+                    </div>
                 </form>
             </field>
         </record>

@@ -35,6 +35,7 @@ import openerp
 # Trips / travels
 class tms_travel(osv.osv):
     _name ='tms.travel'
+    _inherit = ['mail.thread', 'ir.needaction_mixin']
     _description = 'Travels'
     
     
@@ -79,10 +80,9 @@ class tms_travel(osv.osv):
             data_ids = cr.fetchall()
             waybill_ok = not len(data_ids)
 
-            cr.execute("select sum(amount_untaxed) from tms_waybill where travel_id=%s and state='confirmed'",ids)
-            data_ids= filter(None, map(lambda x:x[0], cr.fetchall()))
-            print data_ids
-            waybill_income = 0.0 if not len(data_ids) else data_ids[0]
+            waybill_income = 0.0            
+            for waybill in record.waybill_ids:
+                waybill_income += waybill.amount_untaxed
                         
             res[record.id] = {
                     'advance_ok_for_expense_rec': advance_ok,
@@ -167,7 +167,6 @@ class tms_travel(osv.osv):
         'departure': openerp.osv.fields.related('route_id', 'departure_id', type='many2one', relation='tms.place', string='Departure', store=True, readonly=True),                
         'arrival': openerp.osv.fields.related('route_id', 'arrival_id', type='many2one', relation='tms.place', string='Arrival', store=True, readonly=True),                
 #        'loaded': openerp.osv.fields.boolean('Cargado'),
-#        'income': openerp.osv.fields.function(_get_income, method=True, string='To', type='float', digits=(14,4)),
         'notes': openerp.osv.fields.text('Descripción', required=False, states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
 
         'expense_id': openerp.osv.fields.many2one('tms.expense', 'Travel Expenses Record', required=False),

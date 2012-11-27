@@ -101,10 +101,10 @@ TMS.travel
             <field name="arch" type="xml">
                 <form string="TMS Travels" version="7.0">
                     <header>
-                        <button name="action_cancel" states="draft,progress,done" string="Cancel Travel" type="object" icon="gtk-cancel"/>
+                        <button name="action_cancel" states="draft,progress,done" string="Cancel" type="object" icon="gtk-cancel"/>
                         <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
-                        <button name="action_dispatch" states="draft" string="Dispatch Travel" type="object" icon="gtk-go-forward"/>
-                        <button name="action_end" states="progress" string="End Travel" type="object" icon="gtk-ok"/>
+                        <button name="action_dispatch" states="draft" string="Dispatch" type="object" icon="gtk-go-forward"/>
+                        <button name="action_end" states="progress" string="End" type="object" icon="gtk-ok"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,progress,done,closed,cancel"/> 
                     </header>
                     <sheet>
@@ -265,16 +265,31 @@ TMS.travel
                             </page>
                         </notebook>
                     </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread" placeholder="Share a message..."/>
+                    </div>
                 </form>
             </field>
         </record>
+
+       <record id="view_tms_travel_gantt" model="ir.ui.view">
+            <field name="name">tms.travel.gantt</field>
+            <field name="model">tms.travel</field>
+            <field name="arch" type="xml">
+                <gantt date_start="date_start" date_stop="date_end" string="Travels" default_group_by="unit_id" color="unit_id">
+                </gantt>
+            </field>
+        </record>
+
+
 
 <!-- Action for tms.travel -->
     <record model="ir.actions.act_window" id="open_view_tms_travel_form">
         <field name="name">TMS Travel</field>
         <field name="res_model">tms.travel</field>
         <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">tree,form,gantt</field>
     </record>
 
 <!-- Menu for tms.travel -->

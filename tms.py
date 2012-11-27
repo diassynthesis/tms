@@ -134,6 +134,7 @@ tms_unit_category()
 # Units for Transportation
 class tms_unit(osv.osv):
     _name = "tms.unit"
+    _inherit = ['mail.thread', 'ir.needaction_mixin']
     _description = "All motor/trailer units"
 
     _columns = {
@@ -277,6 +278,7 @@ tms_unit_expiry()
 # Units Kits
 class tms_unit_kit(osv.osv):
     _name = "tms.unit.kit"
+    _inherit = ['mail.thread', 'ir.needaction_mixin']
     _description = "Units Kits"
 
     _columns = {
@@ -415,6 +417,7 @@ tms_place()
 # Routes
 class tms_route(osv.osv):
     _name ='tms.route'
+    _inherit = ['mail.thread', 'ir.needaction_mixin']
     _description = 'Routes'
     
     _columns = {

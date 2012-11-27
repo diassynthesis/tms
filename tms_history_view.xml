@@ -15,6 +15,8 @@ TMS.EVENT.CATEGORY
             <tree string="TMS Event Categories">
 		        <field name="complete_name" />
                 <field name="name" />
+                <field name="gps_code" />
+                <field name="gps_type" />
                 <field name="parent_id" />
                 <field name="notes"/>
                 <field name="company_id" />
@@ -33,26 +35,102 @@ TMS.EVENT.CATEGORY
                 <form string="TMS Unit Categories">
                     <field name="name" select="1"/>
                     <field name="parent_id" />
+                    <field name="gps_code" />
+                    <field name="gps_type" />
                     <field name="active" select="1"/>
                     <field name="company_id" />
-                    <field name="notes" colspan="4"/>
+                    <separator string="Actions" colspan="4" />
+                    <field name="action_ids" colspan="4" nolabel="1"/>
+                    <separator string="Notes" colspan="4" />
+                    <field name="notes" colspan="4" nolabel="1"/>
                 </form>
             </field>
         </record>
 
 <!-- Action for tms.event.category -->
     <record model="ir.actions.act_window" id="open_view_tms_event_category_form">
-        <field name="name">TMS Unit Categories</field>
+        <field name="name">TMS Events Categories</field>
         <field name="res_model">tms.event.category</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
     </record>
 
 <!-- Menu for tms.event.category  -->
-    <menuitem name="Event Categories" 
-              parent="menu_tms_config" 
+	<menuitem id="menu_tms_events" name="Events and Actions" parent="menu_tms_config" sequence="10"/>    
+
+    <menuitem name="Events Categories" 
+              parent="menu_tms_events" 
               id="menu_tms_config_event_category_form" 
               action="open_view_tms_event_category_form"/>
+
+
+<!-- 
+##############################
+TMS.EVENT.ACTION 
+##############################
+-->
+<!-- TREE View for tms.event.action --> 
+	<record model="ir.ui.view" id="view_tms_event_action_tree">
+        <field name="name">tms.event.action.tree</field>
+        <field name="model">tms.event.action</field>
+		<field name="type">tree</field>
+		<field name="arch" type="xml">
+            <tree string="TMS Event Actions">
+                <field name="name" />
+                <field name="object_id" />
+                <field name="field_id" />
+                <field name="active" />
+                <field name="notes"/>
+		    </tree>
+		</field>
+	</record>
+
+
+<!-- FORM View for tms.event.action-->
+    
+        <record id="view_tms_event_action_form" model="ir.ui.view">
+            <field name="name">tms.event.action.form</field>
+            <field name="model">tms.event.action</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="TMS Unit Actions" version="7.0">
+                    <sheet>
+                        <group col="4">
+                            <field name="name" select="1" colspan="4"/>
+                            <field name="field_id" />
+                            <field name="object_id" />
+                            <field name="active" select="1"/>
+                            <notebook colspan="4">
+                                <page string="Notes">
+                                    <field name="notes" colspan="4" nolabel="1"/>
+                                </page>
+                                <page string="Python Expression">
+                                    <field name="get_value" colspan="4"  nolabel="1"/>
+                                </page>
+                                <page string="Events Categories">
+                                    <field name="event_category_ids" colspan="4" nolabel="1"/>
+                                </page>
+                            </notebook>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+<!-- Action for tms.event.action -->
+    <record model="ir.actions.act_window" id="open_view_tms_event_action_form">
+        <field name="name">TMS Events Actions</field>
+        <field name="res_model">tms.event.action</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+<!-- Menu for tms.event.action  -->
+
+    <menuitem name="Actions" 
+              parent="menu_tms_events" 
+              id="menu_tms_config_event_action_form" 
+              action="open_view_tms_event_action_form"/>
 
 
 
@@ -110,16 +188,20 @@ TMS.EVENT
 		<field name="type">tree</field>
 		<field name="arch" type="xml">
             <tree string="TMS Events">
+                   <field name="state"/>
                    <field name="name"/>
                    <field name="date"/>
                    <field name="category_id"/>
                    <field name="travel_id" />
                    <field name="unit_id" />
-                   <field name="trailer1_id" />
-                   <field name="dolly_id" />
-                   <field name="trailer2_id" />
+                   <field name="trailer1_id" invisible="1"/>
+                   <field name="dolly_id" invisible="1"/>
+                   <field name="trailer2_id" invisible="1"/>
                    <field name="employee_id" />
                    <field name="route_id" />
+                   <field name="position_real" />
+                   <field name="position_pi" />
+                   <field name="message" />
                    <field name="shop_id" />
 		    </tree>
 		</field>
@@ -133,25 +215,53 @@ TMS.EVENT
             <field name="model">tms.event</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
-                <form string="TMS Events">
-                   <field name="date"/>
-					<newline />
-                   <field name="category_id" colspan="4"/>
-                   <field name="name" colspan="4"/>
-                   <field name="travel_id" />
-					<newline />
-				  <group colspan="4" col="8">
-		               <field name="unit_id" />
-		               <field name="trailer1_id" />
-		               <field name="dolly_id" />
-		               <field name="trailer2_id" />
-					</group>
-                   <field name="employee_id" />
-                   <field name="route_id" />
-                   <field name="departure_id" />
-                   <field name="arrival_id" />
-                   <field name="shop_id" />
-                   <field name="company_id" />
+                <form string="TMS Events" version="7.0">
+                    <header>
+                        <button name="action_cancel" states="draft,confirmed" string="Cancel" type="object" /> 
+                        <button name="action_draft" states="cancel" string="Set to Draft" icon="gtk-convert" type="object" /> 
+				        <button name="action_confirm" states="draft" string="Confirm" icon="gtk-ok" type="object" /> 
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,cancel"/> 
+                    </header>
+                    <sheet>
+                        <group col="4">
+                            <field name="name" colspan="4"/>
+                            <field name="date"/>
+                            <field name="category_id" />
+                            <field name="action_ids" widget="many2many_tags" />
+                            <notebook colspan="4">
+                                <page string="Travel Info">
+                                    <group col="4">
+                                        <field name="travel_id" />
+                                        <newline />
+                                        <field name="unit_id" />
+                                        <field name="employee_id" />
+                                        <field name="trailer1_id" />
+                                        <field name="route_id" />
+                                        <field name="dolly_id" />
+                                        <field name="departure_id" />
+                                        <field name="trailer2_id" />
+                                        <field name="arrival_id" />
+                                        <field name="waybill_id" /> 
+                                        <field name="origin" />
+                                    </group>
+                                </page>
+                                <page string="GPS Info">
+                                    <group col="4">
+                                        <field name="latitude"/>
+                                        <field name="longitude"/>
+                                        <label for="position_real"/>
+                                        <field name="position_real" nolabel="1"/>
+                                        <label for="position_pi"/>
+                                        <field name="position_pi" nolabel="1"/>
+                                        <field name="message" colspan="4"/>
+                                    </group>
+                                </page>
+                                <page string="Notes">
+                                    <field name="notes" colspan="4" nolabel="1"/>
+                                </page>
+                            </notebook>                            
+                        </group>
+                    </sheet>
                 </form>
             </field>
         </record>
