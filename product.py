@@ -47,6 +47,8 @@ class product_product(osv.osv):
                                           ('negative_balance','Negative Balance'),
                                           ('fuel','Fuel'),
                                           ('indirect_expense','Indirect Expense (Agreements)'),
+                                          ('maint_part','Maintenance Part'),
+                                          ('maint_activity','Maintenance Activity'),
                                           ], 'TMS Type', required=True,
                                           help="""Product Type for using with TMS Module
   - No TMS Product: Not related to TMS
