@@ -1,7 +1,7 @@
 <openerp>
 <data>
 
-        <menuitem icon="terp-account" id="menu_tms" name="Freight Management" sequence="13"
+        <menuitem icon="terp-account" id="menu_tms" name="Freights" sequence="13"
             web_icon="images/logistics.png"
             web_icon_hover="images/logistics-hover.png"/>
         <menuitem id="menu_tms_travels" name="Freights" parent="menu_tms" sequence="10"/>            
@@ -232,6 +232,12 @@ TMS.UNIT
                                     <field name="gps_supplier_id"/>
                                     <field name="gps_id" attrs="{'required':[('gps_supplier_id','!=',False)]}"/>
                                 </group>
+                            </page>
+                            <page string="Active/Inactive History">
+                                <field name="unit_active_history_ids" nolabel="1" />
+                            </page>
+                            <page string="Red Tapes">
+                                <field name="unit_red_tape_ids" nolabel="1" />
                             </page>
                             <page string="Notes">
                                 <field name="notes" nolabel="1" />
@@ -608,7 +614,9 @@ TMS.ROUTE.TOLLSTATION
                             </field>
                         </page>
                         <page string="Routes with this Toll Station">
-                            <field name="tms_route_ids" nolabel="1" />
+                            <group>
+                                <field name="tms_route_ids" nolabel="1" />
+                            </group>
                         </page>
                     </notebook>
                 </form>
@@ -628,6 +636,265 @@ TMS.ROUTE.TOLLSTATION
               parent="menu_tms_config_routes" 
               id="menu_tms_config_route_tollstation_form" 
               action="open_view_tms_route_tollstation_form"/>
+
+
+<!-- 
+##############################
+TMS.UNIT.ACTIVE_HISTORY
+##############################
+-->
+<!-- SEARCH View for tms.unit.active_history --> 
+        <record id="view_tms_unit_active_history_search" model="ir.ui.view">
+            <field name="name">tms.unit.active_history.search</field>
+            <field name="model">tms.unit.active_history</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Unit Active/Inactive History">
+                   <filter string="Motorized Units" icon="terp-accessories-archiver" domain="[('unit_id.fleet_type','=','tractor')]"/>
+                   <filter string="Trailers" icon="terp-accessories-archiver" domain="[('unit_id.fleet_type','=','trailer')]"/>
+                   <filter string="Dolly's" icon="terp-accessories-archiver" domain="[('unit_id.fleet_type','=','dolly')]"/>
+                   <filter string="Others" icon="terp-accessories-archiver" domain="[('unit_id.fleet_type','=','other')]"/>
+                   <separator orientation="vertical"/>
+                   <field name="unit_id"/>
+                   <field name="date" />
+                   <field name="state_cause_id" />
+                   <field name="prev_state" />
+                   <field name="new_state" />
+                   <newline/>
+                   <group  expand='0' string='More filters...'> 
+                   <field name="confirmed_by"/>
+                   <field name="name" />
+                   </group>
+                   <newline/>
+                   <group  expand='0' string='Group by...'> 
+                       <filter string='Unit' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'unit_id'}" />
+                       <filter string='Unit Type' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'unit_type_id'}" />
+                       <separator orientation="vertical"/>                                                                
+                       <filter string='Cause' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'state_cause_id'}" />
+                       <separator orientation="vertical"/>
+                       <filter string='Date' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'date'}" />
+                       <separator orientation="vertical"/>
+                       <filter string='Previous State' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'prev_state'}" />
+                       <filter string='New State' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'new_state'}" />
+                   </group>
+                </search>
+            </field>
+        </record>
+
+<!-- TREE View for tms.unit.active_history --> 
+	<record model="ir.ui.view" id="view_tms_unit_active_history_tree">
+        <field name="name">tms.unit.active_history.tree</field>
+        <field name="model">tms.unit.active_history</field>
+		<field name="type">tree</field>
+		<field name="arch" type="xml">
+            <tree string="Units Active/Inactive History">
+                <field name="state"/>
+                <field name="date"/>
+                <field name="unit_id" />
+                <field name="unit_type_id" invisible="1"/>
+                <field name="prev_state" />
+                <field name="new_state" />
+                <field name="state_cause_id" />
+                <field name="name" />
+                <field name="create_uid" />
+                <field name="confirmed_by" />
+		    </tree>
+		</field>
+	</record>
+
+<!-- FORM View for tms.unit.active_history -->
+
+        <record id="view_tms_unit_active_history_form" model="ir.ui.view">
+            <field name="name">tms.unit.active_history.form</field>
+            <field name="model">tms.unit.active_history</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Units Active/Inactive History" version="7.0">
+                    <header>
+                        <button name="action_cancel" states="draft" string="Cancel" type="object"/>
+                        <button name="action_confirm" states="draft" string="Confirm" type="object" icon="gtk-ok"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,cancel"/>
+                    </header>
+                    <sheet>
+                        <h1>
+                            <label string="Activation / Inactivation Record"/>
+                        </h1>
+                        <group col="4">
+                            <field name="date"/>
+                            <newline />
+                            <field name="unit_id" on_change="on_change_unit_id(unit_id)"/>
+                            <field name="unit_type_id"/>
+                            <field name="prev_state"/>
+                            <field name="new_state"/>
+                            <field name="state_cause_id" context="{'default_type':'active_cause'}" on_change="on_change_state_cause_id(state_cause_id)"/>
+                            <newline />
+                            <field name="name" colspan="4"/>
+                        </group>
+                        <notebook colspan="6">
+                            <page string="Notes">
+                                <field name="notes" nolabel="1" />
+                            </page>
+                            <page string="Log">
+                                <group col="4">
+                                    <field name="create_uid" readonly="1" />
+                                    <field name="create_date" readonly="1" />
+                                    <field name="confirmed_by" readonly="1" />
+                                    <field name="date_confirmed" readonly="1" />
+                                    <field name="cancelled_by" readonly="1" />
+                                    <field name="date_cancelled" readonly="1" />
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread" placeholder="Share a message..."/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+<!-- Action for tms.unit.active_history -->
+    <record model="ir.actions.act_window" id="open_view_tms_unit_active_history_form">
+        <field name="name">Active/Inactivate Units</field>
+        <field name="res_model">tms.unit.active_history</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+<!-- Menu for tms.unit.active_history -->
+    <menuitem name="Activate/Inactivate Units" 
+              parent="menu_tms_config_unit" 
+              id="menu_tms_config_unit_active_history_form" 
+              action="open_view_tms_unit_active_history_form"/>
+
+<!-- 
+##############################
+TMS.UNIT.red_tape
+##############################
+-->
+<!-- SEARCH View for tms.unit.red_tape --> 
+        <record id="view_tms_unit_red_tape_search" model="ir.ui.view">
+            <field name="name">tms.unit.red_tape.search</field>
+            <field name="model">tms.unit.red_tape</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Unit Red Tapes">
+                   <filter string="Motorized Units" icon="terp-accessories-archiver" domain="[('unit_id.fleet_type','=','tractor')]"/>
+                   <filter string="Trailers" icon="terp-accessories-archiver" domain="[('unit_id.fleet_type','=','trailer')]"/>
+                   <filter string="Dolly's" icon="terp-accessories-archiver" domain="[('unit_id.fleet_type','=','dolly')]"/>
+                   <filter string="Others" icon="terp-accessories-archiver" domain="[('unit_id.fleet_type','=','other')]"/>
+                   <separator orientation="vertical"/>
+                   <field name="unit_id"/>
+                   <field name="date" />
+                   <field name="red_tape_id" />
+                   <field name="name" />
+                   <newline/>
+                   <group  expand='0' string='Group by...'>
+                       <filter string='State' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'state'}" />
+                       <filter string='Unit' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'unit_id'}" />
+                       <filter string='Unit Type' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'unit_type_id'}" />
+                       <separator orientation="vertical"/>                                                                
+                       <filter string='Red Tape' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'red_tape_id'}" />
+                       <separator orientation="vertical"/>
+                       <filter string='Date' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'date'}" />
+                   </group>
+                </search>
+            </field>
+        </record>
+
+<!-- TREE View for tms.unit.red_tape --> 
+	<record model="ir.ui.view" id="view_tms_unit_red_tape_tree">
+        <field name="name">tms.unit.red_tape.tree</field>
+        <field name="model">tms.unit.red_tape</field>
+		<field name="type">tree</field>
+		<field name="arch" type="xml">
+            <tree string="Unit Red Tapes">
+                <field name="state"/>
+                <field name="date"/>
+                <field name="unit_id" />
+                <field name="unit_type_id" invisible="1"/>
+                <field name="red_tape_id" />
+                <field name="partner_id" />
+                <field name="amount" sum="Amount"/>
+                <field name="amount_paid" sum="Amount Paid"/>
+		    </tree>
+		</field>
+	</record>
+
+<!-- FORM View for tms.unit.active_history -->
+
+        <record id="view_tms_unit_red_tape_form" model="ir.ui.view">
+            <field name="name">tms.unit.red_tape.form</field>
+            <field name="model">tms.unit.red_tape</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Units Red Tapes" version="7.0">
+                    <header>
+                        <button name="action_cancel" states="draft" string="Cancel" type="object"/>
+                        <button name="action_pending" states="draft" string="Pending" type="object" icon="gtk-media-pause"/>
+                        <button name="action_progress" states="pending" string="Progress" type="object" icon="gtk-go-forward"/>
+                        <button name="action_done" states="progress" string="Done" type="object" icon="gtk-goto-last"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,pending,progress,done,cancel"/>
+                    </header>
+                    <sheet>
+                        <h1>
+                            <label string="Red Label Record"/>
+                        </h1>
+                        <group col="4">
+                            <field name="date"/>
+                            <newline />
+                            <field name="unit_id" />
+                            <field name="unit_type_id"/>
+                            <field name="red_tape_id" context="{'default_type':'red_tape'}" on_change="on_change_red_tape_id(red_tape_id)"/>
+                            <field name="partner_id"/>
+                            <field name="name" colspan="4"/>
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                            <field name="amount"/>
+                            <field name="amount_paid"/>
+                        </group>
+                        <notebook colspan="6">
+                            <page string="Notes">
+                                <field name="notes" nolabel="1" />
+                            </page>
+                            <page string="Log">
+                                <group col="4">
+                                    <field name="create_uid" readonly="1" />
+                                    <field name="create_date" readonly="1" />
+                                    <field name="pending_by" readonly="1" />
+                                    <field name="date_pending" readonly="1" />
+                                    <field name="progress_by" readonly="1" />
+                                    <field name="date_progress" readonly="1" />
+                                    <field name="done_by" readonly="1" />
+                                    <field name="date_done" readonly="1" />
+                                    <field name="cancelled_by" readonly="1" />
+                                    <field name="date_cancelled" readonly="1" />
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread" placeholder="Share a message..."/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+<!-- Action for tms.unit.red_tape -->
+    <record model="ir.actions.act_window" id="open_view_tms_unit_red_tape_form">
+        <field name="name">Unit Red Tapes</field>
+        <field name="res_model">tms.unit.red_tape</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+<!-- Menu for tms.unit.red_tape -->
+    <menuitem name="Unit Red Tapes" 
+              parent="menu_tms_config_unit" 
+              id="menu_tms_config_unit_red_tape_form" 
+              action="open_view_tms_unit_red_tape_form"/>
 
 
 </data>

@@ -80,11 +80,9 @@ TMS.ADVANCE
             <field name="arch" type="xml">
                 <form string="TMS Advances" version="7.0">
                     <header>
-                        <button name="action_cancel" states="draft,approved,confirmed" string="Cancel" type="object" icon="gtk-cancel"/>
-                        <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
-                        <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
-                        <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok"/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,approved,confirmed,closed,cancel"/>
+                        <button name="action_cancel" states="draft" string="Cancel" type="object"/>
+                        <button name="action_confirm" states="draft" string="Confirm" type="object" icon="gtk-ok"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,cancel"/>
                     </header>
                     <sheet>
                         <h1>

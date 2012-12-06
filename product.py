@@ -59,6 +59,7 @@ class product_product(osv.osv):
   - Real Expense: Represent real expenses related to Travel, those that will be used in Travel Expense Checkup.
   - Made-Up Expense: Represent made-up expenses related to Travel,  those that will be used in Travel Expense Checkup.
   - Fuel: Used for filtering products used in Fuel Vouchers.
+  - Indirect Expense (Agreements): Used to define Accounts for Agreements Indirect Expenses.
   All of these products MUST be used as a service because they will never interact with Inventory.
 """),
             'tms_account_ids' : fields.many2many('account.account', 'tms_product_account_rel', 'product_id', 'account_id', 'Accounts for this product'),

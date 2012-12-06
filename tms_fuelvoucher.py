@@ -66,6 +66,7 @@ class tms_fuelvoucher(osv.osv):
             subtotal = (record.tax_amount / tax_factor) if tax_factor <> 0.0 else record.price_total
             special_tax_amount = (record.price_total - subtotal - record.tax_amount) if tax_factor else 0.0
             price_unit = subtotal / record.product_uom_qty
+            print "price_unit: ", price_unit 
             res[record.id] =   {'price_subtotal': subtotal,
                                 'special_tax_amount': special_tax_amount,
                                 'price_unit': price_unit,
@@ -85,7 +86,7 @@ class tms_fuelvoucher(osv.osv):
         'product_id': openerp.osv.fields.many2one('product.product', 'Product', domain=[('purchase_ok', '=', True),('tms_category','=','fuel')],  required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
         'product_uom_qty': openerp.osv.fields.float('Quantity', digits=(16, 4), required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
         'product_uom': openerp.osv.fields.many2one('product.uom', 'UoM ', required=True),
-        'price_unit': openerp.osv.fields.function(_amount_calculation, method=True, string='Unit Price', type='float', digits_compute= dp.get_precision('Sale Price'), multi='price_unit', store=True),
+        'price_unit': openerp.osv.fields.function(_amount_calculation, method=True, string='Unit Price', type='float', digits=(16, 4), multi='price_unit', store=True),
         'price_subtotal': openerp.osv.fields.function(_amount_calculation, method=True, string='SubTotal', type='float', digits_compute= dp.get_precision('Sale Price'), multi='price_unit', store=True),
         'tax_amount': openerp.osv.fields.float('Taxes', required=True, digits_compute= dp.get_precision('Sale Price'), states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
         'special_tax_amount' : openerp.osv.fields.function(_amount_calculation, method=True, string='IEPS', type='float', digits_compute= dp.get_precision('Sale Price'), multi='price_unit', store=True),
@@ -283,18 +284,18 @@ class tms_fuelvoucher_invoice(osv.osv_memory):
             journal_id = account_jrnl_obj.search(cr, uid, [('type', '=', 'purchase')], context=None)
             journal_id = journal_id and journal_id[0] or False
 
-            cr.execute("select distinct partner_id, currency_id from tms_fuelvoucher where invoice_id is null and state='confirmed' and id IN %s",(tuple(record_ids),))
+            cr.execute("select distinct partner_id, currency_id from tms_fuelvoucher where invoice_id is null and state in ('confirmed', 'closed') and id IN %s",(tuple(record_ids),))
 
             data_ids = cr.fetchall()
             if not len(data_ids):
-                raise osv.except_osv(_('Aviso !'),
+                raise osv.except_osv(_('Warning !'),
                                  _('Selected records are not Confirmed or already invoiced...'))
             print data_ids
 
             for data in data_ids:
                 partner = partner_obj.browse(cr,uid,data[0])
 
-                cr.execute("select id from tms_fuelvoucher where invoice_id is null and state='confirmed' and partner_id=" + str(data[0]) + ' and currency_id=' + str(data[1]) + " and id IN %s", (tuple(record_ids),))
+                cr.execute("select id from tms_fuelvoucher where invoice_id is null and state in ('confirmed', 'closed') and partner_id=" + str(data[0]) + ' and currency_id=' + str(data[1]) + " and id IN %s", (tuple(record_ids),))
                 fuelvoucher_ids = filter(None, map(lambda x:x[0], cr.fetchall()))
                 
                 inv_lines = []
@@ -316,6 +317,7 @@ class tms_fuelvoucher_invoice(osv.osv_memory):
                                     context=context).id
 
                     a = account_fiscal_obj.map_account(cr, uid, False, a)
+                    print "line.price_unit: ", line.price_unit
                     inv_line = (0,0, {
                         'name': line.product_id.name + ' - ' + line.travel_id.name + ' - ' + line.name,
                         'origin': line.name,

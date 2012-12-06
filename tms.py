@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+﻿# -*- encoding: utf-8 -*-
 ##############################################################################
 #    
 #    OpenERP, Open Source Management Solution
@@ -24,6 +24,7 @@ from osv import osv, fields
 import netsvc
 import pooler
 from tools.translate import _
+from tools import DEFAULT_SERVER_DATE_FORMAT, DEFAULT_SERVER_DATETIME_FORMAT, float_compare
 import decimal_precision as dp
 from osv.orm import browse_record, browse_null
 import time
@@ -73,6 +74,8 @@ class tms_unit_category(osv.osv):
                             ('extra_data', 'Extra Data'),
                             ('unit_status','Unit Status'),
                             ('expiry','Expiry'),
+                            ('active_cause','Active / Inactive Causes'),
+                            ('red_tape','Red Tape Types'),
                         ], 'Category Type',required=True, help="""Category Types:
  - View: Use this to define tree structure
  - Type: Use this to define Unit types, like Tractor, Trailers, dolly, van, etc.
@@ -80,7 +83,9 @@ class tms_unit_category(osv.osv):
  - Model: Unit Models
  - Motor: Motors
  - Extra Data: Use to define several extra fields for unit catalog.
- - Expiry: Use ti define several extra fields for unit catalog related to document expiration.
+ - Expiry: Use it to define several extra fields for units related to document expiration (Ex. Insurance Validity, Plates Renewal, etc)
+ - Active / Inactive Causes: Use to define causes for a unit to be Active / Inactive (Ex: Highway Accident, Sold, etc)
+ - Red Tape Types: Use it to define all kind of Red Tapes like Unit registration, Traffic Violations, etc.
 """
                 ),
         'fuel_efficiency_drive_unit': openerp.osv.fields.float('Fuel Efficiency Drive Unit', required=False, digits=(14,4)),
@@ -184,6 +189,8 @@ class tms_unit(osv.osv):
         'unit_extradata_ids' : openerp.osv.fields.one2many('tms.unit.extradata', 'unit_id', 'Extra Data'),
         'unit_expiry_ids' : openerp.osv.fields.one2many('tms.unit.expiry', 'unit_id', 'Expiry Extra Data'), 
         'unit_photo_ids' : openerp.osv.fields.one2many('tms.unit.photo', 'unit_id', 'Photos'), 
+        'unit_active_history_ids' : openerp.osv.fields.one2many('tms.unit.active_history', 'unit_id', 'Active/Inactive History'), 
+        'unit_red_tape_ids' : openerp.osv.fields.one2many('tms.unit.red_tape', 'unit_id', 'Unit Red Tapes'), 
         'supplier_unit': openerp.osv.fields.boolean('Supplier Unit'),
         'supplier_id': openerp.osv.fields.many2one('res.partner', 'Supplier', required=False, readonly=False, 
                                             domain="[('tms_category','=','none')]"),
@@ -384,6 +391,186 @@ class tms_unit_kit(osv.osv):
 
 tms_unit_kit()
 
+#Unit Active / Inactive history
+class tms_unit_active_history(osv.osv):
+    _name = "tms.unit.active_history"
+    _inherit = ['mail.thread', 'ir.needaction_mixin']
+    _description = "Units Active / Inactive history"
+
+    _columns = {
+        'state'             : openerp.osv.fields.selection([('draft','Draft'), ('confirmed','Confirmed'), ('cancel','Cancelled')], 'State', readonly=True),
+        'unit_id'           : openerp.osv.fields.many2one('tms.unit', 'Unit Name', required=True, ondelete='cascade', domain=[('active', 'in', ('true', 'false'))]),
+        'unit_type_id'      : openerp.osv.fields.related('unit_id', 'unit_type_id', type='many2one', relation='tms.unit.category', store=True, string='Unit Type'),
+        'prev_state'        : openerp.osv.fields.selection([('active','Active'), ('inactive','Inactive')], 'Previous State', readonly=True),
+        'new_state'         : openerp.osv.fields.selection([('active','Active'), ('inactive','Inactive')], 'New State', readonly=True),
+        'date'              : openerp.osv.fields.datetime('Date', states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)]}, required=True),
+        'state_cause_id'    : openerp.osv.fields.many2one('tms.unit.category', 'Active/Inactive Cause', domain="[('type','=','active_cause')]", states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)]}, required=True),
+        'name'              : openerp.osv.fields.char('Description', size=64, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)]}, required=True),
+        'notes'             : openerp.osv.fields.text('Notes', states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)]}, required=False),
+        'create_uid'        : openerp.osv.fields.many2one('res.users', 'Created by', readonly=True),
+        'create_date'       : openerp.osv.fields.datetime('Creation Date', readonly=True, select=True),
+        'confirmed_by'      : openerp.osv.fields.many2one('res.users', 'Confirmed by', readonly=True),
+        'date_confirmed'    : openerp.osv.fields.datetime('Date Confirmed', readonly=True),
+        'cancelled_by'      : openerp.osv.fields.many2one('res.users', 'Cancelled by', readonly=True),
+        'date_cancelled'    : openerp.osv.fields.datetime('Date Cancelled', readonly=True),
+
+        }
+
+    _defaults = {
+        'state'     : lambda *a: 'draft',
+        'date'      : lambda *a: time.strftime( DEFAULT_SERVER_DATETIME_FORMAT),
+        }
+
+    def on_change_state_cause_id(self, cr, uid, ids, state_cause_id):
+        return {'value': {'name': self.pool.get('tms.unit.category').browse(cr, uid, [state_cause_id])[0].name }}
+
+    def on_change_unit_id(self, cr, uid, ids, unit_id):
+        val = {}
+        if not unit_id:
+            return  val
+        for rec in self.pool.get('tms.unit').browse(cr, uid, [unit_id]):
+            val = {'value' : {'prev_state' : 'active' if rec.active else 'inactive','new_state' : 'inactive' if rec.active else 'active' } }
+        return val
+
+    def create(self, cr, uid, vals, context=None):
+        values = vals
+        if 'unit_id' in vals:
+            res = self.search(cr, uid, [('unit_id', '=', vals['unit_id']),('state','=','draft')], context=None)
+            if res and res[0]:
+                raise osv.except_osv(
+                        _('Warning!'),
+                        _('You can not create a new record for this unit because theres is already a record for this unit in Draft State.'))
+            unit_obj = self.pool.get('tms.unit')
+            for rec in unit_obj.browse(cr, uid, [vals['unit_id']]):
+                vals.update({
+                                'prev_state' : 'active' if rec.active else 'inactive',
+                                'new_state'  : 'inactive' if rec.active else 'active' }
+                            )
+        print vals
+        return super(tms_unit_active_history, self).create(cr, uid, values, context=context)
+
+
+
+    def unlink(self, cr, uid, ids, context=None):
+        for rec in self.browse(cr, uid, ids):
+            if rec.state == 'confirmed':
+                raise osv.except_osv(
+                        _('Warning!'),
+                        _('You can not delete a record if is already Confirmed!!! Click Cancel button to continue.'))
+
+        super(tms_unit_active_history, self).unlink(cr, uid, ids, context=context)
+        return True
+
+    def action_cancel(self, cr, uid, ids, context=None):
+        for rec in self.browse(cr, uid, ids):
+            if rec.state == 'confirmed':
+                raise osv.except_osv(
+                        _('Warning!'),
+                        _('You can not cancel a record if is already Confirmed!!!'))
+        self.write(cr, uid, ids, {'state':'cancel', 'cancelled_by' : uid, 'date_cancelled':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
+        return True
+
+
+    def action_confirm(self, cr, uid, ids, context=None):
+        for rec in self.browse(cr, uid, ids):
+            print rec.new_state == 'active'
+            self.pool.get('tms.unit').write(cr, uid, [rec.unit_id.id], {'active' : (rec.new_state == 'active')} )
+        self.write(cr, uid, ids, {'state':'confirmed', 'confirmed_by' : uid, 'date_confirmed':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
+        return True
+
+
+# Unit Red Tape
+class tms_unit_red_tape(osv.osv):
+    _name = "tms.unit.red_tape"
+    _inherit = ['mail.thread', 'ir.needaction_mixin']
+    _description = "Units Red Tape history"
+
+    _columns = {
+        'state'             : openerp.osv.fields.selection([('draft','Draft'), ('pending','Pending'), ('progress','Progress'), ('done','Done'), ('cancel','Cancelled')], 'State', readonly=True),
+        'unit_id'           : openerp.osv.fields.many2one('tms.unit', 'Unit Name', required=True, ondelete='cascade', domain=[('active', 'in', ('true', 'false'))],
+                                                            readonly=True, states={'draft':[('readonly',False)]} ),
+        'unit_type_id'      : openerp.osv.fields.related('unit_id', 'unit_type_id', type='many2one', relation='tms.unit.category', store=True, string='Unit Type', readonly=True),
+        'date'              : openerp.osv.fields.datetime('Date', required=True, readonly=True, states={'draft':[('readonly',False)], 'pending':[('readonly',False)]} ),
+        'date_start'        : openerp.osv.fields.datetime('Date Start', readonly=True),
+        'date_end'          : openerp.osv.fields.datetime('Date End', readonly=True),
+        'red_tape_id'       : openerp.osv.fields.many2one('tms.unit.category', 'Red Tape', domain="[('type','=','red_tape')]",  required=True,
+                                readonly=True, states={'draft':[('readonly',False)]} ),
+        'partner_id'        : openerp.osv.fields.many2one('res.partner', 'Partner', states={'cancel':[('readonly',True)], 'done':[('readonly',True)]}, required=False),
+        'name'              : openerp.osv.fields.char('Description', size=64, required=True, readonly=True, states={'draft':[('readonly',False)], 'pending':[('readonly',False)]} ),
+        'notes'             : openerp.osv.fields.text('Notes', states={'cancel':[('readonly',True)], 'done':[('readonly',True)]}, required=False),
+        'amount'            : openerp.osv.fields.float('Amount', required=True, digits_compute= dp.get_precision('Sale Price'), readonly=False, states={'cancel':[('readonly',True)], 'done':[('readonly',True)]} ),
+        'amount_paid'       : openerp.osv.fields.float('Amount Paid', required=True, digits_compute= dp.get_precision('Sale Price'), readonly=False, states={'cancel':[('readonly',True)], 'done':[('readonly',True)]} ),
+        'create_uid'        : openerp.osv.fields.many2one('res.users', 'Created by', readonly=True),
+        'create_date'       : openerp.osv.fields.datetime('Creation Date', readonly=True, select=True),
+        'pending_by'        : openerp.osv.fields.many2one('res.users', 'Pending by', readonly=True),
+        'date_pending'      : openerp.osv.fields.datetime('Date Pending', readonly=True),
+        'progress_by'       : openerp.osv.fields.many2one('res.users', 'Progress by', readonly=True),
+        'date_progress'     : openerp.osv.fields.datetime('Date Progress', readonly=True),
+        'done_by'           : openerp.osv.fields.many2one('res.users', 'Done by', readonly=True),
+        'date_done'         : openerp.osv.fields.datetime('Date Done', readonly=True),
+        'cancelled_by'      : openerp.osv.fields.many2one('res.users', 'Cancelled by', readonly=True),
+        'date_cancelled'    : openerp.osv.fields.datetime('Date Cancelled', readonly=True),
+
+        }
+
+    _defaults = {
+        'state'       : lambda *a: 'draft',
+        'date'        : lambda *a: time.strftime( DEFAULT_SERVER_DATETIME_FORMAT),
+        'amount'      : 0.0,
+        'amount_paid' : 0.0,
+        }
+
+    def on_change_red_tape_id(self, cr, uid, ids, red_tape_id):
+        return {'value': {'name': self.pool.get('tms.unit.category').browse(cr, uid, [red_tape_id])[0].name }}
+
+    def create(self, cr, uid, vals, context=None):
+        if 'unit_id' in vals:
+            res = self.search(cr, uid, [('unit_id', '=', vals['unit_id']),('state','=','draft')], context=None)
+            if res and res[0]:
+                raise osv.except_osv(
+                        _('Warning!'),
+                        _('You can not create a new record for this unit because theres is already a record for this unit in Draft State.'))
+        return super(tms_unit_red_tape, self).create(cr, uid, vals, context=context)
+
+
+    def unlink(self, cr, uid, ids, context=None):
+        for rec in self.browse(cr, uid, ids):
+            if rec.state == 'confirmed':
+                raise osv.except_osv(
+                        _('Warning!'),
+                        _('You can not delete a record if is already Confirmed!!! Click Cancel button to continue.'))
+
+        super(tms_unit_active_history, self).unlink(cr, uid, ids, context=context)
+        return True
+
+    def action_cancel(self, cr, uid, ids, context=None):
+        for rec in self.browse(cr, uid, ids):
+            if rec.state == 'confirmed':
+                raise osv.except_osv(
+                        _('Warning!'),
+                        _('You can not cancel a record if already Confirmed!!!'))
+        self.write(cr, uid, ids, {'state':'cancel', 'cancelled_by' : uid, 'date_cancelled':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
+        return True
+
+    def action_pending(self, cr, uid, ids, context=None):
+        self.write(cr, uid, ids, {'state':'pending', 'pending_by' : uid, 'date_pending':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
+        return True
+
+
+    def action_progress(self, cr, uid, ids, context=None):
+        self.write(cr, uid, ids, {'state':'progress', 'progress_by' : uid, 
+                                    'date_progress':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT),
+                                    'date_start':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
+                                    })
+        return True
+
+
+    def action_done(self, cr, uid, ids, context=None):
+        self.write(cr, uid, ids, {'state':'done', 'done_by' : uid, 
+                                'date_confirmed':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT),
+                                    'date_end':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
+                                    })
+        return True
 
 
 

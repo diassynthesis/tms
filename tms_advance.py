@@ -163,7 +163,6 @@ class tms_advance(osv.osv):
 
                 
     def create(self, cr, uid, vals, context=None):
-        print "Entrando aqui..."
         travel = self.pool.get('tms.travel').browse(cr, uid, vals['travel_id'])
         shop_id = travel.shop_id.id
         shop = self.pool.get('sale.shop').browse(cr, uid, [shop_id])[0]

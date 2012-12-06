@@ -66,7 +66,7 @@ class tms_waybill(osv.osv):
                 'amount_tax': 0.0,
                 'amount_total': 0.0,
             }
-            cur = waybill.pricelist_id.currency_id
+            cur = waybill.currency_id
             x_freight = x_move = x_highway = x_insurance = x_other = x_subtotal = x_tax  = x_total = 0.0
             for line in waybill.waybill_line:
                     x_freight += line.price_subtotal if line.product_id.tms_category == 'freight' else 0.0
@@ -203,7 +203,8 @@ class tms_waybill(osv.osv):
         'user_id': openerp.osv.fields.many2one('res.users', 'Salesman', select=True, readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
 
         'partner_id': openerp.osv.fields.many2one('res.partner', 'Customer', required=True, change_default=True, select=True, readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
-        'pricelist_id': openerp.osv.fields.many2one('product.pricelist', 'Pricelist', required=True, help="Pricelist for Waybill.", readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
+        'currency_id': openerp.osv.fields.many2one('res.currency', 'Currency', required=True, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
+#        'pricelist_id': openerp.osv.fields.many2one('product.pricelist', 'Pricelist', required=True, help="Pricelist for Waybill.", readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
         'partner_invoice_id': openerp.osv.fields.many2one('res.partner.address', 'Invoice Address', required=True, help="Invoice address for current Waybill.", readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
         'partner_order_id': openerp.osv.fields.many2one('res.partner.address', 'Ordering Contact', required=True,  help="The name and address of the contact who requested the order or quotation.", readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
         'account_analytic_id': openerp.osv.fields.many2one('account.analytic.account', 'Analytic Account',  help="The analytic account related to a Waybill.", readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
@@ -317,6 +318,7 @@ class tms_waybill(osv.osv):
         'date_down_end_sched'   : lambda *a: time.strftime( DEFAULT_SERVER_DATETIME_FORMAT),
         'date_down_docs_sched'  : lambda *a: time.strftime( DEFAULT_SERVER_DATETIME_FORMAT),
         'date_end'              : lambda *a: time.strftime( DEFAULT_SERVER_DATETIME_FORMAT),
+        'currency_id'           : lambda self,cr,uid,c: self.pool.get('res.users').browse(cr, uid, uid, c).company_id.currency_id.id,
         'billing_policy'        : 'manual',
         'state'                 : lambda *a: 'draft',
         'waybill_type'          : 'self',
@@ -441,13 +443,11 @@ class tms_waybill(osv.osv):
             return {'value': {'partner_invoice_id': False, 
                               'partner_order_id': False, 
                               'payment_term': False, 
-                              'pricelist_id': False, 
                               'user_id': False}
                     }
                     
         addr = self.pool.get('res.partner').address_get(cr, uid, [partner_id], ['invoice', 'contact', 'default', 'delivery'])
         part = self.pool.get('res.partner').browse(cr, uid, partner_id)
-        pricelist = part.property_product_pricelist and part.property_product_pricelist.id or False
         payment_term = part.property_payment_term and part.property_payment_term.id or False
         dedicated_salesman = part.user_id and part.user_id.id or uid
         val = {
@@ -455,7 +455,6 @@ class tms_waybill(osv.osv):
             'partner_order_id': addr['contact'] if addr['contact'] else addr['default'],
             'payment_term': payment_term,
             'user_id': dedicated_salesman,
-            'pricelist_id': pricelist,
         }
         return {'value': val}
 
@@ -538,7 +537,7 @@ class tms_waybill(osv.osv):
             elif waybill.billing_policy == 'automatic':
                 print "Entrando para generar la factura en automatico..."
                 wb_invoice = self.pool.get('tms.waybill.invoice')
-                wb_invoice.makeWaybillInvoicesq(cr, uid, ids, context=None)
+                wb_invoice.makeWaybillInvoices(cr, uid, ids, context=None)
             self.write(cr, uid, ids, {'state':'confirmed', 'confirmed_by' : uid, 'date_confirmed':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
 #            self.message_post(cr, uid, ids, body=_("Waybill has been set to <b>Confirmed</b> state by <em>%s (id: %s)</em>.") % (self.pool.get('res.users').browse(cr, uid, [uid])[0].name, uid), context=None)
             for (id,name) in self.name_get(cr, uid, ids, context=None):
@@ -601,7 +600,7 @@ class tms_waybill_line(osv.osv):
         for line in self.browse(cr, uid, ids, context=context):
             price = line.price_unit - line.price_unit *  (line.discount or 0.0) / 100.0
             taxes = tax_obj.compute_all(cr, uid, line.product_id.taxes_id, price, line.product_uom_qty, line.waybill_id.partner_invoice_id.id, line.product_id, line.waybill_id.partner_id)
-            cur = line.waybill_id.pricelist_id.currency_id
+            cur = line.waybill_id.currency_id
 
             amount_with_taxes = cur_obj.round(cr, uid, cur, taxes['total_included'])
             amount_tax = cur_obj.round(cr, uid, cur, taxes['total_included']) - cur_obj.round(cr, uid, cur, taxes['total'])
@@ -958,7 +957,7 @@ class tms_waybill_invoice(osv.osv_memory):
 #            partner = partner_obj.browse(cr,uid,user_obj.browse(cr,uid,[uid])[0].company_id.partner_id.id)
 
 
-            cr.execute("select distinct partner_id, pricelist_id from tms_waybill where invoice_id is null and (state='confirmed' or (state='approved' and billing_policy='automatic')) and id IN %s",(tuple(record_ids),))
+            cr.execute("select distinct partner_id, currency_id from tms_waybill where invoice_id is null and (state='confirmed' or (state='approved' and billing_policy='automatic')) and id IN %s",(tuple(record_ids),))
             data_ids = cr.fetchall()
             if not len(data_ids):
                 raise osv.except_osv(_('Warning !'),
@@ -968,7 +967,7 @@ class tms_waybill_invoice(osv.osv_memory):
             for data in data_ids:
                 partner = partner_obj.browse(cr,uid,data[0])
  
-                cr.execute("select id from tms_waybill where invoice_id is null and (state='confirmed' or (state='approved' and billing_policy='automatic')) and partner_id=" + str(data[0]) + ' and pricelist_id=' + str(data[1]) + " and id IN %s", (tuple(record_ids),))
+                cr.execute("select id from tms_waybill where invoice_id is null and (state='confirmed' or (state='approved' and billing_policy='automatic')) and partner_id=" + str(data[0]) + ' and currency_id=' + str(data[1]) + " and id IN %s", (tuple(record_ids),))
                 waybill_ids = filter(None, map(lambda x:x[0], cr.fetchall()))
                 
                 inv_lines = []
@@ -976,7 +975,7 @@ class tms_waybill_invoice(osv.osv_memory):
                 inv_amount = 0.0
                 empl_name = ''
                 for waybill in waybill_obj.browse(cr,uid,waybill_ids):                    
-                    currency_id = waybill.pricelist_id.currency_id.id
+                    currency_id = waybill.currency_id.id
                     for line in waybill.waybill_line:
                         if line.line_type=='product':
                             if line.product_id:
@@ -1030,7 +1029,6 @@ class tms_waybill_invoice(osv.osv_memory):
                     'address_invoice_id': self.pool.get('res.partner').address_get(cr, uid, [partner.id], ['default'])['default'],
                     'address_contact_id': self.pool.get('res.partner').address_get(cr, uid, [partner.id], ['default'])['default'],
                     'invoice_line'      : [x for x in inv_lines],
-                    'currency_id'       : currency_id,
                     'comment'           : 'TMS-Waybills',
                     'payment_term'      : pay_term,
                     'fiscal_position'   : partner.property_account_position.id,

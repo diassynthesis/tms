@@ -829,7 +829,7 @@ class tms_expense_invoice(osv.osv_memory):
                         if inv_id:
                             wf_service = netsvc.LocalService("workflow")
                             wf_service.trg_validate(uid, 'account.invoice', inv_id, 'invoice_open', cr)
-                            for new_inv in self.get.pool('accoiunt.invoice').browse(cr, uid, [inv_id]):
+                            for new_inv in self.pool.get('account.invoice').browse(cr, uid, [inv_id]):
                                 invoice_name = new_inv.name                            
 
                         invoices.append(inv_id)

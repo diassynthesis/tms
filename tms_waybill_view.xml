@@ -96,7 +96,7 @@ TMS.WAYBILL
                 <tree string="Waybills" colors="red:state=='cancel';green:state=='approved';blue:state=='confirmed';">
                     <button name="%(action_waybill_cancel)d" states="draft,approved,confirmed" string="Cancel" icon="gtk-cancel"  type="action" /> 
 		            <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
-		            <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok"/>
+		            <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-goto-last"/>
                     <field name="state"/>
                     <field name="name"/>
                     <field name="date_order"/>
@@ -132,12 +132,12 @@ TMS.WAYBILL
                         <button name="%(action_waybill_cancel)d" states="draft,approved,confirmed" string="Cancel" type="action"/> 
 				        <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
 				        <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
-				        <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok"/> 
+				        <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-goto-last"/> 
                         <field name="state" widget="statusbar" statusbar_visible="draft,approved,confirmed,cancel"/> 
                     </header>
                     <sheet>
                         <h1>
-                            <label string="TMS Waybill"/>
+                            <label string="Waybill"/>
                             <field name="name" class="oe_inline" readonly="1"/>
                         </h1>
 					    <field name="company_id" readonly="1" invisible="1"/>
@@ -151,10 +151,7 @@ TMS.WAYBILL
 					    </group>
                         <group col="4">
                             <field name="partner_id" on_change="onchange_partner_id(partner_id)" domain="[('customer','=',True)]" context="{'search_default_customer':1}" required="1"/>
-        <!--	                    <field name="account_analytic_id"
-								        context="{'partner_id':partner_id, 'contact_id':partner_order_id, 'pricelist_id':pricelist_id, 'default_name':name}"
-                                        groups="analytic.group_analytic_accounting" domain="[('parent_id','!=',False)]" /> -->
-                            <field name="pricelist_id" />
+                            <field name="currency_id" />
                             <field name="partner_order_id" domain="[('partner_id','=',partner_id)]" />
                             <field name="partner_invoice_id" domain="[('partner_id','=',partner_id)]" />
 					        <field name="departure_address_id" />

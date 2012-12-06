@@ -20,18 +20,19 @@
 ##############################################################################
 
 {   
-    "name" : "Transportation Management System",
+    "name" : "Hesatec - Freight Management",
     "version" : "1.0",
-    "category" : "Transportation Management System",
+    "category" : "Vertical",
     'complexity': "normal",
     "author" : "HESATEC",
     "website": "http://www.hesatecnica.com",
     "depends" : ["hr", "account_voucher", "purchase","sale"],
-    "description": "Transportation Management System",
+    "description": "Management System for Carriers, Trucking companies and other freight companies",
     "demo_xml" : [],
     "init_xml" : [],
     "update_xml" : [
-#                    'security/ir.model.access.csv',
+                    'security/tms_security.xml',
+                    'security/ir.model.access.csv',
                     'product_view.xml',
                     'ir_sequence_view.xml',
                     'account_view.xml',

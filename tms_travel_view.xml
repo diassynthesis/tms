@@ -69,11 +69,11 @@ TMS.travel
         <field name="model">tms.travel</field>
 		<field name="type">tree</field>
 		<field name="arch" type="xml">
-            <tree string="TMS Travels">
+            <tree string="Travels">
                 <button name="action_cancel" states="draft,progress,done" string="Cancel Travel" type="object" icon="gtk-cancel"/>
                 <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
                 <button name="action_dispatch" states="draft" string="Dispatch Travel" type="object" icon="gtk-go-forward"/>
-                <button name="action_end" states="progress" string="End Travel" type="object" icon="gtk-ok"/>
+                <button name="action_end" states="progress" string="End Travel" type="object" icon="gtk-goto-last"/>
                 <field name="state" />
                 <field name="name" />
                 <field name="date" />
@@ -99,17 +99,17 @@ TMS.travel
             <field name="model">tms.travel</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
-                <form string="TMS Travels" version="7.0">
+                <form string="Travels" version="7.0">
                     <header>
                         <button name="action_cancel" states="draft,progress,done" string="Cancel" type="object" icon="gtk-cancel"/>
                         <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
                         <button name="action_dispatch" states="draft" string="Dispatch" type="object" icon="gtk-go-forward"/>
-                        <button name="action_end" states="progress" string="End" type="object" icon="gtk-ok"/>
+                        <button name="action_end" states="progress" string="End" type="object" icon="gtk-goto-last"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,progress,done,closed,cancel"/> 
                     </header>
                     <sheet>
                         <h1>
-                            <label string="TMS Travel"/>
+                            <label string="Travel"/>
                             <field name="name" class="oe_inline" readonly="1"/>
                         </h1>
                         <group colspan="4" col="4">
