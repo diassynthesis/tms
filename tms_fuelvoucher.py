@@ -163,7 +163,7 @@ class tms_fuelvoucher(osv.osv):
         else:
             raise osv.except_osv(
                                  _('Fuel Voucher Sequence Error !'), 
-                                 _('You have not defined Fuel Voucher Sequence for shop ' + shop.name + ' and Supplier' + str(vals['partner_id'])))
+                                 _('You have not defined Fuel Voucher Sequence for shop ') + travel.shop_id.name + _(' and Supplier ') + str(vals['partner_id']))
         if seq_id:
             seq_number = self.pool.get('ir.sequence').get_id(cr, uid, seq_id)
             vals['name'] = seq_number
