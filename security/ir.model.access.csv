@@ -30,3 +30,5 @@ access_tms_waybill_extradata,tms.waybill.extradata,model_tms_waybill_extradata,t
 access_tms_waybill_invoice,tms.waybill.invoice,model_tms_waybill_invoice,tms.group_tms_manager,1,0,0,0
 access_tms_waybill_line,tms.waybill.line,model_tms_waybill_line,tms.group_tms_manager,1,1,1,1
 access_tms_waybill_shipped_product,tms.waybill.shipped_product,model_tms_waybill_shipped_product,tms.group_tms_manager,1,1,1,1
+access_tms_unit_red_tape,tms.unit.red_tape,model_tms_unit_red_tape,tms.group_tms_manager,1,1,1,1
+access_tms_unit_active_history,tms.unit.active_history,model_tms_unit_active_history,tms.group_tms_manager,1,1,1,1

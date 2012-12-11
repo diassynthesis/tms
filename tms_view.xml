@@ -21,7 +21,7 @@ TMS.UNIT.CATEGORY
         <field name="model">tms.unit.category</field>
 		<field name="type">tree</field>
 		<field name="arch" type="xml">
-            <tree string="TMS Unit Categories" colors="green:type in ('unit_type');blue:type in ('brand');black:type in ('model');red:type in ('extra_data');">
+            <tree string="Unit Master Data" colors="green:type in ('unit_type');blue:type in ('brand');black:type in ('model');red:type in ('extra_data');">
 		   <!-- editable="bottom"> -->
                 <field name="company_id" />
                 <field name="name" />
@@ -39,7 +39,7 @@ TMS.UNIT.CATEGORY
             <field name="model">tms.unit.category</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
-                <form string="TMS Unit Categories" version="7.0">
+                <form string="Unit Categories" version="7.0">
                     <sheet>
                         <h1>
                             <label string="Category"/>
@@ -93,7 +93,7 @@ TMS.UNIT
             <field name="model">tms.unit</field>
             <field name="type">search</field>
             <field name="arch" type="xml">
-                <search string="TMS Units">
+                <search string="Units">
                    <filter string="Motorized Units" icon="terp-accessories-archiver" domain="[('fleet_type','=','tractor')]"/>
                    <filter string="Trailers" icon="terp-accessories-archiver" domain="[('fleet_type','=','trailer')]"/>
                    <filter string="Dolly's" icon="terp-accessories-archiver" domain="[('fleet_type','=','dolly')]"/>
@@ -131,7 +131,7 @@ TMS.UNIT
         <field name="model">tms.unit</field>
 		<field name="type">tree</field>
 		<field name="arch" type="xml">
-            <tree string="TMS Units">
+            <tree string="Units">
                 <field name="name" />
                 <field name="fleet_type"/>
                 <field name="company_id" />
@@ -155,7 +155,7 @@ TMS.UNIT
             <field name="model">tms.unit</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
-                <form string="TMS Units" version="7.0">
+                <form string="Units" version="7.0">
                     <sheet>
                         <h1>
                             <label string="Unit"/>
@@ -277,7 +277,7 @@ TMS.UNIT.KIT
             <field name="model">tms.unit.kit</field>
             <field name="type">search</field>
             <field name="arch" type="xml">
-                <search string="TMS Units Kits">
+                <search string="Units Kits">
                    <field name="name"/>
                    <field name="active" />
                    <field name="unit_id" />
@@ -305,7 +305,7 @@ TMS.UNIT.KIT
         <field name="model">tms.unit.kit</field>
 		<field name="type">tree</field>
 		<field name="arch" type="xml">
-            <tree string="TMS Units Kits">
+            <tree string="Units Kits">
 			<field name="name"/>			
 			<field name="unit_id" />
 			<field name="unit_type" />
@@ -330,7 +330,7 @@ TMS.UNIT.KIT
             <field name="model">tms.unit.kit</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
-                <form string="TMS Units Kits" version="7.0">
+                <form string="Units Kits" version="7.0">
                     <sheet>
                         <h1>
                             <label string="Kit Name"/>
@@ -388,7 +388,7 @@ TMS.PLACE
         <field name="model">tms.place</field>
 		<field name="type">tree</field>
 		<field name="arch" type="xml">
-            <tree string="TMS Places">
+            <tree string="Places">
                 <field name="name" />
 		        <field name="state_id" />
 		        <field name="country_id" />
@@ -406,14 +406,19 @@ TMS.PLACE
             <field name="model">tms.place</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
-                <form string="TMS Places">
-                    <field name="name" select="1"/>
-                    <field name="company_id" select="1"/> 
-                    <field name="state_id" select="1"/>
-                    <field name="country_id" readonly="1"/>
-                    <field name="latitude"/>
-                    <field name="longitude" />
-                    <button name="button_open_google" string="Open Google" type="object" icon="gtk-go-forward"/>
+                <form string="Places" version="7.0">
+                    <header>
+                        <button name="button_get_coords" string="Get Coords from Google" type="object" icon="STOCK_EXECUTE"/>
+                        <button name="button_open_google" string="View in Google Maps" type="object" icon="STOCK_EXECUTE"/>
+                    </header>
+                    <group col="4">
+                        <field name="name" select="1" />
+                        <field name="company_id" select="1"/> 
+                        <field name="state_id" select="1" />
+                        <field name="country_id" readonly="1" />
+                        <field name="latitude"/>
+                        <field name="longitude" />
+                    </group>
                 </form>
             </field>
         </record>
@@ -444,7 +449,7 @@ TMS.ROUTE
             <field name="model">tms.route</field>
             <field name="type">search</field>
             <field name="arch" type="xml">
-                <search string="TMS Routes">
+                <search string="Routes">
                    <field name="name"/>
                    <field name="company_id" />
                    <field name="departure_id"/>
@@ -473,12 +478,12 @@ TMS.ROUTE
         <field name="model">tms.route</field>
 		<field name="type">tree</field>
 		<field name="arch" type="xml">
-            <tree string="TMS Routes">
+            <tree string="Routes">
                 <field name="name" />
 		        <field name="departure_id" />
                 <field name="arrival_id" />
 		        <field name="distance"/>
-                <field name="travel_time"/>
+                <field name="travel_time" widget="float_time"/>
                 <field name="company_id" />
 		    </tree>
 		</field>
@@ -490,7 +495,11 @@ TMS.ROUTE
             <field name="model">tms.route</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
-                <form string="TMS Routes" version="7.0">
+                <form string="Routes" version="7.0">
+                    <header>
+                        <button name="button_get_route_info" string="Get Route Info from Google" type="object" icon="STOCK_EXECUTE"/>
+                        <button name="button_open_google" string="View in Google Maps" type="object" icon="STOCK_EXECUTE"/>
+                    </header>
                     <sheet>
                         <h1>
                             <label string="Route"/>
@@ -500,7 +509,7 @@ TMS.ROUTE
                             <field name="departure_id" />
                             <field name="arrival_id" />
                             <field name="distance" />
-                            <field name="travel_time" />
+                            <field name="travel_time" widget="float_time"/>
                             <field name="active" />
                             <field name="company_id" />
                         </group>
@@ -572,7 +581,7 @@ TMS.ROUTE.TOLLSTATION
         <field name="model">tms.route.tollstation</field>
 		<field name="type">tree</field>
 		<field name="arch" type="xml">
-            <tree string="TMS Toll Stations">
+            <tree string="Toll Stations">
                 <field name="name" />
 		        <field name="place_id" />
                 <field name="partner_id" />
@@ -589,7 +598,7 @@ TMS.ROUTE.TOLLSTATION
             <field name="model">tms.route.tollstation</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
-                <form string="TMS Toll Stations">
+                <form string="Toll Stations">
                     <field name="name" select="1"/>
                     <field name="place_id" select="1"/>
                     <field name="partner_id" select="1"/>

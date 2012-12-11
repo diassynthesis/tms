@@ -30,6 +30,9 @@ from osv.orm import browse_record, browse_null
 import time
 from datetime import datetime, date
 import openerp
+import simplejson as json
+import urllib as my_urllib
+
 
 # Master catalog used for:
 # - Unit Types
@@ -589,13 +592,28 @@ class tms_place(osv.osv):
         'country_id'    : openerp.osv.fields.related('state_id', 'country_id', type='many2one', relation='res.country', string='Country'),
         'latitude'      : openerp.osv.fields.float('Latitude', required=False, digits=(14,10), help='GPS Latitude'),
         'longitude'     : openerp.osv.fields.float('Longitude', required=False, digits=(14,10), help='GPS Longitude'),
-        'route_ids'     : openerp.osv.fields.many2many('tms.route', 'tms_route_places_rel', 'place_id', 'route_id', 'Routes with this Place'),
+        'route_ids'     : openerp.osv.fields.many2many('tms.route', 'tms_route_places_rel', 'place_id', 'route_id', 'Routes with this Place'),        
     }
+
+    def  button_get_coords(self, cr, uid, ids, context=None):
+        for rec in self.browse(cr, uid, ids):
+            address = rec.name + "," + rec.state_id.name + "," + rec.country_id.name
+            google_url = 'http://maps.googleapis.com/maps/api/geocode/json?address=' + address.encode('utf-8') + '&sensor=false'
+            result = json.load(my_urllib.urlopen(google_url))
+            print google_url
+            print result
+            if result['status'] == 'OK':
+                print 'latitude: ', result['results'][0]['geometry']['location']['lat']
+                print 'longitude: ', result['results'][0]['geometry']['location']['lng']
+                self.write(cr, uid, ids, {'latitude': result['results'][0]['geometry']['location']['lat'], 'longitude' : result['results'][0]['geometry']['location']['lng'] })
+            else:
+                print result['status']
+        return True
+
 
     def button_open_google(self, cr, uid, ids, context=None):
         for place in self.browse(cr, uid, ids):
-            
-            url="/tms/static/src/googlemaps/get_coords_from_place.html?" + place.name + ','+ place.state_id.name+','+ place.country_id.name
+            url="/tms/static/src/googlemaps/get_place_from_coords.html?" + str(place.latitude) + ','+ str(place.longitude)
         return { 'type': 'ir.actions.act_url', 'url': url, 'nodestroy': True, 'target': 'new' }
             
 tms_place()
@@ -627,6 +645,32 @@ class tms_route(osv.osv):
     _defaults = {
         'active': True,
     }
+
+    def  button_get_route_info(self, cr, uid, ids, context=None):
+        for rec in self.browse(cr, uid, ids):
+            if rec.departure_id.latitude and rec.departure_id.longitude and rec.arrival_id.latitude and rec.arrival_id.longitude:
+                print context
+                google_url = 'http://maps.googleapis.com/maps/api/distancematrix/json?origins=' + str(rec.departure_id.latitude) + ',' + str(rec.departure_id.longitude) + \
+                                                                                '&destinations=' + str(rec.arrival_id.latitude) +',' + str(rec.arrival_id.longitude) + \
+                                                                                '&mode=driving' + \
+                                                                                '&language=' + context['lang'][:2] + \
+                                                                                '&sensor=false'
+                result = json.load(my_urllib.urlopen(google_url))
+                if result['status'] == 'OK':
+                    self.write(cr, uid, ids, {'distance': result['rows'][0]['elements'][0]['distance']['value'] / 1000.0, 'travel_time' : result['rows'][0]['elements'][0]['duration']['value'] / 3600.0 })
+                else:
+                    print result['status']
+            else:
+                raise osv.except_osv(_('Error !'), _('You cannot get route info because one of the places has no coordinates.'))
+
+        return True
+
+
+    def button_open_google(self, cr, uid, ids, context=None):
+        for route in self.browse(cr, uid, ids):
+            url="/tms/static/src/googlemaps/get_route.html?" + str(route.departure_id.latitude) + ','+ str(route.departure_id.longitude) + ',' + str(route.arrival_id.latitude) + ','+ str(route.arrival_id.longitude)
+        return { 'type': 'ir.actions.act_url', 'url': url, 'nodestroy': True, 'target': 'new' }
+
 
     
 tms_route()

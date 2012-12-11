@@ -27,7 +27,17 @@
     "author" : "HESATEC",
     "website": "http://www.hesatecnica.com",
     "depends" : ["hr", "account_voucher", "purchase","sale"],
-    "description": "Management System for Carriers, Trucking companies and other freight companies",
+    "description": """
+Management System for Carriers, Trucking companies and other freight companies
+
+
+
+
+Python Dependency: http://code.google.com/p/geopy/                        
+
+
+
+""",
     "demo_xml" : [],
     "init_xml" : [],
     "update_xml" : [

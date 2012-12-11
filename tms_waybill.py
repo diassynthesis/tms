@@ -186,7 +186,7 @@ class tms_waybill(osv.osv):
             ('approved', 'Approved'),
             ('confirmed', 'Confirmed'),
             ('cancel', 'Cancelled')
-            ], 'Waybill State', readonly=True, help="Gives the state of the Waybill. \n -The exception state is automatically set when a cancel operation occurs in the invoice validation (Invoice Exception) or in the picking list process (Shipping Exception). \nThe 'Waiting Schedule' state is set when the invoice is confirmed but waiting for the scheduler to run on the date 'Ordered Date'.", select=True),
+            ], 'State', readonly=True, help="Gives the state of the Waybill. \n ", select=True),
         'billing_policy': openerp.osv.fields.selection([
             ('manual', 'Manual'),
             ('automatic', 'Automatic'),

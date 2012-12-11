@@ -49,6 +49,7 @@ class product_product(osv.osv):
                                           ('indirect_expense','Indirect Expense (Agreements)'),
                                           ('maint_part','Maintenance Part'),
                                           ('maint_activity','Maintenance Activity'),
+                                          ('maint_service_type','Maintenance Services Types'),
                                           ], 'TMS Type', required=True,
                                           help="""Product Type for using with TMS Module
   - No TMS Product: Not related to TMS
@@ -62,6 +63,9 @@ class product_product(osv.osv):
   - Made-Up Expense: Represent made-up expenses related to Travel,  those that will be used in Travel Expense Checkup.
   - Fuel: Used for filtering products used in Fuel Vouchers.
   - Indirect Expense (Agreements): Used to define Accounts for Agreements Indirect Expenses.
+  - Maintenance Part: Parts used for maintenance services.
+  - Maintenance Activity: Activities related to maintenance services.
+  - Maintenance Service Types: Different types of maintenance services
   All of these products MUST be used as a service because they will never interact with Inventory.
 """),
             'tms_account_ids' : fields.many2many('account.account', 'tms_product_account_rel', 'product_id', 'account_id', 'Accounts for this product'),
