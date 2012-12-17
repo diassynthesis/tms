@@ -84,13 +84,186 @@ TMS.UNIT.CATEGORY
 
 <!-- 
 ##############################
-TMS.UNIT
+FLEET.VEHICLE - (former TMS.UNIT)
 ##############################
 -->
-<!-- SEARCH View for tms.unit (Transportation Units) --> 
+
+
+        <record id="fleet_vehicle_form_inherit_tms" model="ir.ui.view">
+            <field name="name">fleet.vehicle.tms.form</field>
+            <field name="model">fleet.vehicle</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="fleet.fleet_vehicle_form"/>
+            <field name="arch" type="xml">
+                <div class="oe_title" position="replace">
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name" class="oe_inline"/>
+                        </h1>
+                        <label for="model_id" class="oe_edit_only"/>
+                        <h2>
+                            <field name="model_id" class="oe_inline" on_change="on_change_model(model_id)"/>
+                        </h2>
+                    </div>
+                </div>
+
+                <group col="2" string="General Properties" position="replace" >
+                </group>
+
+                <group col="2" position="replace" >
+
+                    <group col="4">
+                        <field name="tag_ids" widget="many2many_tags" colspan="4"/>
+                        <field name="fleet_type"/>
+                        <field name="shop_id" />
+			            <field name="supplier_unit"/>
+			            <field name="supplier_id" attrs="{'required':[('supplier_unit','=',True)], 'invisible':[('supplier_unit','=',False)]}"/>
+                        <field name="license_plate" />
+                        <field name="active" readonly="1"/>
+                    </group>
+                    <notebook colspan="4">
+                        <page string="General Properties">
+                            <group col="2" string="General Properties">
+                                <group >
+                                    <field name="driver" />
+                                    <field name="location" />
+                                    <newline />
+                                    <field name="latitude" />
+                                    <field name="longitude" />
+                                    <field name="vin_sn" />
+                                    <field name="company_id" groups="base.group_multi_company"/>
+                                </group>
+                                <group>
+                                    <label for="odometer" />
+                                    <div>
+                                        <field name="odometer" class="oe_inline"/>
+                                        <field name="odometer_unit" class="oe_inline"/>
+                                    </div>
+                                    <field name="acquisition_date" />
+                                    <field name="car_value" />
+                                </group>
+                            </group>
+                            <group col="2">
+                                <group string="Additional Properties">
+                                    <field name="seats" />
+                                    <field name="doors" />
+                                    <field name="color" />
+                                </group>
+                                <group string="Engine Options">
+                                    <field name="transmission" />
+                                    <field name="fuel_type" />
+                                    <field name="co2" />
+                                    <field name="horsepower" />
+                                    <field name="horsepower_tax" />
+                                    <field name="power" />
+                                </group>  
+                            </group>
+
+                        </page>
+                        <page string="General Data">
+                            <group col="4">
+                                <field name="year_model" />
+                                <field name="unit_type_id" context="{'default_type':'unit_type'}"/>
+                                <field name="unit_motor_id" context="{'default_type':'motor'}" />
+                                <field name="serial_number" />
+                                <field name="vin" />
+                                <field name="registration" />
+                                <field name="employee_id" context="{'default_tms_category':'driver'}" domain="[('tms_category', '=', 'driver')]"/>
+                                <field name="day_no_circulation"/>
+                                <field name="gps_supplier_id"/>
+                                <field name="gps_id" attrs="{'required':[('gps_supplier_id','!=',False)]}"/>
+
+                            </group>
+                        </page>
+                        <page string="Extra Data">
+                            <group colspan="4" col="4">
+                                <field name="unit_extradata_ids" nolabel="1" widget="one2many_list" >
+                                    <tree string="Extra Data" editable="bottom">
+                                        <field name="extra_data_id" context="{'default_type':'extra_data'}" />
+                                        <field name="extra_value" />
+                                    </tree>
+                                    <form string="Extra Data">
+                                        <group colspan="4">
+                                            <field name="extra_data_id" context="{'default_type':'extra_data'}" />
+                                            <field name="extra_value" />
+                                        </group>
+                                    </form>
+                                </field>
+                                <field name="unit_expiry_ids" nolabel="1" >
+                                    <tree string="Expiry Data" editable="bottom">
+                                        <field name="expiry_id" context="{'default_type':'expiry'}" />
+                                        <field name="extra_value" on_change="on_change_extra_value(extra_value)"/>
+                                        <field name="name" invisible="1"/>
+                                    </tree>
+                                    <form string="Extra Data">
+                                        <group colspan="4">
+                                            <field name="expiry_id" context="{'default_type':'expiry'}" />
+                                            <field name="extra_value" />
+                                        </group>
+                                    </form>
+                                </field>
+                            </group>
+                        </page>
+				        <page string="More Images...">
+                            <field name="unit_photo_ids" nolabel="1" >
+						        <tree string="Unit Photos">
+							        <field name="name"/>
+						        </tree>
+						        <form string="Unit Photos">
+                                    <group colspan="4">
+							            <separator string="Image Description" colspan="4"/>
+							            <field name="name" colspan="4" nolabel="1"/>
+							            <field name="photo" widget='image' nolabel="1" colspan="4"/>
+                                    </group>
+						        </form>
+					        </field>
+                        </page>
+                        <page string="Active/Inactive History">
+                            <field name="unit_active_history_ids" nolabel="1" />
+                        </page>
+                        <page string="Red Tapes">
+                            <field name="unit_red_tape_ids" nolabel="1" />
+                        </page>
+                        <page string="Notes">
+                            <field name="notes" nolabel="1" />
+                        </page>
+                    </notebook> 
+                </group>
+            </field>
+        </record>
+
+
+        <record id="fleet_vehicle_tree_inherit_tms" model="ir.ui.view">
+            <field name="name">fleet.vehicle.tms.tree</field>
+            <field name="model">fleet.vehicle</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="fleet.fleet_vehicle_tree"/>
+            <field name="arch" type="xml">
+                <field name="model_id" position="replace"></field>
+                <field name="acquisition_date" position="replace"></field>
+                <field name="license_plate" position="before">
+                        <field name="name"/>
+                        <field name="model_id" />
+                </field>
+                <field name="license_plate" position="after">
+                    <field name="fleet_type"/>
+                    <field name="unit_type_id" />
+                    <field name="unit_motor_id" />
+        	        <field name="employee_id" string="TMS Driver"/>
+                </field>
+
+
+            </field>
+        </record>
+
+
+
+
+<!-- SEARCH View for fleet.vehicle (Transportation Units) 
         <record id="view_tms_unit_search" model="ir.ui.view">
-            <field name="name">tms.unit.search</field>
-            <field name="model">tms.unit</field>
+            <field name="name">fleet.vehicle.search</field>
+            <field name="model">fleet.vehicle</field>
             <field name="type">search</field>
             <field name="arch" type="xml">
                 <search string="Units">
@@ -110,7 +283,7 @@ TMS.UNIT
                    <field name="plates" />
                    </group>
                    <newline/>
-                   <group  expand='0' string='Group by...'> <!--groups="base.group_extended" -->
+                   <group  expand='0' string='Group by...'> 
                        <filter string='Fleet Unit Type' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'fleet_type'}" />
                        <separator orientation="vertical"/>                                                                
                        <filter string='Unit Type' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'unit_type_id'}" />
@@ -124,11 +297,12 @@ TMS.UNIT
                 </search>
             </field>
         </record>
+-->
 
-<!-- TREE View for tms.unit (Transportation Units) --> 
+<!-- TREE View for fleet.vehicle (Transportation Units) 
 	<record model="ir.ui.view" id="view_tms_unit_tree">
-        <field name="name">tms.unit.tree</field>
-        <field name="model">tms.unit</field>
+        <field name="name">fleet.vehicle.tree</field>
+        <field name="model">fleet.vehicle</field>
 		<field name="type">tree</field>
 		<field name="arch" type="xml">
             <tree string="Units">
@@ -147,12 +321,12 @@ TMS.UNIT
 		    </tree>
 		</field>
 	</record>
-
-<!-- FORM View for tms.unit (Transportation Units) -->
+-->
+<!-- FORM View for fleet.vehicle (Transportation Units) 
 
         <record id="view_tms_unit_form" model="ir.ui.view">
-            <field name="name">tms.unit.form</field>
-            <field name="model">tms.unit</field>
+            <field name="name">fleet.vehicle.form</field>
+            <field name="model">fleet.vehicle</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
                 <form string="Units" version="7.0">
@@ -251,16 +425,16 @@ TMS.UNIT
                 </form>
             </field>
         </record>
-
-<!-- Action for tms.unit (Transportation Units) -->
+-->
+<!-- Action for fleet.vehicle (Transportation Units) -->
     <record model="ir.actions.act_window" id="open_view_tms_unit_form">
         <field name="name">TMS Units</field>
-        <field name="res_model">tms.unit</field>
+        <field name="res_model">fleet.vehicle</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
     </record>
 
-<!-- Menu for tms.unit (Transportation Units) -->
+<!-- Menu for fleet.vehicle (Transportation Units) -->
     <menuitem name="Units" 
               parent="menu_tms_config_unit" 
               id="menu_tms_config_unit_form" 

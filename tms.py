@@ -42,7 +42,7 @@ import urllib as my_urllib
 # - Extra Data for Units (Like Insurance Policy, Unit Invoice, etc
 # - Unit Status (Still not defined if is keeped or not
 # - Documentacion expiraton  for Transportation Units
-class tms_unit_category(osv.osv):
+class fleet_vehicle_category(osv.osv):
     _name = "tms.unit.category"
     _description = "Types, Brands, Models, Motor Type for Transport Units"
 
@@ -71,8 +71,7 @@ class tms_unit_category(osv.osv):
         'type': openerp.osv.fields.selection([
                             ('view','View'), 
                             ('unit_type','Type'), 
-                            ('brand','Brand'), 
-                            ('model','Model'), 
+                            ('brand','Motor Brand'), 
                             ('motor','Motor'), 
                             ('extra_data', 'Extra Data'),
                             ('unit_status','Unit Status'),
@@ -83,7 +82,6 @@ class tms_unit_category(osv.osv):
  - View: Use this to define tree structure
  - Type: Use this to define Unit types, like Tractor, Trailers, dolly, van, etc.
  - Brand: Units brands
- - Model: Unit Models
  - Motor: Motors
  - Extra Data: Use to define several extra fields for unit catalog.
  - Expiry: Use it to define several extra fields for units related to document expiration (Ex. Insurance Validity, Plates Renewal, etc)
@@ -115,7 +113,7 @@ class tms_unit_category(osv.osv):
     def _check_recursion(self, cr, uid, ids, context=None):
         level = 100
         while len(ids):
-            cr.execute('select distinct parent_id from tms_unit_category where id IN %s',(tuple(ids),))
+            cr.execute('select distinct parent_id from fleet_vehicle_category where id IN %s',(tuple(ids),))
             ids = filter(None, map(lambda x:x[0], cr.fetchall()))
             if not level:
                 return False
@@ -134,20 +132,21 @@ class tms_unit_category(osv.osv):
         if not default:
             default = {}
         default['name'] = categ['name'] + ' (copy)'
-        return super(tms_unit_category, self).copy(cr, uid, id, default, context=context)
+        return super(fleet_vehicle_category, self).copy(cr, uid, id, default, context=context)
 
-tms_unit_category()
+fleet_vehicle_category()
 
                              
 # Units for Transportation
-class tms_unit(osv.osv):
-    _name = "tms.unit"
-    _inherit = ['mail.thread', 'ir.needaction_mixin']
+class fleet_vehicle(osv.osv):
+#    _name = "fleet.vehicle"
+    _name = 'fleet.vehicle'
+    _inherit = ['fleet.vehicle']
     _description = "All motor/trailer units"
 
     _columns = {
         'shop_id': openerp.osv.fields.many2one('sale.shop', 'Shop', required=True, readonly=False),
-        'company_id': openerp.osv.fields.related('shop_id','company_id',type='many2one',relation='res.company',string='Company',store=True,readonly=True),
+#        'company_id': openerp.osv.fields.related('shop_id','company_id',type='many2one',relation='res.company',string='Company',store=True,readonly=True),
         'name': openerp.osv.fields.char('Unit Name', size=64, required=True),
         'year_model':openerp.osv.fields.char('Year Model', size=64), 
         'unit_type_id':openerp.osv.fields.many2one('tms.unit.category', 'Unit Type', domain="[('type','=','unit_type')]"),
@@ -156,7 +155,6 @@ class tms_unit(osv.osv):
         'unit_motor_id':openerp.osv.fields.many2one('tms.unit.category', 'Motor', domain="[('type','=','motor')]"),
         'serial_number': openerp.osv.fields.char('Serial Number', size=64),
         'vin': openerp.osv.fields.char('VIN', size=64),
-        'plates': openerp.osv.fields.char('Plates', size=64),
         'day_no_circulation': openerp.osv.fields.selection([
                             ('sunday','Sunday'), 
                             ('monday','Monday'), 
@@ -171,7 +169,7 @@ class tms_unit(osv.osv):
         'gps_supplier_id': openerp.osv.fields.many2one('res.partner', 'GPS Supplier', required=False, readonly=False, 
                                             domain="[('tms_category','=','gps')]"),
         'gps_id': openerp.osv.fields.char('GPS Id', size=64),
-        'employee_id': openerp.osv.fields.many2one('hr.employee', 'Driver', required=False, domain=[('tms_category', '=', 'driver')]),
+        'employee_id': openerp.osv.fields.many2one('hr.employee', 'Driver', required=False, domain=[('tms_category', '=', 'driver')], help="This is used in TMS Module..."),
         'fleet_type': openerp.osv.fields.selection([('tractor','Motorized Unit'), ('trailer','Trailer'), ('dolly','Dolly'), ('other','Other')], 'Unit Fleet Type', required=True),
 # Pendiente de construir los objetos relacionados
 #        'tires_number': openerp.osv.fields.integer('Number of Tires'),
@@ -197,6 +195,9 @@ class tms_unit(osv.osv):
         'supplier_unit': openerp.osv.fields.boolean('Supplier Unit'),
         'supplier_id': openerp.osv.fields.many2one('res.partner', 'Supplier', required=False, readonly=False, 
                                             domain="[('tms_category','=','none')]"),
+        'latitude'      : openerp.osv.fields.float('Lat', required=False, digits=(20,10), help='GPS Latitude'),
+        'longitude'     : openerp.osv.fields.float('Lng', required=False, digits=(20,10), help='GPS Longitude'),
+#        'last_position' : openerp.osv.fields.char('Last Position', size=250),
     }
 
     _defaults = {
@@ -205,7 +206,7 @@ class tms_unit(osv.osv):
     	}
 
     _sql_constraints = [
-            ('name_uniq', 'unique(name)', 'Unit name number must be unique !'),
+#            ('name_uniq', 'unique(name)', 'Unit name number must be unique !'),
             ('gps_id_uniq', 'unique(gps_id)', 'Unit GPS ID must be unique !'),
         ]
 
@@ -218,17 +219,16 @@ class tms_unit(osv.osv):
         default['unit_extradata_ids'] = []
         default['unit_expiry_ids'] = []
         default['unit_photo_ids'] = []
-        return super(tms_unit, self).copy(cr, uid, id, default, context=context)
+        return super(fleet_vehicle, self).copy(cr, uid, id, default, context=context)
 
-tms_unit()
 
 # Units PHOTOS
-class tms_unit_photo(osv.osv):
+class fleet_vehicle_photo(osv.osv):
     _name = "tms.unit.photo"
     _description = "Units Photos"
 
     _columns = {
-        'unit_id' : openerp.osv.fields.many2one('tms.unit', 'Unit Name', required=True, ondelete='cascade'),
+        'unit_id' : openerp.osv.fields.many2one('fleet.vehicle', 'Unit Name', required=True, ondelete='cascade'),
         'name': openerp.osv.fields.char('Description', size=64, required=True),
         'photo': openerp.osv.fields.binary('Photo'),
         }
@@ -238,17 +238,17 @@ class tms_unit_photo(osv.osv):
         ]
 
 
-tms_unit_photo()
+fleet_vehicle_photo()
 
 
 # Units EXTRA DATA
-class tms_unit_extradata(osv.osv):
+class fleet_vehicle_extradata(osv.osv):
     _name = "tms.unit.extradata"
     _description = "Extra Data for Units"
     _rec_name = "extra_value"
 
     _columns = {
-        'unit_id'       : openerp.osv.fields.many2one('tms.unit', 'Unit Name', required=True, ondelete='cascade', select=True,),        
+        'unit_id'       : openerp.osv.fields.many2one('fleet.vehicle', 'Unit Name', required=True, ondelete='cascade', select=True,),        
         'extra_data_id' :openerp.osv.fields.many2one('tms.unit.category', 'Field', domain="[('type','=','extra_data')]", required=True),
         'extra_value'   : openerp.osv.fields.char('Valor', size=64, required=True),
         }
@@ -257,16 +257,16 @@ class tms_unit_extradata(osv.osv):
         ('name_uniq', 'unique(unit_id,extra_data_id)', 'Extra Data Field must be unique for each unit !'),
         ]
 
-tms_unit_extradata()
+fleet_vehicle_extradata()
 
 
 # Units for Transportation EXPIRY EXTRA DATA
-class tms_unit_expiry(osv.osv):
+class fleet_vehicle_expiry(osv.osv):
     _name = "tms.unit.expiry"
     _description = "Expiry Extra Data for Units"
 
     _columns = {
-        'unit_id'       : openerp.osv.fields.many2one('tms.unit', 'Unit Name', required=True, ondelete='cascade', select=True,),        
+        'unit_id'       : openerp.osv.fields.many2one('fleet.vehicle', 'Unit Name', required=True, ondelete='cascade', select=True,),        
         'expiry_id'     :openerp.osv.fields.many2one('tms.unit.category', 'Field', domain="[('type','=','expiry')]", required=True),
         'extra_value'   : openerp.osv.fields.date('Value', required=True),
         'name'          : openerp.osv.fields.char('Valor', size=10, required=True),
@@ -280,26 +280,26 @@ class tms_unit_expiry(osv.osv):
         return {'value': {'name': extra_value[8:] + '/' + extra_value[5:-3] + '/' + extra_value[:-6]}}
 
 
-tms_unit_expiry()
+fleet_vehicle_expiry()
 
 
 
 
 # Units Kits
-class tms_unit_kit(osv.osv):
+class fleet_vehicle_kit(osv.osv):
     _name = "tms.unit.kit"
     _inherit = ['mail.thread', 'ir.needaction_mixin']
     _description = "Units Kits"
 
     _columns = {
         'name'          : openerp.osv.fields.char('Name', size=64, required=True),
-        'unit_id'       : openerp.osv.fields.many2one('tms.unit', 'Unit', required=True),
+        'unit_id'       : openerp.osv.fields.many2one('fleet.vehicle', 'Unit', required=True),
         'unit_type'     : openerp.osv.fields.related('unit_id', 'unit_type_id', type='many2one', relation='tms.unit.category', string='Unit Type', store=True, readonly=True),
-        'trailer1_id'   : openerp.osv.fields.many2one('tms.unit', 'Trailer 1', required=True),
+        'trailer1_id'   : openerp.osv.fields.many2one('fleet.vehicle', 'Trailer 1', required=True),
         'trailer1_type' : openerp.osv.fields.related('trailer1_id', 'unit_type_id', type='many2one', relation='tms.unit.category', string='Trailer 1 Type', store=True, readonly=True),
-        'dolly_id'      : openerp.osv.fields.many2one('tms.unit', 'Dolly'),
+        'dolly_id'      : openerp.osv.fields.many2one('fleet.vehicle', 'Dolly'),
         'dolly_type'    : openerp.osv.fields.related('dolly_id', 'unit_type_id', type='many2one', relation='tms.unit.category', string='Dolly Type', store=True, readonly=True),
-        'trailer2_id'   : openerp.osv.fields.many2one('tms.unit', 'Trailer 2'),
+        'trailer2_id'   : openerp.osv.fields.many2one('fleet.vehicle', 'Trailer 2'),
         'trailer2_type' : openerp.osv.fields.related('trailer2_id', 'unit_type_id', type='many2one', relation='tms.unit.category', string='Trailer 2 Type', store=True, readonly=True),
         'employee_id'   : openerp.osv.fields.many2one('hr.employee', 'Driver', domain=[('tms_category', '=', 'driver')]),
         'date_start'    : openerp.osv.fields.datetime('Date start', required=True),
@@ -318,7 +318,7 @@ class tms_unit_kit(osv.osv):
             date_start = record.date_start
             date_end   = record.date_end
             
-            sql = 'select name from tms_unit_kit where id <> ' + str(record.id) + ' and unit_id = ' + str(record.unit_id.id) \
+            sql = 'select name from fleet_vehicle_kit where id <> ' + str(record.id) + ' and unit_id = ' + str(record.unit_id.id) \
                     + ' and (date_start between \'' + date_start + '\' and \'' + date_end + '\'' \
                         + ' or date_end between \'' + date_start + '\' and \'' + date_end + '\');' 
 
@@ -330,7 +330,7 @@ class tms_unit_kit(osv.osv):
 
 
             if record.dolly_id.id:
-                sql = 'select name from tms_unit_kit where id <> ' + str(record.id) + ' and dolly_id = ' + str(record.dolly_id.id) \
+                sql = 'select name from fleet_vehicle_kit where id <> ' + str(record.id) + ' and dolly_id = ' + str(record.dolly_id.id) \
                         + ' and (date_start between \'' + date_start + '\' and \'' + date_end + '\'' \
                             + ' or date_end between \'' + date_start + '\' and \'' + date_end + '\');' 
 
@@ -340,7 +340,7 @@ class tms_unit_kit(osv.osv):
                     raise osv.except_osv(_('Validity Error !'), _('You cannot have overlaping expiration dates for dolly %s !\n' \
                                                                     'This dolly is overlaping Kit << %s >>')%(record.dolly_id.name, data[0]))
 
-            sql = 'select name from tms_unit_kit where id <> ' + str(record.id) + ' and (trailer1_id = ' + str(record.trailer1_id.id) + 'or trailer2_id = ' + str(record.trailer1_id.id) + ')' \
+            sql = 'select name from fleet_vehicle_kit where id <> ' + str(record.id) + ' and (trailer1_id = ' + str(record.trailer1_id.id) + 'or trailer2_id = ' + str(record.trailer1_id.id) + ')' \
                     + ' and (date_start between \'' + date_start + '\' and \'' + date_end + '\'' \
                         + ' or date_end between \'' + date_start + '\' and \'' + date_end + '\');' 
             cr.execute(sql)
@@ -350,7 +350,7 @@ class tms_unit_kit(osv.osv):
                                                                 'This trailer is overlaping Kit << %s >>')%(record.trailer1_id.name, data[0]))
 
             if record.trailer2_id.id:
-                sql = 'select name from tms_unit_kit where id <> ' + str(record.id) + ' and (trailer1_id = ' + str(record.trailer2_id.id) + 'or trailer2_id = ' + str(record.trailer2_id.id) + ')' \
+                sql = 'select name from fleet_vehicle_kit where id <> ' + str(record.id) + ' and (trailer1_id = ' + str(record.trailer2_id.id) + 'or trailer2_id = ' + str(record.trailer2_id.id) + ')' \
                         + ' and (date_start between \'' + date_start + '\' and \'' + date_end + '\'' \
                             + ' or date_end between \'' + date_start + '\' and \'' + date_end + '\');' 
 
@@ -374,11 +374,11 @@ class tms_unit_kit(osv.osv):
     _order = "name desc, date_start desc"
 
 
-    def on_change_tms_unit_id(self, cr, uid, ids, tms_unit_id):
+    def on_change_fleet_vehicle_id(self, cr, uid, ids, fleet_vehicle_id):
         res = {'value': {'date_start': time.strftime('%Y-%m-%d %H:%M')}}
-        if not (tms_unit_id):
+        if not (fleet_vehicle_id):
             return res
-        cr.execute("select date_end from tms_unit_kit where id=%s order by  date_end desc limit 1", tms_unit_id)
+        cr.execute("select date_end from fleet_vehicle_kit where id=%s order by  date_end desc limit 1", fleet_vehicle_id)
         date_start = cr.fetchall()
         if not date_start:
             return res
@@ -392,17 +392,17 @@ class tms_unit_kit(osv.osv):
         return {'value': {'date_end' : time.strftime('%d/%m/%Y %H:%M:%S')}}
 
 
-tms_unit_kit()
+fleet_vehicle_kit()
 
 #Unit Active / Inactive history
-class tms_unit_active_history(osv.osv):
+class fleet_vehicle_active_history(osv.osv):
     _name = "tms.unit.active_history"
     _inherit = ['mail.thread', 'ir.needaction_mixin']
     _description = "Units Active / Inactive history"
 
     _columns = {
         'state'             : openerp.osv.fields.selection([('draft','Draft'), ('confirmed','Confirmed'), ('cancel','Cancelled')], 'State', readonly=True),
-        'unit_id'           : openerp.osv.fields.many2one('tms.unit', 'Unit Name', required=True, ondelete='cascade', domain=[('active', 'in', ('true', 'false'))]),
+        'unit_id'           : openerp.osv.fields.many2one('fleet.vehicle', 'Unit Name', required=True, ondelete='cascade', domain=[('active', 'in', ('true', 'false'))]),
         'unit_type_id'      : openerp.osv.fields.related('unit_id', 'unit_type_id', type='many2one', relation='tms.unit.category', store=True, string='Unit Type'),
         'prev_state'        : openerp.osv.fields.selection([('active','Active'), ('inactive','Inactive')], 'Previous State', readonly=True),
         'new_state'         : openerp.osv.fields.selection([('active','Active'), ('inactive','Inactive')], 'New State', readonly=True),
@@ -431,7 +431,7 @@ class tms_unit_active_history(osv.osv):
         val = {}
         if not unit_id:
             return  val
-        for rec in self.pool.get('tms.unit').browse(cr, uid, [unit_id]):
+        for rec in self.pool.get('fleet.vehicle').browse(cr, uid, [unit_id]):
             val = {'value' : {'prev_state' : 'active' if rec.active else 'inactive','new_state' : 'inactive' if rec.active else 'active' } }
         return val
 
@@ -443,14 +443,14 @@ class tms_unit_active_history(osv.osv):
                 raise osv.except_osv(
                         _('Warning!'),
                         _('You can not create a new record for this unit because theres is already a record for this unit in Draft State.'))
-            unit_obj = self.pool.get('tms.unit')
+            unit_obj = self.pool.get('fleet.vehicle')
             for rec in unit_obj.browse(cr, uid, [vals['unit_id']]):
                 vals.update({
                                 'prev_state' : 'active' if rec.active else 'inactive',
                                 'new_state'  : 'inactive' if rec.active else 'active' }
                             )
         print vals
-        return super(tms_unit_active_history, self).create(cr, uid, values, context=context)
+        return super(fleet_vehicle_active_history, self).create(cr, uid, values, context=context)
 
 
 
@@ -461,7 +461,7 @@ class tms_unit_active_history(osv.osv):
                         _('Warning!'),
                         _('You can not delete a record if is already Confirmed!!! Click Cancel button to continue.'))
 
-        super(tms_unit_active_history, self).unlink(cr, uid, ids, context=context)
+        super(fleet_vehicle_active_history, self).unlink(cr, uid, ids, context=context)
         return True
 
     def action_cancel(self, cr, uid, ids, context=None):
@@ -477,20 +477,20 @@ class tms_unit_active_history(osv.osv):
     def action_confirm(self, cr, uid, ids, context=None):
         for rec in self.browse(cr, uid, ids):
             print rec.new_state == 'active'
-            self.pool.get('tms.unit').write(cr, uid, [rec.unit_id.id], {'active' : (rec.new_state == 'active')} )
+            self.pool.get('fleet.vehicle').write(cr, uid, [rec.unit_id.id], {'active' : (rec.new_state == 'active')} )
         self.write(cr, uid, ids, {'state':'confirmed', 'confirmed_by' : uid, 'date_confirmed':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
         return True
 
 
 # Unit Red Tape
-class tms_unit_red_tape(osv.osv):
+class fleet_vehicle_red_tape(osv.osv):
     _name = "tms.unit.red_tape"
     _inherit = ['mail.thread', 'ir.needaction_mixin']
     _description = "Units Red Tape history"
 
     _columns = {
         'state'             : openerp.osv.fields.selection([('draft','Draft'), ('pending','Pending'), ('progress','Progress'), ('done','Done'), ('cancel','Cancelled')], 'State', readonly=True),
-        'unit_id'           : openerp.osv.fields.many2one('tms.unit', 'Unit Name', required=True, ondelete='cascade', domain=[('active', 'in', ('true', 'false'))],
+        'unit_id'           : openerp.osv.fields.many2one('fleet.vehicle', 'Unit Name', required=True, ondelete='cascade', domain=[('active', 'in', ('true', 'false'))],
                                                             readonly=True, states={'draft':[('readonly',False)]} ),
         'unit_type_id'      : openerp.osv.fields.related('unit_id', 'unit_type_id', type='many2one', relation='tms.unit.category', store=True, string='Unit Type', readonly=True),
         'date'              : openerp.osv.fields.datetime('Date', required=True, readonly=True, states={'draft':[('readonly',False)], 'pending':[('readonly',False)]} ),
@@ -533,7 +533,7 @@ class tms_unit_red_tape(osv.osv):
                 raise osv.except_osv(
                         _('Warning!'),
                         _('You can not create a new record for this unit because theres is already a record for this unit in Draft State.'))
-        return super(tms_unit_red_tape, self).create(cr, uid, vals, context=context)
+        return super(fleet_vehicle_red_tape, self).create(cr, uid, vals, context=context)
 
 
     def unlink(self, cr, uid, ids, context=None):
@@ -543,7 +543,7 @@ class tms_unit_red_tape(osv.osv):
                         _('Warning!'),
                         _('You can not delete a record if is already Confirmed!!! Click Cancel button to continue.'))
 
-        super(tms_unit_active_history, self).unlink(cr, uid, ids, context=context)
+        super(fleet_vehicle_active_history, self).unlink(cr, uid, ids, context=context)
         return True
 
     def action_cancel(self, cr, uid, ids, context=None):
@@ -590,8 +590,8 @@ class tms_place(osv.osv):
         'name'          : openerp.osv.fields.char('Place', size=64, required=True, select=True),
         'state_id'      : openerp.osv.fields.many2one('res.country.state', 'State Name', required=True),
         'country_id'    : openerp.osv.fields.related('state_id', 'country_id', type='many2one', relation='res.country', string='Country'),
-        'latitude'      : openerp.osv.fields.float('Latitude', required=False, digits=(14,10), help='GPS Latitude'),
-        'longitude'     : openerp.osv.fields.float('Longitude', required=False, digits=(14,10), help='GPS Longitude'),
+        'latitude'      : openerp.osv.fields.float('Latitude', required=False, digits=(20,10), help='GPS Latitude'),
+        'longitude'     : openerp.osv.fields.float('Longitude', required=False, digits=(20,10), help='GPS Longitude'),
         'route_ids'     : openerp.osv.fields.many2many('tms.route', 'tms_route_places_rel', 'place_id', 'route_id', 'Routes with this Place'),        
     }
 

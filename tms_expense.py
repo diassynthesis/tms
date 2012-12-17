@@ -141,7 +141,7 @@ class tms_expense(osv.osv):
         'employee_id': openerp.osv.fields.many2one('hr.employee', 'Driver', required=True, domain=[('tms_category', '=', 'driver')]),
         'employee_id_control': openerp.osv.fields.many2one('hr.employee', 'Driver', required=True, domain=[('tms_category', '=', 'driver')], states={'cancel':[('readonly',True)], 'approved':[('readonly',True)], 'closed':[('readonly',True)]}),
         'travel_ids': openerp.osv.fields.many2many('tms.travel', 'tms_expense_travel_rel', 'expense_id', 'travel_id', 'Travels', readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
-        'unit_id': openerp.osv.fields.many2one('tms.unit', 'Unit', required=False, readonly=True),
+        'unit_id': openerp.osv.fields.many2one('fleet.vehicle', 'Unit', required=False, readonly=True),
         'currency_id': openerp.osv.fields.many2one('res.currency', 'Currency', required=True, readonly=True, states={'draft': [('readonly', False)]}),
         'state': openerp.osv.fields.selection([
             ('draft', 'Draft'),
@@ -197,9 +197,9 @@ class tms_expense(osv.osv):
 
         'amount_total_total': openerp.osv.fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='Total (All)', type='float', multi=True),
 
-        'amount_subtotal_real': openerp.osv.fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='Total (Real)', type='float', multi=True),
+        'amount_subtotal_real': openerp.osv.fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='SubTotal (Real)', type='float', multi=True),
 
-        'amount_subtotal_total': openerp.osv.fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='Total (All)', type='float', multi=True),
+        'amount_subtotal_total': openerp.osv.fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='SubTotal (All)', type='float', multi=True),
 
 
         'distance_routes': openerp.osv.fields.function(_get_route_distance, string='Distance from routes', method=True, type='float', digits=(18,6), help="Routes Distance", multi="distance_route"),

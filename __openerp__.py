@@ -26,7 +26,7 @@
     'complexity': "normal",
     "author" : "HESATEC",
     "website": "http://www.hesatecnica.com",
-    "depends" : ["hr", "account_voucher", "purchase","sale"],
+    "depends" : ["hr", "account_voucher", "purchase","sale", "fleet"],
     "description": """
 Management System for Carriers, Trucking companies and other freight companies
 
