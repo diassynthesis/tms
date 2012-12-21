@@ -42,7 +42,7 @@ import urllib as my_urllib
 # - Extra Data for Units (Like Insurance Policy, Unit Invoice, etc
 # - Unit Status (Still not defined if is keeped or not
 # - Documentacion expiraton  for Transportation Units
-class fleet_vehicle_category(osv.osv):
+class tms_unit_category(osv.osv):
     _name = "tms.unit.category"
     _description = "Types, Brands, Models, Motor Type for Transport Units"
 
@@ -70,9 +70,9 @@ class fleet_vehicle_category(osv.osv):
         'sequence': openerp.osv.fields.integer('Sequence', help="Gives the sequence order when displaying this list of categories."),
         'type': openerp.osv.fields.selection([
                             ('view','View'), 
-                            ('unit_type','Type'), 
+                            ('unit_type','Unit Type'), 
                             ('brand','Motor Brand'), 
-                            ('motor','Motor'), 
+                            ('motor','Motor Model'), 
                             ('extra_data', 'Extra Data'),
                             ('unit_status','Unit Status'),
                             ('expiry','Expiry'),
@@ -113,7 +113,7 @@ class fleet_vehicle_category(osv.osv):
     def _check_recursion(self, cr, uid, ids, context=None):
         level = 100
         while len(ids):
-            cr.execute('select distinct parent_id from fleet_vehicle_category where id IN %s',(tuple(ids),))
+            cr.execute('select distinct parent_id from tms_unit_category where id IN %s',(tuple(ids),))
             ids = filter(None, map(lambda x:x[0], cr.fetchall()))
             if not level:
                 return False
@@ -132,14 +132,13 @@ class fleet_vehicle_category(osv.osv):
         if not default:
             default = {}
         default['name'] = categ['name'] + ' (copy)'
-        return super(fleet_vehicle_category, self).copy(cr, uid, id, default, context=context)
+        return super(tms_unit_category, self).copy(cr, uid, id, default, context=context)
 
-fleet_vehicle_category()
+tms_unit_category()
 
                              
 # Units for Transportation
 class fleet_vehicle(osv.osv):
-#    _name = "fleet.vehicle"
     _name = 'fleet.vehicle'
     _inherit = ['fleet.vehicle']
     _description = "All motor/trailer units"
@@ -205,6 +204,26 @@ class fleet_vehicle(osv.osv):
         'active': True,
     	}
 
+
+    def _check_extra_data_expiry(self, cr, uid, ids, context=None):
+        categ_obj = self.pool.get('tms.unit.category')
+        expiry_obj = self.pool.get('tms.unit.expiry')
+        recs = categ_obj.search(cr, uid, [('mandatory', '=', 1), ('type', '=', 'expiry')])
+        if recs:
+            unit_id = self.browse(cr, uid, ids)[0].id
+            for rec in categ_obj.browse(cr, uid, recs):
+                if not expiry_obj.search(cr, uid, [('expiry_id', '=', rec.id), ('unit_id', '=', unit_id)]):
+                    return False
+        return True
+
+            
+
+    _constraints = [
+        (_check_extra_data_expiry,
+            'You have defined certain mandatory Expiration Extra Data fields that you did not include in this Vehicle record. Please add missing fields.',
+            ['unit_expiry_ids'])
+        ]
+
     _sql_constraints = [
 #            ('name_uniq', 'unique(name)', 'Unit name number must be unique !'),
             ('gps_id_uniq', 'unique(gps_id)', 'Unit GPS ID must be unique !'),
@@ -223,7 +242,7 @@ class fleet_vehicle(osv.osv):
 
 
 # Units PHOTOS
-class fleet_vehicle_photo(osv.osv):
+class tms_unit_photo(osv.osv):
     _name = "tms.unit.photo"
     _description = "Units Photos"
 
@@ -238,11 +257,11 @@ class fleet_vehicle_photo(osv.osv):
         ]
 
 
-fleet_vehicle_photo()
+tms_unit_photo()
 
 
 # Units EXTRA DATA
-class fleet_vehicle_extradata(osv.osv):
+class tms_unit_extradata(osv.osv):
     _name = "tms.unit.extradata"
     _description = "Extra Data for Units"
     _rec_name = "extra_value"
@@ -257,11 +276,11 @@ class fleet_vehicle_extradata(osv.osv):
         ('name_uniq', 'unique(unit_id,extra_data_id)', 'Extra Data Field must be unique for each unit !'),
         ]
 
-fleet_vehicle_extradata()
+tms_unit_extradata()
 
 
 # Units for Transportation EXPIRY EXTRA DATA
-class fleet_vehicle_expiry(osv.osv):
+class tms_unit_expiry(osv.osv):
     _name = "tms.unit.expiry"
     _description = "Expiry Extra Data for Units"
 
@@ -280,13 +299,13 @@ class fleet_vehicle_expiry(osv.osv):
         return {'value': {'name': extra_value[8:] + '/' + extra_value[5:-3] + '/' + extra_value[:-6]}}
 
 
-fleet_vehicle_expiry()
+tms_unit_expiry()
 
 
 
 
 # Units Kits
-class fleet_vehicle_kit(osv.osv):
+class tms_unit_kit(osv.osv):
     _name = "tms.unit.kit"
     _inherit = ['mail.thread', 'ir.needaction_mixin']
     _description = "Units Kits"
@@ -318,7 +337,7 @@ class fleet_vehicle_kit(osv.osv):
             date_start = record.date_start
             date_end   = record.date_end
             
-            sql = 'select name from fleet_vehicle_kit where id <> ' + str(record.id) + ' and unit_id = ' + str(record.unit_id.id) \
+            sql = 'select name from tms_unit_kit where id <> ' + str(record.id) + ' and unit_id = ' + str(record.unit_id.id) \
                     + ' and (date_start between \'' + date_start + '\' and \'' + date_end + '\'' \
                         + ' or date_end between \'' + date_start + '\' and \'' + date_end + '\');' 
 
@@ -330,7 +349,7 @@ class fleet_vehicle_kit(osv.osv):
 
 
             if record.dolly_id.id:
-                sql = 'select name from fleet_vehicle_kit where id <> ' + str(record.id) + ' and dolly_id = ' + str(record.dolly_id.id) \
+                sql = 'select name from tms_unit_kit where id <> ' + str(record.id) + ' and dolly_id = ' + str(record.dolly_id.id) \
                         + ' and (date_start between \'' + date_start + '\' and \'' + date_end + '\'' \
                             + ' or date_end between \'' + date_start + '\' and \'' + date_end + '\');' 
 
@@ -340,7 +359,7 @@ class fleet_vehicle_kit(osv.osv):
                     raise osv.except_osv(_('Validity Error !'), _('You cannot have overlaping expiration dates for dolly %s !\n' \
                                                                     'This dolly is overlaping Kit << %s >>')%(record.dolly_id.name, data[0]))
 
-            sql = 'select name from fleet_vehicle_kit where id <> ' + str(record.id) + ' and (trailer1_id = ' + str(record.trailer1_id.id) + 'or trailer2_id = ' + str(record.trailer1_id.id) + ')' \
+            sql = 'select name from tms_unit_kit where id <> ' + str(record.id) + ' and (trailer1_id = ' + str(record.trailer1_id.id) + 'or trailer2_id = ' + str(record.trailer1_id.id) + ')' \
                     + ' and (date_start between \'' + date_start + '\' and \'' + date_end + '\'' \
                         + ' or date_end between \'' + date_start + '\' and \'' + date_end + '\');' 
             cr.execute(sql)
@@ -350,7 +369,7 @@ class fleet_vehicle_kit(osv.osv):
                                                                 'This trailer is overlaping Kit << %s >>')%(record.trailer1_id.name, data[0]))
 
             if record.trailer2_id.id:
-                sql = 'select name from fleet_vehicle_kit where id <> ' + str(record.id) + ' and (trailer1_id = ' + str(record.trailer2_id.id) + 'or trailer2_id = ' + str(record.trailer2_id.id) + ')' \
+                sql = 'select name from tms_unit_kit where id <> ' + str(record.id) + ' and (trailer1_id = ' + str(record.trailer2_id.id) + 'or trailer2_id = ' + str(record.trailer2_id.id) + ')' \
                         + ' and (date_start between \'' + date_start + '\' and \'' + date_end + '\'' \
                             + ' or date_end between \'' + date_start + '\' and \'' + date_end + '\');' 
 
@@ -374,11 +393,11 @@ class fleet_vehicle_kit(osv.osv):
     _order = "name desc, date_start desc"
 
 
-    def on_change_fleet_vehicle_id(self, cr, uid, ids, fleet_vehicle_id):
+    def on_change_tms_unit_id(self, cr, uid, ids, tms_unit_id):
         res = {'value': {'date_start': time.strftime('%Y-%m-%d %H:%M')}}
-        if not (fleet_vehicle_id):
+        if not (tms_unit_id):
             return res
-        cr.execute("select date_end from fleet_vehicle_kit where id=%s order by  date_end desc limit 1", fleet_vehicle_id)
+        cr.execute("select date_end from tms_unit_kit where id=%s order by  date_end desc limit 1", tms_unit_id)
         date_start = cr.fetchall()
         if not date_start:
             return res
@@ -392,10 +411,10 @@ class fleet_vehicle_kit(osv.osv):
         return {'value': {'date_end' : time.strftime('%d/%m/%Y %H:%M:%S')}}
 
 
-fleet_vehicle_kit()
+tms_unit_kit()
 
 #Unit Active / Inactive history
-class fleet_vehicle_active_history(osv.osv):
+class tms_unit_active_history(osv.osv):
     _name = "tms.unit.active_history"
     _inherit = ['mail.thread', 'ir.needaction_mixin']
     _description = "Units Active / Inactive history"
@@ -450,7 +469,7 @@ class fleet_vehicle_active_history(osv.osv):
                                 'new_state'  : 'inactive' if rec.active else 'active' }
                             )
         print vals
-        return super(fleet_vehicle_active_history, self).create(cr, uid, values, context=context)
+        return super(tms_unit_active_history, self).create(cr, uid, values, context=context)
 
 
 
@@ -461,7 +480,7 @@ class fleet_vehicle_active_history(osv.osv):
                         _('Warning!'),
                         _('You can not delete a record if is already Confirmed!!! Click Cancel button to continue.'))
 
-        super(fleet_vehicle_active_history, self).unlink(cr, uid, ids, context=context)
+        super(tms_unit_active_history, self).unlink(cr, uid, ids, context=context)
         return True
 
     def action_cancel(self, cr, uid, ids, context=None):
@@ -483,7 +502,7 @@ class fleet_vehicle_active_history(osv.osv):
 
 
 # Unit Red Tape
-class fleet_vehicle_red_tape(osv.osv):
+class tms_unit_red_tape(osv.osv):
     _name = "tms.unit.red_tape"
     _inherit = ['mail.thread', 'ir.needaction_mixin']
     _description = "Units Red Tape history"
@@ -533,7 +552,7 @@ class fleet_vehicle_red_tape(osv.osv):
                 raise osv.except_osv(
                         _('Warning!'),
                         _('You can not create a new record for this unit because theres is already a record for this unit in Draft State.'))
-        return super(fleet_vehicle_red_tape, self).create(cr, uid, vals, context=context)
+        return super(tms_unit_red_tape, self).create(cr, uid, vals, context=context)
 
 
     def unlink(self, cr, uid, ids, context=None):
@@ -543,7 +562,7 @@ class fleet_vehicle_red_tape(osv.osv):
                         _('Warning!'),
                         _('You can not delete a record if is already Confirmed!!! Click Cancel button to continue.'))
 
-        super(fleet_vehicle_active_history, self).unlink(cr, uid, ids, context=context)
+        super(tms_unit_active_history, self).unlink(cr, uid, ids, context=context)
         return True
 
     def action_cancel(self, cr, uid, ids, context=None):
@@ -631,7 +650,8 @@ class tms_route(osv.osv):
         'departure_id': openerp.osv.fields.many2one('tms.place', 'Departure', required=True),
         'arrival_id': openerp.osv.fields.many2one('tms.place', 'Arrival', required=True),
         'distance':openerp.osv.fields.float('Distance (mi./kms)', required=True, digits=(14,4), help='Route distance (mi./kms)'),
-        'place_ids':openerp.osv.fields.many2many('tms.place', 'tms_route_places_rel', 'route_id', 'place_id', 'Places in this Route'),
+        'places_ids' : openerp.osv.fields.one2many('tms.route.place', 'route_id', 'Intermediate places in Route'),
+#        'place_ids':openerp.osv.fields.many2many('tms.place', 'tms_route_places_rel', 'route_id', 'place_id', 'Places in this Route'),
         'travel_time':openerp.osv.fields.float('Travel Time (hrs)', required=True, digits=(14,4), help='Route travel time (hours)'),
         'route_fuelefficiency_ids' : openerp.osv.fields.one2many('tms.route.fuelefficiency', 'tms_route_id', 'Fuel Efficiency by Motor type'),
         'fuel_efficiency_drive_unit': openerp.osv.fields.float('Fuel Efficiency Drive Unit', required=False, digits=(14,4)),
@@ -649,15 +669,40 @@ class tms_route(osv.osv):
     def  button_get_route_info(self, cr, uid, ids, context=None):
         for rec in self.browse(cr, uid, ids):
             if rec.departure_id.latitude and rec.departure_id.longitude and rec.arrival_id.latitude and rec.arrival_id.longitude:
-                print context
-                google_url = 'http://maps.googleapis.com/maps/api/distancematrix/json?origins=' + str(rec.departure_id.latitude) + ',' + str(rec.departure_id.longitude) + \
-                                                                                '&destinations=' + str(rec.arrival_id.latitude) +',' + str(rec.arrival_id.longitude) + \
+                destinations = ""
+                origins = str(rec.departure_id.latitude) + ',' + str(rec.departure_id.longitude)
+
+                places = [str(x.place_id.latitude) + ',' + str(x.place_id.longitude) for x in rec.places_ids if x.place_id.latitude and x.place_id.longitude]                        
+                print "places: ", places
+                for place in places:
+                    origins += "|" + place
+                    destinations += place + "|"
+                destinations += str(rec.arrival_id.latitude) +',' + str(rec.arrival_id.longitude)
+                print "origins: ", origins
+                print "destinations: ", destinations
+                google_url = 'http://maps.googleapis.com/maps/api/distancematrix/json?origins=' + origins + \
+                                                                                '&destinations=' + destinations + \
                                                                                 '&mode=driving' + \
                                                                                 '&language=' + context['lang'][:2] + \
                                                                                 '&sensor=false'
                 result = json.load(my_urllib.urlopen(google_url))
                 if result['status'] == 'OK':
-                    self.write(cr, uid, ids, {'distance': result['rows'][0]['elements'][0]['distance']['value'] / 1000.0, 'travel_time' : result['rows'][0]['elements'][0]['duration']['value'] / 3600.0 })
+                    distance = duration = 0.0
+                    if len(rec.places_ids):
+                        i = 0
+                        for row in result['rows']:
+                            print row
+                            distance += row['elements'][i]['distance']['value'] / 1000.0
+                            duration += row['elements'][i]['duration']['value'] / 3600.0
+                            i += 1
+                    else:
+                        distance = result['rows'][0]['elements'][0]['distance']['value'] / 1000.0
+                        duration = result['rows'][0]['elements'][0]['duration']['value'] / 3600.0
+
+                    print "distance: ", distance
+                    print "duration: ", duration
+
+                    self.write(cr, uid, ids, {'distance': distance, 'travel_time' : duration })
                 else:
                     print result['status']
             else:
@@ -668,12 +713,33 @@ class tms_route(osv.osv):
 
     def button_open_google(self, cr, uid, ids, context=None):
         for route in self.browse(cr, uid, ids):
-            url="/tms/static/src/googlemaps/get_route.html?" + str(route.departure_id.latitude) + ','+ str(route.departure_id.longitude) + ',' + str(route.arrival_id.latitude) + ','+ str(route.arrival_id.longitude)
+            points = str(route.departure_id.latitude) + ','+ str(route.departure_id.longitude) + (',' if len(route.places_ids) else '') +  \
+                        ','.join([str(x.place_id.latitude) + ',' + str(x.place_id.longitude) for x in route.places_ids if x.place_id.latitude and x.place_id.longitude]) + \
+                        ',' + str(route.arrival_id.latitude) + ','+ str(route.arrival_id.longitude)
+            print points
+            url="/tms/static/src/googlemaps/get_route.html?" + points
         return { 'type': 'ir.actions.act_url', 'url': url, 'nodestroy': True, 'target': 'new' }
-
-
     
 tms_route()
+
+class tms_route_place(osv.osv):
+    _name ='tms.route.place'
+    _description = 'Intermediate Places in Routes'
+
+    _columns = {
+        'route_id'  : openerp.osv.fields.many2one('tms.route', 'Route', required=True),
+        'place_id'  : openerp.osv.fields.many2one('tms.place', 'Place', required=True),
+        'state_id'  : openerp.osv.fields.related('place_id', 'state_id', type='many2one', relation='res.country.state', string='State', store=True, readonly=True),
+        'country_id': openerp.osv.fields.related('place_id', 'country_id', type='many2one', relation='res.country', string='Country', store=True, readonly=True),
+        'sequence'  : openerp.osv.fields.integer('Sequence', help="Gives the sequence order when displaying this list."),
+    }
+
+    _defaults = {
+        'sequence': 10,
+    }
+
+
+tms_route_place()
 
 # Route Fuel Efficiency by Motor
 class tms_route_fuelefficiency(osv.osv):

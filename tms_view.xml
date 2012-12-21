@@ -15,6 +15,29 @@
 TMS.UNIT.CATEGORY 
 ##############################
 -->
+<!-- SEARCH View for tms.unit.category (Types, Brands, Models, Motor Type for Transportation Units) --> 
+	<record model="ir.ui.view" id="view_tms_unit_category_search">
+        <field name="name">tms.unit.category.search</field>
+        <field name="model">tms.unit.category</field>
+		<field name="type">search</field>
+		<field name="arch" type="xml">
+            <search string="Unit Master Data">
+                <filter string="View"        icon="terp-accessories-archiver" domain="[('type','=','view')]"/>
+                <filter string="Unit Type"   icon="terp-accessories-archiver" domain="[('type','=','unit_type')]"/>
+                <filter string="Motor Brand" icon="terp-accessories-archiver" domain="[('type','=','brand')]"/>
+                <filter string="Motor Model" icon="terp-accessories-archiver" domain="[('type','=','motor')]"/>
+                <filter string="Extra Data"  icon="terp-accessories-archiver" domain="[('type','=','extra_data')]"/>
+                <filter string="Expiry"      icon="terp-accessories-archiver" domain="[('type','=','expiry')]"/>
+                <filter string="Unit Status" icon="terp-accessories-archiver" domain="[('type','=','unit_status')]"/>
+                <filter string="Active Cause" icon="terp-accessories-archiver" domain="[('type','=','active_cause')]"/>
+                <filter string="Red Tape"    icon="terp-accessories-archiver" domain="[('type','=','red_tape')]"/>
+                <group  expand='0' string='Group by...'> 
+                    <filter string="Category"  icon="terp-accessories-archiver" domain="[]" context="{'group_by' : 'type')]"/>
+                </group>
+		    </search>
+		</field>
+	</record>
+
 <!-- TREE View for tms.unit.category (Types, Brands, Models, Motor Type for Transportation Units) --> 
 	<record model="ir.ui.view" id="view_tms_unit_category_tree">
         <field name="name">tms.unit.category.tree</field>
@@ -22,7 +45,6 @@ TMS.UNIT.CATEGORY
 		<field name="type">tree</field>
 		<field name="arch" type="xml">
             <tree string="Unit Master Data" colors="green:type in ('unit_type');blue:type in ('brand');black:type in ('model');red:type in ('extra_data');">
-		   <!-- editable="bottom"> -->
                 <field name="company_id" />
                 <field name="name" />
 		        <field name="complete_name" />
@@ -49,7 +71,6 @@ TMS.UNIT.CATEGORY
                             <field name="parent_id" />
                             <field name="type" select="1"/>
                             <field name="active" select="1"/>
-<!--                            <field name="company_id" />-->
                             <field name="sequence" />
                             <field name="mandatory" attrs="{'invisible':[('type','!=','expiry')]}"/>
                             <newline/>
@@ -87,6 +108,31 @@ TMS.UNIT.CATEGORY
 FLEET.VEHICLE - (former TMS.UNIT)
 ##############################
 -->
+
+        <record model="ir.ui.view" id="fleet_vehicle_search_inherit_tms">
+            <field name="name">fleet.vehicle.tms.search</field>
+            <field name="model">fleet.vehicle</field>
+            <field name="type">search</field>
+            <field name="inherit_id" ref="fleet.fleet_vehicle_search"/>
+            <field name="arch" type="xml">
+                <filter name="alert_true" position="before">
+                    <field name="employee_id" />
+                </filter>
+                <filter name="alert_true" position="after">
+                   <filter string="Motorized Units" icon="terp-accessories-archiver" domain="[('fleet_type','=','tractor')]" name="motorized_unit"/>
+                   <filter string="Trailers" icon="terp-accessories-archiver" domain="[('fleet_type','=','trailer')]" name="trailer"/>
+                   <filter string="Dolly's" icon="terp-accessories-archiver" domain="[('fleet_type','=','dolly')]" name="dolly"/>
+                   <filter string="Others" icon="terp-accessories-archiver" domain="[('fleet_type','=','other')]" name="other"/>
+                   <group  expand='0' string='Group by...'> 
+                       <filter string='Fleet Unit Type' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'fleet_type'}" />
+                       <filter string='Unit Type' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'unit_type_id'}" />
+                       <filter string='Model' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'model_id'}" />
+                       <filter string='Motor' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'unit_motor_id'}" />
+                   </group>
+                </filter>
+            </field>
+        </record>
+
 
 
         <record id="fleet_vehicle_form_inherit_tms" model="ir.ui.view">
@@ -690,7 +736,14 @@ TMS.ROUTE
                         <notebook colspan="4">
                             <page string="Intermediate Places">
                                 <separator string="Places in this route" colspan="4" />
-                                <field name="place_ids" nolabel="1" colspan="4"/>
+                                <field name="places_ids" nolabel="1" colspan="4">
+                                    <tree string="Intermediate places in this route" editable="bottom">
+                                        <field name="sequence"/>
+                                        <field name="place_id" />
+                                        <field name="state_id" />
+                                        <field name="country_id" />
+                                    </tree>
+                                </field>
                             </page>
                             <page string="Fuel Efficiency Expected">
                                 <field name="route_fuelefficiency_ids" nolabel="1" >

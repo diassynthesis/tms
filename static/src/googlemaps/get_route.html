@@ -23,6 +23,18 @@
         var start = new google.maps.LatLng(params[0], params[1]);
         var end   = new google.maps.LatLng(params[2], params[3]);
 
+        var points = [];
+        for(i = 0; i < params.length - 1; i += 2){
+            points.push(new google.maps.LatLng(params[i], params[i+1]));
+        }
+
+        var waypoints = [];
+        if (points.length > 2) {
+            for(i=1; i < points.length - 1; i++) {
+                waypoints.push({ location: points[i], stopover: true})
+            }
+        }
+
         var mapOptions = {
           center: start,
           zoom: 12,          
@@ -38,10 +50,12 @@
         directionsDisplay.setMap(map);
         directionsDisplay.setPanel(document.getElementById("directions_panel"));
 
+
         var request = {
-            origin:start,
-            destination:end,
-            travelMode: google.maps.TravelMode.DRIVING
+            origin      : points[0],
+            destination : points[points.length - 1],
+            waypoints : waypoints,
+            travelMode  : google.maps.TravelMode.DRIVING
           };
           directionsService.route(request, function(result, status) {
             if (status == google.maps.DirectionsStatus.OK) {
