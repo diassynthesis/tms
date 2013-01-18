@@ -40,8 +40,8 @@ class account_invoice(osv.osv):
                         ('invoice', 'Invoice'),
                         ], 'TMS Type', help="Waybill -> This invoice results from one Waybill (Mexico - Carta Porte/Guia con valor fiscal)\nInvoice -> This Invoice results from several Waybills (México - Carta Porte/Guia sin valor Fiscal)", require=False),
         'waybill_ids': openerp.osv.fields.one2many('tms.waybill', 'invoice_id', 'Waybills', readonly=True, required=False),
-        'departure_address_id': openerp.osv.fields.many2one('res.partner.address', 'Departure Address', readonly=True, required=False),
-        'arrival_address_id': openerp.osv.fields.many2one('res.partner.address', 'Arrival Address', readonly=True, required=False),
+        'departure_address_id': openerp.osv.fields.many2one('res.partner', 'Departure Address', readonly=True, required=False),
+        'arrival_address_id': openerp.osv.fields.many2one('res.partner', 'Arrival Address', readonly=True, required=False),
     }
     
     _defaults = {
