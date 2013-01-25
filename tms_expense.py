@@ -41,7 +41,7 @@ class tms_expense(osv.osv):
             paid = (record.invoice_id.state == 'paid') if record.invoice_id.id else False
             res[record.id] =  { 'invoiced': invoiced,
                                 'invoice_paid': paid,
-                                'invoice_name': record.invoice_id.reference
+                                'invoice_name': record.invoice_id.supplier_invoice_number
                                 }
         return res
 
@@ -333,10 +333,14 @@ class tms_expense(osv.osv):
                         'product_uom_qty'   : 1,
                         'price_unit'        : result,
                         'control'           : True,
-                        'tax_id'            : products['salary']['taxes']
+                        'tax_id'            : products['salary']['taxes'],
                         }
+
+                print "//////////////////////"
+                print "xline: ", xline
+                print "//////////////////////"
                 res = expense_line_obj.create(cr, uid, xline)
-                
+                print "Despues del error..."
                 for fuelvoucher in travel.fuelvoucher_ids:
                     qty             += fuelvoucher.product_uom_qty
                     amount_untaxed  += fuelvoucher.price_subtotal / fuelvoucher.currency_id.rate
@@ -518,7 +522,7 @@ class tms_expense_line(osv.osv):
         'product_uom_qty'   : openerp.osv.fields.float('Quantity (UoM)', digits=(16, 2)),
         'product_uom'       : openerp.osv.fields.many2one('product.uom', 'Unit of Measure '),
         'notes'             : openerp.osv.fields.text('Notes'),
-        'expense_employee_id': openerp.osv.fields.related('expense_id', 'employee_id', type='many2one', relation='res.partner', store=True, string='Driver'),
+        'employee_id'       : openerp.osv.fields.related('expense_id', 'employee_id', type='many2one', relation='hr.employee', store=True, string='Driver'),
         'shop_id'           : openerp.osv.fields.related('expense_id', 'shop_id', type='many2one', relation='sale.shop', string='Shop', store=True, readonly=True),
         'company_id'        : openerp.osv.fields.related('expense_id', 'company_id', type='many2one', relation='res.company', string='Company', store=True, readonly=True),
         'fuel_voucher'      : openerp.osv.fields.boolean('Fuel Voucher'),
@@ -811,6 +815,7 @@ class tms_expense_invoice(osv.osv_memory):
                             'journal_id'        : journal_id,
                             'period_id'         : period_id[0],
                             'reference'         : expense.name + ' -' + expense.employee_id.name + ' (' + str(expense.employee_id.id) + ')', 
+                            'supplier_invoice_number': expense.name,
                             'account_id'        : a,
                             'partner_id'        : partner.id,
                             'address_invoice_id': self.pool.get('res.partner').address_get(cr, uid, [partner.id], ['default'])['default'],

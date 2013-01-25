@@ -103,21 +103,18 @@ TMS.WAYBILL
                     <field name="travel_id" />
                     <field name="client_order_ref"/>
                     <field name="partner_id"/>
-                    <field name="product_uom_type"/>
+<!--                    <field name="product_uom_type"/>-->
                     <field name="product_qty" sum="Product Quantity"/>
-                    <field name="amount_freight" sum="Freight"/>
+<!--                    <field name="amount_freight" sum="Freight"/>
                     <field name="amount_move" sum="Moves"/>
                     <field name="amount_insurance" sum="Insurance"/>
                     <field name="amount_highway_tolls" sum="Highway Tolls"/>
-                    <field name="amount_other" sum="Other"/>
+                    <field name="amount_other" sum="Other"/>-->
                     <field name="amount_untaxed" sum="Amount Untaxed"/>
                     <field name="amount_tax" sum="Taxes"/>
                     <field name="amount_total" sum="Total "/>
                     <field name="invoice_id" invisible="1"/>
                     <field name="invoice_name"/>
-                    <field name="user_id" />
-                    <field name="shop_id" />
-
                 </tree> 
             </field>
         </record>
@@ -131,8 +128,8 @@ TMS.WAYBILL
                     <header>
                         <button name="%(action_waybill_cancel)d" states="draft,approved,confirmed" string="Cancel" type="action"/> 
 				        <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
-				        <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
-				        <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-goto-last"/> 
+				        <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward" class="oe_highlight" />
+				        <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-goto-last" class="oe_highlight" />
                         <field name="state" widget="statusbar" statusbar_visible="draft,approved,confirmed,cancel"/> 
                     </header>
                     <sheet>
@@ -165,7 +162,6 @@ TMS.WAYBILL
 						    <page string="Lines">
                                 <group>
                                     <separator string="Shipped Product" colspan="4"/>
-                                    <group colspan="4" col="8">
 						            <field name="waybill_shipped_product" nolabel="1" colspan="8"> <!--context="{'default_waybill_id': active_id}" colspan="4" nolabel="1">-->
 							            <tree string="Shipped Product" editable="bottom">
 								            <field name="name" invisible="1" />
@@ -179,11 +175,10 @@ TMS.WAYBILL
 								            <field name="sequence" string="Seq"/>
 							            </tree>
 						            </field>
-                                        <field name="product_qty" />
-                                        <field name="product_volume" />
-                                        <field name="product_weight" />
-                                        <field name="product_uom_type" />
-                                    </group>
+                                    <field name="product_qty" />
+                                    <field name="product_volume" />
+                                    <field name="product_weight" />
+                                    <field name="product_uom_type" />
                                     <separator string="Waybill Lines" colspan="4"/>
 							        <field name="waybill_line" colspan="4" nolabel="1"> 
 								        <tree string="Waybill Lines">
@@ -192,12 +187,12 @@ TMS.WAYBILL
 									        <field name="product_uom" />
 									        <field name="product_uom_qty" />
 									        <field name="price_unit" />
-									        <field name="price_amount" sum="Price Amount"/>
-									        <field name="discount" />
-									        <field name="price_discount" sum="Price Discount"/>
-									        <field name="price_subtotal" sum="Price Subtotal"/>
-									        <field name="tax_amount" sum="Tax Amount"/>
-									        <field name="price_total" sum="Price Total"/>
+									        <field name="price_amount" sum="Price"/>
+									        <!--<field name="discount" /> -->
+									        <field name="price_discount" sum="Discount"/>
+									        <field name="price_subtotal" sum="Subtotal"/>
+									        <field name="tax_amount" sum="Tax"/>
+									        <field name="price_total" sum="Total"/>
     									    <field name="sequence" string="Seq"/>
 								        </tree>
 								        <form string="Waybill Lines">
@@ -427,6 +422,8 @@ TMS.WAYBILL
                         <separator orientation="vertical"/>
                         <filter string="Order Date" icon="terp-go-month" domain="[]" context="{'group_by':'date_order'}"/>
                         <filter string='Invoice' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'invoice_name'}" />
+                        <filter string="User" icon="terp-personal" domain="[]" context="{'group_by':'user_id'}"/>
+                        <filter string='Shop' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'shop_id'}" />
 
 
                     </group>

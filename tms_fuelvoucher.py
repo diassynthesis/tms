@@ -47,7 +47,7 @@ class tms_fuelvoucher(osv.osv):
             if (record.invoice_id.id):                
                 invoiced = True
                 paid = (record.invoice_id.state == 'paid')
-                name = record.invoice_id.reference
+                name = record.invoice_id.supplier_invoice_number
             res[record.id] =  { 'invoiced': invoiced,
                                 'invoice_paid': paid,
                                 'invoice_name': name 

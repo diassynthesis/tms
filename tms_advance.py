@@ -318,8 +318,6 @@ class tms_advance_invoice(osv.osv_memory):
                 inv_lines = []
                 notes = "Anticipos de Viaje."
                 inv_amount = 0.0
-                employee_name = ''
-                advance_name = ''
                 for line in advance_obj.browse(cr,uid,advance_ids):                    
                     a = line.employee_id.tms_advance_account_id.id
                     if not a:
@@ -345,9 +343,10 @@ class tms_advance_invoice(osv.osv_memory):
                     inv_lines.append(inv_line)
                     inv_amount += line.total
                 
-                    notes += '\n' + line.name
+                    notes += '\n' + line.travel_id.name + ' - ' + line.name
                     employee_name = line.employee_id.name + ' (' + str(line.employee_id.id) + ')' # + time.strftime(DEFAULT_SERVER_DATE_FORMAT)
                     advance_name = line.name
+                    advance_travel_name = line.travel_id.name
                     advance_prod = line.product_id.name
 
                 a = partner.property_account_payable.id
@@ -362,6 +361,7 @@ class tms_advance_invoice(osv.osv_memory):
                     'type'              : 'in_invoice',
                     'journal_id'        : journal_id,
                     'reference'         : advance_name + ' -' + employee_name + ' - ' +  advance_prod,
+                    'supplier_invoice_number': advance_name + ' -' + employee_name + ' - ' +  advance_prod,
                     'account_id'        : a,
                     'partner_id'        : partner.id,
                     'address_invoice_id': self.pool.get('res.partner').address_get(cr, uid, [partner.id], ['default'])['default'],

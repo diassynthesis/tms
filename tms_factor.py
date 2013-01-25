@@ -67,7 +67,7 @@ For next options you have to type Ranges or Fixed Amount
  - Volume
 For next option you only have to type Fixed Amount:
  - Travel
-For next option you only have to type Factor:
+For next option you only have to type Factor like 10.5 for 10.50%:
  - Income Percent
 For next option you only have to type Special Python Code:
  - Special
@@ -162,6 +162,9 @@ For next option you only have to type Special Python Code:
 
                         x = float(waybill.product_volume)
 
+                    elif factor.factor_type == 'percent':
+                        x = float(waybill.amount_freight) / 100.0
+
                     elif factor.factor_type == 'travel':
                         x = 0.0
 
@@ -172,20 +175,15 @@ For next option you only have to type Special Python Code:
 
 
         elif record_type == 'expense' and travel_ids:
-            print "Entrando a calcular sueldo del Operador..."
             travel_obj = self.pool.get('tms.travel')
-            print "travel_ids ", travel_ids
             for travel in travel_obj.browse(cr, uid, travel_ids, context=context):
-                print "Recorriendo Viajes"
                 res1 = res2 = weight = qty = volume = x = 0.0
-                if travel.waybill_ids:    
+                if travel.waybill_ids:
                     for waybill in travel.waybill_ids:
                         res1 += self.calculate(cr, uid, 'waybill', [waybill.id], 'driver', travel_ids=False)
-                        print "res1 :", res1
                         weight  += waybill.product_weight
                         qty     += waybill.product_qty
                         volume  += waybill.product_volume
-                print "not res1 :", not res1
                 if not res1:
                     for factor in travel.expense_driver_factor:                        
                         if factor.factor_type == 'distance':

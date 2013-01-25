@@ -172,7 +172,7 @@ FLEET.VEHICLE - (former TMS.UNIT)
                         <page string="General Properties">
                             <group col="2" string="General Properties">
                                 <group >
-                                    <field name="driver" />
+                                   <field name="driver_id" />
                                     <field name="location" />
                                     <newline />
                                     <field name="latitude" />

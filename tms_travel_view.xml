@@ -86,8 +86,8 @@ TMS.travel
                 <field name="route_id" />
                 <field name="departure" invisible="1"/>
                 <field name="arrival" invisible="1"/>
-                <field name="date_start" string="Start Sched."/>
-                <field name="date_end" string="End Sched." />
+                <field name="date_start" string="Start Sched." invisible="1"/>
+                <field name="date_end" string="End Sched." invisible="1"/>
                 <field name="shop_id" invisible="1"/>
 		    </tree>
 		</field>
@@ -103,8 +103,8 @@ TMS.travel
                     <header>
                         <button name="action_cancel" states="draft,progress,done" string="Cancel" type="object" icon="gtk-cancel"/>
                         <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
-                        <button name="action_dispatch" states="draft" string="Dispatch" type="object" icon="gtk-go-forward"/>
-                        <button name="action_end" states="progress" string="End" type="object" icon="gtk-goto-last"/>
+                        <button name="action_dispatch" states="draft" string="Dispatch" type="object" icon="gtk-go-forward" class="oe_highlight" />
+                        <button name="action_end" states="progress" string="End" type="object" icon="gtk-goto-last" class="oe_highlight" />
                         <field name="state" widget="statusbar" statusbar_visible="draft,progress,done,closed,cancel"/> 
                     </header>
                     <sheet>
@@ -138,14 +138,12 @@ TMS.travel
                                 <group>
                                     <field name="fuelvoucher_ids" nolabel="1" context="{'default_travel_id': active_id}" >
                                         <tree string="TMS Fuel Vouchers">
-                                            <button name="action_cancel" states="draft,approved,confirmed" string="Cancel" type="object" icon="gtk-cancel"/>
+<!--                                            <button name="action_cancel" states="draft,approved,confirmed" string="Cancel" type="object" icon="gtk-cancel"/>
                                             <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-ok"/>
-                                            <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok"/>
+                                            <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok"/> -->
                                             <field name="state" />
                                             <field name="name" />
                                             <field name="date" />
-                                            <field name="unit_id" />
-                                            <field name="employee_id" />
                                             <field name="partner_id" />
                                             <field name="product_uom_qty" sum="Quatity"/>
                                             <field name="product_uom" />
@@ -159,14 +157,12 @@ TMS.travel
                                 <group>
                             	    <field name="advance_ids" nolabel="1"  context="{'default_travel_id': active_id}" >
                                         <tree string="TMS Advances">
-                                            <button name="action_cancel" states="draft,approved,confirmed" string="Cancel" type="object" icon="gtk-cancel"/>
+<!--                                            <button name="action_cancel" states="draft,approved,confirmed" string="Cancel" type="object" icon="gtk-cancel"/>
                                             <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-ok"/>
-                                            <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok"/>
+                                            <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok"/> -->
                                             <field name="state" />
                                             <field name="name" />
                                             <field name="date" />
-                                            <field name="unit_id" />
-                                            <field name="employee_id" />
                                             <field name="product_id" />
                                             <field name="product_uom_qty" />
                                             <field name="subtotal" sum="SubTotal" />
@@ -182,19 +178,17 @@ TMS.travel
                                 <group>
                                     <field name="waybill_ids" nolabel="1">
                                         <tree string="Waybills" colors="red:state=='cancel';green:state=='approved';blue:state=='confirmed';">
-                                            <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
-                                            <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok"/>
+<!--                                            <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
+                                            <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok"/> -->
                                             <field name="state"/>
                                             <field name="name"/>
                                             <field name="date_order"/>
                                             <field name="client_order_ref"/>
                                             <field name="partner_id"/>
-                                            <field name="product_uom_type"/>
                                             <field name="product_qty" sum="Product Quantity"/>
                                             <field name="amount_untaxed" sum="Amount Untaxed"/>
                                             <field name="amount_tax" sum="Taxes"/>
                                             <field name="amount_total" sum="Total "/>
-                                            <field name="user_id" />
                                         </tree> 
                                     </field>
                                 </group>
@@ -210,15 +204,13 @@ TMS.travel
 					        </page>
                             <page string="History">
                                 <group>
+                                    <separator string="Travel history" colspan="4"/>
                                     <field name="event_ids" nolabel="1"/>
-                                </group>
-                            </page>
-                            <page string="Notes">
-                                <group>
+                                    <separator string="Notes" colspan="4"/>
                                     <field name="notes" nolabel="1" />
                                 </group>
                             </page>
-                            <page string="Statistics Data">
+                            <page string="Statistics">
                                 <group >
                                     <group >
                                         <separator string="Distances (mi./kms)"/>

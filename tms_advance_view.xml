@@ -52,9 +52,8 @@ TMS.ADVANCE
 		<field name="arch" type="xml">
             <tree string="TMS Advances">
                 <button name="action_cancel" states="draft,approved,confirmed" string="Cancel" type="object" icon="gtk-cancel"/>
-                <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
-                <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-ok"/>
-                <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok"/>
+                <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
+                <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-goto-last"/>
                 <field name="state" />
                 <field name="name" />
                 <field name="date" />
@@ -80,9 +79,11 @@ TMS.ADVANCE
             <field name="arch" type="xml">
                 <form string="TMS Advances" version="7.0">
                     <header>
-                        <button name="action_cancel" states="draft" string="Cancel" type="object"/>
-                        <button name="action_confirm" states="draft" string="Confirm" type="object" icon="gtk-ok"/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,cancel"/>
+                        <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
+                        <button name="action_cancel" states="draft,approved,confirmed" string="Cancel" type="object"/>
+                        <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward" class="oe_highlight" />
+                        <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-goto-last" class="oe_highlight"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,approved,confirmed,cancel"/>
                     </header>
                     <sheet>
                         <h1>
