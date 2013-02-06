@@ -93,7 +93,7 @@ TMS.WAYBILL
             <field name="type">tree</field>
             <field name="priority">2</field>
             <field name="arch" type="xml">
-                <tree string="Waybills" colors="red:state=='cancel';green:state=='approved';blue:state=='confirmed';">
+                <tree string="Waybills" colors="gray:state=='cancel';red:state=='draft';green:state=='approved';">
                     <button name="%(action_waybill_cancel)d" states="draft,approved,confirmed" string="Cancel" icon="gtk-cancel"  type="action" /> 
 		            <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
 		            <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-goto-last"/>
@@ -130,7 +130,7 @@ TMS.WAYBILL
 				        <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
 				        <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward" class="oe_highlight" />
 				        <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-goto-last" class="oe_highlight" />
-                        <field name="state" widget="statusbar" statusbar_visible="draft,approved,confirmed,cancel"/> 
+                        <field name="state" widget="statusbar" statusbar_visible="cancel,draft,approved,confirmed"/> 
                     </header>
                     <sheet>
                         <h1>
@@ -176,8 +176,8 @@ TMS.WAYBILL
 							            </tree>
 						            </field>
                                     <field name="product_qty" />
-                                    <field name="product_volume" />
-                                    <field name="product_weight" />
+<!--                                    <field name="product_volume" />
+                                    <field name="product_weight" /> -->
                                     <field name="product_uom_type" />
                                     <separator string="Waybill Lines" colspan="4"/>
 							        <field name="waybill_line" colspan="4" nolabel="1"> 
@@ -198,29 +198,36 @@ TMS.WAYBILL
 								        <form string="Waybill Lines">
 									        <field name="line_type" />
 									        <newline />
-									        <field name="product_id" attrs="{'invisible':[('line_type','!=','product')],'required':[('line_type','=','product')]}" 
-													        on_change="on_change_product_id(product_id)"
+									        <field name="product_id" attrs="{'invisible':[('line_type','!=','product')],'required':[('line_type','=','product')]}"  colspan="4"
+													        on_change="on_change_product_id(product_id, parent.partner_id)"
 													        domain="[('tms_category','in',('freight', 'move','insurance','highway_tolls', 'other'))]"
 													        context="{'default_tms_category': 'freight','default_type': 'service', 'default_procure_method':'make_to_stock', 'default_supply_method': 'buy'}"/>
 									        <field name="product_uom" attrs="{'invisible':[('line_type','!=','product')],'required':[('line_type','=','product')]}" />
-									        <field name="product_uom_qty" on_change="on_change_amount(product_uom_qty, price_unit, discount, product_id)" 
+                                            <newline />
+									        <field name="product_uom_qty" on_change="on_change_amount(product_uom_qty, price_unit, discount, product_id, parent.partner_id)" 
 																        attrs="{'invisible':[('line_type','!=','product')],'required':[('line_type','=','product')]}" />
-									        <field name="price_unit" on_change="on_change_amount(product_uom_qty, price_unit, discount, product_id)" 
+                                            <newline />
+									        <field name="price_unit" on_change="on_change_amount(product_uom_qty, price_unit, discount, product_id, parent.partner_id)" 
 																        attrs="{'invisible':[('line_type','!=','product')],'required':[('line_type','=','product')]}" />
-
+                                            <newline />
 									        <field name="price_amount" readonly="1" sum="Price Amount" 
 																        attrs="{'invisible':[('line_type','!=','product')]}" />
-
-									        <field name="discount" on_change="on_change_amount(product_uom_qty, price_unit, discount, product_id)" 
+                                            <newline />
+									        <field name="discount" on_change="on_change_amount(product_uom_qty, price_unit, discount, product_id, parent.partner_id)" 
 																        attrs="{'invisible':[('line_type','!=','product')],'required':[('line_type','=','product')]}" />
+                                            <newline />
 									        <field name="price_discount" readonly="1" attrs="{'invisible':[('line_type','!=','product')]}" />
+                                            <newline />
 									        <field name="price_subtotal" readonly="1" attrs="{'invisible':[('line_type','!=','product')]}" />
+                                            <newline />
 									        <field name="tax_amount" readonly="1" attrs="{'invisible':[('line_type','!=','product')]}" />
+                                            <newline />
 									        <field name="price_total" readonly="1" attrs="{'invisible':[('line_type','!=','product')]}" />
-
+                                            <newline />
 									        <field name="name" colspan="4"/>
-
 									        <field name="sequence" />
+                                            <newline />
+									        <field name="tax_id" nolabel="1" colspan="4"/>
 								        </form>
 							        </field>
                                     <group class="oe_subtotal_footer oe_right" colspan="2" name="sale_total">
@@ -396,6 +403,9 @@ TMS.WAYBILL
                     <filter icon="terp-dialog-close" string="Without Travel" domain="[('travel_id','=',False)]"/>
 					<filter string="Invoiced" icon="terp-stock_symbol-selection" domain="[('invoice_id','!=', False)]"/>
 					<filter string="Not Invoiced" icon="terp-dialog-close" domain="[('invoice_id','=', False)]"/>
+                   <filter string="Not Cancelled" icon="terp-stock_symbol-selection" domain="[('state','!=','cancel')]" name="not_cancelled"/>
+                   <filter string="From this month" icon="terp-check" domain="[('date_order','&gt;=', time.strftime('%%Y-%%m-01'))]" name="this_month" />
+
                     <newline/>
                     <field name="partner_id" />
                     <field name="date_order" string="Waybill date" />
@@ -464,7 +474,7 @@ TMS.WAYBILL
             <field name="view_type">form</field>
             <field name="view_mode">tree,form,calendar,graph</field>
             <field name="search_view_id" ref="view_tms_waybill_filter"/>
-            <field name="context">{"search_default_user_id":uid}</field>
+            <field name="context">{"search_default_user_id":uid, 'search_default_this_month': 1}</field>
             <field name="help">TMS Waybills</field>
         </record>
 

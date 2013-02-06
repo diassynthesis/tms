@@ -36,22 +36,8 @@ class tms_waybill(osv.osv):
     _description = 'Waybills'
 
 
-#    def _get_order(self, cr, uid, ids, context=None):
-#        result = {}
-#        for line in self.pool.get('tms.waybill.line').browse(cr, uid, ids, context=context):
-#            result[line.waybill_id.id] = True
-#        return result.keys()
-
-
-#    def _amount_line_tax(self, cr, uid, line, tax_type, context=None):
-#        val = 0.0
-#        for c in self.pool.get('account.tax').compute_all_tax_and_retention(cr, uid, line.tax_id, line.price_unit, 
-#                               line.product_uom_qty, tax_type)['taxes']:
-#            val += c.get('res', 0.0)
-#        return val
-
     def _amount_all(self, cr, uid, ids, field_name, arg, context=None):
-        print "_amount_all"
+        #print "_amount_all"
         cur_obj = self.pool.get('res.currency')
         res = {}
         for waybill in self.browse(cr, uid, ids, context=context):
@@ -78,23 +64,17 @@ class tms_waybill(osv.osv):
                     x_tax += line.tax_amount
                     x_total += line.price_total
         
-            res[waybill.id] = { 'amount_freight'   : cur_obj.round(cr, uid, cur, x_freight),
-                                'amount_move'       : cur_obj.round(cr, uid, cur, x_move),
-                                'amount_highway_tolls'    : cur_obj.round(cr, uid, cur, x_highway),
-                                'amount_insurance'  : cur_obj.round(cr, uid, cur, x_insurance),
-                                'amount_other'      : cur_obj.round(cr, uid, cur, x_other),
-                                'amount_untaxed'    : cur_obj.round(cr, uid, cur, x_subtotal),
-                                'amount_tax'    : cur_obj.round(cr, uid, cur, x_tax),
-                                'amount_total'    : cur_obj.round(cr, uid, cur, x_total),
+            res[waybill.id] = { 'amount_freight'        : cur_obj.round(cr, uid, cur, x_freight),
+                                'amount_move'           : cur_obj.round(cr, uid, cur, x_move),
+                                'amount_highway_tolls'  : cur_obj.round(cr, uid, cur, x_highway),
+                                'amount_insurance'      : cur_obj.round(cr, uid, cur, x_insurance),
+                                'amount_other'          : cur_obj.round(cr, uid, cur, x_other),
+                                'amount_untaxed'        : cur_obj.round(cr, uid, cur, x_subtotal),
+                                'amount_tax'            : cur_obj.round(cr, uid, cur, x_tax),
+                                'amount_total'          : cur_obj.round(cr, uid, cur, x_total),
 
                               }
             
-#            x_travel = waybill.payment_factor * (1.0 if waybill.payment_type == 'travel' else
-#                                                waybill.distance if waybill.payment_type == 'distance'    else
-#                                                waybill.quantity if waybill.payment_type == 'quantity'    else
-#                                                waybill.volume   if waybill.payment_type == 'volume'      else
-#                                                waybill.tons     if waybill.payment_type == 'tons'        else 0.0
-#                                                )
                         
         return res
 
@@ -119,7 +99,7 @@ class tms_waybill(osv.osv):
             volume = weight = qty = 0.0
             for record in waybill.waybill_shipped_product:
                 qty += record.product_uom_qty
-                print "Waybill - record.product_uom.category_id.name", record.product_uom.category_id.name
+                #print "Waybill - record.product_uom.category_id.name", record.product_uom.category_id.name
                 volume += record.product_uom_qty if record.product_uom.category_id.name == 'Volume' else 0.0
                 weight += record.product_uom_qty if record.product_uom.category_id.name == 'Weight' else 0.0
                 res[waybill.id] =  {'product_qty': qty,
@@ -343,39 +323,41 @@ class tms_waybill(osv.osv):
                         _('Missing configuration !'),
                         _('There is no product defined as Freight !!!'))
 
-        for product in prod_obj.browse(cr, uid, prod_id, context=None):
+        product = prod_obj.browse(cr, uid, prod_id,	 context=None)
         
-            prod_uom = product.uom_id.id
-            prod_name = product.name
-            prod_taxes = [(6, 0, [x.id for x in product.taxes_id])]
-
 
         factor = self.pool.get('tms.factor')
-
-
         line_obj = self.pool.get('tms.waybill.line')
+        fpos_obj = self.pool.get('account.fiscal.position')
         for waybill in self.browse(cr, uid, ids):
             for line in waybill.waybill_line:
                 if line.control:
                     line_obj.unlink(cr, uid, [line.id])
             result = factor.calculate(cr, uid, 'waybill', ids, 'client', False)
 
-            print result
+            #print result
 
+            fpos = waybill.partner_id.property_account_position.id or False
+            #print "fpos: ", fpos
+            fpos = fpos and fpos_obj.browse(cr, uid, fpos, context=context) or False
+            #print "fpos: ", fpos
+            #print "product[0].taxes_id: ", product[0].taxes_id
+            #print "fpos_obj.map_tax: ", (6, 0, [_x for _x in fpos_obj.map_tax(cr, uid, fpos, product[0].taxes_id)]),
+            
             xline = {
                     'waybill_id'        : waybill.id,
                     'line_type'         : 'product',
-                    'name'              : prod_name,
+                    'name'              : product[0].name,
                     'sequence'          : 1,
-                    'product_id'        : prod_id[0],
-                    'product_uom'       : prod_uom,
+                    'product_id'        : product[0].id,
+                    'product_uom'       : product[0].uom_id.id,
                     'product_uom_qty'   : 1,
                     'price_unit'        : result,
                     'discount'          : 0.0,
                     'control'           : True,
-                    'tax_id'            : prod_taxes
+                    'tax_id'            : [(6, 0, [_w for _w in fpos_obj.map_tax(cr, uid, fpos, product[0].taxes_id)])],
                 }
-        
+            #print xline
             line_obj.create(cr, uid, xline)
         return True
         
@@ -389,7 +371,7 @@ class tms_waybill(osv.osv):
 
     def create(self, cr, uid, vals, context=None):
         res = super(tms_waybill, self).create(cr, uid, vals, context=context)
-        print res
+        #print res
         self.get_freight_from_factors(cr, uid, [res], context=context)
         self.message_post(cr, uid, [res], body=_("Waybill for <em>%s</em> <b>created</b>.") % (self.pool.get('tms.waybill').browse(cr, uid, [res])[0].partner_id.name), context=context)
         return res
@@ -460,10 +442,10 @@ class tms_waybill(osv.osv):
 
 
     def copy(self, cr, uid, id, default=None, values=None, context=None):
-        print "values: ", values
-        print "cr: ", cr
-        print "uid: ", uid
-        print "id: ", id
+        #print "values: ", values
+        #print "cr: ", cr
+        #print "uid: ", uid
+        #print "id: ", id
 
 
         default = default or {}
@@ -489,7 +471,7 @@ class tms_waybill(osv.osv):
                 default.update({'sequence_id': values['sequence_id'] })
             if 'date_order' in values:
                 default.update({'date_order': values['date_order'] })
-        print "default: ", default
+        #print "default: ", default
         return super(tms_waybill, self).copy(cr, uid, id, default, context)
 
 
@@ -511,7 +493,7 @@ class tms_waybill(osv.osv):
         return True
     
     def action_approve(self, cr, uid, ids, context=None):
-        print "action_approve"
+        #print "action_approve"
         for waybill in self.browse(cr, uid, ids, context=context):            
             if waybill.state in ('draft'):                
                 if not waybill.sequence_id.id:
@@ -530,12 +512,12 @@ class tms_waybill(osv.osv):
         return True
 
     def action_confirm(self, cr, uid, ids, context=None):
-        print "action_confirm"
+        #print "action_confirm"
         for waybill in self.browse(cr, uid, ids, context=None):
             if waybill.amount_untaxed <= 0.0:
                 raise osv.except_osv(_('Could not confirm Waybill !'),_('Total Amount must be greater than zero.'))
             elif waybill.billing_policy == 'automatic':
-                print "Entrando para generar la factura en automatico..."
+                #print "Entrando para generar la factura en automatico..."
                 wb_invoice = self.pool.get('tms.waybill.invoice')
                 wb_invoice.makeWaybillInvoices(cr, uid, ids, context=None)
             self.write(cr, uid, ids, {'state':'confirmed', 'confirmed_by' : uid, 'date_confirmed':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
@@ -565,8 +547,8 @@ class tms_waybill(osv.osv):
 #                        'drafted_by'    : False,
 #                        'date_drafted'  : False,
 #						})
-#        print default
-#        print id
+#        #print default
+#        #print id
 #        return super(tms_waybill, self).copy(cr, uid, id, default, context=context)
 
 
@@ -598,8 +580,8 @@ class tms_waybill_line(osv.osv):
         if context is None:
             context = {}
         for line in self.browse(cr, uid, ids, context=context):
-            price = line.price_unit - line.price_unit *  (line.discount or 0.0) / 100.0
-            taxes = tax_obj.compute_all(cr, uid, line.product_id.taxes_id, price, line.product_uom_qty, line.waybill_id.partner_invoice_id.id, line.product_id, line.waybill_id.partner_id)
+            price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
+            taxes = tax_obj.compute_all(cr, uid, line.tax_id, price, line.product_uom_qty, line.product_id, line.waybill_id.partner_id)
             cur = line.waybill_id.currency_id
 
             amount_with_taxes = cur_obj.round(cr, uid, cur, taxes['total_included'])
@@ -641,7 +623,7 @@ class tms_waybill_line(osv.osv):
         'price_discount': openerp.osv.fields.function(_amount_line, method=True, string='Discount', type='float', digits_compute= dp.get_precision('Sale Price'),  store=True, multi='price_subtotal'),
         'price_total'   : openerp.osv.fields.function(_amount_line, method=True, string='Total Amount', type='float', digits_compute= dp.get_precision('Sale Price'),  store=True, multi='price_subtotal'),
         'tax_amount'   : openerp.osv.fields.function(_amount_line, method=True, string='Tax Amount', type='float', digits_compute= dp.get_precision('Sale Price'),  store=True, multi='price_subtotal'),
-        'tax_id': openerp.osv.fields.many2many('account.tax', 'waybill_tax', 'waybill_line_id', 'tax_id', 'Taxes'),
+        'tax_id'            : openerp.osv.fields.many2many('account.tax', 'waybill_tax', 'waybill_line_id', 'tax_id', 'Taxes'),
         'product_uom_qty': openerp.osv.fields.float('Quantity (UoM)', digits=(16, 2)),
         'product_uom': openerp.osv.fields.many2one('product.uom', 'Unit of Measure '),
         'discount': openerp.osv.fields.float('Discount (%)', digits=(16, 2), help="Please use 99.99 format..."),
@@ -664,25 +646,34 @@ class tms_waybill_line(osv.osv):
 
 
 
-    def on_change_product_id(self, cr, uid, ids, product_id):
+    def on_change_product_id(self, cr, uid, ids, product_id, partner_id, context=None):
         res = {}
         if not product_id:
             return {}
+        context = context or {}
+        lang = context.get('lang',False)
+        if not  partner_id:
+            raise osv.except_osv(_('No Customer Defined !'), _('Before choosing a product,\n select a customer in the form.'))
+        partner_obj = self.pool.get('res.partner')
+        if partner_id:
+            lang = partner_obj.browse(cr, uid, partner_id).lang
+        context_partner = {'lang': lang, 'partner_id': partner_id}
+
+        fpos = partner_obj.browse(cr, uid, partner_id).property_account_position.id or False
+
         prod_obj = self.pool.get('product.product')
-        for product in prod_obj.browse(cr, uid, [product_id], context=None):
-            print "Entrando aquí..."
-            print "Taxes: ", product.taxes_id
-            for x in product.taxes_id:
-                print x.id
-            res = {'value': {'product_uom' : product.uom_id.id,
-                             'name': product.name,
-                             'tax_id': [(6, 0, [x.id for x in product.taxes_id])],
-                            }
-                }
-            print res
+        fpos_obj = self.pool.get('account.fiscal.position')
+        fpos = fpos and fpos_obj.browse(cr, uid, fpos, context=context) or False
+        product_obj = prod_obj.browse(cr, uid, product_id, context=context_partner)
+        taxes = product_obj.taxes_id
+        res = {'value': {'product_uom' : product_obj.uom_id.id,
+                         'name': product_obj.name,
+                         'tax_id': fpos_obj.map_tax(cr, uid, fpos, taxes),
+                        }
+            }
         return res
 
-    def on_change_amount(self, cr, uid, ids, product_uom_qty, price_unit, discount, product_id):
+    def on_change_amount(self, cr, uid, ids, product_uom_qty, price_unit, discount, product_id, partner_id, context=None):
         res = {'value': {
                     'price_amount': 0.0, 
                     'price_subtotal': 0.0, 
@@ -693,9 +684,14 @@ class tms_waybill_line(osv.osv):
                 }
         if not (product_uom_qty and price_unit and product_id ):
             return res
-        tax_factor = 0.00
+        fpos = self.pool.get('res.partner').browse(cr, uid, [partner_id])[0].property_account_position.id or False
+        fpos_obj = self.pool.get('account.fiscal.position')
+        tax_obj = self.pool.get('account.tax')
+        fpos = fpos and fpos_obj.browse(cr, uid, fpos, context=context) or False
         prod_obj = self.pool.get('product.product')
-        for line in prod_obj.browse(cr, uid, [product_id], context=None)[0].taxes_id:
+        tax_factor = 0.00
+        for line in tax_obj.browse(cr, uid, fpos_obj.map_tax(cr, uid, fpos, prod_obj.browse(cr, uid, [product_id], context=None)[0].taxes_id)):
+            #print line
             tax_factor = (tax_factor + line.amount) if line.amount <> 0.0 else tax_factor
 #        if tax_factor == 0.00:
 #            raise osv.except_osv(_('No taxes defined in product !'), _('You have to add taxes for this product. Para Mexico: Tiene que agregar el IVA que corresponda y el IEPS con factor 0.0.'))        
@@ -815,7 +811,7 @@ class tms_waybill_extradata(osv.osv):
             xdate = filter(None, map(lambda x:int(x), value.split('-'))) 
             return {'value': {'value_extra' : date(xdate[0], xdate[1], xdate[2]).strftime(DEFAULT_SERVER_DATE_FORMAT)}}                
         elif type_extra == 'datetime':
-            print "value: ", value            
+            #print "value: ", value            
             xvalue = value.split(' ')
             xdate = filter(None, map(lambda x:int(x), xvalue[0].split('-'))) 
             xtime = map(lambda x:int(x), xvalue[1].split(':')) 
@@ -823,7 +819,7 @@ class tms_waybill_extradata(osv.osv):
             tzone = timezone(self.pool.get('res.users').browse(cr, uid, uid).tz)
             value = tzone.localize(datetime(xdate[0], xdate[1], xdate[2], xtime[0], xtime[1], xtime[2]))
 
-            print value
+            #print value
             xvalue = value.split(' ')
             xdate = filter(None, map(lambda x:int(x), xvalue[0].split('-'))) 
             xtime = map(lambda x:int(x), xvalue[1].split(':')) 
@@ -868,16 +864,16 @@ class tms_waybill_cancel(osv.osv_memory):
 
         record_id =  context.get('active_ids',[])
 
-        print record_id
+        #print record_id
 
         if record_id:
-            print "Si entra..."
+            #print "Si entra..."
             for record in self.browse(cr,uid, ids):
-                print record.company_id.name
-                print record.date_order
+                #print record.company_id.name
+                #print record.date_order
                 waybill_obj = self.pool.get('tms.waybill')
                 for waybill in waybill_obj.browse(cr, uid, record_id):
-                    print waybill.name
+                    #print waybill.name
                     if waybill.invoiced and waybill.invoice_paid:
                         raise osv.except_osv(
                                 _('Could not cancel Waybill !'),
@@ -897,7 +893,7 @@ class tms_waybill_cancel(osv.osv_memory):
         #                raise osv.except_osv(
         #                        _('Could not cancel Advance !'),
         #                        _('This Waybill is already linked to Travel Expenses record'))
-                    print "record_id:", record_id
+                    #print "record_id:", record_id
                     waybill_obj.write(cr, uid, record_id, {'state':'cancel', 'cancelled_by':uid,'date_cancelled':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
                     waybill_obj.message_post(cr, uid, record_id, body=_("Waybill has been set to <b>Cancel</b> state by <em>%s (id: %s)</em>.") % (self.pool.get('res.users').browse(cr, uid, [uid])[0].name, uid), context=None)                    
           
@@ -962,7 +958,7 @@ class tms_waybill_invoice(osv.osv_memory):
             if not len(data_ids):
                 raise osv.except_osv(_('Warning !'),
                                      _('Not all selected records are Confirmed yet or already invoiced...'))
-            print data_ids
+            #print data_ids
 
             for data in data_ids:
                 partner = partner_obj.browse(cr,uid,data[0])

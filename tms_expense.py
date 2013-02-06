@@ -527,7 +527,7 @@ class tms_expense_line(osv.osv):
         'company_id'        : openerp.osv.fields.related('expense_id', 'company_id', type='many2one', relation='res.company', string='Company', store=True, readonly=True),
         'fuel_voucher'      : openerp.osv.fields.boolean('Fuel Voucher'),
 
-        'control'           : openerp.osv.fields.boolean('Control'), # Useful to mark those lines that must not be taken for Expense Record (like Fuel from Fuel Voucher, Toll Stations payed without cash (credit card, voucher, etc)
+        'control'           : openerp.osv.fields.boolean('Control'), # Useful to mark those lines that must not be deleted for Expense Record (like Fuel from Fuel Voucher, Toll Stations payed without cash (credit card, voucher, etc)
         'automatic'         : openerp.osv.fields.boolean('Automatic', help="Check this if you want to create Advances and/or Fuel Vouchers for this line automatically"),
         'credit'            : openerp.osv.fields.boolean('Credit', help="Check this if you want to create Fuel Vouchers for this line"),
         'fuel_supplier_id'  : openerp.osv.fields.many2one('res.partner', 'Fuel Supplier', domain=[('tms_category', '=', 'fuel')],  required=False),

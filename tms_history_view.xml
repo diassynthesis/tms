@@ -187,7 +187,7 @@ TMS.EVENT
         <field name="model">tms.event</field>
 		<field name="type">tree</field>
 		<field name="arch" type="xml">
-            <tree string="TMS Events">
+            <tree string="TMS Events" colors="gray:state=='cancel';red:state=='draft';">
                    <field name="state"/>
                    <field name="name"/>
                    <field name="date"/>
@@ -219,8 +219,8 @@ TMS.EVENT
                     <header>
                         <button name="action_cancel" states="draft,confirmed" string="Cancel" type="object" /> 
                         <button name="action_draft" states="cancel" string="Set to Draft" icon="gtk-convert" type="object" /> 
-				        <button name="action_confirm" states="draft" string="Confirm" icon="gtk-ok" type="object" /> 
-                        <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,cancel"/> 
+				        <button name="action_confirm" states="draft" string="Confirm" icon="gtk-ok" type="object" class="oe_highlight" />
+                        <field name="state" widget="statusbar" statusbar_visible="cancel,draft,confirmed"/> 
                     </header>
                     <sheet>
                         <group col="4">

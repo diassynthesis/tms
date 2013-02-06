@@ -61,11 +61,10 @@ class tms_advance(osv.osv):
 
             subtotal = record.price_unit * record.product_uom_qty
             tax_amount = subtotal * tax_factor
-            total = subtotal + tax_amount
             res[record.id] =   {
                             'subtotal'  :   subtotal,
                             'tax_amount':   tax_amount,
-                            'total'     :   total,
+                            #'total'     :   total,
                     }
         return res
 
@@ -85,7 +84,7 @@ class tms_advance(osv.osv):
         'price_unit'    : openerp.osv.fields.float('Price Unit', required=True, digits_compute= dp.get_precision('Sale Price'), states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
         'subtotal'      : openerp.osv.fields.function(_amount, method=True, string='Subtotal', type='float', digits_compute= dp.get_precision('Sale Price'), multi=True, store=True),
         'tax_amount'    : openerp.osv.fields.function(_amount, method=True, string='Tax Amount', type='float', digits_compute= dp.get_precision('Sale Price'), multi=True, store=True),
-        'total'         : openerp.osv.fields.function(_amount, method=True, string='Total', type='float', digits_compute= dp.get_precision('Sale Price'), multi=True, store=True),
+        'total'         : openerp.osv.fields.float('Total', required=True, digits_compute= dp.get_precision('Sale Price'), states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
 
         'notes'         : openerp.osv.fields.text('Notes', states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
         
@@ -121,26 +120,36 @@ class tms_advance(osv.osv):
     _order = "name desc, date desc"
 
 
-    def on_change_amount(self, cr, uid, ids, product_id, product_uom_qty, price_unit):
-        res = {'value': {'subtotal': 0.0, 'tax_amount': 0.0, 'total': 0.0, }}
-        if not (product_uom_qty and product_id and price_unit):
+    def on_change_amount(self, cr, uid, ids, product_id, product_uom_qty, price_unit, total, field):
+        res = {'value': {'subtotal': 0.0, 'tax_amount': 0.0, 'total': 0.0}}
+        if not (product_id):
+            raise osv.except_osv(_('Product error !'), _('You have not define a product...'))
+        elif not (product_uom_qty and  price_unit and total) and field != 'total':
+            return res
+        elif not total and field == 'total':
             return res
         tax_factor = 0.00
         prod_obj = self.pool.get('product.product')
         for line in prod_obj.browse(cr, uid, [product_id], context=None)[0].supplier_taxes_id:
             tax_factor = (tax_factor + line.amount) if line.amount <> 0.0 else tax_factor
         
-
-        subtotal    = price_unit * product_uom_qty
-        tax_amount  = subtotal * tax_factor
-        total       = subtotal * (1.0 + tax_factor)
+        if field != 'total':
+            subtotal    = price_unit * product_uom_qty
+            tax_amount  = subtotal * tax_factor
+            total       = subtotal * (1.0 + tax_factor)
+        else:
+            subtotal    = total / (1.0 + tax_factor)
+            product_uom_qty = product_uom_qty if product_uom_qty else 1.0
+            price_unit  = subtotal / product_uom_qty
+            tax_amount  = subtotal * tax_factor
+            
         print tax_factor
         print price_unit
         print subtotal
         print tax_amount
         print total
 
-        return {'value': {'subtotal': subtotal, 'total': total, 'tax_amount': tax_amount}}
+        return {'value': {'price_unit': price_unit, 'product_uom_qty':product_uom_qty, 'subtotal': subtotal, 'total': total, 'tax_amount': tax_amount}}
 
 
     def on_change_product_id(self, cr, uid, ids, product_id):

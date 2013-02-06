@@ -923,7 +923,7 @@ TMS.UNIT.ACTIVE_HISTORY
         <field name="model">tms.unit.active_history</field>
 		<field name="type">tree</field>
 		<field name="arch" type="xml">
-            <tree string="Units Active/Inactive History">
+            <tree string="Units Active/Inactive History" colors="gray:state=='cancel';red:state=='draft';">
                 <field name="state"/>
                 <field name="date"/>
                 <field name="unit_id" />
@@ -948,8 +948,8 @@ TMS.UNIT.ACTIVE_HISTORY
                 <form string="Units Active/Inactive History" version="7.0">
                     <header>
                         <button name="action_cancel" states="draft" string="Cancel" type="object"/>
-                        <button name="action_confirm" states="draft" string="Confirm" type="object" icon="gtk-ok"/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,cancel"/>
+                        <button name="action_confirm" states="draft" string="Confirm" type="object" icon="gtk-goto-last" class="oe_highlight" />
+                        <field name="state" widget="statusbar" statusbar_visible="cancel,draft,confirmed"/>
                     </header>
                     <sheet>
                         <h1>
@@ -1045,7 +1045,7 @@ TMS.UNIT.red_tape
         <field name="model">tms.unit.red_tape</field>
 		<field name="type">tree</field>
 		<field name="arch" type="xml">
-            <tree string="Unit Red Tapes">
+            <tree string="Unit Red Tapes" colors="gray:state=='cancel';red:state=='draft';">
                 <field name="state"/>
                 <field name="date"/>
                 <field name="unit_id" />
@@ -1068,10 +1068,8 @@ TMS.UNIT.red_tape
                 <form string="Units Red Tapes" version="7.0">
                     <header>
                         <button name="action_cancel" states="draft" string="Cancel" type="object"/>
-                        <button name="action_pending" states="draft" string="Pending" type="object" icon="gtk-media-pause"/>
-                        <button name="action_progress" states="pending" string="Progress" type="object" icon="gtk-go-forward"/>
-                        <button name="action_done" states="progress" string="Done" type="object" icon="gtk-goto-last"/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,pending,progress,done,cancel"/>
+                        <button name="action_confirm" states="draft" string="Done" type="object" icon="gtk-goto-last" class="oe_highlight" />
+                        <field name="state" widget="statusbar" statusbar_visible="cancel,draft,confirmed"/>
                     </header>
                     <sheet>
                         <h1>
@@ -1131,6 +1129,11 @@ TMS.UNIT.red_tape
               parent="menu_tms_config_unit" 
               id="menu_tms_config_unit_red_tape_form" 
               action="open_view_tms_unit_red_tape_form"/>
+
+<!-- Take some config menu from Fleet module -->
+        <menuitem action="fleet.fleet_vehicle_model_act" parent="menu_tms_config_unit" id="tms_fleet_vehicle_model_menu" groups="base.group_no_one"/>
+        <menuitem action="fleet.fleet_vehicle_model_brand_act" parent="menu_tms_config_unit" id="tms_fleet_vehicle_model_brand_menu" groups="base.group_no_one"/>
+        <menuitem action="fleet.fleet_vehicle_state_act" parent="menu_tms_config_unit" id="tms_fleet_vehicle_state_menu" groups="fleet.group_fleet_manager"/>
 
 
 </data>

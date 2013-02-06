@@ -22,7 +22,9 @@ TMS.ADVANCE
                    <filter string="Closed" icon="terp-check" domain="[('state','=','closed')]"/>
                    <separator orientation="vertical"/>
                    <filter string="Cancelled" icon="terp-dialog-close" domain="[('state','=','cancel')]"/>
-                   <filter string="Not Cancelled" icon="terp-stock_symbol-selection" domain="[('state','!=','cancel')]"/>
+                   <filter string="Not Cancelled" icon="terp-stock_symbol-selection" domain="[('state','!=','cancel')]" name="not_cancelled"/>
+                   <filter string="Not Closed" icon="terp-stock_symbol-selection" domain="[('state','!=','closed')]" name="not_closed"/>
+                   <filter string="From this month" icon="terp-check" domain="[('date','&gt;=', time.strftime('%%Y-%%m-01'))]" name="this_month" />
                    <newline/>
                    <field name="date"/>
                    <field name="name"/>
@@ -50,7 +52,7 @@ TMS.ADVANCE
 		<field name="model">tms.advance</field>
 		<field name="type">tree</field>
 		<field name="arch" type="xml">
-            <tree string="TMS Advances">
+            <tree string="TMS Advances" colors="gray:state=='cancel';red:state=='draft';green:state=='approved';blue:state=='confirmed';">
                 <button name="action_cancel" states="draft,approved,confirmed" string="Cancel" type="object" icon="gtk-cancel"/>
                 <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
                 <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-goto-last"/>
@@ -83,7 +85,7 @@ TMS.ADVANCE
                         <button name="action_cancel" states="draft,approved,confirmed" string="Cancel" type="object"/>
                         <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward" class="oe_highlight" />
                         <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-goto-last" class="oe_highlight"/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,approved,confirmed,cancel"/>
+                        <field name="state" widget="statusbar" statusbar_visible="cancel,draft,approved,confirmed"/>
                     </header>
                     <sheet>
                         <h1>
@@ -102,12 +104,12 @@ TMS.ADVANCE
 						            context="{'default_tms_category': 'real_expense', 'default_type': 'service', 'default_procure_method':'make_to_stock', 'default_supply_method': 'buy'}"/>
 					            <field name="product_uom_qty" class="oe_text_right"/>
 					            <field name="product_uom" invisible="1"/>
-					            <field name="price_unit" on_change="on_change_amount(product_id, product_uom_qty, price_unit)" class="oe_text_right"/>
+					            <field name="price_unit" on_change="on_change_amount(product_id, product_uom_qty, price_unit, total, 'price_unit')" class="oe_text_right"/>
 					            <field name="subtotal" readonly="1"  
                                             class="oe_text_right" widget='monetary' options="{'currency_field': 'currency_id'}"/>
 					            <field name="tax_amount" readonly="1"  
                                             class="oe_text_right" widget='monetary' options="{'currency_field': 'currency_id'}"/>
-					            <field name="total" on_change="on_change_amount(product_id, product_uom_qty, price_unit)" 
+					            <field name="total" on_change="on_change_amount(product_id, product_uom_qty, price_unit, total, 'total')" 
                                             class="oe_text_right" widget='monetary' options="{'currency_field': 'currency_id'}"/>
                                 <field name="currency_id" />
                                 <field name="auto_expense" />
@@ -157,6 +159,7 @@ TMS.ADVANCE
     <record model="ir.actions.act_window" id="open_view_tms_advance_form">
         <field name="name">TMS Advances</field>
         <field name="res_model">tms.advance</field>
+        <field name="context">{'search_default_this_month': 1}</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
     </record>
