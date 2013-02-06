@@ -718,7 +718,7 @@ class tms_waybill_shipped_product(osv.osv):
 
     _columns = {
 #        'agreement_id': openerp.osv.fields.many2one('tms.agreement', 'Agreement', required=False, ondelete='cascade', select=True, readonly=True),
-        'waybill_id': openerp.osv.fields.many2one('tms.waybill', 'waybill', required=True, ondelete='cascade', select=True, readonly=True),
+        'waybill_id': openerp.osv.fields.many2one('tms.waybill', 'waybill', required=False, ondelete='cascade', select=True, readonly=True),
         'name': openerp.osv.fields.char('Description', size=256, required=True, select=True),
         'product_id': openerp.osv.fields.many2one('product.product', 'Product', 
                             domain=[
