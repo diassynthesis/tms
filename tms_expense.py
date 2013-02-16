@@ -576,16 +576,6 @@ class tms_expense_line(osv.osv):
                 }
         return res
 
-#    def unlink(self, cr, uid, ids, context=None):
-#        for line in self.browse(cr, uid, ids):
-#            print line
-#            if line.control:
-#                raise osv.except_osv(
-#                        _('Warning!'),
-#                        _('You can not delete expense lines that are created automatically (Salary & Fuel Vouchers) !!! Click Cancel button to continue.'))
-
-#        super(tms_expense_line, self).unlink(cr, uid, ids, context=context)
-#        return True
 
 # Wizard que permite validar la cancelacion de una Liquidacion
 class tms_expense_cancel(osv.osv_memory):
