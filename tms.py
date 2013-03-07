@@ -1,4 +1,4 @@
-﻿# -*- encoding: utf-8 -*-
+# -*- encoding: utf-8 -*-
 ##############################################################################
 #    
 #    OpenERP, Open Source Management Solution
@@ -143,6 +143,18 @@ class fleet_vehicle(osv.osv):
     _inherit = ['fleet.vehicle']
     _description = "All motor/trailer units"
 
+    def _get_current_odometer(self, cr, uid, ids, field_name, arg, context=None):
+        res = {}
+        for record in self.browse(cr, uid, ids, context=context):            
+            odom_obj = self.pool.get('fleet.vehicle.odometer.device')
+            result = odom_obj.search(cr, uid, [('vehicle_id', '=', record.id),('state', '=', 'active')], limit=1, context=None)
+            print "result: ", result
+            if result and result[0]:
+                res[record.id] = result[0]
+        return res
+
+
+
     _columns = {
         'shop_id': openerp.osv.fields.many2one('sale.shop', 'Shop', required=True, readonly=False),
 #        'company_id': openerp.osv.fields.related('shop_id','company_id',type='many2one',relation='res.company',string='Company',store=True,readonly=True),
@@ -175,28 +187,30 @@ class fleet_vehicle(osv.osv):
 #        'tires_extra': openerp.osv.fields.integer('Number of Extra Tires'),
 #        'unit_status': openerp.osv.fields.many2one('tms.unit.fleet.unit.status', 'Unit Status', required=True),
 #        'maint_cycle': openerp.osv.fields.many2one('tms.maintenance.cycle', 'Maintenance Cycle', required=True),
-#        'avg_distance_per_day':openerp.osv.fields.float('Avg Distance per day', required=False, digits=(14,4), help='Specify average distance (mi./kms) per day for this unit'),
+        'avg_distance_per_day'  :openerp.osv.fields.float('Avg Distance per day', required=False, digits=(16,2), help='Specify average distance (mi./kms) per day for this unit'),
 #        'fuel_efficiency_std':openerp.osv.fields.float('Fuel Efficiency', required=False, digits=(14,4), help='Fuel Efficiency as specified by the manufacturer'),
 #        'maint_cycle_by':openerp.osv.fields.selection([('distance','Distance (mi./km)'), ('time','Time (Operation hours)')], 'Manage Maintenance Cycle by'),
-#        'current_distance_score':openerp.osv.fields.float('Current Distance Score', required=False, digits=(14,4), help='Current Distance Score for this unit'),
-#        'cumulative_distance_score':openerp.osv.fields.float('Cumulative Distance Score', required=False, digits=(14,4), help='Cumulative Distance Score for this unit'),
 #        'last_maint_service': openerp.osv.fields.function(_get_last_maint_service, method=True, type="char", string='Last Maintenance Service'),
 #        'next_maint_service': openerp.osv.fields.many2one('tms.maintenance.cycle.service', 'Next Maintenance ServiceCompany', required=False),
         
         
-        'notes': openerp.osv.fields.text('Notes'),
-        'active': openerp.osv.fields.boolean('Active'),
-        'unit_extradata_ids' : openerp.osv.fields.one2many('tms.unit.extradata', 'unit_id', 'Extra Data'),
-        'unit_expiry_ids' : openerp.osv.fields.one2many('tms.unit.expiry', 'unit_id', 'Expiry Extra Data'), 
-        'unit_photo_ids' : openerp.osv.fields.one2many('tms.unit.photo', 'unit_id', 'Photos'), 
+        'notes'                 : openerp.osv.fields.text('Notes'),
+        'active'                : openerp.osv.fields.boolean('Active'),
+        'unit_extradata_ids'    : openerp.osv.fields.one2many('tms.unit.extradata', 'unit_id', 'Extra Data'),
+        'unit_expiry_ids'       : openerp.osv.fields.one2many('tms.unit.expiry', 'unit_id', 'Expiry Extra Data'), 
+        'unit_photo_ids'        : openerp.osv.fields.one2many('tms.unit.photo', 'unit_id', 'Photos'), 
         'unit_active_history_ids' : openerp.osv.fields.one2many('tms.unit.active_history', 'unit_id', 'Active/Inactive History'), 
-        'unit_red_tape_ids' : openerp.osv.fields.one2many('tms.unit.red_tape', 'unit_id', 'Unit Red Tapes'), 
-        'supplier_unit': openerp.osv.fields.boolean('Supplier Unit'),
-        'supplier_id': openerp.osv.fields.many2one('res.partner', 'Supplier', required=False, readonly=False, 
+        'unit_red_tape_ids'     : openerp.osv.fields.one2many('tms.unit.red_tape', 'unit_id', 'Unit Red Tapes'), 
+        'supplier_unit'         : openerp.osv.fields.boolean('Supplier Unit'),
+        'supplier_id'           : openerp.osv.fields.many2one('res.partner', 'Supplier', required=False, readonly=False, 
                                             domain="[('tms_category','=','none')]"),
-        'latitude'      : openerp.osv.fields.float('Lat', required=False, digits=(20,10), help='GPS Latitude'),
-        'longitude'     : openerp.osv.fields.float('Lng', required=False, digits=(20,10), help='GPS Longitude'),
-#        'last_position' : openerp.osv.fields.char('Last Position', size=250),
+        'latitude'              : openerp.osv.fields.float('Lat', required=False, digits=(20,10), help='GPS Latitude'),
+        'longitude'             : openerp.osv.fields.float('Lng', required=False, digits=(20,10), help='GPS Longitude'),
+        'last_position'         : openerp.osv.fields.char('Last Position', size=250),
+        'active_odometer'       : openerp.osv.fields.float('Odometer', required=False, digits=(20,10), help='Odometer'),
+        'active_odometer_id'    : openerp.osv.fields.function(_get_current_odometer, type='many2one', relation="fleet.vehicle.odometer.device", string="Active Odometer"),
+        'current_odometer_read' : openerp.osv.fields.related('active_odometer_id', 'odometer_end', type='float', string='Last Odometer Read', readonly=True),
+
     }
 
     _defaults = {
@@ -239,6 +253,24 @@ class fleet_vehicle(osv.osv):
         default['unit_expiry_ids'] = []
         default['unit_photo_ids'] = []
         return super(fleet_vehicle, self).copy(cr, uid, id, default, context=context)
+
+
+    def create(self, cr, uid, vals, context=None):
+        values = vals
+        res = super(fleet_vehicle, self).create(cr, uid, values, context=context)
+        
+        odom_obj = self.pool.get('fleet.vehicle.odometer.device')
+        rec = { 'name'          : _('Odometer device created when vehicle %s was created') % (vals['name']),
+                'state'         : 'draft',
+                'date'          : time.strftime( DEFAULT_SERVER_DATETIME_FORMAT),
+                'date_start'    : time.strftime( DEFAULT_SERVER_DATETIME_FORMAT),
+                'vehicle_id'    : res,
+                'accumulated_start' : 0.0,
+                'odometer_start'    : 0.0, 
+            }
+        odom_id = odom_obj.create(cr, uid, rec)    
+        odom_obj.action_activate(cr, uid, [odom_id])
+        return res
 
 
 # Units PHOTOS
@@ -836,6 +868,185 @@ class tms_route_fuelefficiency(osv.osv):
         ]
 
 tms_route_fuelefficiency()
+
+
+# Fleet Vehicle odometer device
+class fleet_vehicle_odometer_device(osv.osv):
+    _name = "fleet.vehicle.odometer.device"
+    _inherit = ['mail.thread', 'ir.needaction_mixin']
+    _description = "Fleet Vehicle Odometer Device"
+
+
+    _columns = {
+        'state'             : openerp.osv.fields.selection([('draft','Draft'), ('active','Active'), ('inactive','Inactive'), ('cancel','Cancelled')], 'State', readonly=True),
+        'date'              : openerp.osv.fields.datetime('Date', required=True, states={'cancel':[('readonly',True)], 'active':[('readonly',True)], 'inactive':[('readonly',True)]} ),
+        'date_start'        : openerp.osv.fields.datetime('Date Start', required=True, states={'cancel':[('readonly',True)], 'active':[('readonly',True)], 'inactive':[('readonly',True)]} ),
+        'date_end'          : openerp.osv.fields.datetime('Date End', readonly=True),
+        'name'              : openerp.osv.fields.char('Name', size=128, required=True, states={'cancel':[('readonly',True)], 'active':[('readonly',True)], 'inactive':[('readonly',True)]} ),
+        'vehicle_id'        : openerp.osv.fields.many2one('fleet.vehicle', 'Vehicle', required=True, ondelete='cascade', states={'cancel':[('readonly',True)], 'active':[('readonly',True)], 'inactive':[('readonly',True)]} ),
+        'replacement_of'    : openerp.osv.fields.many2one('fleet.vehicle.odometer.device', 'Replacement of', required=False, digits=(16, 2), states={'cancel':[('readonly',True)], 'active':[('readonly',True)], 'inactive':[('readonly',True)]} ),
+        'accumulated_start' : openerp.osv.fields.float('Original Accumulated', help="Kms /Miles Accumulated from vehicle at the moment of activation of this odometer", readonly=True ),
+        'odometer_start'    : openerp.osv.fields.float('Start count', required=True, help="Initial counter from device", digits=(16, 2), states={'cancel':[('readonly',True)], 'active':[('readonly',True)], 'inactive':[('readonly',True)]} ),
+        'odometer_end'      : openerp.osv.fields.float('End count', required=True, help="Ending counter from device", digits=(16, 2), states={'cancel':[('readonly',True)], 'active':[('readonly',True)], 'inactive':[('readonly',True)]} ),
+        'odometer_reading_ids': fields.one2many('fleet.vehicle.odometer', 'odometer_id', 'Odometer Readings', readonly=True),
+        }
+
+    _defaults ={
+            'date'              : lambda *a: time.strftime(DEFAULT_SERVER_DATETIME_FORMAT),
+            'date_start'        : lambda *a: time.strftime(DEFAULT_SERVER_DATETIME_FORMAT),
+            'odometer_start'    : 0.0,
+            'odometer_end'      : 0.0,
+            'state'             : 'draft',
+        } 
+
+    def _check_state(self, cr, uid, ids, context=None):         
+        hubod_obj = self.pool.get('fleet.vehicle.odometer.device')
+        for record in self.browse(cr, uid, ids, context=context):
+            print "ID: ", record.id
+            print "State: ", record.state
+            res = hubod_obj.search(cr, uid, [('vehicle_id', '=', record.vehicle_id.id),('state', 'not in', ('cancel','inactive')),('state','=',record.state)], context=None)
+            if res and res[0] and res[0] != record.id:
+                return False
+            return True
+
+    def _check_odometer(self, cr, uid, ids, context=None):         
+        for rec in self.browse(cr, uid, ids, context=context):
+            if rec.odometer_end < rec.odometer_start:
+                return False
+            return True
+
+    def _check_dates(self, cr, uid, ids, context=None):         
+        hubod_obj = self.pool.get('fleet.vehicle.odometer.device')
+        for record in self.browse(cr, uid, ids, context=context):
+            if record.date_end and record.date_end < record.date_start:            
+                raise osv.except_osv(_('Error !'), _('Ending Date (%s) is less than Starting Date (%s)')%(record.date_end, record.date_start))
+            res = hubod_obj.search(cr, uid, [('vehicle_id', '=', record.vehicle_id.id),('state', '!=', 'cancel'),('date_end','>',record.date_start)], context=None)
+            print "res: ", res
+            if res and res[0] and res[0] != record.id:
+                return False
+            return True
+
+
+    _constraints = [
+        (_check_state, 'You can not have two records with the same State (Draft / Active) !', ['state']),
+        (_check_odometer, 'You can not have Odometer End less than Odometer Start', ['odometer_end']),
+        (_check_dates, 'You can not have this Star Date because is overlaping with another record', ['date_end'])
+        ]
+
+    def on_change_vehicle_id(self, cr, uid, ids, vehicle_id, date_start):
+        odom_obj = self.pool.get('fleet.vehicle.odometer.device')
+        res = odom_obj.search(cr, uid, [('vehicle_id', '=', vehicle_id),('state', '!=', 'cancel'),('date_end','<',date_start)], limit=1, order="date_end desc", context=None)
+        odometer_id = False
+        accumulated = 0.0
+        print "res: ", res
+        if res and res[0]:
+            for rec in odom_obj.browse(cr, uid, res):
+                odometer_id = rec.id
+                accumulated = rec.vehicle_id.odometer
+        return {'value': {'replacement_of': odometer_id, 'accumulated': accumulated }}
+
+    
+    def action_activate(self, cr, uid, ids, context=None):
+        for rec in self.browse(cr, uid, ids):
+            odometer = rec.vehicle_id.odometer
+            self.write(cr, uid, ids, {'state':'active', 'accumulated' : odometer})
+        return True
+
+    def action_inactivate(self, cr, uid, ids, context=None):
+        for rec in self.browse(cr, uid, ids):
+            self.write(cr, uid, ids, {'state':'inactive', 'date_end': time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
+        return True
+
+    def action_cancel(self, cr, uid, ids, context=None):
+        for rec in self.browse(cr, uid, ids):
+            self.write(cr, uid, ids, {'state':'cancel'})
+        return True
+
+
+
+fleet_vehicle_odometer_device()
+
+# Vehicle Odometer records
+class fleet_vehicle_odometer(osv.osv):
+    _inherit = ['fleet.vehicle.odometer']
+    _name='fleet.vehicle.odometer'
+### PENDIENTES
+# - CALCULAR LA DISTANCIA RECORRIDA ENTRE EL REGISTRO ACTUAL Y EL ANTERIOR BASADA EN EL ODOMETRO ACTIVO. NO SE PUEDEN GUARDAR
+    _columns = {
+        'odometer_id'       : openerp.osv.fields.many2one('fleet.vehicle.odometer.device', 'Odometer', required=True),
+        'last_odometer'     : openerp.osv.fields.float('Last Read', digits=(16,2), required=True),        
+        'current_odometer'  : openerp.osv.fields.float('Current Read', digits=(16,2), required=True),
+        'distance'          : openerp.osv.fields.float('Distance', digits=(16,2), required=True),
+        'tms_expense_id'    : openerp.osv.fields.many2one('tms.expense', 'Expense Rec'),
+        'tms_travel_id'     : openerp.osv.fields.many2one('tms.travel', 'Travel'),
+    }
+
+    def _check_values(self, cr, uid, ids, context=None):         
+        for record in self.browse(cr, uid, ids, context=context):
+            if record.current_odometer <= record.last_odometer:
+                return False
+            return True
+
+
+    _constraints = [
+        (_check_values, 'You can not have Current Reading <= Last Reading !', ['current_odometer']),
+        ]
+    
+
+    def on_change_vehicle(self, cr, uid, ids, vehicle_id, context=None):
+        res = super(fleet_vehicle_odometer, self).on_change_vehicle(cr, uid, ids, vehicle_id, context=context)
+        for vehicle in self.pool.get('fleet.vehicle').browse(cr, uid, [vehicle_id], context=context):
+            odom_obj = self.pool.get('fleet.vehicle.odometer.device')
+            odometer_id = odom_obj.search(cr, uid, [('vehicle_id', '=', vehicle_id), ('state', '=','active')], context=context)
+            if odometer_id and odometer_id[0]:
+                for odometer in odom_obj.browse(cr, uid, odometer_id):                
+                    res['value']['odometer_id'] = odometer_id[0]
+                    res['value']['last_odometer'] = odometer.odometer_end
+                    res['value']['value'] = vehicle.odometer
+            else:
+                raise osv.except_osv(
+                        _('Record Warning !'),
+                        _('There is no Active Odometer for vehicle %s') % (vehicle.name))
+
+        return res
+
+    def on_change_current_odometer(self, cr, uid, ids, vehicle_id, last_odometer, current_odometer, context=None):
+        distance = current_odometer - last_odometer
+        accum = self.pool.get('fleet.vehicle').browse(cr, uid, [vehicle_id], context=context)[0].odometer + distance
+        return {'value': {
+                        'distance'  : distance,
+                        'value'     : accum,
+                        }    
+                }
+        
+    def on_change_distance(self, cr, uid, ids, vehicle_id, last_odometer, distance, context=None):
+        current_odometer = last_odometer + distance
+        accum = self.pool.get('fleet.vehicle').browse(cr, uid, [vehicle_id], context=context)[0].odometer + distance
+        return {'value': {
+                        'current_odometer'  : current_odometer,
+                        'value'             : accum,
+                        }    
+                }
+
+
+    def on_change_value(self, cr, uid, ids, vehicle_id, last_odometer, value, context=None):
+        distance = value - self.pool.get('fleet.vehicle').browse(cr, uid, [vehicle_id], context=context)[0].odometer
+        current_odometer = last_odometer + distance
+        return {'value': {
+                        'current_odometer'  : current_odometer,
+                        'distance'          : distance,
+                        }    
+                }
+
+    def create(self, cr, uid, vals, context=None):
+        values = vals
+        odom_obj = self.pool.get('fleet.vehicle.odometer.device')
+        odometer_end = odom_obj.browse(cr, uid, [vals['odometer_id']])[0].odometer_end + vals['distance']
+        odom_obj.write(cr, uid, [vals['odometer_id']], {'odometer_end': odometer_end}, context=context)
+        return super(fleet_vehicle_odometer, self).create(cr, uid, values, context=context)
+
+
+
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
 

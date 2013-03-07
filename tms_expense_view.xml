@@ -73,9 +73,9 @@ TMS.EXPENSE
                 <form string="Travel Expenses" version="7.0">
                     <header>
                         <button name="%(action_expense_cancel)d" states="draft,approved,confirmed" string="Cancel" icon="gtk-cancel"  type="action"/> 
-				        <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
-				        <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
-				        <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok"/> 
+		        <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
+		        <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward" class="oe_highlight" />
+		        <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok" class="oe_highlight" />
                         <field name="state" widget="statusbar" statusbar_visible="cancel,draft,approved,confirmed"/> 
                     </header>
                     <sheet>
@@ -95,49 +95,57 @@ TMS.EXPENSE
                             <field name="employee_id" invisible="1"/>
                         <notebook>
                             <page string="Resume">
-                                <group colspan="4" col="6">
-                                    <group colspan="2" col="2">
-                                        <separator string="Travel Expenses Real"  colspan="2"/>
-							            <field name="amount_salary" class="oe_text_right" />
-							            <field name="amount_salary_retention" class="oe_text_right"/>
-							            <field name="amount_salary_discount" class="oe_text_right"/>
-							            <field name="amount_real_expense" class="oe_text_right"/>
-							            <field name="amount_fuel" class="oe_text_right"/>
-							            <field name="amount_subtotal_real" class="oe_text_right" style="font-weight: bold;"/>
-							            <field name="amount_tax_real" class="oe_text_right"/>
-							            <field name="amount_total_real" class="oe_text_right" style="font-weight: bold;"/>
-							            <field name="amount_advance" class="oe_text_right"/>
-							            <field name="amount_balance" class="oe_text_right" style="font-weight: bold;"/>
-                                    </group>
-                                    <group>
-                                        <label string="·"/>
-                                    </group>
-                                    <group colspan="2">
-                                        <separator string="Including Fuel Vouchers"  colspan="2"/>
-							            <field name="amount_fuel_voucher"  class="oe_text_right"/>
-							            <field name="amount_subtotal_total"  class="oe_text_right" style="font-weight: bold;"/>
-							            <field name="amount_tax_total" class="oe_text_right"/>
-							            <field name="amount_total_total"  class="oe_text_right" style="font-weight: bold;"/>
-                                        <separator string="· · · · · · · · · ·"  colspan="2" style="text-align: center;"/>
-							            <field name="amount_madeup_expense" class="oe_text_right"/>
-                                    </group>
-                                    <group>
-                                        <label string="·"/>
-                                    </group>
-                                </group>
+                              <group col="4">
+				<div>
+				  <group>
+				    <separator string="Resumen de Gastos" colspan="2" />
+			            <field name="amount_salary" class="oe_text_right" />
+				    <field name="amount_salary_retention" class="oe_text_right"/>
+				    <field name="amount_salary_discount" class="oe_text_right"/>
+				    <field name="amount_real_expense" class="oe_text_right"/>
+				    <field name="amount_fuel" class="oe_text_right"/>
+				    <field name="amount_subtotal_real" class="oe_text_right" style="font-weight: bold;"/>
+				    <field name="amount_tax_real" class="oe_text_right"/>
+				    <field name="amount_total_real" class="oe_text_right" style="font-weight: bold;"/>
+				    <field name="amount_advance" class="oe_text_right"/>
+				    <field name="amount_balance" class="oe_text_right" style="font-weight: bold;"/>
+                                    <separator string="Including Fuel Vouchers"  colspan="2"/>
+				    <field name="amount_fuel_voucher"  class="oe_text_right"/>
+				    <field name="amount_subtotal_total"  class="oe_text_right" style="font-weight: bold;"/>
+				    <field name="amount_tax_total" class="oe_text_right"/>
+				    <field name="amount_total_total"  class="oe_text_right" style="font-weight: bold;"/>
+                                    <separator string="· · · · · · · · · ·"  colspan="2" style="text-align: center;"/>
+				    <field name="amount_madeup_expense" class="oe_text_right"/>
+				  </group>
+				</div>
+			        <div>
+				  <group>
+                                    <separator string="Distance Resumen"  colspan="2"/>
+				    <field name="vehicle_id" class="oe_text_right" attrs="{'invisible':[('odometer_log_id','=',False)]}"/>
+				    <field name="odometer_id" class="oe_text_right"  attrs="{'invisible':[('odometer_log_id','=',False)]}"/>
+				    <field name="last_odometer" class="oe_text_right" invisible="1" />
+				    <field name="vehicle_odometer" class="oe_text_right" on_change="on_change_vehicle_odometer(vehicle_id, last_odometer, vehicle_odometer)"/>
+				    <field name="current_odometer" class="oe_text_right" on_change="on_change_current_odometer(vehicle_id, last_odometer, current_odometer)"/>
+                                    <field name="distance_real" class="oe_text_right" on_change="on_change_distance_real(vehicle_id, last_odometer, distance_real)"/>
+                                    <field name="distance_routes" class="oe_text_right"/>
+				    <field name="odometer_log_id" class="oe_text_right" attrs="{'invisible':[('odometer_log_id','=',False)]}"/>
+				  </group>
+				</div>
+                              </group>
                             </page>
-						    <page string="Travels">
-							    <field name="travel_ids" colspan="4" nolabel="1" 
+			    <page string="Travels">
+				    <field name="travel_ids" colspan="4" nolabel="1" 
                                     domain="[('employee_id','=', employee_id), ('state','=', 'done'), ('advance_ok_for_expense_rec','=', 1), ('fuelvoucher_ok_for_expense_rec','=', 1), ('waybill_ok_for_expense_rec','=', 1), ('state','=','done')]" 
+				    on_change="on_change_travel_ids(travel_ids)"
                                     />
-						    </page>
-						    <page string="Expense Lines">
-							    <field name="expense_line" context="{'default_expense_id': active_id, 'group_by_line_type': 1}" colspan="4" nolabel="1">
-							    </field>
-						    </page>
-						    <page string="Advances">
-							    <field name="advance_ids" colspan="4" nolabel="1" readonly="1"/>
-						    </page>
+			    </page>
+			    <page string="Expense Lines">
+				    <field name="expense_line" context="{'default_expense_id': active_id, 'group_by_line_type': 1}" colspan="4" nolabel="1">
+				    </field>
+			    </page>
+			    <page string="Advances">
+				    <field name="advance_ids" colspan="4" nolabel="1" readonly="1"/>
+			    </page>
 						    <page string="Fuel Vouchers">
 							    <field name="fuelvoucher_ids" colspan="4" nolabel="1" readonly="1"/>
 						    </page>
@@ -241,7 +249,7 @@ TMS.EXPENSE
             <field name="help">TMS Travel Expenses</field>
         </record>
 
-        <menuitem action="action_tms_expense_form" id="menu_tms_expense" parent="menu_tms_travels" sequence="99" />
+        <menuitem action="action_tms_expense_form" id="menu_tms_expense" parent="menu_tms_travels" sequence="40" />
 
 
 

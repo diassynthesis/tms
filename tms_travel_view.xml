@@ -89,6 +89,7 @@ TMS.travel
                 <field name="date_start" string="Start Sched." invisible="1"/>
                 <field name="date_end" string="End Sched." invisible="1"/>
                 <field name="shop_id" invisible="1"/>
+                <field name="user_id" invisible="1"/>
 		    </tree>
 		</field>
 	</record>
@@ -132,6 +133,7 @@ TMS.travel
                             <field name="route_id" on_change="onchange_route_id(route_id, unit_id, trailer1_id, dolly_id, trailer2_id)" colspan="4"/>
                             <field name="departure" readonly="1" />
                             <field name="arrival" readonly="1" />
+			    <field name="user_id" />
                         </group>                    
                         <notebook colspan="4">
                             <page string="Fuel Vouchers">
@@ -216,10 +218,10 @@ TMS.travel
                                         <separator string="Distances (mi./kms)"/>
                                         <newline />
                                         <field name="distance_route" readonly="1"/> 
-                                        <field name="distance_driver" readonly="1"/>
-                                        <field name="distance_loaded" readonly="1"/>
-                                        <field name="distance_empty" readonly="1"/>
-                                        <field name="distance_extraction" readonly="1"/>
+                                        <field name="distance_driver"  />
+                                        <field name="distance_loaded" />
+                                        <field name="distance_empty" />
+                                        <field name="distance_extraction" />
                                     </group>
                                     <group  >
                                         <separator colspan="4" string="Fuel Efficiency"/>

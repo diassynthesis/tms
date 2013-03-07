@@ -157,10 +157,10 @@ class tms_travel(osv.osv):
         'waybill_ok_for_expense_rec': openerp.osv.fields.function(_validate_for_expense_rec, string='Waybill OK', method=True,  type='boolean',  multi='advance_ok_for_expense_rec'),
         'waybill_income': openerp.osv.fields.function(_validate_for_expense_rec, string='Income', method=True, type='float', digits=(18,6), multi='advance_ok_for_expense_rec'),
 
-        'distance_driver': openerp.osv.fields.float('Distance traveled by driver (mi./km)', required=False, digits=(14,4), states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
-        'distance_loaded': openerp.osv.fields.float('Distance Loaded (mi./km)', required=False, digits=(14,4), states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
-        'distance_empty': openerp.osv.fields.float('Distance Empty (mi./km)', required=False, digits=(14,4), states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
-        'distance_extraction': openerp.osv.fields.float('Distance Extraction (mi./km)', required=False, digits=(14,4), states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
+        'distance_driver': openerp.osv.fields.float('Distance traveled by driver (mi./km)', required=False, digits=(16,2), states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
+        'distance_loaded': openerp.osv.fields.float('Distance Loaded (mi./km)', required=False, digits=(16,2), states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
+        'distance_empty': openerp.osv.fields.float('Distance Empty (mi./km)', required=False, digits=(16,2), states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
+        'distance_extraction': openerp.osv.fields.float('Distance Extraction (mi./km)', required=False, digits=(16,2), states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
         
         'fuel_efficiency_travel': openerp.osv.fields.float('Fuel Efficiency Travel', required=False, digits=(14,4), states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
         'fuel_efficiency_extraction': openerp.osv.fields.float('Fuel Efficiency Extraction', required=False, digits=(14,4), states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
@@ -181,23 +181,26 @@ class tms_travel(osv.osv):
         'date_cancelled': openerp.osv.fields.datetime('Date Cancelled', readonly=True),
         'dispatched_by' : openerp.osv.fields.many2one('res.users', 'Dispatched by', readonly=True),
         'date_dispatched': openerp.osv.fields.datetime('Date Dispatched', readonly=True),
-        'done_by' : openerp.osv.fields.many2one('res.users', 'Ended by', readonly=True),
-        'date_done': openerp.osv.fields.datetime('Date Ended', readonly=True),
-        'closed_by' : openerp.osv.fields.many2one('res.users', 'Closed by', readonly=True),
-        'date_closed': openerp.osv.fields.datetime('Date Closed', readonly=True),
-        'drafted_by' : openerp.osv.fields.many2one('res.users', 'Drafted by', readonly=True),
-        'date_drafted': openerp.osv.fields.datetime('Date Drafted', readonly=True),
-
+        'done_by'       : openerp.osv.fields.many2one('res.users', 'Ended by', readonly=True),
+        'date_done'     : openerp.osv.fields.datetime('Date Ended', readonly=True),
+        'closed_by'     : openerp.osv.fields.many2one('res.users', 'Closed by', readonly=True),
+        'date_closed'   : openerp.osv.fields.datetime('Date Closed', readonly=True),
+        'drafted_by'    : openerp.osv.fields.many2one('res.users', 'Drafted by', readonly=True),
+        'date_drafted'  : openerp.osv.fields.datetime('Date Drafted', readonly=True),
+        'user_id'       : openerp.osv.fields.many2one('res.users', 'Salesman', select=True, readonly=False, states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
+        'parameter_distance': openerp.osv.fields.integer('Distance Parameter', help="1 = Travel, 2 = Travel Expense, 3 = Manual, 4 = Tyre"),
         }
 
 
     _defaults = {
-        'date': lambda *a: time.strftime(DEFAULT_SERVER_DATETIME_FORMAT),
-        'date_start': lambda *a: time.strftime(DEFAULT_SERVER_DATETIME_FORMAT),
-        'date_end': lambda *a: time.strftime(DEFAULT_SERVER_DATETIME_FORMAT),
-        'date_start_real': lambda *a: time.strftime(DEFAULT_SERVER_DATETIME_FORMAT),
-        'date_end_real': lambda *a: time.strftime(DEFAULT_SERVER_DATETIME_FORMAT),
-        'state': 'draft',
+        'date'              : lambda *a: time.strftime(DEFAULT_SERVER_DATETIME_FORMAT),
+        'date_start'        : lambda *a: time.strftime(DEFAULT_SERVER_DATETIME_FORMAT),
+        'date_end'          : lambda *a: time.strftime(DEFAULT_SERVER_DATETIME_FORMAT),
+        'date_start_real'   : lambda *a: time.strftime(DEFAULT_SERVER_DATETIME_FORMAT),
+        'date_end_real'     : lambda *a: time.strftime(DEFAULT_SERVER_DATETIME_FORMAT),
+        'state'             : 'draft',
+        'user_id'           : lambda obj, cr, uid, context: uid,
+        'parameter_distance': lambda s, cr, uid, c: int(s.pool.get('ir.config_parameter').get_param(cr, uid, 'tms_property_update_vehicle_distance', context=c)[0]),
         }
     
     _sql_constraints = [
@@ -245,7 +248,7 @@ class tms_travel(osv.osv):
 
     def onchange_route_id(self, cr, uid, ids, route_id, unit_id, trailer1_id, dolly_id, trailer2_id):
         if not route_id:
-            return {'value': {'distance_route': 0.00, 'fuel_efficiency_expected': 0.00}}
+            return {'value': {'distance_route': 0.00, 'distance_extraction': 0.0, 'fuel_efficiency_expected': 0.00}}
         val = {}        
         route = self.pool.get('tms.route').browse(cr, uid, route_id)
         distance  = route.distance
@@ -270,6 +273,7 @@ class tms_travel(osv.osv):
 
         val = {
             'distance_route'            : distance,
+            'distance_extraction'       : distance,
             'fuel_efficiency_expected'  : fuel_efficiency_expected,
             'expense_driver_factor'     : factors,
             }
@@ -327,7 +331,30 @@ class tms_travel(osv.osv):
                     raise osv.except_osv(
                         _('Could not cancel Travel !'),
                         _('You must first cancel all Advances for Drivers attached to this Travel.'))
-            self.write(cr, uid, ids, {'state':'cancel', 'cancelled_by':uid,'date_cancelled':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
+
+            if not travel.parameter_distance:
+                    raise osv.except_osv(
+                        _('Could not Confirm Expense Record !'),
+                        _('Parameter to determine Vehicle distance update from does not exist.'))
+            elif travel.parameter_distance == 2: # Revisamos el parametro (tms_property_update_vehicle_distance) donde se define donde se actualizan los kms/millas a las unidades 
+                unit_obj = self.pool.get('flee.vehicle')
+                odom_obj = self.pool.get('fleet.vehicle.odometer')
+                res = odom_obj.search(cr, uid, [('tms_travel_id', '=', travel.id)])
+                for odom_rec in odom_obj.browse(cr, uid, res):
+                    unit_odometer = unit_obj.browse(cr, uid, [odom_rec.vehicle_id.id])[0].odometer
+                    unit_obj.write(cr, uid, [odom_rec.vehicle_id.id],  {'odometer': unit_odometer - odom_rec.distance})
+                    device_odometer = odom_obj.browse(cr, uid, [odom_rec.odometer_id.id])[0].odometer_end
+                    odom_obj.write(cr, uid, [odom_rec.odometer_id.id],  {'odometer_end': device_odometer - odom_rec.distance})
+                odom_obj.unlink(cr, uid, res)
+
+
+        self.write(cr, uid, ids, {'state':'cancel', 'cancelled_by':uid,'date_cancelled':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
+
+
+
+
+
+
         for (id,name) in self.name_get(cr, uid, ids):
             message = _("Travel '%s' is cancelled.") % name
             self.log(cr, uid, id, message)
@@ -352,6 +379,20 @@ class tms_travel(osv.osv):
         return True
 
     def action_end(self, cr, uid, ids, context=None):
+        for travel in self.browse(cr, uid, ids):
+            if not travel.parameter_distance:
+                raise osv.except_osv(
+                    _('Could not End Travel !'),
+                    _('Parameter to determine Vehicle distance origin does not exist.'))
+            elif travel.parameter_distance == 1: #  parametro (tms_property_update_vehicle_distance) donde se define donde se actualizan los kms/millas a las unidades 
+                xdistance = travel.distance_extraction
+                self.create_odometer_log(cr, uid, travel.id, travel.unit_id.id, xdistance)
+                if travel.trailer1_id and travel.trailer1_id.id:
+                    self.create_odometer_log(cr, uid, travel_id, travel.trailer1_id.id, xdistance)
+                if travel.dolly_id and travel.dolly_id.id:
+                    self.create_odometer_log(cr, uid, travel.id, travel.dolly_id.id, xdistance)
+                if travel.trailer2_id and travel.trailer2_id.id:
+                    self.create_odometer_log(cr, uid, travel.id, travel.trailer2_id.id, xdistance)
 
         self.write(cr,uid,ids,{ 'state':'done',
                                 'ended_by':uid,
@@ -362,6 +403,32 @@ class tms_travel(osv.osv):
             self.log(cr, uid, id, message)
         return True
 
+
+    def create_odometer_log(self, cr, uid, travel_id, vehicle_id, distance, context=None):
+        vehicle = self.pool.get('fleet.vehicle').browse(cr, si.uid, [vehicle_id])[0]
+        odom_dev_obj = self.pool.get('fleet.vehicle.odometer.device')
+        odometer_id = odom_dev_obj.search(cr, uid, [('vehicle_id', '=', vehicle_id), ('state', '=','active')], context=context)
+        last_odometer = 0.0
+        if odometer_id and odometer_id[0]:
+            last_odometer = odom_dev_obj.browse(cr, uid, odometer_id)[0].odometer_end
+        else:
+            raise osv.except_osv(
+                _('Could not Confirm Expense Record!'),
+                _('There is no Active Odometer for Vehicle %s') % (expense.vehicle_id.name))
+           
+        values = { 'odometer_id'      : odometer_id[0],
+                   'vehicle_id'       : vehicle_id,
+                   'value'            : vehicle.odometer + distance,
+                   'last_odometer'    : last_odometer,
+                   'distance'         : distance,
+                   'current_odometer' : last_odometer + distance,
+                   'tms_travel_id'    : travel_id,
+                   }
+        res = self.pool.get('fleet.vehicle.odometer').create(cr, uid, values)
+        return
+
 tms_travel()
+
+
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

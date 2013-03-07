@@ -35,6 +35,7 @@ class tms_expense(osv.osv):
     _description = 'TMS Travel Expenses'
 
     def _invoiced(self, cr, uid, ids, field_name, args, context=None):
+        print "Entrando a _invoiced..."
         res = {}
         for record in self.browse(cr, uid, ids, context=context):
             invoiced = (record.invoice_id.id)
@@ -43,6 +44,7 @@ class tms_expense(osv.osv):
                                 'invoice_paid': paid,
                                 'invoice_name': record.invoice_id.supplier_invoice_number
                                 }
+        print res
         return res
 
 
@@ -104,7 +106,8 @@ class tms_expense(osv.osv):
                     fuel            += line.price_subtotal if (line.product_id.tms_category == 'fuel' and not line.fuel_voucher) else 0.0
                     tax_total       += line.tax_amount if line.product_id.tms_category != 'madeup_expense' else 0.0
                     tax_real        += line.tax_amount if (line.product_id.tms_category == 'real_expense' or (line.product_id.tms_category == 'fuel' and not line.fuel_voucher)) else 0.0            
-        
+
+
             subtotal_real = real_expense + fuel + salary + salary_retention + salary_discount
             total_real = subtotal_real + tax_real
             subtotal_total = subtotal_real + fuel_voucher
@@ -161,8 +164,8 @@ class tms_expense(osv.osv):
         'date': openerp.osv.fields.date('Date', required=True, select=True,readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
 
         'invoice_id': openerp.osv.fields.many2one('account.invoice','Invoice Record', readonly=True),
-        'invoiced':  openerp.osv.fields.function(_invoiced, method=True, string='Invoiced', type='boolean', multi='invoiced', store=True),
-        'invoice_paid':  openerp.osv.fields.function(_invoiced, method=True, string='Paid', type='boolean', multi='invoiced', store=True),
+        'invoiced':  openerp.osv.fields.function(_invoiced, method=True, string='Invoiced', type='boolean', multi='invoiced'),
+        'invoice_paid':  openerp.osv.fields.function(_invoiced, method=True, string='Paid', type='boolean', multi='invoiced'),
         'invoice_name':  openerp.osv.fields.function(_invoiced, method=True, string='Invoice', type='char', size=64, multi='invoiced', store=True),
 
         'expense_line': openerp.osv.fields.one2many('tms.expense.line', 'expense_id', 'Expense Lines', readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
@@ -202,9 +205,15 @@ class tms_expense(osv.osv):
         'amount_subtotal_total': openerp.osv.fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='SubTotal (All)', type='float', multi=True),
 
 
-        'distance_routes': openerp.osv.fields.function(_get_route_distance, string='Distance from routes', method=True, type='float', digits=(18,6), help="Routes Distance", multi="distance_route"),
-        'distance_real':  openerp.osv.fields.float('Distance Real', digits=(18,6), help="Route obtained by electronic reading and/or GPS"),
-       
+        'vehicle_id'        : openerp.osv.fields.many2one('fleet.vehicle', 'Vehicle'),
+        'odometer_id'       : openerp.osv.fields.many2one('fleet.vehicle.odometer.device', 'Odometer'),
+        'last_odometer'     : openerp.osv.fields.float('Last Read', digits=(16,2)),        
+        'vehicle_odometer'  : openerp.osv.fields.float('Vehicle Odometer', digits=(16,2)),
+        'current_odometer'  : openerp.osv.fields.float('Current Read', digits=(16,2)),
+        'distance_routes'   : openerp.osv.fields.function(_get_route_distance, string='Distance from routes', method=True, type='float', digits=(16,2), help="Routes Distance"),
+        'distance_real'     : openerp.osv.fields.float('Distance Real', digits=(16,2), help="Route obtained by electronic reading and/or GPS"),
+        'odometer_log_id'   : openerp.osv.fields.many2one('fleet.vehicle.odometer', 'Odometer Record'),
+
         'create_uid' : openerp.osv.fields.many2one('res.users', 'Created by', readonly=True),
         'create_date': openerp.osv.fields.datetime('Creation Date', readonly=True, select=True),
         'cancelled_by' : openerp.osv.fields.many2one('res.users', 'Cancelled by', readonly=True),
@@ -221,7 +230,7 @@ class tms_expense(osv.osv):
         
         'fuelvoucher_ids':openerp.osv.fields.one2many('tms.fuelvoucher', 'expense_id', string='Fuel Vouchers', readonly=True),
         'advance_ids':openerp.osv.fields.one2many('tms.advance', 'expense_id', string='Advances', readonly=True),
-
+        'parameter_distance': openerp.osv.fields.integer('Distance Parameter', help="1 = Travel, 2 = Travel Expense, 3 = Manual, 4 = Tyre"),
 
     }
     _defaults = {
@@ -229,6 +238,7 @@ class tms_expense(osv.osv):
         'expense_policy'    : 'manual',
         'state'             : lambda *a: 'draft',
         'currency_id'       : lambda self,cr,uid,c: self.pool.get('res.users').browse(cr, uid, uid, c).company_id.currency_id.id,
+        'parameter_distance': lambda s, cr, uid, c: int(s.pool.get('ir.config_parameter').get_param(cr, uid, 'tms_property_update_vehicle_distance', context=c)[0]),
     }
     _sql_constraints = [
         ('name_uniq', 'unique(name)', 'Expense record must be unique !'),
@@ -247,10 +257,17 @@ class tms_expense(osv.osv):
                     first = False
         return True
 
+
+    def _check_odometer(self, cr, uid, ids, context=None):         
+        for record in self.browse(cr, uid, ids, context=context):
+            if record.current_odometer <= record.last_odometer:
+                return False
+            return True
+
     _constraints = [
         (_check_units_in_travels, 'You can not create a Travel Expense Record with several units.', ['travel_ids']),
+        (_check_odometer, 'You can not have Current Reading <= Last Reading !', ['current_odometer']),
     ]
-
 
     _order = 'name desc'
 
@@ -333,7 +350,7 @@ class tms_expense(osv.osv):
                         'product_uom_qty'   : 1,
                         'price_unit'        : result,
                         'control'           : True,
-                        'tax_id'            : products['salary']['taxes'],
+                        #'tax_id'            : products['salary']['taxes'],
                         }
 
                 print "//////////////////////"
@@ -383,16 +400,91 @@ class tms_expense(osv.osv):
                 travel_obj.write(cr, uid, [travel.id], {'expense_id': expense.id, 'state':'closed','closed_by':uid,'date_closed':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
         return
 
+    def on_change_travel_ids(self, cr, uid, ids, travel_ids, context=None):
+        res = {'value' : 
+                           {'unit_id'          : False,
+                            'vehicle_id'       : False,
+                            'vehicle_odometer' : False,
+                            'odometer_id'      : False,
+                            'last_odometer'    : 0.0,
+                            'distance_real'    : 0.0,
+                            } 
+                           }
+
+        print "travel_ids: ", travel_ids
+        distance_extraction = 0.0
+        for expense in self.browse(cr, uid, ids):
+            for travel in expense.travel_ids:
+                distance_extraction += travel.distance_extraction
+
+        travels = []
+        for rec in travel_ids[0][2]:
+            travels.append(rec)
+        print travels
+        if len(travels):
+            cr.execute("select sum(distance_extraction), unit_id from tms_travel where id in %s group by unit_id limit 1;",(tuple(travels),))
+            data = cr.fetchall()
+            if not len(data):
+                raise osv.except_osv(_('Warning !'),
+                                     _('There is no information about the Travel you just selected...'))
+            print data
+
+            distance_extraction = data[0][0] if len(data) else 0.0
+            unit_id = data[0][1]
+            odom_obj = self.pool.get('fleet.vehicle.odometer.device')
+            odometer_id = odom_obj.search(cr, uid, [('vehicle_id', '=', unit_id), ('state', '=','active')], context=context)
+            if odometer_id and odometer_id[0]:
+                for odometer in odom_obj.browse(cr, uid, odometer_id):      
+                    res = {'value' : 
+                           {'unit_id'          : unit_id,
+                            'vehicle_id'       : unit_id,
+                            'vehicle_odometer' : self.pool.get('fleet.vehicle').browse(cr, uid, [unit_id])[0].odometer,
+                            'odometer_id'      : odometer_id[0],
+                            'last_odometer'    : odometer.odometer_end,
+                            'distance_real'    : distance_extraction,
+                            } 
+                           }
+            else:
+                raise osv.except_osv(
+                        _('Record Warning !'),
+                        _('There is no Active Odometer for vehicle %s') % (travel.unit_id.name))     
+        print res
+        return res
+
+    def on_change_current_odometer(self, cr, uid, ids, vehicle_id, last_odometer, current_odometer, context=None):
+        distance = current_odometer - last_odometer
+        accum = self.pool.get('fleet.vehicle').browse(cr, uid, [vehicle_id], context=context)[0].odometer + distance
+        return {'value': {
+                        'distance_real'    : distance,
+                        'vehicle_odometer' : accum,
+                        }    
+                }
+        
+    def on_change_distance_real(self, cr, uid, ids, vehicle_id, last_odometer, distance_real, context=None):
+        current_odometer = last_odometer + distance_real
+        accum = self.pool.get('fleet.vehicle').browse(cr, uid, [vehicle_id], context=context)[0].odometer + distance_real
+        return {'value': {
+                        'current_odometer' : current_odometer,
+                        'vehicle_odometer' : accum,
+                        }    
+                }
+
+
+    def on_change_vehicle_odometer(self, cr, uid, ids, vehicle_id, last_odometer, vehicle_odometer, context=None):
+        distance = vehicle_odometer - self.pool.get('fleet.vehicle').browse(cr, uid, [vehicle_id], context=context)[0].odometer
+        current_odometer = last_odometer + distance
+        return {'value': {
+                        'current_odometer' : current_odometer,
+                        'distance_real'    : distance,
+                        }    
+                }
+
 
     def write(self, cr, uid, ids, vals, context=None):
-        print "vals en metodo write:", vals
         super(tms_expense, self).write(cr, uid, ids, vals, context=context)
 
         if 'state' in vals and vals['state'] not in ('cancel', 'confirmed') :
-            print "Antes,,,"
             self.get_salary_advances_and_fuel_vouchers(cr, uid, ids, vals)
-            print "Despues,,,"
-
         return True
 
 
@@ -425,15 +517,66 @@ class tms_expense(osv.osv):
         return True
 
 
-    def action_confirm(self, cr, uid, ids, context=None):
-        exp_invoice = self.pool.get('tms.expense.invoice')
-        exp_invoice.makeInvoices(cr, uid, ids, context=None)
-        for expense in self.browse(cr, uid, ids, context=None):           
+    def action_confirm(self, cr, uid, ids, context=None):                
+        for expense in self.browse(cr, uid, ids, context=None):
+            current_odometer = self.pool.get('fleet.vehicle').browse(cr, uid, [expense.vehicle_id.id], context=context)[0].odometer
+            if expense.vehicle_id.odometer != current_odometer:
+                raise osv.except_osv(
+                    _('Could not Confirm Expense Record!'),
+                    _('Current Vehicle Odometer is grater than this Expense Record. You will have to cancel this Record and create a new one. Current Vehicle Odometer: %s Expense Record Odometer: %s') % (current_odometer, expense.vehicle_id.odometer))
+
+# Falta modificar la clase tms_travel para que por defecto ponga los kms de la ruta en la lectura para que no quede vacio            
+
+            if not expense.parameter_distance:
+                raise osv.except_osv(
+                    _('Could not Confirm Expense Record !'),
+                    _('Parameter to determine Vehicle distance update from does not exist.'))
+            
+            elif expense.parameter_distance == 2: # Revisamos el parametro (tms_property_update_vehicle_distance) donde se define donde se actualizan los kms/millas a las unidades 
+                
+                distance_real = distance_routes = 0.0
+                for travel in expense.travel_ids:
+                    distance_real += travel.distance_extraction
+                    distance_routes += travel.distance_route
+                for travel in expense.travel_ids:
+                    xdistance = (travel.distance_route / distance_routes) * distance_real if distance_real != expense.distance_real else travel.distance_extraction
+                    self.create_odometer_log(cr, uid, expense.id, travel.id, expense.vehicle_id.id, xdistance)
+                    if travel.trailer1_id and travel.trailer1_id.id:
+                        self.create_odometer_log(cr, uid, expense.id, travel_id, travel.trailer1_id.id, xdistance)
+                    if travel.dolly_id and travel.dolly_id.id:
+                        self.create_odometer_log(cr, uid, expense.id, travel.id, travel.dolly_id.id, xdistance)
+                    if travel.trailer2_id and travel.trailer2_id.id:
+                        self.create_odometer_log(cr, uid, expense.id, travel.id, travel.trailer2_id.id, xdistance)
             for (id,name) in self.name_get(cr, uid, ids, context=None):
                 message = _("Travel Expense Record '%s' is set to confirmed.") % name
                 self.log(cr, uid, id, message)
+        exp_invoice = self.pool.get('tms.expense.invoice')
+        exp_invoice.makeInvoices(cr, uid, ids, context=None)
         return True
 
+    def create_odometer_log(self, cr, uid, expense_id, travel_id, vehicle_id, distance, context=None):
+        vehicle = self.pool.get('fleet.vehicle').browse(cr, uid, [vehicle_id])[0]
+        odom_dev_obj = self.pool.get('fleet.vehicle.odometer.device')
+        odometer_id = odom_dev_obj.search(cr, uid, [('vehicle_id', '=', vehicle_id), ('state', '=','active')], context=context)
+        last_odometer = 0.0
+        if odometer_id and odometer_id[0]:
+            last_odometer = odom_dev_obj.browse(cr, uid, odometer_id)[0].odometer_end
+        else:
+            raise osv.except_osv(
+                _('Could not Confirm Expense Record!'),
+                _('There is no Active Odometer for Vehicle %s') % (expense.vehicle_id.name))
+           
+        values = { 'odometer_id'      : odometer_id[0],
+                   'vehicle_id'       : vehicle_id,
+                   'value'            : vehicle.odometer + distance,
+                   'last_odometer'    : last_odometer,
+                   'distance'         : distance,
+                   'current_odometer' : last_odometer + distance,
+                   'tms_expense_id'   : expense_id,
+                   'tms_travel_id'    : travel_id,
+                   }
+        res = self.pool.get('fleet.vehicle.odometer').create(cr, uid, values)
+        return
 
 # Adding relation between Advances and Travel Expenses
 class tms_advance(osv.osv):
@@ -650,8 +793,22 @@ class tms_expense_cancel(osv.osv_memory):
                 advance_obj.write(cr, uid, record_ids, {'expense_id': False, 'state':'confirmed','closed_by':False,'date_closed':False})
     
                 travel_obj.write(cr, uid, travel_ids, {'expense_id': False, 'state':'done','closed_by':False,'date_closed':False})
-        
-                
+
+
+                if not expense.parameter_distance:
+                    raise osv.except_osv(
+                        _('Could not Confirm Expense Record !'),
+                        _('Parameter to determine Vehicle distance update from does not exist.'))
+                elif expense.parameter_distance == 2: # Revisamos el parametro (tms_property_update_vehicle_distance) donde se define donde se actualizan los kms/millas a las unidades 
+                    unit_obj = self.pool.get('flee.vehicle')
+                    odom_obj = self.pool.get('fleet.vehicle.odometer')
+                    res = odom_obj.search(cr, uid, [('tms_travel_id', 'in', tuple(travel_ids),)])
+                    for odom_rec in odom_obj.browse(cr, uid, res):
+                        unit_odometer = unit_obj.browse(cr, uid, [odom_rec.vehicle_id.id])[0].odometer
+                        unit_obj.write(cr, uid, [odom_rec.vehicle_id.id],  {'odometer': unit_odometer - odom_rec.distance})
+                        device_odometer = odom_obj.browse(cr, uid, [odom_rec.odometer_id.id])[0].odometer_end
+                        odom_obj.write(cr, uid, [odom_rec.odometer_id.id],  {'odometer_end': device_odometer - odom_rec.distance})
+                    odom_obj.unlink(cr, uid, res)  
 
         return {'type': 'ir.actions.act_window_close'}
 

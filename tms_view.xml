@@ -9,6 +9,8 @@
         <menuitem id="menu_tms_config_unit" name="Units" parent="menu_tms_config" sequence="2"/>
         <menuitem id="menu_tms_config_routes" name="Routes" parent="menu_tms_config" sequence="2"/>
         <menuitem id="menu_tms_config_waybill" name="Waybill" parent="menu_tms_config" sequence="2"/>
+	
+	<menuitem action="fleet.fleet_vehicle_odometer_act" parent="menu_tms_travels" id="tms_fleet_vehicle_odometer_menu" groups="fleet.group_fleet_user" sequence="90"/>
 
 <!-- 
 ##############################
@@ -64,12 +66,12 @@ TMS.UNIT.CATEGORY
                 <form string="Unit Categories" version="7.0">
                     <sheet>
                         <h1>
-                            <label string="Category"/>
+                            <label string="Name"/>
                             <field name="name" class="oe_inline"/>
                         </h1>
-					    <group col="4" colspan="4">
-                            <field name="parent_id" />
+			<group col="4" colspan="4">
                             <field name="type" select="1"/>
+		  	    <field name="parent_id" />
                             <field name="active" select="1"/>
                             <field name="sequence" />
                             <field name="mandatory" attrs="{'invisible':[('type','!=','expiry')]}"/>
@@ -98,10 +100,11 @@ TMS.UNIT.CATEGORY
     </record>
 
 <!-- Menu for tms.unit.category (Types, Brands, Models, Motor Type for Transportation Units) -->
-    <menuitem name="Unit Categories" 
+    <menuitem name="Vehicles Related Catalogs" 
               parent="menu_tms_config_unit" 
               id="menu_tms_config_unit_category_form" 
-              action="open_view_tms_unit_category_form"/>
+              action="open_view_tms_unit_category_form"
+	      sequence="20"/>
 
 <!-- 
 ##############################
@@ -183,9 +186,16 @@ FLEET.VEHICLE - (former TMS.UNIT)
                                 <group>
                                     <label for="odometer" />
                                     <div>
-                                        <field name="odometer" class="oe_inline"/>
+                                        <field name="odometer" class="oe_inline" readonly="1"/>
                                         <field name="odometer_unit" class="oe_inline"/>
+                    					<newline />
                                     </div>
+                                    <label for="active_odometer_id" />
+                                    <div>
+                                        <field name="active_odometer_id" class="oe_inline" readonly="1"/>
+                                        <newline />
+                                    </div>
+                 		    <field name="current_odometer_read" readonly="1"/>
                                     <field name="acquisition_date" />
                                     <field name="car_value" />
                                 </group>
@@ -251,25 +261,25 @@ FLEET.VEHICLE - (former TMS.UNIT)
                                 </field>
                             </group>
                         </page>
-				        <page string="More Images...">
+		        <page string="More Images...">
                             <field name="unit_photo_ids" nolabel="1" >
-						        <tree string="Unit Photos">
-							        <field name="name"/>
-						        </tree>
-						        <form string="Unit Photos">
+			        <tree string="Unit Photos">
+				        <field name="name"/>
+			        </tree>
+			        <form string="Unit Photos">
                                     <group colspan="4">
-							            <separator string="Image Description" colspan="4"/>
-							            <field name="name" colspan="4" nolabel="1"/>
-							            <field name="photo" widget='image' nolabel="1" colspan="4"/>
+				            <separator string="Image Description" colspan="4"/>
+				            <field name="name" colspan="4" nolabel="1"/>
+				            <field name="photo" widget='image' nolabel="1" colspan="4"/>
                                     </group>
-						        </form>
-					        </field>
+			        </form>
+		            </field>
                         </page>
                         <page string="Active/Inactive History">
-                            <field name="unit_active_history_ids" nolabel="1" />
+                            <field name="unit_active_history_ids" nolabel="1" /> 
                         </page>
                         <page string="Red Tapes">
-                            <field name="unit_red_tape_ids" nolabel="1" />
+                            <field name="unit_red_tape_ids" nolabel="1" /> 
                         </page>
                         <page string="Notes">
                             <field name="notes" nolabel="1" />
@@ -303,195 +313,27 @@ FLEET.VEHICLE - (former TMS.UNIT)
             </field>
         </record>
 
-
-
-
-<!-- SEARCH View for fleet.vehicle (Transportation Units) 
-        <record id="view_tms_unit_search" model="ir.ui.view">
-            <field name="name">fleet.vehicle.search</field>
-            <field name="model">fleet.vehicle</field>
-            <field name="type">search</field>
-            <field name="arch" type="xml">
-                <search string="Units">
-                   <filter string="Motorized Units" icon="terp-accessories-archiver" domain="[('fleet_type','=','tractor')]"/>
-                   <filter string="Trailers" icon="terp-accessories-archiver" domain="[('fleet_type','=','trailer')]"/>
-                   <filter string="Dolly's" icon="terp-accessories-archiver" domain="[('fleet_type','=','dolly')]"/>
-                   <filter string="Others" icon="terp-accessories-archiver" domain="[('fleet_type','=','other')]"/>
-                   <separator orientation="vertical"/>
-                   <field name="name"/>
-                   <field name="employee_id" />
-                   <field name="unit_extradata_ids" />
-                   <field name="unit_expiry_ids" />
-                   <newline/>
-                   <group  expand='0' string='More filters...'> 
-                   <field name="company_id"/>
-                   <field name="active" />
-                   <field name="plates" />
-                   </group>
-                   <newline/>
-                   <group  expand='0' string='Group by...'> 
-                       <filter string='Fleet Unit Type' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'fleet_type'}" />
-                       <separator orientation="vertical"/>                                                                
-                       <filter string='Unit Type' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'unit_type_id'}" />
-                       <separator orientation="vertical"/>
-                       <filter string='Brand' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'unit_brand_id'}" />
-                       <separator orientation="vertical"/>
-                       <filter string='Model' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'unit_model_id'}" />
-                       <separator orientation="vertical"/>
-                       <filter string='Motor' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'unit_motor_id'}" />
-                   </group>
-                </search>
-            </field>
-        </record>
--->
-
-<!-- TREE View for fleet.vehicle (Transportation Units) 
-	<record model="ir.ui.view" id="view_tms_unit_tree">
-        <field name="name">fleet.vehicle.tree</field>
-        <field name="model">fleet.vehicle</field>
-		<field name="type">tree</field>
-		<field name="arch" type="xml">
-            <tree string="Units">
-                <field name="name" />
-                <field name="fleet_type"/>
-                <field name="company_id" />
-                <field name="active"/>
-                <field name="year_model" />
-                <field name="unit_type_id" />
-                <field name="unit_brand_id" />
-                <field name="unit_model_id" />
-                <field name="unit_motor_id" />
-                <field name="plates" />
-                <field name="gps_supplier_id" />
-	        <field name="employee_id"/>
-		    </tree>
-		</field>
-	</record>
--->
-<!-- FORM View for fleet.vehicle (Transportation Units) 
-
-        <record id="view_tms_unit_form" model="ir.ui.view">
-            <field name="name">fleet.vehicle.form</field>
-            <field name="model">fleet.vehicle</field>
-            <field name="type">form</field>
-            <field name="arch" type="xml">
-                <form string="Units" version="7.0">
-                    <sheet>
-                        <h1>
-                            <label string="Unit"/>
-                            <field name="name" class="oe_inline"/>
-                        </h1>
-                        <group col="4">
-                            <field name="fleet_type"/>
-                            <field name="shop_id" />
-					        <field name="supplier_unit"/>
-					        <field name="supplier_id" attrs="{'required':[('supplier_unit','=',True)], 'invisible':[('supplier_unit','=',False)]}"/>
-                            <field name="active" readonly="1"/>
-                        </group>
-                        <notebook colspan="4">
-                            <page string="General Data">
-                                <group col="4">
-                                    <field name="year_model" />
-                                    <field name="unit_type_id" context="{'default_type':'unit_type'}"/>
-                                    <field name="unit_brand_id" context="{'default_type':'brand'}"/>
-                                    <field name="unit_model_id" context="{'default_type':'model'}" domain="[('parent_id', '=', unit_brand_id)]"/>
-                                    <field name="unit_motor_id" context="{'default_type':'motor'}" />
-                                    <field name="serial_number" />
-                                    <field name="vin" />
-                                    <field name="plates" />
-                                    <field name="registration" />
-                                    <field name="employee_id" context="{'default_tms_category':'driver'}" domain="[('tms_category', '=', 'driver')]"/>
-                                    <field name="day_no_circulation"/>
-                                </group>
-                            </page>
-                            <page string="Extra Data">
-                                <group colspan="4" col="4">
-                                    <field name="unit_extradata_ids" nolabel="1" widget="one2many_list" >
-                                        <tree string="Extra Data" editable="bottom">
-                                            <field name="extra_data_id" context="{'default_type':'extra_data'}" />
-                                            <field name="extra_value" />
-                                        </tree>
-                                        <form string="Extra Data">
-                                            <group colspan="4">
-                                                <field name="extra_data_id" context="{'default_type':'extra_data'}" />
-                                                <field name="extra_value" />
-                                            </group>
-                                        </form>
-                                    </field>
-                                    <field name="unit_expiry_ids" nolabel="1" >
-                                        <tree string="Expiry Data" editable="bottom">
-                                            <field name="expiry_id" context="{'default_type':'expiry'}" />
-                                            <field name="extra_value" on_change="on_change_extra_value(extra_value)"/>
-                                            <field name="name" invisible="1"/>
-                                        </tree>
-                                        <form string="Extra Data">
-                                            <group colspan="4">
-                                                <field name="expiry_id" context="{'default_type':'expiry'}" />
-                                                <field name="extra_value" />
-                                            </group>
-                                        </form>
-                                    </field>
-                                </group>
-                            </page>
-						    <page string="Images">
-                                <field name="unit_photo_ids" nolabel="1" >
-								    <tree string="Unit Photos">
-									    <field name="name"/>
-								    </tree>
-								    <form string="Unit Photos">
-                                        <group colspan="4">
-									        <separator string="Image Description" colspan="4"/>
-									        <field name="name" colspan="4" nolabel="1"/>
-									        <field name="photo" widget='image' nolabel="1" colspan="4"/>
-                                        </group>
-								    </form>
-							    </field>
-                            </page>
-                            <page string="GPS">
-                                <group col="4">
-                                    <field name="gps_supplier_id"/>
-                                    <field name="gps_id" attrs="{'required':[('gps_supplier_id','!=',False)]}"/>
-                                </group>
-                            </page>
-                            <page string="Active/Inactive History">
-                                <field name="unit_active_history_ids" nolabel="1" />
-                            </page>
-                            <page string="Red Tapes">
-                                <field name="unit_red_tape_ids" nolabel="1" />
-                            </page>
-                            <page string="Notes">
-                                <field name="notes" nolabel="1" />
-                            </page>
-                        </notebook>
-                    </sheet>
-                    <div class="oe_chatter">
-                        <field name="message_follower_ids" widget="mail_followers"/>
-                        <field name="message_ids" widget="mail_thread" placeholder="Share a message..."/>
-                    </div>
-                </form>
-            </field>
-        </record>
--->
 <!-- Action for fleet.vehicle (Transportation Units) -->
     <record model="ir.actions.act_window" id="open_view_tms_unit_form">
-        <field name="name">TMS Units</field>
+        <field name="name">Vehicles - TMS</field>
         <field name="res_model">fleet.vehicle</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
     </record>
 
 <!-- Menu for fleet.vehicle (Transportation Units) -->
-    <menuitem name="Units" 
+    <menuitem name="Vehicles" 
               parent="menu_tms_config_unit" 
               id="menu_tms_config_unit_form" 
-              action="open_view_tms_unit_form"/>
+              action="open_view_tms_unit_form"
+	      sequence="21"/>
 
 <!-- 
 ##############################
 TMS.UNIT.KIT
 ##############################
 -->
-<!-- SEARCH View for tms.unit.kit (Transportation Units Kits) --> 
+<!-- SEARCH View for tms.unit.kit (Vehicle Kits) --> 
         <record id="view_tms_unit_kit_search" model="ir.ui.view">
             <field name="name">tms.unit.kit.search</field>
             <field name="model">tms.unit.kit</field>
@@ -504,7 +346,7 @@ TMS.UNIT.KIT
                    <field name="trailer1_id" />
                    <field name="dolly_id" />
                    <field name="trailer2_id" />
-				<newline />
+		   <newline />
                    <field name="employee_id" />
                    <field name="date_start" />
                    <field name="date_end" />
@@ -595,7 +437,8 @@ TMS.UNIT.KIT
     <menuitem name="Units Kits" 
               parent="menu_tms_config_unit" 
               id="menu_tms_config_unit_kit_form" 
-              action="open_view_tms_unit_kit_form"/>
+              action="open_view_tms_unit_kit_form"
+		sequence="22"/>
 
 <!-- 
 ##############################
@@ -1002,7 +845,8 @@ TMS.UNIT.ACTIVE_HISTORY
     <menuitem name="Activate/Inactivate Units" 
               parent="menu_tms_config_unit" 
               id="menu_tms_config_unit_active_history_form" 
-              action="open_view_tms_unit_active_history_form"/>
+              action="open_view_tms_unit_active_history_form"
+		sequence="23"/>
 
 <!-- 
 ##############################
@@ -1128,12 +972,149 @@ TMS.UNIT.red_tape
     <menuitem name="Unit Red Tapes" 
               parent="menu_tms_config_unit" 
               id="menu_tms_config_unit_red_tape_form" 
-              action="open_view_tms_unit_red_tape_form"/>
+              action="open_view_tms_unit_red_tape_form"
+		sequence="24"/>
 
 <!-- Take some config menu from Fleet module -->
-        <menuitem action="fleet.fleet_vehicle_model_act" parent="menu_tms_config_unit" id="tms_fleet_vehicle_model_menu" groups="base.group_no_one"/>
-        <menuitem action="fleet.fleet_vehicle_model_brand_act" parent="menu_tms_config_unit" id="tms_fleet_vehicle_model_brand_menu" groups="base.group_no_one"/>
-        <menuitem action="fleet.fleet_vehicle_state_act" parent="menu_tms_config_unit" id="tms_fleet_vehicle_state_menu" groups="fleet.group_fleet_manager"/>
+        <menuitem action="fleet.fleet_vehicle_model_act" parent="menu_tms_config_unit" id="tms_fleet_vehicle_model_menu" sequence="10"/>
+        <menuitem action="fleet.fleet_vehicle_model_brand_act" parent="menu_tms_config_unit" id="tms_fleet_vehicle_model_brand_menu" sequence="11"/>
+        <menuitem action="fleet.fleet_vehicle_state_act" parent="menu_tms_config_unit" id="tms_fleet_vehicle_state_menu" groups="fleet.group_fleet_manager" sequence="12"/>
+
+<!-- 
+##############################
+fleet.vehicle.odometer.device
+##############################
+-->
+<!-- SEARCH View for fleet.vehicle.odometer.device --> 
+        <record id="view_fleet_vehicle_odometer_device_search" model="ir.ui.view">
+            <field name="name">fleet.vehicle.odometer.device.search</field>
+            <field name="model">fleet.vehicle.odometer.device</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Vehicle Odometer Device">
+                   <field name="vehicle_id" />
+                   <field name="name" />
+                   <filter string="Active" icon="terp-accessories-archiver" domain="[('state' , '=' , 'active')]" />
+                   <filter string="Inactive" icon="terp-accessories-archiver" domain="[('state' , '=' , 'inactive')]" />
+                   <filter string="Draft" icon="terp-accessories-archiver" domain="[('state' , '=' , 'draft')]" />
+                   <filter string="Cancel" icon="terp-accessories-archiver" domain="[('state' , '=' , 'cancel')]" />
+                   <group  expand='0' string='Group by...'>
+                       <filter string='State' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'state'}" />
+                       <filter string='Vehicle' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'vehicle_id'}" />
+                       <separator orientation="vertical"/>
+                       <filter string='Date' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'date'}" />
+                   </group>
+                </search>
+            </field>
+        </record>
+
+<!-- TREE View for fleet.vehicle.odometer.device --> 
+	<record model="ir.ui.view" id="view_fleet_vehicle_odometer_device_tree">
+        <field name="name">fleet.vehicle.odometer.device.tree</field>
+        <field name="model">fleet.vehicle.odometer.device</field>
+		<field name="type">tree</field>
+		<field name="arch" type="xml">
+		    <tree string="Vehicle Odometer Device" colors="gray:state=='cancel';red:state=='draft';gray:state=='inactive';blue:state=='active';">
+		        <field name="state"/>
+		        <field name="date"/>
+		        <field name="date_start"/>
+		        <field name="date_end"/>
+		        <field name="name"/>
+		        <field name="vehicle_id" />
+		        <field name="accumulated_start"/>
+		        <field name="odometer_start" />
+		        <field name="odometer_end" />
+		        <field name="replacement_of"/>
+		    </tree>
+		</field>
+	</record>
+
+<!-- FORM View for fleet.vehicle.odometer.device -->
+
+        <record id="view_fleet_vehicle_odometer_device_form" model="ir.ui.view">
+            <field name="name">fleet.vehicle.odometer.device.form</field>
+            <field name="model">fleet.vehicle.odometer.device</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Vehicle Odometer Device" version="7.0">
+                    <header>
+                        <button name="action_cancel" states="draft" string="Cancel" type="object"/>
+                        <button name="action_activate" states="draft" string="Activate" type="object" icon="gtk-go-forward" class="oe_highlight" />
+                        <button name="action_inactivate" states="active" string="Inactivate" type="object" icon="gtk-goto-last" />
+                        <field name="state" widget="statusbar" statusbar_visible="cancel,draft,active,inactive"/>
+                    </header>
+                    <sheet>
+                        <h1>
+                            <label string="Odometer History"/>
+                        </h1>
+                        <group col="4">
+                            <field name="name" colspan="4"/>
+                            <field name="vehicle_id"  on_change="on_change_vehicle_id(vehicle_id, date_start)"/>
+                            <field name="date"/>
+                            <field name="date_start" />
+                            <field name="date_end" />
+                            <field name="replacement_of" invisible="1"/>
+                            <field name="accumulated_start" invisible="1" />
+                            <field name="odometer_start" />
+                            <field name="odometer_end" />
+			    <separator string="Odometer Readings" colspan="4" />
+                            <field name="odometer_reading_ids" nolabel="1" colspan="4"/>
+			</group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread" placeholder="Share a message..."/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+       <record id="view_fleet_vehicle_odometer_device" model="ir.ui.view">
+            <field name="name">fleet.vehicle.odometer.device.gantt</field>
+            <field name="model">fleet.vehicle.odometer.device</field>
+            <field name="arch" type="xml">
+                <gantt date_start="date_start" date_stop="date_end" string="Odometer History" default_group_by="vehicle_id" color="vehicle_id">
+                </gantt>
+            </field>
+        </record>
+
+<!-- Action for fleet.vehicle.odometer.device -->
+    <record model="ir.actions.act_window" id="open_view_fleet_vehicle_odometer_device_form">
+        <field name="name">Vehicle Odometer Device</field>
+        <field name="res_model">fleet.vehicle.odometer.device</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form,gantt</field>
+    </record>
+
+<!-- Menu for fleet.vehicle.odometer.device -->
+    <menuitem name="Vehicle Odometer Device" 
+              parent="menu_tms_config_unit" 
+              id="menu_tms_config_fleet_vehicle_odometer_device_form" 
+              action="open_view_fleet_vehicle_odometer_device_form"
+		sequence="24"/>
+
+
+<!-- #######################################
+FLEET.VEHICLE.ODOMETER
+###################################### -->
+        <record id="fleet_vehicle_odometer_inherit_tms" model="ir.ui.view">
+            <field name="name">fleet.vehicle.odometer.tree.tms</field>
+            <field name="model">fleet.vehicle.odometer</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="fleet.fleet_vehicle_odometer_tree"/>
+            <field name="arch" type="xml">
+                <field name="vehicle_id" position="after">
+                    <field name="odometer_id"/>
+                    <field name="last_odometer" invisible="1"/>
+                    <field name="current_odometer"  on_change="on_change_current_odometer(vehicle_id,last_odometer, current_odometer)"/>
+                    <field name="distance"   on_change="on_change_distance(vehicle_id, last_odometer, distance)"/>
+                </field>
+		<field name="unit" position="after">
+		  <field name="tms_expense_id" />  
+		  <field name="tms_travel_id" />  
+		</field>
+            </field>
+        </record>
 
 
 </data>
