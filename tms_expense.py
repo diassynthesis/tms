@@ -533,20 +533,20 @@ class tms_expense(osv.osv):
                     _('Parameter to determine Vehicle distance update from does not exist.'))
             
             elif expense.parameter_distance == 2: # Revisamos el parametro (tms_property_update_vehicle_distance) donde se define donde se actualizan los kms/millas a las unidades 
-                
+                odom_obj = self.pool.get('fleet.vehicle.odometer')
                 distance_real = distance_routes = 0.0
                 for travel in expense.travel_ids:
                     distance_real += travel.distance_extraction
                     distance_routes += travel.distance_route
                 for travel in expense.travel_ids:
                     xdistance = (travel.distance_route / distance_routes) * distance_real if distance_real != expense.distance_real else travel.distance_extraction
-                    self.create_odometer_log(cr, uid, expense.id, travel.id, expense.vehicle_id.id, xdistance)
+                    odom_obj.create_odometer_log(cr, uid, expense.id, travel.id, expense.vehicle_id.id, xdistance)
                     if travel.trailer1_id and travel.trailer1_id.id:
-                        self.create_odometer_log(cr, uid, expense.id, travel_id, travel.trailer1_id.id, xdistance)
+                        odom_obj.create_odometer_log(cr, uid, expense.id, travel_id, travel.trailer1_id.id, xdistance)
                     if travel.dolly_id and travel.dolly_id.id:
-                        self.create_odometer_log(cr, uid, expense.id, travel.id, travel.dolly_id.id, xdistance)
+                        odom_obj.create_odometer_log(cr, uid, expense.id, travel.id, travel.dolly_id.id, xdistance)
                     if travel.trailer2_id and travel.trailer2_id.id:
-                        self.create_odometer_log(cr, uid, expense.id, travel.id, travel.trailer2_id.id, xdistance)
+                        odom_obj.create_odometer_log(cr, uid, expense.id, travel.id, travel.trailer2_id.id, xdistance)
             for (id,name) in self.name_get(cr, uid, ids, context=None):
                 message = _("Travel Expense Record '%s' is set to confirmed.") % name
                 self.log(cr, uid, id, message)
@@ -554,29 +554,6 @@ class tms_expense(osv.osv):
         exp_invoice.makeInvoices(cr, uid, ids, context=None)
         return True
 
-    def create_odometer_log(self, cr, uid, expense_id, travel_id, vehicle_id, distance, context=None):
-        vehicle = self.pool.get('fleet.vehicle').browse(cr, uid, [vehicle_id])[0]
-        odom_dev_obj = self.pool.get('fleet.vehicle.odometer.device')
-        odometer_id = odom_dev_obj.search(cr, uid, [('vehicle_id', '=', vehicle_id), ('state', '=','active')], context=context)
-        last_odometer = 0.0
-        if odometer_id and odometer_id[0]:
-            last_odometer = odom_dev_obj.browse(cr, uid, odometer_id)[0].odometer_end
-        else:
-            raise osv.except_osv(
-                _('Could not Confirm Expense Record!'),
-                _('There is no Active Odometer for Vehicle %s') % (expense.vehicle_id.name))
-           
-        values = { 'odometer_id'      : odometer_id[0],
-                   'vehicle_id'       : vehicle_id,
-                   'value'            : vehicle.odometer + distance,
-                   'last_odometer'    : last_odometer,
-                   'distance'         : distance,
-                   'current_odometer' : last_odometer + distance,
-                   'tms_expense_id'   : expense_id,
-                   'tms_travel_id'    : travel_id,
-                   }
-        res = self.pool.get('fleet.vehicle.odometer').create(cr, uid, values)
-        return
 
 # Adding relation between Advances and Travel Expenses
 class tms_advance(osv.osv):
@@ -800,15 +777,7 @@ class tms_expense_cancel(osv.osv_memory):
                         _('Could not Confirm Expense Record !'),
                         _('Parameter to determine Vehicle distance update from does not exist.'))
                 elif expense.parameter_distance == 2: # Revisamos el parametro (tms_property_update_vehicle_distance) donde se define donde se actualizan los kms/millas a las unidades 
-                    unit_obj = self.pool.get('flee.vehicle')
-                    odom_obj = self.pool.get('fleet.vehicle.odometer')
-                    res = odom_obj.search(cr, uid, [('tms_travel_id', 'in', tuple(travel_ids),)])
-                    for odom_rec in odom_obj.browse(cr, uid, res):
-                        unit_odometer = unit_obj.browse(cr, uid, [odom_rec.vehicle_id.id])[0].odometer
-                        unit_obj.write(cr, uid, [odom_rec.vehicle_id.id],  {'odometer': unit_odometer - odom_rec.distance})
-                        device_odometer = odom_obj.browse(cr, uid, [odom_rec.odometer_id.id])[0].odometer_end
-                        odom_obj.write(cr, uid, [odom_rec.odometer_id.id],  {'odometer_end': device_odometer - odom_rec.distance})
-                    odom_obj.unlink(cr, uid, res)  
+                    self.pool.get('fleet.vehicle.odometer').unlink_odometer_rec(cr, uid, ids, travel_ids)
 
         return {'type': 'ir.actions.act_window_close'}
 

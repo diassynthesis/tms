@@ -1046,7 +1046,40 @@ class fleet_vehicle_odometer(osv.osv):
         return super(fleet_vehicle_odometer, self).create(cr, uid, values, context=context)
 
 
+    def create_odometer_log(self, cr, uid, expense_id, travel_id, vehicle_id, distance, context=None):
+        vehicle = self.pool.get('fleet.vehicle').browse(cr, uid, [vehicle_id])[0]
+        odom_dev_obj = self.pool.get('fleet.vehicle.odometer.device')
+        odometer_id = odom_dev_obj.search(cr, uid, [('vehicle_id', '=', vehicle_id), ('state', '=','active')], context=context)
+        last_odometer = 0.0
+        if odometer_id and odometer_id[0]:
+            last_odometer = odom_dev_obj.browse(cr, uid, odometer_id)[0].odometer_end
+        else:
+            raise osv.except_osv(
+                _('Could not create Odometer Record!'),
+                _('There is no Active Odometer for Vehicle %s') % (vehicle.name))
+           
+        values = { 'odometer_id'      : odometer_id[0],
+                   'vehicle_id'       : vehicle_id,
+                   'value'            : vehicle.odometer + distance,
+                   'last_odometer'    : last_odometer,
+                   'distance'         : distance,
+                   'current_odometer' : last_odometer + distance,
+                   'tms_expense_id'   : expense_id,
+                   'tms_travel_id'    : travel_id,
+                   }
+        res = self.create(cr, uid, values)
+        return
 
-
+    def unlink_odometer_rec(cr, uid, ids, travel_ids, context=None):
+        unit_obj = self.pool.get('flee.vehicle')
+        odom_dev_obj = self.pool.get('fleet.vehicle.odometer.device')
+        res = self.search(cr, uid, [('tms_travel_id', 'in', tuple(travel_ids),)])
+        for odom_rec in self.browse(cr, uid, res):
+            unit_odometer = unit_obj.browse(cr, uid, [odom_rec.vehicle_id.id])[0].odometer
+            unit_obj.write(cr, uid, [odom_rec.vehicle_id.id],  {'odometer': unit_odometer - odom_rec.distance})
+            device_odometer = odom_obj.browse(cr, uid, [odom_rec.odometer_id.id])[0].odometer_end
+            odom_dev_obj.write(cr, uid, [odom_rec.odometer_id.id],  {'odometer_end': device_odometer - odom_rec.distance})
+            self.unlink(cr, uid, res)  
+        return
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
 
