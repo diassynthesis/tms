@@ -194,9 +194,6 @@ class tms_advance(osv.osv):
                         _('Travel is Closed or Cancelled !!!'))
             else:
                 self.write(cr, uid, ids, {'state':'draft','drafted_by':uid,'date_drafted':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
-        for (id,name) in self.name_get(cr, uid, ids):
-            message = _("Advance '%s' has been set to draft state.") % name
-            self.log(cr, uid, id, message)
         return True
     
     def action_cancel(self, cr, uid, ids, context=None):
@@ -216,9 +213,6 @@ class tms_advance(osv.osv):
                         _('Could not cancel Advance !'),
                         _('This Advance is already linked to Travel Expenses record'))
             self.write(cr, uid, ids, {'state':'cancel', 'cancelled_by':uid,'date_cancelled':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
-            for (id,name) in self.name_get(cr, uid, ids):
-                message = _("Advance '%s' is cancelled.") % name
-            self.log(cr, uid, id, message)
         return True
 
     def action_approve(self, cr, uid, ids, context=None):
@@ -229,18 +223,11 @@ class tms_advance(osv.osv):
                         _('Could not approve Advance !'),
                         _('Total Amount must be greater than zero.'))
                 self.write(cr, uid, ids, {'state':'approved', 'approved_by' : uid, 'date_approved':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
-                for (id,name) in self.name_get(cr, uid, ids):
-                    message = _("Advance '%s' is set to approved.") % name
-                self.log(cr, uid, id, message)
         return True
 
     def action_confirm(self, cr, uid, ids, context=None):
         adv_invoice = self.pool.get('tms.advance.invoice')
         adv_invoice.makeInvoices(cr, uid, ids, context=None)
-        for advance in self.browse(cr, uid, ids, context=None):           
-            for (id,name) in self.name_get(cr, uid, ids, context=None):
-                message = _("Advance '%s' is set to confirmed.") % name
-                self.log(cr, uid, id, message)
         return True
 
     def copy(self, cr, uid, id, default=None, context=None):

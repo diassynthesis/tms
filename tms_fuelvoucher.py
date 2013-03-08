@@ -182,9 +182,6 @@ class tms_fuelvoucher(osv.osv):
                         _('Travel is Closed or Cancelled !!!'))
             else:
                 self.write(cr, uid, ids, {'state':'draft','drafted_by':uid,'date_drafted':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
-        for (id,name) in self.name_get(cr, uid, ids):
-            message = _("Fuel Voucher '%s' has been set in draft state.") % name
-            self.log(cr, uid, id, message)
         return True
     
     def action_cancel(self, cr, uid, ids, context=None):
@@ -198,18 +195,12 @@ class tms_fuelvoucher(osv.osv):
                         _('Could not cancel Fuel Voucher !'),
                         _('This Fuel Voucher is already linked to Travel Expenses record'))
             self.write(cr, uid, ids, {'state':'cancel', 'invoice_id':False, 'cancelled_by':uid,'date_cancelled':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
-            for (id,name) in self.name_get(cr, uid, ids):
-                message = _("Fuel Voucher '%s' is cancelled.") % name
-            self.log(cr, uid, id, message)
         return True
 
     def action_approve(self, cr, uid, ids, context=None):
         for fuelvoucher in self.browse(cr, uid, ids, context=context):
             if fuelvoucher.state in ('draft'):
                 self.write(cr, uid, ids, {'state':'approved', 'approved_by' : uid, 'date_approved':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
-                for (id,name) in self.name_get(cr, uid, ids):
-                    message = _("Fuel Voucher '%s' is set to approve.") % name
-                self.log(cr, uid, id, message)
         return True
 
     def action_confirm(self, cr, uid, ids, context=None):
@@ -220,9 +211,6 @@ class tms_fuelvoucher(osv.osv):
                         _('Product quantity must be greater than zero.'))
 
             self.write(cr,uid,ids,{'state':'confirmed', 'confirmed_by':uid, 'date_confirmed':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
-            for (id,name) in self.name_get(cr, uid, ids):
-                message = _("Fuel Voucher '%s' is set to confirmed.") % name
-                self.log(cr, uid, id, message)
         return True
 
     def copy(self, cr, uid, id, default=None, context=None):

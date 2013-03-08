@@ -1,4 +1,4 @@
-﻿# -*- encoding: utf-8 -*-
+# -*- encoding: utf-8 -*-
 ##############################################################################
 #    
 #    OpenERP, Open Source Management Solution
@@ -371,9 +371,7 @@ class tms_waybill(osv.osv):
 
     def create(self, cr, uid, vals, context=None):
         res = super(tms_waybill, self).create(cr, uid, vals, context=context)
-        #print res
         self.get_freight_from_factors(cr, uid, [res], context=context)
-        self.message_post(cr, uid, [res], body=_("Waybill for <em>%s</em> <b>created</b>.") % (self.pool.get('tms.waybill').browse(cr, uid, [res])[0].partner_id.name), context=context)
         return res
 
 
@@ -486,10 +484,6 @@ class tms_waybill(osv.osv):
                         _('Travel is Cancelled !!!'))
             else:
                 self.write(cr, uid, ids, {'state':'draft', 'drafted_by':uid,'date_drafted':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
-#                self.message_post(cr, uid, ids, body=_("Waybill has been set to <b>Draft</b> state by <em>%s (id: %s)</em>.") % (self.pool.get('res.users').browse(cr, uid, [uid])[0].name, uid), context=None)
-        for (id,name) in self.name_get(cr, uid, ids):
-            message = "Waybill '%s' has been set to draft state." % name
-            self.log(cr, uid, id, message)
         return True
     
     def action_approve(self, cr, uid, ids, context=None):
@@ -505,10 +499,6 @@ class tms_waybill(osv.osv):
                     seq_number = waybill.name
 
                 self.write(cr, uid, ids, {'name':seq_number, 'state':'approved', 'approved_by' : uid, 'date_approved':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
-#                self.message_post(cr, uid, ids, body=_("Waybill has been set to <b>Approved</b> state by <em>%s (id: %s)</em>.") % (self.pool.get('res.users').browse(cr, uid, [uid])[0].name, uid), context=None)
-                for (id,name) in self.name_get(cr, uid, ids):
-                    message = _("Waybill '%s' is set to approved.") % name
-                self.log(cr, uid, id, message)
         return True
 
     def action_confirm(self, cr, uid, ids, context=None):
@@ -521,10 +511,6 @@ class tms_waybill(osv.osv):
                 wb_invoice = self.pool.get('tms.waybill.invoice')
                 wb_invoice.makeWaybillInvoices(cr, uid, ids, context=None)
             self.write(cr, uid, ids, {'state':'confirmed', 'confirmed_by' : uid, 'date_confirmed':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
-#            self.message_post(cr, uid, ids, body=_("Waybill has been set to <b>Confirmed</b> state by <em>%s (id: %s)</em>.") % (self.pool.get('res.users').browse(cr, uid, [uid])[0].name, uid), context=None)
-            for (id,name) in self.name_get(cr, uid, ids, context=None):
-                message = _("Waybill '%s' is set to confirmed.") % name
-                self.log(cr, uid, id, message)
         return True
 
     def button_dummy(self, cr, uid, ids, context=None):
@@ -895,7 +881,6 @@ class tms_waybill_cancel(osv.osv_memory):
         #                        _('This Waybill is already linked to Travel Expenses record'))
                     #print "record_id:", record_id
                     waybill_obj.write(cr, uid, record_id, {'state':'cancel', 'cancelled_by':uid,'date_cancelled':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
-                    waybill_obj.message_post(cr, uid, record_id, body=_("Waybill has been set to <b>Cancel</b> state by <em>%s (id: %s)</em>.") % (self.pool.get('res.users').browse(cr, uid, [uid])[0].name, uid), context=None)                    
           
                     if record.copy_waybill:                        
                         default ={} 
@@ -1038,7 +1023,6 @@ class tms_waybill_invoice(osv.osv_memory):
                 invoices.append(inv_id)
    
                 waybill_obj.write(cr,uid,waybill_ids, {'invoice_id': inv_id, 'state':'confirmed', 'confirmed_by':uid, 'date_confirmed':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})               
-                waybill_obj.message_post(cr, uid, waybill_ids, body=_("Draft Invoice is waiting for validation</b>."), context=context)
 
 
 

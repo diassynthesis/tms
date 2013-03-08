@@ -25,16 +25,16 @@
             <field name="type">form</field>
             <field name="inherit_id" ref="account.invoice_form"/>
             <field name="arch" type="xml">
-				<notebook position="inside">
-					<page string="TMS" attrs="{'invisible':[('waybill_ids','=',False)]  }">
-                    	<field name="tms_type"  />
-						<newline />
-                    	<field name="departure_address_id"  />
-                    	<field name="arrival_address_id"  />
-						<separator colspan="4" string="Waybills" />
-                    	<field name="waybill_ids" nolabel="1"  colspan="4"/>
-					</page>
-				</notebook>
+	      <notebook position="inside">
+		<page string="TMS" attrs="{'invisible':[('waybill_ids','=',False)]  }">
+                  <field name="tms_type"  />
+		  <newline />
+                  <field name="departure_address_id"  />
+                  <field name="arrival_address_id"  />
+		  <separator colspan="4" string="Waybills" />
+                  <field name="waybill_ids" nolabel="1"  colspan="4"/>
+		</page>
+	      </notebook>
             </field>
         </record>
 

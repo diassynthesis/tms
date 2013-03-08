@@ -289,7 +289,7 @@ TMS.EXPENSE.LINE
             <field name="type">form</field>
             <field name="arch" type="xml">
                 <form string="Expense Lines">
-				    <field name="travel_id" domain="[('id','in', tuple(parent.travel_ids[0][2]))]" />   
+		  <field name="travel_id" domain="[('id','in', tuple(parent.travel_ids[0][2]),)]" /> 
                     <newline />
                     <field name="control" invisible="1" />
 					<field name="line_type" required="1" attrs="{'readonly':[('control','!=',False)]}"/>

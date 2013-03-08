@@ -308,9 +308,6 @@ class tms_travel(osv.osv):
         if not len(ids):
             return False
         self.write(cr, uid, ids, {'state':'draft','drafted_by':uid,'date_drafted':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
-        for (id,name) in self.name_get(cr, uid, ids):
-            message = _("Travel '%s' has been set in draft state.") % name
-            self.log(cr, uid, id, message)
         return True
     
     def action_cancel(self, cr, uid, ids, context=None):
@@ -341,10 +338,6 @@ class tms_travel(osv.osv):
 
         self.write(cr, uid, ids, {'state':'cancel', 'cancelled_by':uid,'date_cancelled':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
 
-
-        for (id,name) in self.name_get(cr, uid, ids):
-            message = _("Travel '%s' is cancelled.") % name
-            self.log(cr, uid, id, message)
         return True
 
     def action_dispatch(self, cr, uid, ids, context=None):
@@ -360,9 +353,6 @@ class tms_travel(osv.osv):
                                     'dispatched_by':uid,
                                     'date_dispatched':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT),
                                     'date_start_real':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
-        for (id,name) in self.name_get(cr, uid, ids):
-            message = _("Travel '%s' is set to progress.") % name
-            self.log(cr, uid, id, message)
         return True
 
     def action_end(self, cr, uid, ids, context=None):
@@ -386,9 +376,7 @@ class tms_travel(osv.osv):
                                 'ended_by':uid,
                                 'date_ended':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT),
                                 'date_end_real':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
-        for (id,name) in self.name_get(cr, uid, ids):
-            message = _("Travel '%s' is ended.") % name
-            self.log(cr, uid, id, message)
+
         return True
 
 
