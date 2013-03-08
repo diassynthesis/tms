@@ -542,7 +542,7 @@ class tms_expense(osv.osv):
                     xdistance = (travel.distance_route / distance_routes) * distance_real if distance_real != expense.distance_real else travel.distance_extraction
                     odom_obj.create_odometer_log(cr, uid, expense.id, travel.id, expense.vehicle_id.id, xdistance)
                     if travel.trailer1_id and travel.trailer1_id.id:
-                        odom_obj.create_odometer_log(cr, uid, expense.id, travel_id, travel.trailer1_id.id, xdistance)
+                        odom_obj.create_odometer_log(cr, uid, expense.id, travel.id, travel.trailer1_id.id, xdistance)
                     if travel.dolly_id and travel.dolly_id.id:
                         odom_obj.create_odometer_log(cr, uid, expense.id, travel.id, travel.dolly_id.id, xdistance)
                     if travel.trailer2_id and travel.trailer2_id.id:
