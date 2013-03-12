@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data noupdate="1">
+
+
+	<!-- Account Types -->
+	<record model="ir.config_parameter" id="tms_property_update_vehicle_distance">               
+  <field name="key">tms_property_update_vehicle_distance</field> 
+  <field name="value">2
+  1- Update distance from Travels
+  2- Update distance from Travel Expense Record
+  3- Update Manually
+  4- Update from Tyre Revisions
+  </field>              
+</record>
+
+
+</data>
+</openerp>
