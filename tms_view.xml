@@ -66,7 +66,7 @@ TMS.UNIT.CATEGORY
                 <form string="Unit Categories" version="7.0">
                     <sheet>
                         <h1>
-                            <label string="Name"/>
+                            <!--<label string="Name" /> -->
                             <field name="name" class="oe_inline"/>
                         </h1>
 			<group col="4" colspan="4">
@@ -508,122 +508,123 @@ TMS.ROUTE
 
 <!-- SEARCH View for tms.route  --> 
         <record id="view_tms_route_search" model="ir.ui.view">
-            <field name="name">tms.route.search</field>
-            <field name="model">tms.route</field>
-            <field name="type">search</field>
-            <field name="arch" type="xml">
-                <search string="Routes">
-                   <field name="name"/>
-                   <field name="company_id" />
-                   <field name="departure_id"/>
-                   <field name="arrival_id"/>
-                   <field name="tms_route_tollstation_ids" />
-                   <field name="active" />
-                   <newline/>
-                   <group  expand='0' string='Group by...'>
-                       <filter string='Departure' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'departure_id'}" />
-                       <separator orientation="vertical"/>                                                                
-                       <filter string='Arrival' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'arrival_id'}" />
-                       <separator orientation="vertical"/>                                                                
-                       <filter string='Fuel Eff. by Unit' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'fuel_efficiency_drive_unit'}" />
-                       <separator orientation="vertical"/>                                                                
-                       <filter string='Fuel Eff. 1 Trailer' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'fuel_efficiency_1trailer'}" />
-                       <separator orientation="vertical"/>                                                                
-                       <filter string='Fuel Eff. 2 Trailer' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'fuel_efficiency_2trailer'}" />
-                   </group>
-                </search>
-            </field>
+          <field name="name">tms.route.search</field>
+          <field name="model">tms.route</field>
+          <field name="type">search</field>
+          <field name="arch" type="xml">
+            <search string="Routes">
+              <field name="name"/>
+              <field name="company_id" />
+              <field name="departure_id"/>
+              <field name="arrival_id"/>
+              <field name="tms_route_tollstation_ids" />
+              <field name="active" />
+              <newline/>
+              <group  expand='0' string='Group by...'>
+                <filter string='Departure' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'departure_id'}" />
+                <separator orientation="vertical"/>                                                                
+                <filter string='Arrival' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'arrival_id'}" />
+                <separator orientation="vertical"/>                                                                
+                <filter string='Fuel Eff. by Unit' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'fuel_efficiency_drive_unit'}" />
+                <separator orientation="vertical"/>                                                                
+                <filter string='Fuel Eff. 1 Trailer' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'fuel_efficiency_1trailer'}" />
+                <separator orientation="vertical"/>                                                                
+                <filter string='Fuel Eff. 2 Trailer' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'fuel_efficiency_2trailer'}" />
+              </group>
+            </search>
+          </field>
         </record>
 
 <!-- TREE View for tms.route --> 
 	<record model="ir.ui.view" id="view_tms_route_tree">
-        <field name="name">tms.route.tree</field>
-        <field name="model">tms.route</field>
-		<field name="type">tree</field>
-		<field name="arch" type="xml">
+          <field name="name">tms.route.tree</field>
+          <field name="model">tms.route</field>
+	  <field name="type">tree</field>
+	  <field name="arch" type="xml">
             <tree string="Routes">
-                <field name="name" />
-		        <field name="departure_id" />
-                <field name="arrival_id" />
-		        <field name="distance"/>
-                <field name="travel_time" widget="float_time"/>
-                <field name="company_id" />
-		    </tree>
-		</field>
+              <field name="name" />
+	      <field name="departure_id" />
+              <field name="arrival_id" />
+	      <field name="distance"/>
+              <field name="travel_time" widget="float_time"/>
+              <field name="company_id" />
+	    </tree>
+	  </field>
 	</record>
 
 <!-- FORM View for tms.route -->
         <record id="view_tms_route_form" model="ir.ui.view">
-            <field name="name">tms.route.form</field>
-            <field name="model">tms.route</field>
-            <field name="type">form</field>
-            <field name="arch" type="xml">
-                <form string="Routes" version="7.0">
-                    <header>
-                        <button name="button_get_route_info" string="Get Route Info from Google" type="object" icon="STOCK_EXECUTE"/>
-                        <button name="button_open_google" string="View in Google Maps" type="object" icon="STOCK_EXECUTE"/>
-                    </header>
-                    <sheet>
-                        <h1>
-                            <label string="Route"/>
-                            <field name="name" class="oe_inline"/>
-                        </h1>
-					    <group col="4" colspan="4">
-                            <field name="departure_id" />
-                            <field name="arrival_id" />
-                            <field name="distance" />
-                            <field name="travel_time" widget="float_time"/>
-                            <field name="active" />
-                            <field name="company_id" />
-                        </group>
-                        <notebook colspan="4">
-                            <page string="Intermediate Places">
-                                <separator string="Places in this route" colspan="4" />
-                                <field name="places_ids" nolabel="1" colspan="4">
-                                    <tree string="Intermediate places in this route" editable="bottom">
-                                        <field name="sequence"/>
-                                        <field name="place_id" />
-                                        <field name="state_id" />
-                                        <field name="country_id" />
-                                    </tree>
-                                </field>
-                            </page>
-                            <page string="Fuel Efficiency Expected">
-                                <field name="route_fuelefficiency_ids" nolabel="1" >
-                                    <tree string="Route Fuel Efficiency Expected" editable="bottom">
-                                        <field name="motor_id" widget="selection" domain="[('type','=','motor')]"/>
-                                        <field name="type" />
-                                        <field name="performance" />
-                                    </tree>
-                                    <form string="Route Fuel Efficiency Expected">
-                                        <field name="motor_id" widget="selection" domain="[('type','=','motor')]"/>
-                                        <field name="type" />
-                                        <field name="performance" />
-                                    </form>
-                                </field>
-                            </page>
-                            <page string="Toll Stations">
-                                <field name="tms_route_tollstation_ids"  nolabel="1"/>
-                            </page>
-                            <page string="Factor Driver">
-                                <separator string="Driver Salary Factors" colspan="4"/>
-                                <field name="expense_driver_factor" 
-                                        context="{'default_route_id': active_id,'default_category':'driver'}" 
-                                        domain="[('category','=','driver')]"
-                                        colspan="4" nolabel="1"/>
-                            </page>
-
-                            <page string="Notes">
-                                <field name="notes" nolabel="1"/>                            
-                            </page>
-                        </notebook>
-                    </sheet>
-                    <div class="oe_chatter">
-                        <field name="message_follower_ids" widget="mail_followers"/>
-                        <field name="message_ids" widget="mail_thread" placeholder="Share a message..."/>
-                    </div>
-                </form>
-            </field>
+          <field name="name">tms.route.form</field>
+          <field name="model">tms.route</field>
+          <field name="type">form</field>
+          <field name="arch" type="xml">
+            <form string="Routes" version="7.0">
+              <header>
+                <button name="button_get_route_info" string="Get Route Info from Google" type="object" icon="STOCK_EXECUTE"/>
+                <button name="button_open_google" string="View in Google Maps" type="object" icon="STOCK_EXECUTE"/>
+              </header>
+              <sheet>
+		<group col="4" colspan="4">
+                  <h1>
+                    <field name="name" colspan="4"/>
+                  </h1>
+		</group>
+		<group col="4" colspan="4">
+                  <field name="departure_id" />
+                  <field name="arrival_id" />
+                  <field name="distance" />
+                  <field name="travel_time" widget="float_time"/>
+                  <field name="active" />
+                  <field name="company_id" />
+                </group>
+                <notebook colspan="4">
+                  <page string="Intermediate Places">
+                    <separator string="Places in this route" colspan="4" />
+                    <field name="places_ids" nolabel="1" colspan="4">
+                      <tree string="Intermediate places in this route" editable="bottom">
+                        <field name="sequence"/>
+                        <field name="place_id" />
+                        <field name="state_id" />
+                        <field name="country_id" />
+                      </tree>
+                    </field>
+                  </page>
+                  <page string="Fuel Efficiency Expected">
+                    <field name="route_fuelefficiency_ids" nolabel="1" >
+                      <tree string="Route Fuel Efficiency Expected" editable="bottom">
+                        <field name="motor_id" widget="selection" domain="[('type','=','motor')]"/>
+                        <field name="type" />
+                        <field name="performance" />
+                      </tree>
+                      <form string="Route Fuel Efficiency Expected">
+                        <field name="motor_id" widget="selection" domain="[('type','=','motor')]"/>
+                        <field name="type" />
+                        <field name="performance" />
+                      </form>
+                    </field>
+                  </page>
+                  <page string="Toll Stations">
+                    <field name="tms_route_tollstation_ids"  nolabel="1"/>
+                  </page>
+                  <page string="Factor Driver">
+                    <separator string="Driver Salary Factors" colspan="4"/>
+                    <field name="expense_driver_factor" 
+                           context="{'default_route_id': active_id,'default_category':'driver'}" 
+                           domain="[('category','=','driver')]"
+                           colspan="4" nolabel="1"/>
+                  </page>
+		  
+                  <page string="Notes">
+                    <field name="notes" nolabel="1"/>                            
+                  </page>
+                </notebook>
+              </sheet>
+              <div class="oe_chatter">
+                <field name="message_follower_ids" widget="mail_followers"/>
+                <field name="message_ids" widget="mail_thread" placeholder="Share a message..."/>
+              </div>
+            </form>
+          </field>
         </record>
 
 <!-- Action for tms.route -->
@@ -647,59 +648,59 @@ TMS.ROUTE.TOLLSTATION
 -->
 <!-- TREE View for tms.route.tollstation --> 
 	<record model="ir.ui.view" id="view_tms_route_tollstation_tree">
-        <field name="name">tms.route.tollstation.tree</field>
-        <field name="model">tms.route.tollstation</field>
-		<field name="type">tree</field>
-		<field name="arch" type="xml">
+          <field name="name">tms.route.tollstation.tree</field>
+          <field name="model">tms.route.tollstation</field>
+	  <field name="type">tree</field>
+	  <field name="arch" type="xml">
             <tree string="Toll Stations">
-                <field name="name" />
-		        <field name="place_id" />
-                <field name="partner_id" />
-		        <field name="credit"/>
-                <field name="active"/>
-                <field name="company_id" />
-		    </tree>
-		</field>
+              <field name="name" />
+	      <field name="place_id" />
+              <field name="partner_id" />
+	      <field name="credit"/>
+              <field name="active"/>
+              <field name="company_id" />
+	    </tree>
+	  </field>
 	</record>
 
 <!-- FORM View for tms.route.tollstation -->
         <record id="view_tms_route_tollstation_form" model="ir.ui.view">
-            <field name="name">tms.route.tollstation.form</field>
-            <field name="model">tms.route.tollstation</field>
-            <field name="type">form</field>
-            <field name="arch" type="xml">
-                <form string="Toll Stations">
-                    <field name="name" select="1"/>
-                    <field name="place_id" select="1"/>
-                    <field name="partner_id" select="1"/>
-                    <field name="credit" select="1"/>
-                    <field name="active" select="1"/>
-                    <field name="company_id" />
-                    <notebook colspan="4">
-                        <page string="Costs per axis">
-                            <field name="tms_route_tollstation_costperaxis_ids" > 
-                                <tree string="" editable="top">
-                                    <field name="unit_type_id" />
-                                    <field name="axis" />
-                                    <field name="cost_credit" />
-                                    <field name="cost_cash" />
-                                </tree>
-                                <form string="">
-                                    <field name="unit_type_id" />
-                                    <field name="axis" />
-                                    <field name="cost_credit" />
-                                    <field name="cost_cash" />
-                                </form>
-                            </field>
-                        </page>
-                        <page string="Routes with this Toll Station">
-                            <group>
-                                <field name="tms_route_ids" nolabel="1" />
-                            </group>
-                        </page>
-                    </notebook>
-                </form>
-            </field>
+          <field name="name">tms.route.tollstation.form</field>
+          <field name="model">tms.route.tollstation</field>
+          <field name="type">form</field>
+          <field name="arch" type="xml">
+            <form string="Toll Stations">
+              <field name="name" select="1"/>
+              <field name="place_id" select="1"/>
+              <field name="partner_id" select="1"/>
+              <field name="credit" select="1"/>
+              <field name="active" select="1"/>
+              <field name="company_id" />
+              <notebook colspan="4">
+                <page string="Costs per axis">
+                  <field name="tms_route_tollstation_costperaxis_ids" nolabel="1"> 
+                    <tree string="" editable="top">
+                      <field name="unit_type_id" />
+                      <field name="axis" />
+                      <field name="cost_credit" />
+                      <field name="cost_cash" />
+                    </tree>
+                    <form string="">
+                      <field name="unit_type_id" />
+                      <field name="axis" />
+                      <field name="cost_credit" />
+                      <field name="cost_cash" />
+                    </form>
+                  </field>
+                </page>
+                <page string="Routes with this Toll Station">
+                  <group>
+                    <field name="tms_route_ids" nolabel="1" />
+                  </group>
+                </page>
+              </notebook>
+            </form>
+          </field>
         </record>
 
 <!-- Action for tms.route.tollstation -->
@@ -885,21 +886,21 @@ TMS.UNIT.red_tape
 
 <!-- TREE View for tms.unit.red_tape --> 
 	<record model="ir.ui.view" id="view_tms_unit_red_tape_tree">
-        <field name="name">tms.unit.red_tape.tree</field>
-        <field name="model">tms.unit.red_tape</field>
-		<field name="type">tree</field>
-		<field name="arch" type="xml">
+          <field name="name">tms.unit.red_tape.tree</field>
+          <field name="model">tms.unit.red_tape</field>
+	  <field name="type">tree</field>
+	  <field name="arch" type="xml">
             <tree string="Unit Red Tapes" colors="gray:state=='cancel';red:state=='draft';">
-                <field name="state"/>
-                <field name="date"/>
-                <field name="unit_id" />
-                <field name="unit_type_id" invisible="1"/>
-                <field name="red_tape_id" />
-                <field name="partner_id" />
-                <field name="amount" sum="Amount"/>
-                <field name="amount_paid" sum="Amount Paid"/>
-		    </tree>
-		</field>
+              <field name="state"/>
+              <field name="date"/>
+              <field name="unit_id" />
+              <field name="unit_type_id" invisible="1"/>
+              <field name="red_tape_id" />
+              <field name="partner_id" />
+              <field name="amount" sum="Amount"/>
+              <field name="amount_paid" sum="Amount Paid"/>
+	    </tree>
+	  </field>
 	</record>
 
 <!-- FORM View for tms.unit.active_history -->
@@ -911,21 +912,27 @@ TMS.UNIT.red_tape
             <field name="arch" type="xml">
                 <form string="Units Red Tapes" version="7.0">
                     <header>
-                        <button name="action_cancel" states="draft" string="Cancel" type="object"/>
-                        <button name="action_confirm" states="draft" string="Done" type="object" icon="gtk-goto-last" class="oe_highlight" />
-                        <field name="state" widget="statusbar" statusbar_visible="cancel,draft,confirmed"/>
+                        <button name="action_cancel" states="draft,pending,progress" string="Cancel" type="object"/>
+			<button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
+                        <button name="action_pending" states="draft" string="Pending" type="object" icon="terp-gtk-media-pause" class="oe_highlight" />
+                        <button name="action_progress" states="pending" string="Progress" type="object" icon="gtk-go-forward" class="oe_highlight" />
+                        <button name="action_done" states="progress" string="Done" type="object" icon="gtk-goto-last" class="oe_highlight" />
+                        <field name="state" widget="statusbar" statusbar_visible="cancel,draft,pending,progress,done"/>
                     </header>
                     <sheet>
+		      <group col="4" colspan="4">
                         <h1>
-                            <label string="Red Label Record"/>
+                          <label string="Vehicle:"/>
+                          <field name="unit_id" class="oe_inline"/>
+                          <label string="Red Tape:"/>
+			  <field name="red_tape_id" context="{'default_type':'red_tape'}" on_change="on_change_red_tape_id(red_tape_id)" class="oe_inline"/>
                         </h1>
+		      </group>
                         <group col="4">
                             <field name="date"/>
-                            <newline />
-                            <field name="unit_id" />
-                            <field name="unit_type_id"/>
-                            <field name="red_tape_id" context="{'default_type':'red_tape'}" on_change="on_change_red_tape_id(red_tape_id)"/>
                             <field name="partner_id"/>
+                            <field name="unit_type_id"/>
+                            <newline />
                             <field name="name" colspan="4"/>
                             <field name="date_start"/>
                             <field name="date_end"/>
@@ -962,14 +969,14 @@ TMS.UNIT.red_tape
 
 <!-- Action for tms.unit.red_tape -->
     <record model="ir.actions.act_window" id="open_view_tms_unit_red_tape_form">
-        <field name="name">Unit Red Tapes</field>
+        <field name="name">Vehicle Red Tape</field>
         <field name="res_model">tms.unit.red_tape</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
     </record>
 
 <!-- Menu for tms.unit.red_tape -->
-    <menuitem name="Unit Red Tapes" 
+    <menuitem name="Vehicle Red Tape" 
               parent="menu_tms_config_unit" 
               id="menu_tms_config_unit_red_tape_form" 
               action="open_view_tms_unit_red_tape_form"

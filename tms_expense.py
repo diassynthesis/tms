@@ -431,10 +431,11 @@ class tms_expense(osv.osv):
 
             distance_extraction = data[0][0] if len(data) else 0.0
             unit_id = data[0][1]
+            print "unit_id: ", unit_id
             odom_obj = self.pool.get('fleet.vehicle.odometer.device')
             odometer_id = odom_obj.search(cr, uid, [('vehicle_id', '=', unit_id), ('state', '=','active')], context=context)
             if odometer_id and odometer_id[0]:
-                for odometer in odom_obj.browse(cr, uid, odometer_id):      
+                for odometer in odom_obj.browse(cr, uid, odometer_id):     
                     res = {'value' : 
                            {'unit_id'          : unit_id,
                             'vehicle_id'       : unit_id,
@@ -481,7 +482,10 @@ class tms_expense(osv.osv):
 
 
     def write(self, cr, uid, ids, vals, context=None):
-        super(tms_expense, self).write(cr, uid, ids, vals, context=context)
+        values = vals
+        if 'vehicle_id' in vals and vals['vehicle_id']:
+            values['unit_id'] = vals['vehicle_id']
+        super(tms_expense, self).write(cr, uid, ids, values, context=context)
 
         if 'state' in vals and vals['state'] not in ('cancel', 'confirmed') :
             self.get_salary_advances_and_fuel_vouchers(cr, uid, ids, vals)
@@ -490,16 +494,21 @@ class tms_expense(osv.osv):
 
 
     def create(self, cr, uid, vals, context=None):
-        if vals['shop_id']:
+        values = vals
+        if 'shop_id' in vals and vals['shop_id']:
             shop = self.pool.get('sale.shop').browse(cr, uid, [vals['shop_id']])[0]
             seq_id = shop.tms_travel_expenses_seq.id
             if shop.tms_travel_expenses_seq:
                 seq_number = self.pool.get('ir.sequence').get_id(cr, uid, seq_id)
-                vals['name'] = seq_number
+                values['name'] = seq_number
             else:
                 raise osv.except_osv(_('Expense Sequence Error !'), _('You have not defined Expense Sequence for shop ' + shop.name))
 
-        res = super(tms_expense, self).create(cr, uid, vals, context=context)
+
+        if 'vehicle_id' in vals and vals['vehicle_id']:
+            values['unit_id'] = vals['vehicle_id']
+
+        res = super(tms_expense, self).create(cr, uid, values, context=context)
         self.get_salary_advances_and_fuel_vouchers(cr, uid, [res], vals)
         return res
 
@@ -634,6 +643,7 @@ class tms_expense_line(osv.osv):
         'product_id'        : openerp.osv.fields.many2one('product.product', 'Product', 
                                     domain=[('tms_category', 'in', ('expense_real', 'madeup_expense', 'salary','salary_retention' ,'salary_discount'))]),
         'price_unit'        : openerp.osv.fields.float('Price Unit', required=True, digits_compute= dp.get_precision('Sale Price')),
+        'price_unit_control': openerp.osv.fields.float('Price Unit', digits_compute= dp.get_precision('Sale Price')),
         'price_subtotal'    : openerp.osv.fields.function(_amount_line, method=True, string='SubTotal', type='float', digits_compute= dp.get_precision('Sale Price'),  store=True, multi='price_subtotal'),
         'price_total'       : openerp.osv.fields.function(_amount_line, method=True, string='Total', type='float', digits_compute= dp.get_precision('Sale Price'),  store=True, multi='price_subtotal'),
         'tax_amount'        : openerp.osv.fields.function(_amount_line, method=True, string='Tax Amount', type='float', digits_compute= dp.get_precision('Sale Price'),  store=True, multi='price_subtotal'),
@@ -674,27 +684,54 @@ class tms_expense_line(osv.osv):
                 }
         return res
 
-    def on_change_amount(self, cr, uid, ids, product_uom_qty, price_unit, product_id):
-        res = {'value': {
-                    'price_subtotal': 0.0, 
-                    'price_total': 0.0,
-                    'tax_amount': 0.0, 
-                        }
-                }
-        if not (product_uom_qty and price_unit and product_id ):
+    def on_change_price_total(self, cr, uid, ids, product_id, product_uom_qty, price_total):
+        res = {}
+        print "product_id: ", product_id
+        print "product_uom_qty: ", product_uom_qty
+        print "price_total: ", price_total
+
+        if not (product_uom_qty and product_id and price_total):
             return res
         tax_factor = 0.00
         prod_obj = self.pool.get('product.product')
         for line in prod_obj.browse(cr, uid, [product_id], context=None)[0].supplier_taxes_id:
             tax_factor = (tax_factor + line.amount) if line.amount <> 0.0 else tax_factor
+        price_unit = price_total / (1.0 + tax_factor) / product_uom_qty
         price_subtotal = price_unit * product_uom_qty
+        tax_amount = price_subtotal * tax_factor
         res = {'value': {
-                    'price_subtotal': price_subtotal, 
-                    'tax_amount': price_subtotal * tax_factor, 
-                    'price_total': price_subtotal * (1.0 + tax_factor),
-                        }
+                'price_unit'         : price_unit,
+                'price_unit_control' : price_unit,
+                'price_subtotal' : price_subtotal, 
+                'tax_amount'     : tax_amount, 
                 }
+               }
         return res
+
+    def on_change_qty(self, cr, uid, ids, product_id, product_uom_qty, price_unit):
+        res = {}
+        print "product_id: ", product_id
+        print "product_uom_qty: ", product_uom_qty
+        print "price_total: ", price_unit
+
+        if not (product_uom_qty and product_id and price_unit):
+            return res
+        tax_factor = 0.00
+        prod_obj = self.pool.get('product.product')
+        for line in prod_obj.browse(cr, uid, [product_id], context=None)[0].supplier_taxes_id:
+            tax_factor = (tax_factor + line.amount) if line.amount <> 0.0 else tax_factor
+        price_total = price_unit * (1.0 + tax_factor) * product_uom_qty
+        price_subtotal = price_unit * product_uom_qty
+        tax_amount = price_subtotal * tax_factor
+        res = {'value': {
+                'price_unit'     : price_unit,
+                'price_total'    : price_total,
+                'price_subtotal' : price_subtotal, 
+                'tax_amount'     : tax_amount, 
+                }
+               }
+        return res
+
 
 
 # Wizard que permite validar la cancelacion de una Liquidacion
@@ -776,7 +813,7 @@ class tms_expense_cancel(osv.osv_memory):
                     raise osv.except_osv(
                         _('Could not Confirm Expense Record !'),
                         _('Parameter to determine Vehicle distance update from does not exist.'))
-                elif expense.parameter_distance == 2: # Revisamos el parametro (tms_property_update_vehicle_distance) donde se define donde se actualizan los kms/millas a las unidades 
+                elif expense.parameter_distance == 2 and expense.state=='confirmed': # Revisamos el parametro (tms_property_update_vehicle_distance) donde se define donde se actualizan los kms/millas a las unidades 
                     self.pool.get('fleet.vehicle.odometer').unlink_odometer_rec(cr, uid, ids, travel_ids)
 
         return {'type': 'ir.actions.act_window_close'}

@@ -9,6 +9,7 @@ access_tms_expense_line,tms.expense.line,model_tms_expense_line,tms.group_tms_ma
 access_tms_factor,tms.factor,model_tms_factor,tms.group_tms_manager,1,1,1,1
 access_tms_fuelvoucher,tms.fuelvoucher,model_tms_fuelvoucher,tms.group_tms_manager,1,1,1,1
 access_tms_place,tms.place,model_tms_place,tms.group_tms_manager,1,1,1,1
+access_tms_route_place,tms.route.place,model_tms_route_place,tms.group_tms_manager,1,1,1,1
 access_tms_route,tms.route,model_tms_route,tms.group_tms_manager,1,1,1,1
 access_tms_route_fuelefficiency,tms.route.fuelefficiency,model_tms_route_fuelefficiency,tms.group_tms_manager,1,1,1,1
 access_tms_route_tollstation,tms.route.tollstation,model_tms_route_tollstation,tms.group_tms_manager,1,1,1,1
@@ -27,3 +28,4 @@ access_tms_waybill_line,tms.waybill.line,model_tms_waybill_line,tms.group_tms_ma
 access_tms_waybill_shipped_product,tms.waybill.shipped_product,model_tms_waybill_shipped_product,tms.group_tms_manager,1,1,1,1
 access_tms_unit_red_tape,tms.unit.red_tape,model_tms_unit_red_tape,tms.group_tms_manager,1,1,1,1
 access_tms_unit_active_history,tms.unit.active_history,model_tms_unit_active_history,tms.group_tms_manager,1,1,1,1
+access_tms_fleet_vehicle_odometer_device,fleet.vehicle.odometer.device,model_fleet_vehicle_odometer_device,tms.group_tms_manager,1,1,1,1

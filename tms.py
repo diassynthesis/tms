@@ -564,6 +564,8 @@ class tms_unit_red_tape(osv.osv):
         'date_done'         : openerp.osv.fields.datetime('Date Done', readonly=True),
         'cancelled_by'      : openerp.osv.fields.many2one('res.users', 'Cancelled by', readonly=True),
         'date_cancelled'    : openerp.osv.fields.datetime('Date Cancelled', readonly=True),
+        'drafted_by'        : openerp.osv.fields.many2one('res.users', 'Drafted by', readonly=True),
+        'date_drafted'      : openerp.osv.fields.datetime('Date Drafted', readonly=True),
 
         }
 
@@ -610,6 +612,10 @@ class tms_unit_red_tape(osv.osv):
         self.write(cr, uid, ids, {'state':'pending', 'pending_by' : uid, 'date_pending':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
         return True
 
+    def action_cancel_draft(self, cr, uid, ids, context=None):
+        self.write(cr, uid, ids, {'state':'draft', 'drafted_by' : uid, 'date_drafted':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
+        return True
+
 
     def action_progress(self, cr, uid, ids, context=None):
         self.write(cr, uid, ids, {'state':'progress', 'progress_by' : uid, 
@@ -621,9 +627,9 @@ class tms_unit_red_tape(osv.osv):
 
     def action_done(self, cr, uid, ids, context=None):
         self.write(cr, uid, ids, {'state':'done', 'done_by' : uid, 
-                                'date_confirmed':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT),
-                                    'date_end':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
-                                    })
+                                  'date_done':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT),
+                                  'date_end':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
+                                  })
         return True
 
 
@@ -1071,7 +1077,7 @@ class fleet_vehicle_odometer(osv.osv):
         return
 
     def unlink_odometer_rec(cr, uid, ids, travel_ids, context=None):
-        unit_obj = self.pool.get('flee.vehicle')
+        unit_obj = self.pool.get('fleet.vehicle')
         odom_dev_obj = self.pool.get('fleet.vehicle.odometer.device')
         res = self.search(cr, uid, [('tms_travel_id', 'in', tuple(travel_ids),)])
         for odom_rec in self.browse(cr, uid, res):
