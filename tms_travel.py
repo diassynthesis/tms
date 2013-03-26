@@ -219,10 +219,10 @@ class tms_travel(osv.osv):
     def get_factors_from_route(self, cr, uid, ids, context=None):        
         if len(ids):
             factor_obj = self.pool.get('tms.factor')       
-            factor_ids = factor_obj.search(cr, uid, [('travel_id', '=', ids[0])], context=None)
+            factor_ids = factor_obj.search(cr, uid, [('travel_id', '=', ids[0]), ('control', '=', 1)], context=None)
             if factor_ids:
                 res = factor_obj.unlink(cr, uid, factor_ids)
-            factors = []
+                factors = []
             for factor in self.browse(cr, uid, ids)[0].route_id.expense_driver_factor:
                 x = {
                             'name'          : factor.name,
@@ -235,6 +235,7 @@ class tms_travel(osv.osv):
                             'mixed'         : factor.mixed,
                             'special_formula': factor.special_formula,
                             'travel_id'     : ids[0],
+                            'control'       : True,
                             }
                 factor_obj.create(cr, uid, x)
         return True
@@ -381,6 +382,7 @@ class tms_travel(osv.osv):
 
 
 tms_travel()
+
 
 
 

@@ -52,7 +52,8 @@ class tms_factor(osv.osv):
             ], 'Type', required=True),
 
         'factor_type': openerp.osv.fields.selection([
-            ('distance', 'Distance (Km/Mi)'),
+            ('distance', 'Distance Route (Km/Mi)'),
+            ('distance_real', 'Distance Real (Km/Mi)'),
             ('weight', 'Weight'),
             ('travel', 'Travel'),
             ('qty', 'Quantity'),
@@ -61,7 +62,8 @@ class tms_factor(osv.osv):
             ('special', 'Special'),
             ], 'Factor Type', required=True, help="""
 For next options you have to type Ranges or Fixed Amount
- - Distance
+ - Distance Route (Km/mi)
+ - Distance Real (Km/Mi)
  - Weight
  - Quantity
  - Volume
@@ -72,6 +74,13 @@ For next option you only have to type Factor like 10.5 for 10.50%:
 For next option you only have to type Special Python Code:
  - Special
                 """),
+        
+        'framework': openerp.osv.fields.selection([
+            ('Any', 'Any'),
+            ('Unit', 'Unit'),
+            ('Single', 'Single'),
+            ('Double', 'Double'),
+            ], 'Framework', required=True),
 
         'range_start'   : openerp.osv.fields.float('Range Start',   digits=(16, 4)),
         'range_end'     : openerp.osv.fields.float('Range End',     digits=(16, 4)),
@@ -84,20 +93,26 @@ For next option you only have to type Special Python Code:
         'total_amount'  : openerp.osv.fields.function(_get_total, method=True, digits_compute=dp.get_precision('Sale Price'), string='Total', type='float',
                                             store=True),
 
+#        'waybill_ids'   : openerp.osv.fields.many2many('tms.waybill', 'tms_factor_waybill_rel', 'factor_id', 'waybill_id', 'Waybills with this factor'), 
+#        'expense_ids'   : openerp.osv.fields.many2many('tms.expense', 'tms_factor_expense_rel', 'factor_id', 'expense_id', 'Expenses with this factor'), 
+#        'route_ids'     : openerp.osv.fields.many2many('tms.route',   'tms_factor_route_rel',   'factor_id', 'route_id',   'Routes with this factor'), 
+#        'travel_ids'    : openerp.osv.fields.many2many('tms.travel',  'tms_factor_travel_rel',  'factor_id', 'travel_id',  'Travels with this factor'), 
+
         'waybill_id': openerp.osv.fields.many2one('tms.waybill', 'Waybill', required=False, ondelete='cascade'), #, select=True, readonly=True),
         'expense_id': openerp.osv.fields.many2one('tms.expense', 'Expense', required=False, ondelete='cascade'), #, select=True, readonly=True),
-        'route_id': openerp.osv.fields.many2one('tms.route', 'Route', required=False, ondelete='cascade'), #, select=True, readonly=True),
+        'route_id': openerp.osv.fields.many2one('tms.route',   'Route', required=False, ondelete='cascade'), #, select=True, readonly=True),
         'travel_id': openerp.osv.fields.many2one('tms.travel', 'Travel', required=False, ondelete='cascade'), #, select=True, readonly=True),
 #        'agreement_id': openerp.osv.fields.many2one('tms.negotiation', 'Negotiation', required=False, ondelete='cascade'),# select=True, readonly=True),
         'sequence': openerp.osv.fields.integer('Sequence', help="Gives the sequence calculation for these factors."),
         'notes': openerp.osv.fields.text('Notes'),
-
+        'control' : openerp.osv.fields.boolean('Control'),
     }
 
     _defaults = {
         'mixed'             : False,
         'sequence'          : 10,
         'variable_amount'   : 0.0,
+        'framework'         : 'Any',
     }
 
     _order = "sequence"
@@ -128,14 +143,14 @@ For next option you only have to type Special Python Code:
                 for factor in (waybill.waybill_customer_factor if calc_type=='client' else waybill.expense_driver_factor if calc_type=='driver' else waybill.waybill_supplier_factor):
                     print "Recorriendo factors"
                     print "Tipo de factor: ", factor.factor_type
-                    if factor.factor_type == 'distance':
+                    if factor.factor_type in ('distance', 'distance_real'):
                         print "Tipo Distancia"
                         if not waybill.travel_id.id:
                             raise osv.except_osv(
                                 _('Could calculate Freight amount for Waybill !'),
                                 _('Waybill %s is not assigned to a Travel') % (waybill.name))
                         print waybill.travel_id.route_id.distance
-                        x = float(waybill.travel_id.route_id.distance)
+                        x = (float(waybill.travel_id.route_id.distance) if factor.factor_type=='distance' else float(waybill.travel_id.route_id.distance_extraction)) if factor.framework == 'Any' or factor.framework == waybill.travel_id.framework else 0.0
 
                     elif factor.factor_type == 'weight':
                         print "waybill.product_weight", waybill.product_weight
@@ -187,7 +202,7 @@ For next option you only have to type Special Python Code:
                 if not res1:
                     for factor in travel.expense_driver_factor:                        
                         if factor.factor_type == 'distance':
-                            x = float(travel.route_id.distance)
+                            x = (float(travel.route_id.distance) if factor.factor_type=='distance' else float(travel.route_id.distance_extraction)) if factor.framework == 'Any' or factor.framework == travel.framework else 0.0
 
                         elif factor.factor_type == 'weight':                            
                             if not weight:
