@@ -121,7 +121,8 @@ For next option you only have to type Special Python Code:
         if not factor_type:
             return {'value': {'name': False}}
         values = {
-                    'distance'  : _('Distance (Km/Mi)'),
+                    'distance'  : _('Distance Route (Km/Mi)'),
+                    'distance_real'  : _('Distance Real (Km/Mi)'),
                     'weight'    : _('Weight'),
                     'travel'    : _('Travel'),
                     'qty'       : _('Quantity'),

@@ -39,8 +39,7 @@ TMS.FACTOR
 	          <field name="category" invisible="1" />
 	          <field name="factor_type" on_change="on_change_factor_type(factor_type)"/>
 	          <field name="name" />
-	          <field name="framework" />
-
+	          <field name="framework" attrs="{'invisible'	:[('factor_type','not in',('distance','distance_real'))]}"/>
 	          <field name="factor" 
 		             attrs="{'invisible'	:[('factor_type','in',('special','travel'))],
 			                'required'	:[('factor_type','in',('distance','weight','qty','volume','percent'))]}" />
