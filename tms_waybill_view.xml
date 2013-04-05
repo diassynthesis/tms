@@ -427,7 +427,7 @@ TMS.WAYBILL.EXTRADATA
 	      <filter string="Not Invoiced" icon="terp-dialog-close" domain="[('invoice_id','=', False)]"/>
           <filter string="Not Cancelled" icon="terp-stock_symbol-selection" domain="[('state','!=','cancel')]" name="not_cancelled"/>
           <filter string="Outsourced" icon="terp-dialog-close" domain="[('waybill_type','=', 'outsourced')]"/>
-          <filter string="Outsourced & Not Invoiced" icon="terp-dialog-close" domain="[('waybill_type','=', 'outsourced'),('supplier_invoiced', '=', False)]"/>
+          <filter string="Outsourced and Not Invoiced" icon="terp-dialog-close" domain="[('waybill_type','=', 'outsourced'),('supplier_invoiced', '=', False)]"/>
           <filter string="From this month" icon="terp-check" domain="[('date_order','&gt;=', time.strftime('%%Y-%%m-01'))]" name="this_month" />
 	      
           <newline/>
