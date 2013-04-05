@@ -34,7 +34,7 @@ TMS.UNIT.CATEGORY
                 <filter string="Active Cause" icon="terp-accessories-archiver" domain="[('type','=','active_cause')]"/>
                 <filter string="Red Tape"    icon="terp-accessories-archiver" domain="[('type','=','red_tape')]"/>
                 <group  expand='0' string='Group by...'> 
-                    <filter string="Category"  icon="terp-accessories-archiver" domain="[]" context="{'group_by' : 'type')]"/>
+                    <filter string="Category"  icon="terp-accessories-archiver" domain="[]" context="{'group_by' : 'type'}"/>
                 </group>
 		    </search>
 		</field>

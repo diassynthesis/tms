@@ -54,11 +54,13 @@ class account_journal(osv.osv):
     _columns = {
         'tms_advance_journal': openerp.osv.fields.boolean('TMS Advance Journal', help= 'If set to True then it will be used for TMS Advance Invoices. It must be a Purchase Type Journal'),
         'tms_expense_journal': openerp.osv.fields.boolean('TMS Expense Journal', help= 'If set to True then it will be used for TMS Expense Invoices. It must be a Purchase Type Journal'),
+        'tms_supplier_journal': openerp.osv.fields.boolean('TMS Freight Supplier Journal', help= 'If set to True then it will be used for TMS Waybill Supplier Invoices. It must be a Purchase Type Journal'),
         }
 
     _defaults = {
         'tms_advance_journal':False,
         'tms_expense_journal':False,
+        'tms_supplier_journal':False,
         }
 
 account_journal()

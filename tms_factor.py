@@ -188,7 +188,11 @@ For next option you only have to type Special Python Code:
                         x = 0.0 # To do
 
                     result += ((factor.fixed_amount if (factor.mixed or factor.factor_type=='travel') else 0.0) + (factor.factor * x)) if ((x >= factor.range_start and x <= factor.range_end) or (factor.range_start == factor.range_end == 0.0)) else 0.0
-
+                    print "factor.fixed_amount : ", factor.fixed_amount
+                    print "factor.mixed : ", factor.mixed
+                    print "factor.factor_type : ", factor.factor_type
+                    print "factor.factor : ", factor.factor
+                    print "x : ", x
 
         elif record_type == 'expense' and travel_ids:
             travel_obj = self.pool.get('tms.travel')
@@ -233,7 +237,7 @@ For next option you only have to type Special Python Code:
                             x = 0.0 # To do: Make calculation
                         res2 = ((factor.fixed_amount if (factor.mixed or factor.factor_type=='travel') else 0.0) + (factor.factor * x)) if ((x >= factor.range_start and x <= factor.range_end) or (factor.range_start == factor.range_end == 0.0)) else 0.0
                 result += res1 + res2
-                print "result :", result
+        print "result :", result
 
         return result
     

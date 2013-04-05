@@ -22,7 +22,7 @@
 						    <field name="tms_advance_account_id" attrs="{'required':[('tms_category','=','driver')],'invisible':[('tms_category','!=','driver')]  }"/>
                             <field name="tms_expense_negative_balance_account_id" attrs="{'required':[('tms_category','=','driver')],'invisible':[('tms_category','!=','driver')]  }"/>
 						    <field name="tms_supplier_driver" />
-						    <field name="tms_supplier_id" attrs="{'required':[('tms_supplier_driver','=',1)],'invisible':[('tms_supplier_driver','!=',1)]  }"/>
+						    <field name="tms_supplier_id" attrs="{'required':[('tms_supplier_driver','=',True)],'invisible':[('tms_supplier_driver','!=',True)]  }"/>
                         </group>
 					</page>
                 </notebook>

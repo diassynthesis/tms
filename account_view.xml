@@ -14,6 +14,7 @@
                 <field name="entry_posted" position="after">
                     <field name="tms_advance_journal"  attrs="{'invisible':[('type','!=','purchase')]  }"/>
                     <field name="tms_expense_journal"  attrs="{'invisible':[('type','!=','purchase')]  }"/>
+                    <field name="tms_supplier_journal"  attrs="{'invisible':[('type','!=','purchase')]  }"/>
                 </field>
             </field>
         </record>
