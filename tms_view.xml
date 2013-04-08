@@ -452,8 +452,8 @@ TMS.PLACE
 		<field name="type">tree</field>
 		<field name="arch" type="xml">
             <tree string="Places">
-                <field name="name" />
-		        <field name="state_id" />
+                <field name="complete_name" />
+<!--		        <field name="state_id" /> -->
 		        <field name="country_id" />
                 <field name="latitude"/>
                 <field name="longitude"/>

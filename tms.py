@@ -154,7 +154,6 @@ class fleet_vehicle(osv.osv):
         return res
 
 
-
     _columns = {
         'shop_id': openerp.osv.fields.many2one('sale.shop', 'Shop', required=True, readonly=False),
 #        'company_id': openerp.osv.fields.related('shop_id','company_id',type='many2one',relation='res.company',string='Company',store=True,readonly=True),
@@ -643,15 +642,27 @@ class tms_place(osv.osv):
     _name = 'tms.place'
     _description = 'Cities / Places'
 
+    def _get_place_and_state(self, cr, uid, ids, field_name, arg, context=None):
+        res = {}
+        for record in self.browse(cr, uid, ids, context=context):            
+            xname = record.name + ', ' + record.state_id.code
+            res[record.id] = xname
+        return res
+
+
     _columns = {
         'company_id'    : openerp.osv.fields.many2one('res.company', 'Company', required=False),
         'name'          : openerp.osv.fields.char('Place', size=64, required=True, select=True),
+        'complete_name' : openerp.osv.fields.function(_get_place_and_state, method=True, type="char", size=100, string='Complete Name', store=True),
         'state_id'      : openerp.osv.fields.many2one('res.country.state', 'State Name', required=True),
         'country_id'    : openerp.osv.fields.related('state_id', 'country_id', type='many2one', relation='res.country', string='Country'),
         'latitude'      : openerp.osv.fields.float('Latitude', required=False, digits=(20,10), help='GPS Latitude'),
         'longitude'     : openerp.osv.fields.float('Longitude', required=False, digits=(20,10), help='GPS Longitude'),
         'route_ids'     : openerp.osv.fields.many2many('tms.route', 'tms_route_places_rel', 'place_id', 'route_id', 'Routes with this Place'),        
     }
+
+    _rec_name = 'complete_name'
+
 
     def  button_get_coords(self, cr, uid, ids, context=None):
         for rec in self.browse(cr, uid, ids):
