@@ -151,6 +151,7 @@ class tms_waybill(osv.osv):
     def _get_waybill_type(self, cr, uid, ids, field_name, arg, context=None):
         res = {}
         for waybill in self.browse(cr, uid, ids, context=context):
+            waybill_type = 'self'
             for travel in waybill.travel_ids:
                 waybill_type = 'outsourced' if travel.unit_id.supplier_unit else 'self'
             res[waybill.id] = waybill_type
@@ -739,7 +740,7 @@ class tms_waybill_shipped_product(osv.osv):
                                     ('tms_category', '=','other'),
                                     ], change_default=True, required=True),
         'product_uom': openerp.osv.fields.many2one('product.uom', 'Unit of Measure ', required=True),
-        'product_uom_qty': openerp.osv.fields.float('Quantity (UoM)', digits=(16, 2), required=True),
+        'product_uom_qty': openerp.osv.fields.float('Quantity (UoM)', digits=(16, 4), required=True),
         'notes': openerp.osv.fields.text('Notes'),
         'waybill_partner_id': openerp.osv.fields.related('waybill_id', 'partner_id', type='many2one', relation='res.partner', store=True, string='Customer'),
         'salesman_id':openerp.osv.fields.related('waybill_id', 'user_id', type='many2one', relation='res.users', store=True, string='Salesman'),

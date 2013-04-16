@@ -20,27 +20,43 @@
 ##############################################################################
 
 {   
-    "name" : "Hesatec - Freight Management",
-    "version" : "1.0",
-    "category" : "Vertical",
-    'complexity': "normal",
-    "author" : "HESATEC",
-    "website": "http://www.hesatecnica.com",
-    "depends" : ["hr", "account_voucher", "purchase","sale", "fleet"],
-    "description": """
-Management System for Carriers, Trucking companies and other freight companies
+    "name"        : "Hesatec - Freight Management",
+    "version"     : "1.0",
+    "category"    : "Vertical",
+    'complexity'  : "normal",
+    "author"      : "HESATEC",
+    "website"     : "http://www.hesatecnica.com",
+    "depends"     : ["hr", "account_voucher", "purchase","sale", "fleet"],
+    "summary"     : "Management System for Carriers, Trucking companies and other freight companies",
+    "description" : """
+Freight Management System
+==========================
 
+This application allows you to manage Truckload Freights and Less-than-truckload freight. It also can help Companies such as owner-operators, carriers, brokers and shippers.
 
+It handles full Travel workflow:
 
+Transport Requirement => Waybill => Freight => Delivery
 
-Python Dependency: http://code.google.com/p/geopy/                        
+Managing:
+- Driver Cash advance (Payment & Conciliation)
+- Fuel Voucher Management
+- Checking Travel Expenses
+- Freight Invoicing (Trucks of the company or third parties)
 
+It also can manage:
+- Trucks Red Tapes
+- Truck Odometers
+- Events during travel (Example: Arrival delay, Missing Cargo, etc)
+- Kits
+- Places (Linked with Google Maps)
+- Routes (Visible in Google Maps)
+- Easy integration with GPS System
 
 
 """,
-    "demo_xml" : [],
-    "init_xml" : [],
-    "update_xml" : [
+
+    "data" : [
         'security/tms_security.xml',
         'security/ir.model.access.csv',
         'product_view.xml',
@@ -59,9 +75,7 @@ Python Dependency: http://code.google.com/p/geopy/
         'tms_factor_view.xml',
         'tms_history_view.xml',
         ],
-    "active": False,
-    'application': True,
+    "application": True,
     "installable": True
 }
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
-

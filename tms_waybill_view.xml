@@ -432,11 +432,12 @@ TMS.WAYBILL.EXTRADATA
 	      
           <newline/>
           <field name="partner_id" />
+          <field name="travel_id" />
           <field name="date_order" string="Waybill date" />
           <field name="name" select="1"/>
 	  
           <field name="client_order_ref"/>
-	  <field name="user_id" select="1">
+	      <field name="user_id" select="1">
 	    <filter domain="[('user_id','=',uid)]" help="My Waybills" icon="terp-personal"/>
 	  </field>
 	  <newline />
