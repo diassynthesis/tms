@@ -305,7 +305,8 @@ class tms_expense(osv.osv):
 
         qty = amount_untaxed = 0.0
 
-        factor = self.pool.get('tms.factor')
+        factor_obj = self.pool.get('tms.factor')
+        factor_special_obj = self.pool.get('tms.factor.special')
         expense_line_obj = self.pool.get('tms.expense.line')
         expense_obj = self.pool.get('tms.expense')
         travel_obj = self.pool.get('tms.travel')
@@ -337,7 +338,13 @@ class tms_expense(osv.osv):
             for travel in expense.travel_ids:
                 travel_ids.append(travel.id)
                 print "Calculando sueldo para el viaje: ", travel.name
-                result = factor.calculate(cr, uid, 'expense', False, 'driver', [travel.id])
+                factor_special_ids = factor_special_obj.search(cr, uid, [('travel_salary', '=', True), ('active', '=', True)])
+                if len(factor_special_ids):
+                    exec factor_special_obj.browse(cr, uid, factor_special_ids)[0].python_code
+                else:
+                    result = factor_obj.calculate(cr, uid, 'expense', False, 'driver', [travel.id])
+                print result
+
                 salary += result
                 xline = {
                         'travel_id'         : travel.id,

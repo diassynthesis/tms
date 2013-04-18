@@ -24,6 +24,7 @@ import time
 from datetime import datetime, date
 import decimal_precision as dp
 from tools.translate import _
+from tools import DEFAULT_SERVER_DATE_FORMAT, DEFAULT_SERVER_DATETIME_FORMAT, float_compare
 import openerp
 
 # Extra data fields for Waybills & Agreement
@@ -87,7 +88,7 @@ For next option you only have to type Special Python Code:
         'factor'        : openerp.osv.fields.float('Factor',        digits=(16, 4)),
         'fixed_amount'  : openerp.osv.fields.float('Fixed Amount',  digits=(16, 4)),
         'mixed'         : openerp.osv.fields.boolean('Mixed'),
-        'special_formula': openerp.osv.fields.text('Special (Python Code)'),
+        'factor_special_id': openerp.osv.fields.many2one('tms.factor.special', 'Special'),
 
         'variable_amount' : openerp.osv.fields.float('Variable',  digits=(16, 4)),
         'total_amount'  : openerp.osv.fields.function(_get_total, method=True, digits_compute=dp.get_precision('Sale Price'), string='Total', type='float',
@@ -185,9 +186,9 @@ For next option you only have to type Special Python Code:
                         x = 0.0
 
                     elif factor.factor_type == 'special':
-                        x = 0.0 # To do
+                        exec factor.factor_special_id.python_code
 
-                    result += ((factor.fixed_amount if (factor.mixed or factor.factor_type=='travel') else 0.0) + (factor.factor * x)) if ((x >= factor.range_start and x <= factor.range_end) or (factor.range_start == factor.range_end == 0.0)) else 0.0
+                    result += ((factor.fixed_amount if (factor.mixed or factor.factor_type=='travel') else 0.0) + (factor.factor * x if factor.factor_type != 'special' else x)) if ((x >= factor.range_start and x <= factor.range_end) or (factor.range_start == factor.range_end == 0.0)) else 0.0
                     print "factor.fixed_amount : ", factor.fixed_amount
                     print "factor.mixed : ", factor.mixed
                     print "factor.factor_type : ", factor.factor_type
@@ -234,14 +235,65 @@ For next option you only have to type Special Python Code:
                             x = 0.0
 
                         elif factor.factor_type == 'special':
-                            x = 0.0 # To do: Make calculation
-                        res2 = ((factor.fixed_amount if (factor.mixed or factor.factor_type=='travel') else 0.0) + (factor.factor * x)) if ((x >= factor.range_start and x <= factor.range_end) or (factor.range_start == factor.range_end == 0.0)) else 0.0
+                            exec factor.factor_special_id.python_code
+                            
+                        res2 = ((factor.fixed_amount if (factor.mixed or factor.factor_type=='travel') else 0.0) + (factor.factor * x if factor.factor_type != 'special' else x)) if ((x >= factor.range_start and x <= factor.range_end) or (factor.range_start == factor.range_end == 0.0)) else 0.0
                 result += res1 + res2
         print "result :", result
 
         return result
     
 tms_factor()
+
+
+class tms_factor_special(osv.osv):
+    _name = "tms.factor.special"
+    _description = "Python Code calculate Payment (Driver/Supplier) & Client charge"
+
+
+    _columns = {
+        'name'            : openerp.osv.fields.char('Special Name', size=200, required=True),
+        'active'          : openerp.osv.fields.boolean('Active'),
+        'date'            : openerp.osv.fields.date('Date', required=True),
+        'description'     : openerp.osv.fields.text('Description'),
+        'python_code'     : openerp.osv.fields.text('Python Code', required=True),
+        'factor_ids'      : openerp.osv.fields.one2many('tms.factor', 'factor_special_id', 'Factor'),
+        'travel_salary'   : openerp.osv.fields.boolean('Travel Salary Factor', help="Travel Salary Special Calculation for Company Drivers"),
+        'travel_supplier' : openerp.osv.fields.boolean('Travel Supplier Factor', help="Travel Supplier Special Calculation"),
+        'company_id'      : openerp.osv.fields.many2one('res.company', 'Company', required=False),
+        }
+    
+    _defaults = {
+        'active' : True,
+        'date'   : time.strftime( DEFAULT_SERVER_DATE_FORMAT),
+        }
+
+    def _check_only_one_salary(self, cr, uid, ids, context=None):
+        cr.execute('select count(id) from tms_factor_special where travel_salary and active;')
+        count = filter(None, map(lambda x:x[0], cr.fetchall()))
+        if  count and count[0] > 1:
+            return False
+        return True
+
+    def _check_only_one_supplier(self, cr, uid, ids, context=None):
+        cr.execute('select count(id) from tms_factor_special where travel_supplier and active;')
+        count = filter(None, map(lambda x:x[0], cr.fetchall()))
+        if  count and count[0] > 1:
+            return False
+        return True
+
+    def _check_one_or_another(self, cr, uid, ids, context=None):
+        for rec in self.browse(cr, uid, ids):
+            return not(rec.travel_salary and rec.travel_supplier)
+        return True
+
+
+    _constraints = [
+        (_check_only_one_salary, _('Error ! You can not have two active Travel Salary Factors.'), ['travel_salary']),
+        (_check_only_one_supplier, _('Error ! You can not have two active Travel Supplier Factors.'), ['travel_supplier']),
+        (_check_one_or_another, _('Error ! You can not have Travel Salary and Travel Supplier Factors checked at the same time.'), ['travel_supplier'])
+    ]
+
 
 
 class tms_waybill(osv.osv):

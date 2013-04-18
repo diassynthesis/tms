@@ -34,34 +34,125 @@ TMS.FACTOR
           <field name="type">form</field>
           <field name="arch" type="xml">
 	        <form string="Factors" >
-	          <!--					<field name="waybill_id" invisible="1" />
-		          <field name="travel_id" /> -->
-	          <field name="category" invisible="1" />
-	          <field name="factor_type" on_change="on_change_factor_type(factor_type)"/>
-	          <field name="name" />
-	          <field name="framework" attrs="{'invisible'	:[('factor_type','not in',('distance','distance_real'))]}"/>
-	          <field name="factor" 
-		             attrs="{'invisible'	:[('factor_type','in',('special','travel'))],
-			                'required'	:[('factor_type','in',('distance','weight','qty','volume','percent'))]}" />
-	          <newline />
-	          <field name="range_start" 
-		             attrs="{'invisible'	:[('factor_type','in',('special','travel','percent'))],
-			                'required'	:[('factor_type','in',('distance','weight','qty','volume'))]}"/>
-	          <field name="range_end" 
-		             attrs="{'invisible'	:[('factor_type','in',('special','travel','percent'))],
-			                'required'	:[('factor_type','in',('distance','weight','qty','volume'))]}"/>
-	          <field name="mixed"	attrs="{'invisible'	:[('factor_type','=','travel')]}" />
-	          <newline/>
-	          <field name="fixed_amount" required="1"/>
-	          <newline />
-	          <field name="special_formula"  colspan="4"
-		             attrs="{'invisible':[('factor_type','!=','special')],'required':[('factor_type','=','special')]}"/>
-	          <field name="sequence" />
-	          <newline />
-	          <field name="notes" colspan="4" />
+              <group colspan="4" col="4">
+	            <!--					<field name="waybill_id" invisible="1" />
+		            <field name="travel_id" /> -->
+	            <field name="category" invisible="1" />
+	            <field name="factor_type" on_change="on_change_factor_type(factor_type)"/>
+	            <field name="name" />
+	            <field name="framework" attrs="{'invisible'	:[('factor_type','not in',('distance','distance_real'))]}"/>
+	            <field name="factor" 
+		               attrs="{'invisible'	:[('factor_type','in',('special','travel'))],
+			                  'required'	:[('factor_type','in',('distance','weight','qty','volume','percent'))]}" />
+	            <newline />
+	            <field name="range_start" 
+		               attrs="{'invisible'	:[('factor_type','in',('special','travel','percent'))],
+			                  'required'	:[('factor_type','in',('distance','weight','qty','volume'))]}"/>
+	            <field name="range_end" 
+		               attrs="{'invisible'	:[('factor_type','in',('special','travel','percent'))],
+			                  'required'	:[('factor_type','in',('distance','weight','qty','volume'))]}"/>
+	            <field name="mixed"	attrs="{'invisible'	:[('factor_type','=','travel')]}" />
+	            <newline/>
+	            <field name="fixed_amount" required="1"/>
+	            <newline />
+	            <field name="factor_special_id"  colspan="4"
+		               attrs="{'invisible':[('factor_type','!=','special')],'required':[('factor_type','=','special')]}"/>
+	            <field name="sequence" />
+	            <newline />
+	            <field name="notes" colspan="4" />
+              </group>
 	        </form>
 	      </field>
 	    </record>
+
+
+<!-- 
+##############################
+TMS.FACTOR.SPECIAL 
+##############################
+-->
+<!-- SEARCH View for tms.factor.special --> 
+	<record model="ir.ui.view" id="view_tms_factor_special_search">
+        <field name="name">tms.factor.special.search</field>
+        <field name="model">tms.factor.special</field>
+		<field name="type">search</field>
+		<field name="arch" type="xml">
+            <search string="Special Factors">
+              <field name="name" />
+		    </search>
+		</field>
+	</record>
+
+<!-- TREE View for tms.factor.special -->
+	<record model="ir.ui.view" id="view_tms_factor_special_tree">
+        <field name="name">tms.factor.special.tree</field>
+        <field name="model">tms.factor.special</field>
+		<field name="type">tree</field>
+		<field name="arch" type="xml">
+            <tree string="Special Factors">
+                <field name="name" />
+                <field name="date" />
+                <field name="travel_salary" />
+                <field name="travel_supplier" />
+		        <field name="active" />
+		    </tree>
+		</field>
+	</record>
+
+<!-- FORM View for tms.factor.special -->
+    
+        <record id="view_tms_factor_special_form" model="ir.ui.view">
+            <field name="name">tms.factor.special.form</field>
+            <field name="model">tms.factor.special</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Unit Categories" version="7.0">
+                    <sheet>
+		              <group col="4" colspan="4">
+                        <h1>
+                          <field name="name" colspan="4"/>
+                        </h1>
+		              </group>
+			          <group col="4" colspan="4">
+		  	            <field name="date" />
+                        <field name="active" />
+                        <field name="travel_salary" />
+                        <field name="travel_supplier" />
+                        <notebook colspan="4" col="4">
+                          <page string="Description">
+                            <field name="description" nolabel="1" colspan="4" />
+                          </page>
+                          <page string="Python Code">
+                            <field name="python_code" nolabel="1" colspan="4" />
+                          </page>
+                          <page string="Associated Factors">
+                            <field name="factor_ids" nolabel="1" widget="one2many_tags" colspan="4" readonly="1"/>
+                          </page>
+                        </notebook>
+                      </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+<!-- Action for tms.factor.special -->
+    <record model="ir.actions.act_window" id="open_view_tms_factor_special_form">
+        <field name="name">TMS Special Factors</field>
+        <field name="res_model">tms.factor.special</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+<menuitem id="menu_tms_factor" name="Factors" parent="menu_tms_config" sequence="99"/>
+
+<!-- Menu for tms.factor.special -->
+    <menuitem name="Special Factors" 
+              parent="menu_tms_factor" 
+              id="menu_tms_factor_special_form" 
+              action="open_view_tms_factor_special_form"
+	      sequence="20"/>
+
+
 	
 
     </data>

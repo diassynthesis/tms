@@ -114,7 +114,7 @@ TMS.EXPENSE
 			  <field name="amount_subtotal_total"  class="oe_text_right" style="font-weight: bold;"/>
 			  <field name="amount_tax_total" class="oe_text_right"/>
 			  <field name="amount_total_total"  class="oe_text_right" style="font-weight: bold;"/>
-                          <separator string="· · · · · · · · · ·"  colspan="2" style="text-align: center;"/>
+              <separator string="· · · · · · · · · ·"  colspan="2" style="text-align: center;"/>
 			  <field name="amount_madeup_expense" class="oe_text_right"/>
 			</group>
 		      </div>

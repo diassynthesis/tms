@@ -384,6 +384,4 @@ class tms_travel(osv.osv):
 tms_travel()
 
 
-
-
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

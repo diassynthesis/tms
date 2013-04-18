@@ -48,6 +48,95 @@ TMS.WAYBILL.EXTRADATA
 
 
 
+<!-- 
+##############################
+TMS.waybill.category
+##############################
+-->
+<!-- SEARCH View for tms.waybill.category  --> 
+        <record id="view_tms_waybill_category_search" model="ir.ui.view">
+            <field name="name">tms.waybill.category.search</field>
+            <field name="model">tms.waybill.category</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <search string="Waybill Categories">
+                   <field name="name"/>
+                   <group  expand='0' string='Group by...'>
+                       <filter string='Shop' icon="terp-go-home" domain="[]" context="{'group_by' : 'shop_id'}" />
+                   </group>
+                </search>
+            </field>
+        </record>
+
+<!-- TREE View for tms.waybill.category --> 
+	<record model="ir.ui.view" id="view_tms_waybill_category_tree">
+        <field name="name">tms.waybill.category.tree</field>
+        <field name="model">tms.waybill.category</field>
+		<field name="type">tree</field>
+		<field name="arch" type="xml">
+            <tree string="Waybill Categories">
+                <field name="name" />
+                <field name="shop_id" />
+                <field name="company_id" />
+                <field name="active" />
+		    </tree>
+		</field>
+	</record>
+
+<!-- FORM View for tms.waybill.category -->
+        <record id="view_tms_waybill_category_form" model="ir.ui.view">
+            <field name="name">tms.waybill.category.form</field>
+            <field name="model">tms.waybill.category</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Waybill Categories" version="7.0">
+                    <sheet>
+                      <group colspan="4" col="4">
+                        <h1>
+                            <label string="Category"/>
+                            <field name="name" class="oe_inline"/>
+                        </h1>
+                      </group>
+                      <group colspan="4" col="4">
+                        <field name="shop_id"/>
+                        <field name="active" />
+                        <separator string="Description" colspan="4" />
+                        <field name="description" nolabel="1" colspan="4"/>
+                      </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread" placeholder="Share a message..."/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+
+
+<!-- Action for tms.waybill.category -->
+    <record model="ir.actions.act_window" id="open_view_tms_waybill_category_form">
+        <field name="name">Waybill Category</field>
+        <field name="res_model">tms.waybill.category</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+<!-- Menu for tms.waybill.category -->
+    <menuitem name="Waybill Categories" sequence="10"
+              parent="menu_tms_config_waybill" 
+              id="menu_tms_config_waybill_category_form" 
+              action="open_view_tms_waybill_category_form"/>
+
+
+
+
+
+
+
+
+
+
 <!--  tms.waybill.cancel wizard-->
 
         <record id="view_waybill_cancel" model="ir.ui.view">
@@ -141,15 +230,15 @@ TMS.WAYBILL.EXTRADATA
                   <field name="name" class="oe_inline" readonly="1"/>
                 </h1>
 	            <field name="company_id" readonly="1" invisible="1"/>
-                <group col="6">
+                <group col="4">
                   <field name="date_order"/>
                   <field name="shop_id" />                        
                   <field name="sequence_id" on_change="onchange_sequence_id(sequence_id)" required="1" 
 		                 context="{'default_tms_waybill_sequence': 1,'default_shop_id': shop_id}"
 		                 domain="[('shop_id','=',shop_id)]" />
-	              
-	            </group>
-                <group col="4">
+
+	              <field name="waybill_category" domain="['|',('shop_id','=',shop_id),('shop_id','=',False)]" />
+                  <separator string="·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·" colspan="4" style="text-align: center;"/>
                   <field name="partner_id" on_change="onchange_partner_id(partner_id)" domain="[('customer','=',True)]" context="{'search_default_customer':1}" required="1"/>
                   <field name="currency_id" />
                   <field name="partner_order_id" domain="[('partner_id','=',partner_id)]" />
@@ -442,16 +531,17 @@ TMS.WAYBILL.EXTRADATA
 	  </field>
 	  <newline />
           <group expand="0" string="More filters..." colspan="11" col="8" groups="base.group_extended">
-	    <field name="route_id" />
-	    <field name="departure_id" />
-	    <field name="arrival_id" />
-	    <field name="product_uom_type" />
-	  </group>
+	        <field name="route_id" />
+	        <field name="departure_id" />
+	        <field name="arrival_id" />
+	        <field name="product_uom_type" />
+	      </group>
           <newline/>
           <group expand="0" string="Group By..." colspan="11" col="11" groups="base.group_extended">
             <filter string="Customer" icon="terp-personal" domain="[]" context="{'group_by':'partner_id'}"/>
             <filter string="Salesman" icon="terp-personal" domain="[]" context="{'group_by':'user_id'}"/>
             <filter string="Waybill Type" icon="terp-personal" domain="[]" context="{'group_by':'waybill_type'}"/>
+            <filter string="Waybill Category" icon="terp-personal" domain="[]" context="{'group_by':'waybill_category'}"/>
             <separator orientation="vertical"/>
             <filter string="State" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'state'}"/>
             <filter string="Product UoM Type" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'product_uom_type'}"/>

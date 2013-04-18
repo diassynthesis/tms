@@ -29,6 +29,26 @@ import netsvc
 import openerp
 from pytz import timezone
 
+
+# Waybill Category
+class tms_waybill_category(osv.osv):
+    _name ='tms.waybill.category'
+    _inherit = ['mail.thread', 'ir.needaction_mixin']
+    _description = 'Waybill Categories'
+
+    _columns = {
+        'shop_id'     : openerp.osv.fields.many2one('sale.shop', 'Shop'),
+        'company_id'  : openerp.osv.fields.related('shop_id','company_id',type='many2one',relation='res.company',string='Company',store=True,readonly=True),
+        'name'        : openerp.osv.fields.char('Name', size=64, required=True),
+        'description' : openerp.osv.fields.text('Description'),
+        'active'      : openerp.osv.fields.boolean('Active'),
+        }
+
+    _defaults = {
+        'active' : True,
+        }
+
+
  # TMS Waybills
 class tms_waybill(osv.osv):
     _name = 'tms.waybill'
@@ -132,10 +152,17 @@ class tms_waybill(osv.osv):
     def _get_supplier_amount(self, cr, uid, ids, field_name, arg, context=None):
         res = {}
         for waybill in self.browse(cr, uid, ids, context=context):
+            result = 0.0
             if waybill.waybill_type == 'outsourced':
-                factor = self.pool.get('tms.factor')
-                result = factor.calculate(cr, uid, 'waybill', ids, 'supplier', False)                
-                res[waybill.id] = result
+                factor_special_obj = self.pool.get('tms.factor.special')
+                factor_special_ids = factor_special_obj.search(cr, uid, [('travel_supplier', '=', True), ('active', '=', True)])
+                if len(factor_special_ids):
+                    exec factor_special_obj.browse(cr, uid, factor_special_ids)[0].python_code
+                    print result
+                else:
+                    factor_obj = self.pool.get('tms.factor')
+                    result = factor_obj.calculate(cr, uid, 'waybill', ids, 'supplier', False)                
+            res[waybill.id] = result
         return res
 
 
@@ -167,6 +194,7 @@ class tms_waybill(osv.osv):
     _columns = {
         'name'             : openerp.osv.fields.char('Name', size=64, readonly=True, select=True),
         'shop_id'          : openerp.osv.fields.many2one('sale.shop', 'Shop', required=True, readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
+        'waybill_category' : openerp.osv.fields.many2one('tms.waybill.category', 'Waybill Category', required=False, readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
         'sequence_id'      : openerp.osv.fields.many2one('ir.sequence', 'Sequence', required=True, readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
         'travel_ids'       : openerp.osv.fields.many2many('tms.travel', 'tms_waybill_travel_rel', 'waybill_id', 'travel_id', 'Travels', readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
 

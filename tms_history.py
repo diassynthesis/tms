@@ -114,7 +114,7 @@ class tms_event_action(osv.osv):
         'event_category_ids': openerp.osv.fields.many2many('tms.event.category', 'tms_event_action_rel','action_id', 'event_category_id', 'Event Categories'),        
         'field_id'          : openerp.osv.fields.many2one('ir.model.fields', 'Field to update'),
         'object_id'         : openerp.osv.fields.related('field_id', 'model_id', type='many2one', relation='ir.model', string='Object', store=True, readonly=True),                
-        'get_value'         : openerp.osv.fields.text('Get Value Python Expression'),
+        'get_value'         : openerp.osv.fields.text('Python Code'),
         'notes'             : openerp.osv.fields.text('Notes'),
         'active'            : openerp.osv.fields.boolean('Active'),
     }
