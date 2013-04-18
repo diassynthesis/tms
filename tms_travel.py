@@ -233,7 +233,7 @@ class tms_travel(osv.osv):
                             'factor'        : factor.factor,
                             'fixed_amount'  : factor.fixed_amount,
                             'mixed'         : factor.mixed,
-                            'special_formula': factor.special_formula,
+                            'factor_special_id': factor.factor_special_id.id,
                             'travel_id'     : ids[0],
                             'control'       : True,
                             }
@@ -266,7 +266,7 @@ class tms_travel(osv.osv):
                         'factor'        : factor.factor,
                         'fixed_amount'  : factor.fixed_amount,
                         'mixed'         : factor.mixed,
-                        'special_formula': factor.special_formula,
+                        'factor_special_id': factor.factor_special_id.id,
 #                        'travel_id'     : ids[0],
                         })
             factors.append(x)
