@@ -118,31 +118,37 @@ TMS.travel
                             <field name="date" />
                             <field name="kit_id" on_change="onchange_kit_id(kit_id)"/>
                             <newline />
-                            <field name="unit_id" />
-                            <field name="trailer1_id" 	domain="[('id','!=',trailer2_id), ('fleet_type','=','trailer')]"
-										                context="{'default_fleet_type': 'trailer'}"
-									                  	attrs="{'required':['|', ('dolly_id','!=',False),('trailer2_id','!=',False)]}"/>
-                            <field name="dolly_id" 	domain="[('fleet_type','=','dolly')]"
-									                context="{'default_fleet_type': 'dolly'}"
-									                attrs="{'required':[('trailer2_id','!=',False)]}"/>
-                            <field name="trailer2_id" 	domain="[('id','!=',trailer1_id), ('fleet_type','=','trailer')]"
-										                context="{'default_fleet_type': 'trailer'}"
-										                attrs="{'required':[('dolly_id','!=',False)]}"/>
-                            <field name="employee_id" context="{'default_tms_category': 'driver'}"/>
-                            <field name="employee2_id"  context="{'default_tms_category': 'driver'}"/> 
+                            <group col="2" colspan="2">
+
+                              <field name="unit_id" />
+                            
+                              <field name="trailer1_id" 	domain="[('id','!=',trailer2_id), ('fleet_type','=','trailer')]"
+									 context="{'default_fleet_type': 'trailer'}"
+									 attrs="{'required':['|', ('dolly_id','!=',False),('trailer2_id','!=',False)]}"/>
+                              <field name="dolly_id" 	domain="[('fleet_type','=','dolly')]"
+									 context="{'default_fleet_type': 'dolly'}"
+									 attrs="{'required':[('trailer2_id','!=',False)]}"/>
+                              <field name="trailer2_id" 	domain="[('id','!=',trailer1_id), ('fleet_type','=','trailer')]"
+									 context="{'default_fleet_type': 'trailer'}"
+									 attrs="{'required':[('dolly_id','!=',False)]}"/>
+
+                            </group>
+                            <group col="2" colspan="2">
+                              <field name="supplier_unit" attrs="{'invisible':[('supplier_unit','!=',True)]}" />
+                              <field name="supplier_id" string="Outsourced with" attrs="{'invisible':[('supplier_unit','!=',True)]}" />
+                              <field name="employee_id" context="{'default_tms_category': 'driver'}"/>
+                              <field name="employee2_id"  context="{'default_tms_category': 'driver'}"/>
+                            </group>
                             <field name="route_id" on_change="onchange_route_id(route_id, unit_id, trailer1_id, dolly_id, trailer2_id)" colspan="4"/>
                             <field name="departure" readonly="1" />
                             <field name="arrival" readonly="1" />
 			    <field name="user_id" />
                         </group>                    
                         <notebook colspan="4">
-                            <page string="Fuel Vouchers">
+                            <page string="Fuel Vouchers" attrs="{'invisible':[('supplier_unit','=',True)]}">
                                 <group>
                                     <field name="fuelvoucher_ids" nolabel="1" context="{'default_travel_id': active_id}" >
                                         <tree string="TMS Fuel Vouchers">
-<!--                                            <button name="action_cancel" states="draft,approved,confirmed" string="Cancel" type="object" icon="gtk-cancel"/>
-                                            <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-ok"/>
-                                            <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok"/> -->
                                             <field name="state" />
                                             <field name="name" />
                                             <field name="date" />
@@ -155,13 +161,11 @@ TMS.travel
 
                                 </group>
                             </page>                        
-                            <page string="Advances">
+                            <page string="Advances" attrs="{'invisible':[('supplier_unit','=',True)]}">
                                 <group>
-                            	    <field name="advance_ids" nolabel="1"  context="{'default_travel_id': active_id}" >
+                            	    <field name="advance_ids" nolabel="1"  context="{'default_travel_id': active_id}" 
+                                           attrs="{'readonly':[('supplier_unit','=',True)]}">
                                         <tree string="TMS Advances">
-<!--                                            <button name="action_cancel" states="draft,approved,confirmed" string="Cancel" type="object" icon="gtk-cancel"/>
-                                            <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-ok"/>
-                                            <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok"/> -->
                                             <field name="state" />
                                             <field name="name" />
                                             <field name="date" />
@@ -196,7 +200,7 @@ TMS.travel
                                 </group>
                             </page>
 
-					        <page string="Factor Driver">
+					        <page string="Factor Driver" attrs="{'invisible':[('supplier_unit','=',True)]}">
                                 <group>
                                     <separator string="Driver Salary Factors" colspan="4"/>
                                     <field name="expense_driver_factor" 

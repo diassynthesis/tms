@@ -106,7 +106,7 @@ TMS.FUELVOUCHER
                         <group colspan="4" col="4">
                             <field name="shop_id" />
                             <field name="date" />
-                            <field name="travel_id" domain="[('state','!=','cancel'),('state','!=','closed')]" on_change="on_change_travel_id(travel_id)"/>
+                            <field name="travel_id" domain="[('state','!=','cancel'),('state','!=','closed'), ('supplier_unit', '=', False)]" on_change="on_change_travel_id(travel_id)"/>
                             <newline />
                             <field name="unit_id" readonly="1"/>
                             <field name="employee_id" readonly="1"/>

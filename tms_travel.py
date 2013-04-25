@@ -135,6 +135,8 @@ class tms_travel(osv.osv):
         'route_id': openerp.osv.fields.many2one('tms.route', 'Route', required=True, states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
         'kit_id': openerp.osv.fields.many2one('tms.unit.kit', 'Kit', required=False, states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
         'unit_id': openerp.osv.fields.many2one('fleet.vehicle', 'Unit', required=True, domain=[('fleet_type', '=', 'tractor')], states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
+        'supplier_unit': openerp.osv.fields.related('unit_id', 'supplier_unit', type='boolean', string='Supplier Unit', store=True, readonly=True),
+        'supplier_id': openerp.osv.fields.related('unit_id', 'supplier_id',type='many2one',relation='res.partner',string='Supplier', store=True, readonly=True),                
         'trailer1_id': openerp.osv.fields.many2one('fleet.vehicle', 'Trailer1', required=False,  domain=[('fleet_type', '=', 'trailer')], states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
         'dolly_id': openerp.osv.fields.many2one('fleet.vehicle', 'Dolly', required=False,        domain=[('fleet_type', '=', 'dolly')],   states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
         'trailer2_id': openerp.osv.fields.many2one('fleet.vehicle', 'Trailer2', required=False,  domain=[('fleet_type', '=', 'trailer')], states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
@@ -155,7 +157,7 @@ class tms_travel(osv.osv):
         'advance_ok_for_expense_rec': openerp.osv.fields.function(_validate_for_expense_rec, string='Advance OK', method=True, type='boolean',  multi='advance_ok_for_expense_rec'),
         'fuelvoucher_ok_for_expense_rec': openerp.osv.fields.function(_validate_for_expense_rec, string='Fuel Voucher OK', method=True,  type='boolean',  multi='advance_ok_for_expense_rec'),
         'waybill_ok_for_expense_rec': openerp.osv.fields.function(_validate_for_expense_rec, string='Waybill OK', method=True,  type='boolean',  multi='advance_ok_for_expense_rec'),
-        'waybill_income': openerp.osv.fields.function(_validate_for_expense_rec, string='Income', method=True, type='float', digits=(18,6), multi='advance_ok_for_expense_rec'),
+        'waybill_income': openerp.osv.fields.function(_validate_for_expense_rec, string='Income', method=True, type='float', digits=(18,6), multi='advance_ok_for_expense_rec', store=True),
 
         'distance_driver': openerp.osv.fields.float('Distance traveled by driver (mi./km)', required=False, digits=(16,2), states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
         'distance_loaded': openerp.osv.fields.float('Distance Loaded (mi./km)', required=False, digits=(16,2), states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),

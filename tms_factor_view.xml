@@ -92,8 +92,7 @@ TMS.FACTOR.SPECIAL
             <tree string="Special Factors">
                 <field name="name" />
                 <field name="date" />
-                <field name="travel_salary" />
-                <field name="travel_supplier" />
+                  <field name="type" />
 		        <field name="active" />
 		    </tree>
 		</field>
@@ -116,8 +115,8 @@ TMS.FACTOR.SPECIAL
 			          <group col="4" colspan="4">
 		  	            <field name="date" />
                         <field name="active" />
-                        <field name="travel_salary" />
-                        <field name="travel_supplier" />
+                        <field name="type" />
+                        <newline />
                         <notebook colspan="4" col="4">
                           <page string="Description">
                             <field name="description" nolabel="1" colspan="4" />

@@ -24,10 +24,40 @@
 						    <field name="tms_supplier_driver" />
 						    <field name="tms_supplier_id" attrs="{'required':[('tms_supplier_driver','=',True)],'invisible':[('tms_supplier_driver','!=',True)]  }"/>
                         </group>
+                        <group colspan="4" col="4">
+                            <separator string="Record Travel Expenses Related" colspan="4" />
+						    <field name="tms_global_salary" />
+                            <newline />
+						    <field name="tms_house_rent_discount" />
+                            <newline />
+						    <field name="tms_house_rent_discount_perc" />
+						    <field name="tms_house_rent_prod_id" />
+						    <field name="tms_alimony" />
+                            <field name="tms_alimony_prod_id" />                            
+						    <field name="tms_credit_charge_discount" />
+						    <field name="tms_credit_charge_prod_id" />
+                        </group>
 					</page>
                 </notebook>
             </field>
         </record>
+
+
+
+        <record model="ir.ui.view" id="view_hr_job_form_tms">
+            <field name="name">Jobs - TMS</field>
+            <field name="model">hr.job</field>
+            <field name="type">form</field>
+            <field name="priority">50</field>
+            <field name="inherit_id" ref="hr.view_hr_job_form"/>
+            <field name="arch" type="xml">
+                <field name="department_id" position="after">
+                    <field name="tms_global_salary"/>
+                </field>
+            </field>
+        </record>
+
+
 
 </data>
 </openerp>

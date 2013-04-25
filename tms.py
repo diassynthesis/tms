@@ -239,7 +239,7 @@ class fleet_vehicle(osv.osv):
         ]
 
     _sql_constraints = [
-#            ('name_uniq', 'unique(name)', 'Unit name number must be unique !'),
+            ('name_uniq', 'unique(name)', 'Unit name number must be unique !'),
             ('gps_id_uniq', 'unique(gps_id)', 'Unit GPS ID must be unique !'),
         ]
 

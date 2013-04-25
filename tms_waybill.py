@@ -155,7 +155,7 @@ class tms_waybill(osv.osv):
             result = 0.0
             if waybill.waybill_type == 'outsourced':
                 factor_special_obj = self.pool.get('tms.factor.special')
-                factor_special_ids = factor_special_obj.search(cr, uid, [('travel_supplier', '=', True), ('active', '=', True)])
+                factor_special_ids = factor_special_obj.search(cr, uid, [('type', '=', 'supplier'), ('active', '=', True)])
                 if len(factor_special_ids):
                     exec factor_special_obj.browse(cr, uid, factor_special_ids)[0].python_code
                     print result
@@ -176,6 +176,7 @@ class tms_waybill(osv.osv):
         return res
 
     def _get_waybill_type(self, cr, uid, ids, field_name, arg, context=None):
+        print "Entrando aqui..."
         res = {}
         for waybill in self.browse(cr, uid, ids, context=context):
             waybill_type = 'self'
@@ -1136,6 +1137,7 @@ class tms_waybill_supplier_invoice(osv.osv_memory):
             account_jrnl_obj=self.pool.get('account.journal')
             invoice_obj=self.pool.get('account.invoice')
             waybill_obj=self.pool.get('tms.waybill')
+            travel_obj=self.pool.get('tms.travel')
 
             journal_id = account_jrnl_obj.search(cr, uid, [('type', '=', 'purchase'),('tms_supplier_journal','=', 1)], context=None)
             if not journal_id:
@@ -1236,7 +1238,7 @@ class tms_waybill_supplier_invoice(osv.osv_memory):
                 }
                 print "inv: " , inv
 
-
+                travel_obj.write(cr, uid, [waybill.travel_id.id], {'closed_by': uid, date_closed : time.strftime(DEFAULT_SERVER_DATETIME_FORMAT), state:'closed'})
 
                 inv_id = invoice_obj.create(cr, uid, inv)
                 invoices.append(inv_id)

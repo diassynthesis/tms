@@ -258,8 +258,18 @@ class tms_factor_special(osv.osv):
         'description'     : openerp.osv.fields.text('Description'),
         'python_code'     : openerp.osv.fields.text('Python Code', required=True),
         'factor_ids'      : openerp.osv.fields.one2many('tms.factor', 'factor_special_id', 'Factor'),
-        'travel_salary'   : openerp.osv.fields.boolean('Travel Salary Factor', help="Travel Salary Special Calculation for Company Drivers"),
-        'travel_supplier' : openerp.osv.fields.boolean('Travel Supplier Factor', help="Travel Supplier Special Calculation"),
+        'type'            : openerp.osv.fields.selection([
+                ('salary', 'Driver Salary'),
+                ('salary_distribution', 'Salary Distribution'),
+                ('retention', 'Salary Retentions & Discounts'),
+                ('supplier', 'Supplier Payment'),
+                ], 'Type', required=True, help="""
+Driver Salary => Use this for special Driver Salary calculation
+Salary Distribution => Useful in some countries, you can make a Wage distribution on several expenses, so Salary is masked for Tax purposes
+Salary Retentions & Discounts => Use this for Driver Tax retentions
+Supplier => Use this to calculate Supplier Travel Payment
+                """),
+
         'company_id'      : openerp.osv.fields.many2one('res.company', 'Company', required=False),
         }
     
@@ -268,30 +278,17 @@ class tms_factor_special(osv.osv):
         'date'   : time.strftime( DEFAULT_SERVER_DATE_FORMAT),
         }
 
-    def _check_only_one_salary(self, cr, uid, ids, context=None):
-        cr.execute('select count(id) from tms_factor_special where travel_salary and active;')
-        count = filter(None, map(lambda x:x[0], cr.fetchall()))
-        if  count and count[0] > 1:
-            return False
-        return True
-
-    def _check_only_one_supplier(self, cr, uid, ids, context=None):
-        cr.execute('select count(id) from tms_factor_special where travel_supplier and active;')
-        count = filter(None, map(lambda x:x[0], cr.fetchall()))
-        if  count and count[0] > 1:
-            return False
-        return True
-
-    def _check_one_or_another(self, cr, uid, ids, context=None):
+    def _check_only_one(self, cr, uid, ids, context=None):
         for rec in self.browse(cr, uid, ids):
-            return not(rec.travel_salary and rec.travel_supplier)
+            cr.execute("select count(id) from tms_factor_special where type='%s' and active;" % (rec.type))
+        count = filter(None, map(lambda x:x[0], cr.fetchall()))
+        if  count and count[0] > 1:
+            return False
         return True
 
 
     _constraints = [
-        (_check_only_one_salary, _('Error ! You can not have two active Travel Salary Factors.'), ['travel_salary']),
-        (_check_only_one_supplier, _('Error ! You can not have two active Travel Supplier Factors.'), ['travel_supplier']),
-        (_check_one_or_another, _('Error ! You can not have Travel Salary and Travel Supplier Factors checked at the same time.'), ['travel_supplier'])
+        (_check_only_one, _('Error ! You can not have two active Factor with the same Type'), ['type']),
     ]
 
 

@@ -9,8 +9,16 @@
         <menuitem id="menu_tms_config_unit" name="Units" parent="menu_tms_config" sequence="2"/>
         <menuitem id="menu_tms_config_routes" name="Routes" parent="menu_tms_config" sequence="2"/>
         <menuitem id="menu_tms_config_waybill" name="Waybill" parent="menu_tms_config" sequence="2"/>
-	
-	<menuitem action="fleet.fleet_vehicle_odometer_act" parent="menu_tms_travels" id="tms_fleet_vehicle_odometer_menu" groups="fleet.group_fleet_user" sequence="90"/>
+        <menuitem id="menu_tms_config_product" name="Products" parent="menu_tms_config" sequence="2"/>
+        <menuitem name="Products by Category" id="menu_tms_product_by_category_stock_form" action="product.product_category_action"
+            parent="menu_tms_config_product" sequence="0"/>
+        <menuitem action="product.product_normal_action" id="menu_tms_config_product_product" parent="menu_tms_config_product" sequence="1"/>
+        <menuitem
+            action="product.product_category_action_form" id="menu_tms_config_product_product_category"
+            parent="menu_tms_config_product" sequence="0"/>
+
+
+	    <menuitem action="fleet.fleet_vehicle_odometer_act" parent="menu_tms_travels" id="tms_fleet_vehicle_odometer_menu" groups="fleet.group_fleet_user" sequence="90"/>
 
 <!-- 
 ##############################
