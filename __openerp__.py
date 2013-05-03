@@ -20,7 +20,7 @@
 ##############################################################################
 
 {   
-    "name"        : "Hesatec - Freight Management",
+    "name"        : "Freight Management",
     "version"     : "1.0",
     "category"    : "Vertical",
     'complexity'  : "normal",

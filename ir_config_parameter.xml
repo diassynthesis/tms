@@ -19,9 +19,7 @@
     -->
 	<record model="ir.config_parameter" id="tms_property_hr_salario_minimo_df">               
       <field name="key">tms_property_hr_salario_minimo_df</field> 
-      <field name="value">61.38
-Indique el Salario Mínimo del DF para usarlo como cálculo para el descuento del INFONAVIT
-      </field>              
+      <field name="value">61.38</field>              
     </record>
 
 	<!-- Mexico's Special Parameter for Convenio IMSS-CANACAR
@@ -29,8 +27,7 @@ Indique el Salario Mínimo del DF para usarlo como cálculo para el descuento de
     -->
 	<record model="ir.config_parameter" id="tms_property_hr_salario_minimo_zona">               
       <field name="key">tms_property_hr_salario_minimo_zona</field> 
-      <field name="value">61.38
-Indique el Salario Mínimo de la Zona correpondiente para usarlo como cálculo para la retencion del Seguro Social del Operador      </field>              
+      <field name="value">61.38</field>
     </record>
 
 	<!-- Mexico's Special Parameter for Convenio IMSS-CANACAR
@@ -38,9 +35,7 @@ Indique el Salario Mínimo de la Zona correpondiente para usarlo como cálculo p
     -->
 	<record model="ir.config_parameter" id="tms_property_hr_factor_cuota_imss">               
       <field name="key">tms_property_hr_factor_imss</field> 
-      <field name="value">0.02851
-Indique el Factor Cuota Obrera para el cálculo del convenio IMSS-CANACAR
-      </field>              
+      <field name="value">6.13</field>              
     </record>
 
 	<!-- Mexico's Special Parameter for Convenio IMSS-CANACAR
@@ -48,9 +43,7 @@ Indique el Factor Cuota Obrera para el cálculo del convenio IMSS-CANACAR
     -->
 	<record model="ir.config_parameter" id="tms_property_hr_factor_cuota_obrera">               
       <field name="key">tms_property_hr_factor_cuota_obrera</field> 
-      <field name="value">0.02851
-Indique el Factor Cuota Obrera para el cálculo del convenio IMSS-CANACAR
-      </field>              
+      <field name="value">0.02851</field>              
     </record>
 
 	<!-- Mexico's Special Parameter for Convenio IMSS-CANACAR
@@ -58,9 +51,7 @@ Indique el Factor Cuota Obrera para el cálculo del convenio IMSS-CANACAR
     -->
 	<record model="ir.config_parameter" id="tms_property_hr_factor_excedente">               
       <field name="key">tms_property_hr_factor_excedente</field> 
-      <field name="value">0.0
-Indique el Factor Excedente a aplicar para el cálculo del convenio IMSS-CANACAR
-      </field>              
+      <field name="value">0.0</field>              
     </record>
 
 

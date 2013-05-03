@@ -21,13 +21,14 @@
 						    <field name="tms_category" />
 						    <field name="tms_advance_account_id" attrs="{'required':[('tms_category','=','driver')],'invisible':[('tms_category','!=','driver')]  }"/>
                             <field name="tms_expense_negative_balance_account_id" attrs="{'required':[('tms_category','=','driver')],'invisible':[('tms_category','!=','driver')]  }"/>
-						    <field name="tms_supplier_driver" />
+						    <field name="tms_supplier_driver" attrs="{'invisible':[('tms_category','!=','driver')]  }"/>
 						    <field name="tms_supplier_id" attrs="{'required':[('tms_supplier_driver','=',True)],'invisible':[('tms_supplier_driver','!=',True)]  }"/>
                         </group>
-                        <group colspan="4" col="4">
+                        <div attrs="{'invisible':[('tms_category','!=','driver')]}">
+                        <group colspan="4" col="4" >
                             <separator string="Record Travel Expenses Related" colspan="4" />
-						    <field name="tms_global_salary" />
-                            <newline />
+						    <!--<field name="tms_global_salary" />
+                            <newline /> -->
 						    <field name="tms_house_rent_discount" />
                             <newline />
 						    <field name="tms_house_rent_discount_perc" />
@@ -37,6 +38,7 @@
 						    <field name="tms_credit_charge_discount" />
 						    <field name="tms_credit_charge_prod_id" />
                         </group>
+                        </div>
 					</page>
                 </notebook>
             </field>

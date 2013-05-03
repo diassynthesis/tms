@@ -56,7 +56,7 @@ class hr_employee(osv.osv):
         'tms_expense_negative_balance_account_id': openerp.osv.fields.many2one('account.account', 'Negative Balance Account', domain=[('type', '=', 'other')]), 
         'tms_supplier_driver': openerp.osv.fields.boolean('Supplier Driver'), 
         'tms_supplier_id':openerp.osv.fields.many2one('res.partner', 'Supplier', domain=[('supplier', '=', 1)]),
-        'tms_global_salary' : openerp.osv.fields.related('job_id', 'tms_global_salary', string='Salary', store=True, readonly=True),
+#        'tms_global_salary' : openerp.osv.fields.related('job_id', 'tms_global_salary', type='float', digits=(18,6), string='Salary', readonly=True),
         'tms_alimony' : openerp.osv.fields.float('Alimony', digits=(18,6)),
         'tms_alimony_prod_id':openerp.osv.fields.many2one('product.product', 'Alimony Product', domain=[('tms_category', '=', 'salary_discount')]),
         'tms_house_rent_discount_perc' : openerp.osv.fields.float('Monthly House Rental Discount (%)', digits=(18,6)),

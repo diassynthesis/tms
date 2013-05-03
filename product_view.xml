@@ -18,9 +18,29 @@
                    <filter string="TMS Related" icon="terp-stage" 
                         domain="[('tms_category','in',('freight', 'travel','move','insurance','highway','other'))]"/>
                    <filter string="TMS Expense" icon="terp-dolar" domain="[('tms_category','in',('real_expense','madeup_expense', 'salary', 'salary_retention', 'salary_discount', 'negative_balance'))]"/> 
+                   <filter string="MRO Related" icon="terp-stage" 
+                        domain="[('tms_category','in',('maint_part', 'maint_activity','maint_service_type'))]"/>
+
                 </xpath> 
+                <xpath expr="/search/group/filter[@string='Type']" position="after" >
+                  <filter string='TMS or MRO Type' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'tms_category'}"/>
+                </xpath>
             </field>
         </record>
+
+        <record model="ir.ui.view" id="tms_product_product_tree_view">
+            <field name="name">TMS product.tree</field>
+            <field name="model">product.product</field>
+            <field name="type">form</field>
+            <field name="priority">50</field>
+            <field name="inherit_id" ref="product.product_product_tree_view"/>
+            <field name="arch" type="xml">
+              <field name="name" position="after">
+                <field name="tms_category" />
+              </field>
+            </field>
+        </record>
+
 
         <record model="ir.ui.view" id="tms_product_normal_form_view">
             <field name="name">TMS product.normal.form</field>
@@ -35,9 +55,9 @@
                         <newline />
                         <field name="tms_category" on_change="onchange_tms_category(tms_category)" class="oe_left" nolabel="1"/>
                         <newline />
-                        <label for="tms_activity_duration" attrs="{'invisible':[('tms_category','!=','maint_activity')]}" class="oe_left"/>
+                        <label for="tms_activity_duration" attrs="{'invisible':[('tms_category','!=','maint_activity')]}" class="oe_left" />
                         <newline />
-                        <field name="tms_activity_duration" attrs="{'invisible':[('tms_category','!=','maint_activity')], 'required':[('tms_category','=','maint_activity')]}" class="oe_left" nolabel="1"/>
+                        <field name="tms_activity_duration" attrs="{'invisible':[('tms_category','!=','maint_activity')], 'required':[('tms_category','=','maint_activity')]}" class="oe_left" nolabel="1" widget="float_time"/>
                     </group>
                 </xpath> 
                 <notebook position="inside">
@@ -47,7 +67,6 @@
                 </notebook>
             </field>
         </record>
-
 
 
 

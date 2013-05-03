@@ -347,6 +347,9 @@ class tms_expense(osv.osv):
                 print "Calculando sueldo para el viaje: ", travel.name
                 factor_special_ids = factor_special_obj.search(cr, uid, [('type', '=', 'salary'), ('active', '=', True)])
                 if len(factor_special_ids):
+                    print "= = = = = = = = = = = = = = = = = = = = = = = = = = = = ="
+                    print factor_special_obj.browse(cr, uid, factor_special_ids)[0].python_code
+                    print "= = = = = = = = = = = = = = = = = = = = = = = = = = = = ="
                     exec factor_special_obj.browse(cr, uid, factor_special_ids)[0].python_code
                 else:
                     result = factor_obj.calculate(cr, uid, 'expense', False, 'driver', [travel.id])

@@ -275,8 +275,23 @@ TMS.travel
             <field name="name">tms.travel.gantt</field>
             <field name="model">tms.travel</field>
             <field name="arch" type="xml">
-                <gantt date_start="date_start" date_stop="date_end" string="Travels" default_group_by="unit_id" color="unit_id">
-                </gantt>
+              <gantt date_start="date_start" date_stop="date_end" string="Travels" default_group_by="unit_id" color="unit_id">
+                <field name="name" />
+              </gantt>
+            </field>
+        </record>
+
+
+       <record id="view_tms_travel_calendar" model="ir.ui.view">
+            <field name="name">tms.travel.calendar</field>
+            <field name="model">tms.travel</field>
+            <field name="arch" type="xml">
+              <calendar string="Travels" color="state" date_start="date_start" date_stop="date_end">
+                <field name="name" />
+                <field name="unit_id" />
+                <field name="employee_id" />
+                <field name="arrival" />
+              </calendar>
             </field>
         </record>
 
@@ -287,7 +302,7 @@ TMS.travel
         <field name="name">TMS Travel</field>
         <field name="res_model">tms.travel</field>
         <field name="view_type">form</field>
-        <field name="view_mode">tree,form,gantt</field>
+        <field name="view_mode">tree,form,calendar,gantt</field>
     </record>
 
 <!-- Menu for tms.travel -->
