@@ -68,15 +68,15 @@ class tms_travel(osv.osv):
             waybill_ok = False
             waybill_income = 0.0
 
-            cr.execute("select id from tms_advance where travel_id=%s and state not in ('cancel','confirmed')",ids)
+            cr.execute("select id from tms_advance where travel_id in %s and state not in ('cancel','confirmed')", (tuple(ids),))
             data_ids = cr.fetchall()
             advance_ok = not len(data_ids)
 
-            cr.execute("select id from tms_fuelvoucher where travel_id=%s and state not in ('cancel','confirmed')",ids)
+            cr.execute("select id from tms_fuelvoucher where travel_id in %s and state not in ('cancel','confirmed')", (tuple(ids),))
             data_ids = cr.fetchall()
             fuelvoucher_ok = not len(data_ids)
 
-            cr.execute("select id from tms_waybill where travel_id=%s and state not in ('cancel','confirmed')",ids)
+            cr.execute("select id from tms_waybill where travel_id in %s and state not in ('cancel','confirmed')", (tuple(ids),))
             data_ids = cr.fetchall()
             waybill_ok = not len(data_ids)
 
@@ -245,7 +245,8 @@ class tms_travel(osv.osv):
 
     def write(self, cr, uid, ids, vals, context=None):
         super(tms_travel, self).write(cr, uid, ids, vals, context=context)
-        self.get_factors_from_route(cr, uid, ids, context=context)
+        if 'state' in vals and vals['state'] not in ('cancel', 'done', 'closed'):
+            self.get_factors_from_route(cr, uid, ids, context=context)
         return True
 
 

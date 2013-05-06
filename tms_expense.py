@@ -528,6 +528,7 @@ class tms_expense(osv.osv):
         if 'vehicle_id' in vals and vals['vehicle_id']:
             values['unit_id'] = vals['vehicle_id']
 
+        print "vals: ", vals
         res = super(tms_expense, self).create(cr, uid, values, context=context)
         self.get_salary_advances_and_fuel_vouchers(cr, uid, [res], vals)
         self.get_salary_retentions(cr, uid, [res])
@@ -793,7 +794,7 @@ class tms_expense_cancel(osv.osv_memory):
                 if len(data) > 0 and data[0] != expense.id:
                     raise osv.except_osv(
                             _('Could not cancel Expense Record!'),
-                            _('This Expense Record is not the last one for driver'))
+                            _('This Expense Record is not the last one for this driver'))
 
 
                 if expense.invoiced and expense.invoice_paid:
