@@ -239,7 +239,10 @@ TMS.waybill.category
 
 	              <field name="waybill_category" domain="['|',('shop_id','=',shop_id),('shop_id','=',False)]" />
                   <separator string="·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·" colspan="4" style="text-align: center;"/>
-                  <field name="partner_id" on_change="onchange_partner_id(partner_id)" domain="[('customer','=',True)]" context="{'search_default_customer':1}" required="1"/>
+                  <field name="partner_id" on_change="onchange_partner_id(partner_id)" 
+                         domain="[('customer','=',True), ('is_company', '=', True)]" 
+                         context="{'default_customer':1, 'default_is_company' : 1}" 
+                         required="1"/>
                   <field name="currency_id" />
                   <field name="partner_order_id" domain="[('partner_id','=',partner_id)]" />
                   <field name="partner_invoice_id" domain="[('partner_id','=',partner_id)]" />

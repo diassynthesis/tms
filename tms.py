@@ -177,7 +177,7 @@ class fleet_vehicle(osv.osv):
                            ], string="Day no Circulation", translate=True),
         'registration': openerp.osv.fields.char('Registration', size=64), # Tarjeta de Circulacion
         'gps_supplier_id': openerp.osv.fields.many2one('res.partner', 'GPS Supplier', required=False, readonly=False, 
-                                            domain="[('tms_category','=','gps')]"),
+                                            domain="[('tms_category','=','gps'),('is_company', '=', True)]"),
         'gps_id': openerp.osv.fields.char('GPS Id', size=64),
         'employee_id': openerp.osv.fields.many2one('hr.employee', 'Driver', required=False, domain=[('tms_category', '=', 'driver')], help="This is used in TMS Module..."),
         'fleet_type': openerp.osv.fields.selection([('tractor','Motorized Unit'), ('trailer','Trailer'), ('dolly','Dolly'), ('other','Other')], 'Unit Fleet Type', required=True),
@@ -202,7 +202,7 @@ class fleet_vehicle(osv.osv):
         'unit_red_tape_ids'     : openerp.osv.fields.one2many('tms.unit.red_tape', 'unit_id', 'Unit Red Tapes'), 
         'supplier_unit'         : openerp.osv.fields.boolean('Supplier Unit'),
         'supplier_id'           : openerp.osv.fields.many2one('res.partner', 'Supplier', required=False, readonly=False, 
-                                            domain="[('tms_category','=','none')]"),
+                                            domain="[('tms_category','=','none'),('is_company', '=', True)]"),
         'latitude'              : openerp.osv.fields.float('Lat', required=False, digits=(20,10), help='GPS Latitude'),
         'longitude'             : openerp.osv.fields.float('Lng', required=False, digits=(20,10), help='GPS Longitude'),
         'last_position'         : openerp.osv.fields.char('Last Position', size=250),
@@ -917,7 +917,8 @@ class fleet_vehicle_odometer_device(osv.osv):
             'state'             : 'draft',
         } 
 
-    def _check_state(self, cr, uid, ids, context=None):         
+    def _check_state(self, cr, uid, ids, context=None):
+        print "Entrando a _check_state "
         hubod_obj = self.pool.get('fleet.vehicle.odometer.device')
         for record in self.browse(cr, uid, ids, context=context):
             print "ID: ", record.id
@@ -927,13 +928,17 @@ class fleet_vehicle_odometer_device(osv.osv):
                 return False
             return True
 
-    def _check_odometer(self, cr, uid, ids, context=None):         
+    def _check_odometer(self, cr, uid, ids, context=None):
+        print "Entrando a _check_odometer"
         for rec in self.browse(cr, uid, ids, context=context):
+            print "rec.odometer_end: ", rec.odometer_end
+            print "rec.odometer_start: ", rec.odometer_start
             if rec.odometer_end < rec.odometer_start:
                 return False
             return True
 
-    def _check_dates(self, cr, uid, ids, context=None):         
+    def _check_dates(self, cr, uid, ids, context=None):
+        print "Entrando a _check_dates"
         hubod_obj = self.pool.get('fleet.vehicle.odometer.device')
         for record in self.browse(cr, uid, ids, context=context):
             if record.date_end and record.date_end < record.date_start:            
@@ -950,6 +955,13 @@ class fleet_vehicle_odometer_device(osv.osv):
         (_check_odometer, 'You can not have Odometer End less than Odometer Start', ['odometer_end']),
         (_check_dates, 'You can not have this Star Date because is overlaping with another record', ['date_end'])
         ]
+
+
+    def write(self, cr, uid, ids, vals, context=None):
+        values = vals
+        print self._name, " vals: ", vals
+        return super(fleet_vehicle_odometer_device, self).write(cr, uid, ids, values, context=context)
+
 
     def on_change_vehicle_id(self, cr, uid, ids, vehicle_id, date_start):
         odom_obj = self.pool.get('fleet.vehicle.odometer.device')
@@ -1058,9 +1070,11 @@ class fleet_vehicle_odometer(osv.osv):
 
     def create(self, cr, uid, vals, context=None):
         values = vals
-        odom_obj = self.pool.get('fleet.vehicle.odometer.device')
-        odometer_end = odom_obj.browse(cr, uid, [vals['odometer_id']])[0].odometer_end + vals['distance']
-        odom_obj.write(cr, uid, [vals['odometer_id']], {'odometer_end': odometer_end}, context=context)
+        print "vals: ", vals
+        if 'odometer_id' in vals and vals['odometer_id']:
+            odom_obj = self.pool.get('fleet.vehicle.odometer.device')
+            odometer_end = odom_obj.browse(cr, uid, [vals['odometer_id']])[0].odometer_end + vals['distance']
+            odom_obj.write(cr, uid, [vals['odometer_id']], {'odometer_end': odometer_end}, context=context)
         return super(fleet_vehicle_odometer, self).create(cr, uid, values, context=context)
 
 
@@ -1088,16 +1102,30 @@ class fleet_vehicle_odometer(osv.osv):
         res = self.create(cr, uid, values)
         return
 
-    def unlink_odometer_rec(cr, uid, ids, travel_ids, context=None):
+    def unlink_odometer_rec(self, cr, uid, ids, travel_ids, unit_id, context=None):
+        print "Entrando a: unlink_odometer_rec "
         unit_obj = self.pool.get('fleet.vehicle')
         odom_dev_obj = self.pool.get('fleet.vehicle.odometer.device')
-        res = self.search(cr, uid, [('tms_travel_id', 'in', tuple(travel_ids),)])
+        res = self.search(cr, uid, [('tms_travel_id', 'in', tuple(travel_ids),), ('vehicle_id', '=', unit_id)])
+        print "Registros de lecturas de odometro especificando unidad: ", res
+        res1 = self.search(cr, uid, [('tms_travel_id', 'in', tuple(travel_ids),)])
+        print "Registros de lecturas de odometro sin especificar unidad: ", res1
+        print "Recorriendo las lecturas de odometro..."
         for odom_rec in self.browse(cr, uid, res):
-            unit_odometer = unit_obj.browse(cr, uid, [odom_rec.vehicle_id.id])[0].odometer
-            unit_obj.write(cr, uid, [odom_rec.vehicle_id.id],  {'odometer': unit_odometer - odom_rec.distance})
-            device_odometer = odom_obj.browse(cr, uid, [odom_rec.odometer_id.id])[0].odometer_end
-            odom_dev_obj.write(cr, uid, [odom_rec.odometer_id.id],  {'odometer_end': device_odometer - odom_rec.distance})
-            self.unlink(cr, uid, res)  
+            print "===================================="
+            print "Vehiculo: ", odom_rec.vehicle_id.name
+            unit_odometer = unit_obj.browse(cr, uid, [odom_rec.vehicle_id.id])[0].current_odometer_read
+            print "unit_odometer: ", unit_odometer
+            print "odom_rec.distance: ",odom_rec.distance
+            print "Valor a descontar: ", round(unit_odometer, 2) - round(odom_rec.distance, 2)
+            unit_obj.write(cr, uid, [unit_id],  {'current_odometer_read': round(unit_odometer, 2) - round(odom_rec.distance, 2)})
+            print "Después de actualizar el odometro de la unidad..."
+            #device_odometer = odom_dev_obj.browse(cr, uid, [odom_rec.odometer_id.id])[0].odometer_end
+            #print "device_odometer: ", device_odometer
+            #print "device_odometer - odom_rec.distance : ", round(device_odometer, 2) - round(odom_rec.distance, 2)
+            #odom_dev_obj.write(cr, uid, [odom_rec.odometer_id.id],  {'odometer_end': round(device_odometer, 2) - round(odom_rec.distance, 2)})
+            print "===================================="
+        self.unlink(cr, uid, res1)
         return
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
 

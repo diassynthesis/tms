@@ -418,10 +418,11 @@ class tms_expense(osv.osv):
         return
 
     def on_change_travel_ids(self, cr, uid, ids, travel_ids, context=None):
+        print "Entrando a on_change_travel_ids"
         res = {'value' : 
                            {'unit_id'          : False,
                             'vehicle_id'       : False,
-                            'vehicle_odometer' : False,
+                            'vehicle_odometer' : 0.0,
                             'odometer_id'      : False,
                             'last_odometer'    : 0.0,
                             'distance_real'    : 0.0,
@@ -456,12 +457,13 @@ class tms_expense(osv.osv):
                     res = {'value' : 
                            {'unit_id'          : unit_id,
                             'vehicle_id'       : unit_id,
-                            'vehicle_odometer' : self.pool.get('fleet.vehicle').browse(cr, uid, [unit_id])[0].odometer,
+                            'vehicle_odometer' : round(self.pool.get('fleet.vehicle').browse(cr, uid, [unit_id])[0].odometer, 2),
                             'odometer_id'      : odometer_id[0],
-                            'last_odometer'    : odometer.odometer_end,
-                            'distance_real'    : distance_extraction,
+                            'last_odometer'    : round(odometer.odometer_end, 2),
+                            'distance_real'    : round(distance_extraction, 2),
                             } 
                            }
+                    print "res: ", res
             else:
                 raise osv.except_osv(
                         _('Record Warning !'),
@@ -469,31 +471,36 @@ class tms_expense(osv.osv):
         print res
         return res
 
-    def on_change_current_odometer(self, cr, uid, ids, vehicle_id, last_odometer, current_odometer, context=None):
-        distance = current_odometer - last_odometer
-        accum = self.pool.get('fleet.vehicle').browse(cr, uid, [vehicle_id], context=context)[0].odometer + distance
-        return {'value': {
-                        'distance_real'    : distance,
-                        'vehicle_odometer' : accum,
-                        }    
-                }
+    def on_change_current_odometer(self, cr, uid, ids, vehicle_id, last_odometer, current_odometer, distance_real, context=None):
+        print "Entrando a on_change_current_odometer (1)"
+        distance = round(current_odometer - last_odometer, 2)
+        print "distance_real: ", distance_real
+        print "distance: ", distance
+        accum = round(self.pool.get('fleet.vehicle').browse(cr, uid, [vehicle_id], context=context)[0].odometer + distance , 2)
+        res =  {'value': {'vehicle_odometer' : accum }} 
+        if round(distance, 2) != round(distance_real, 2):
+            res['value']['distance_real'] = round(distance, 2)
+        print "res: ", res
+        return res
         
     def on_change_distance_real(self, cr, uid, ids, vehicle_id, last_odometer, distance_real, context=None):
+        print "Entrando a on_change_distance_real (2)"
         current_odometer = last_odometer + distance_real
         accum = self.pool.get('fleet.vehicle').browse(cr, uid, [vehicle_id], context=context)[0].odometer + distance_real
         return {'value': {
-                        'current_odometer' : current_odometer,
-                        'vehicle_odometer' : accum,
+                        'current_odometer' : round(current_odometer, 2),
+                        'vehicle_odometer' : round(accum, 2),
                         }    
                 }
 
 
     def on_change_vehicle_odometer(self, cr, uid, ids, vehicle_id, last_odometer, vehicle_odometer, context=None):
+        print "Entrando a on_change_vehicle_odometer (3)"
         distance = vehicle_odometer - self.pool.get('fleet.vehicle').browse(cr, uid, [vehicle_id], context=context)[0].odometer
         current_odometer = last_odometer + distance
         return {'value': {
-                        'current_odometer' : current_odometer,
-                        'distance_real'    : distance,
+                        'current_odometer' : round(current_odometer, 2),
+                        'distance_real'    : round(distance, 2),
                         }    
                 }
 
@@ -836,13 +843,15 @@ class tms_expense_cancel(osv.osv_memory):
     
                 travel_obj.write(cr, uid, travel_ids, {'expense_id': False, 'state':'done','closed_by':False,'date_closed':False})
 
-
+                
                 if not expense.parameter_distance:
                     raise osv.except_osv(
                         _('Could not Confirm Expense Record !'),
                         _('Parameter to determine Vehicle distance update from does not exist.'))
                 elif expense.parameter_distance == 2 and expense.state=='confirmed': # Revisamos el parametro (tms_property_update_vehicle_distance) donde se define donde se actualizan los kms/millas a las unidades 
-                    self.pool.get('fleet.vehicle.odometer').unlink_odometer_rec(cr, uid, ids, travel_ids)
+                    print "Intentando eliminar las lecturas del odometro generadas por la liquidacion..."
+                    self.pool.get('fleet.vehicle.odometer').unlink_odometer_rec(cr, uid, ids, travel_ids, expense.unit_id.id)
+                    print "Todo OK..."
 
         return {'type': 'ir.actions.act_window_close'}
 
