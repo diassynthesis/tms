@@ -348,7 +348,7 @@ class tms_expense(osv.osv):
                 factor_special_ids = factor_special_obj.search(cr, uid, [('type', '=', 'salary'), ('active', '=', True)])
                 if len(factor_special_ids):
                     print "= = = = = = = = = = = = = = = = = = = = = = = = = = = = ="
-                    print factor_special_obj.browse(cr, uid, factor_special_ids)[0].python_code
+                    #print factor_special_obj.browse(cr, uid, factor_special_ids)[0].python_code
                     print "= = = = = = = = = = = = = = = = = = = = = = = = = = = = ="
                     exec factor_special_obj.browse(cr, uid, factor_special_ids)[0].python_code
                 else:
@@ -374,7 +374,7 @@ class tms_expense(osv.osv):
                 print "xline: ", xline
                 print "//////////////////////"
                 res = expense_line_obj.create(cr, uid, xline)
-                print "Despues del error..."
+                qty = 0.0
                 for fuelvoucher in travel.fuelvoucher_ids:
                     qty             += fuelvoucher.product_uom_qty
                     amount_untaxed  += fuelvoucher.price_subtotal / fuelvoucher.currency_id.rate
@@ -677,14 +677,14 @@ class tms_expense_line(osv.osv):
         'sequence'          : openerp.osv.fields.integer('Sequence', help="Gives the sequence order when displaying a list of sales order lines."),
         'product_id'        : openerp.osv.fields.many2one('product.product', 'Product', 
                                     domain=[('tms_category', 'in', ('expense_real', 'madeup_expense', 'salary','salary_retention' ,'salary_discount'))]),
-        'price_unit'        : openerp.osv.fields.float('Price Unit', required=True, digits_compute= dp.get_precision('Sale Price')),
+        'price_unit'        : openerp.osv.fields.float('Price Unit', required=True, digits=(16, 4)),
         'price_unit_control': openerp.osv.fields.float('Price Unit', digits_compute= dp.get_precision('Sale Price')),
         'price_subtotal'    : openerp.osv.fields.function(_amount_line, method=True, string='SubTotal', type='float', digits_compute= dp.get_precision('Sale Price'),  store=True, multi='price_subtotal'),
         'price_total'       : openerp.osv.fields.function(_amount_line, method=True, string='Total', type='float', digits_compute= dp.get_precision('Sale Price'),  store=True, multi='price_subtotal'),
         'tax_amount'        : openerp.osv.fields.function(_amount_line, method=True, string='Tax Amount', type='float', digits_compute= dp.get_precision('Sale Price'),  store=True, multi='price_subtotal'),
         'special_tax_amount': openerp.osv.fields.float('Special Tax', required=False, digits_compute= dp.get_precision('Sale Price')),
         'tax_id'            : openerp.osv.fields.many2many('account.tax', 'expense_tax', 'tms_expense_line_id', 'tax_id', 'Taxes'),
-        'product_uom_qty'   : openerp.osv.fields.float('Quantity (UoM)', digits=(16, 2)),
+        'product_uom_qty'   : openerp.osv.fields.float('Quantity (UoM)', digits=(16, 4)),
         'product_uom'       : openerp.osv.fields.many2one('product.uom', 'Unit of Measure '),
         'notes'             : openerp.osv.fields.text('Notes'),
         'employee_id'       : openerp.osv.fields.related('expense_id', 'employee_id', type='many2one', relation='hr.employee', store=True, string='Driver'),

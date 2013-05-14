@@ -70,8 +70,8 @@ TMS.travel
 		<field name="type">tree</field>
 		<field name="arch" type="xml">
             <tree string="Travels" colors="gray:state=='cancel';red:state=='draft';green:state=='progress';blue:state=='done';">
-                <button name="action_cancel" states="draft,progress,done" string="Cancel Travel" type="object" icon="gtk-cancel"/>
-                <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
+<!--                <button name="action_cancel" states="draft,progress,done" string="Cancel Travel" type="object" icon="gtk-cancel"/> 
+                <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/> -->
                 <button name="action_dispatch" states="draft" string="Dispatch Travel" type="object" icon="gtk-go-forward"/>
                 <button name="action_end" states="progress" string="End Travel" type="object" icon="gtk-goto-last"/>
                 <field name="state" />
