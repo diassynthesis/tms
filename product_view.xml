@@ -2,7 +2,7 @@
 <data>
 
 <!-- Add fields to product.product object
-'tms_categorye'
+'tms_category'
 -->
         <record model="ir.ui.view" id="tms_product_search_form_view">
             <field name="name">TMS product.search.form</field>

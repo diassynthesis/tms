@@ -28,6 +28,7 @@ import decimal_precision as dp
 import netsvc
 import openerp
 
+
 # TMS Travel Expenses
 class tms_expense(osv.osv):
     _name = 'tms.expense'
@@ -281,7 +282,7 @@ class tms_expense(osv.osv):
         return {'value': {'employee_id': employee_id}}
 
     def get_salary_retentions(self, cr, uid, ids, context=None):
-        print "Checando si existe algun calculo de retenciones o deducciones de salario... "
+        #print "Checando si existe algun calculo de retenciones o deducciones de salario... "
         factor_special_obj = self.pool.get('tms.factor.special')
         factor_special_ids = factor_special_obj.search(cr, uid, [('type', '=', 'retention'), ('active', '=', True)])        
         if len(factor_special_ids):
@@ -293,7 +294,7 @@ class tms_expense(osv.osv):
 
 #        expenses = [x for x in expense_line if 'control' not in x[2] or not x[2]['control']] if expense_line else []
 
-        print vals
+        #print vals
 
         prod_obj = self.pool.get('product.product')
 
@@ -344,16 +345,16 @@ class tms_expense(osv.osv):
             travel_ids = []
             for travel in expense.travel_ids:
                 travel_ids.append(travel.id)
-                print "Calculando sueldo para el viaje: ", travel.name
+                #print "Calculando sueldo para el viaje: ", travel.name
                 factor_special_ids = factor_special_obj.search(cr, uid, [('type', '=', 'salary'), ('active', '=', True)])
                 if len(factor_special_ids):
-                    print "= = = = = = = = = = = = = = = = = = = = = = = = = = = = ="
-                    #print factor_special_obj.browse(cr, uid, factor_special_ids)[0].python_code
-                    print "= = = = = = = = = = = = = = = = = = = = = = = = = = = = ="
+                    #print "= = = = = = = = = = = = = = = = = = = = = = = = = = = = ="
+                    ##print factor_special_obj.browse(cr, uid, factor_special_ids)[0].python_code
+                    #print "= = = = = = = = = = = = = = = = = = = = = = = = = = = = ="
                     exec factor_special_obj.browse(cr, uid, factor_special_ids)[0].python_code
                 else:
                     result = factor_obj.calculate(cr, uid, 'expense', False, 'driver', [travel.id])
-                print result
+                #print result
 
                 salary += result
                 xline = {
@@ -370,9 +371,9 @@ class tms_expense(osv.osv):
                         #'tax_id'            : products['salary']['taxes'],
                         }
 
-                print "//////////////////////"
-                print "xline: ", xline
-                print "//////////////////////"
+                #print "//////////////////////"
+                #print "xline: ", xline
+                #print "//////////////////////"
                 res = expense_line_obj.create(cr, uid, xline)
                 qty = 0.0
                 for fuelvoucher in travel.fuelvoucher_ids:
@@ -418,7 +419,7 @@ class tms_expense(osv.osv):
         return
 
     def on_change_travel_ids(self, cr, uid, ids, travel_ids, context=None):
-        print "Entrando a on_change_travel_ids"
+        #print "Entrando a on_change_travel_ids"
         res = {'value' : 
                            {'unit_id'          : False,
                             'vehicle_id'       : False,
@@ -429,7 +430,7 @@ class tms_expense(osv.osv):
                             } 
                            }
 
-        print "travel_ids: ", travel_ids
+        #print "travel_ids: ", travel_ids
         distance_extraction = 0.0
         for expense in self.browse(cr, uid, ids):
             for travel in expense.travel_ids:
@@ -438,18 +439,18 @@ class tms_expense(osv.osv):
         travels = []
         for rec in travel_ids[0][2]:
             travels.append(rec)
-        print travels
+        #print travels
         if len(travels):
             cr.execute("select sum(distance_extraction), unit_id from tms_travel where id in %s group by unit_id limit 1;",(tuple(travels),))
             data = cr.fetchall()
             if not len(data):
                 raise osv.except_osv(_('Warning !'),
                                      _('There is no information about the Travel you just selected...'))
-            print data
+            #print data
 
             distance_extraction = data[0][0] if len(data) else 0.0
             unit_id = data[0][1]
-            print "unit_id: ", unit_id
+            #print "unit_id: ", unit_id
             odom_obj = self.pool.get('fleet.vehicle.odometer.device')
             odometer_id = odom_obj.search(cr, uid, [('vehicle_id', '=', unit_id), ('state', '=','active')], context=context)
             if odometer_id and odometer_id[0]:
@@ -463,28 +464,28 @@ class tms_expense(osv.osv):
                             'distance_real'    : round(distance_extraction, 2),
                             } 
                            }
-                    print "res: ", res
+                    #print "res: ", res
             else:
                 raise osv.except_osv(
                         _('Record Warning !'),
                         _('There is no Active Odometer for vehicle %s') % (travel.unit_id.name))     
-        print res
+        #print res
         return res
 
     def on_change_current_odometer(self, cr, uid, ids, vehicle_id, last_odometer, current_odometer, distance_real, context=None):
-        print "Entrando a on_change_current_odometer (1)"
+        #print "Entrando a on_change_current_odometer (1)"
         distance = round(current_odometer - last_odometer, 2)
-        print "distance_real: ", distance_real
-        print "distance: ", distance
+        #print "distance_real: ", distance_real
+        #print "distance: ", distance
         accum = round(self.pool.get('fleet.vehicle').browse(cr, uid, [vehicle_id], context=context)[0].odometer + distance , 2)
         res =  {'value': {'vehicle_odometer' : accum }} 
         if round(distance, 2) != round(distance_real, 2):
             res['value']['distance_real'] = round(distance, 2)
-        print "res: ", res
+        #print "res: ", res
         return res
         
     def on_change_distance_real(self, cr, uid, ids, vehicle_id, last_odometer, distance_real, context=None):
-        print "Entrando a on_change_distance_real (2)"
+        #print "Entrando a on_change_distance_real (2)"
         current_odometer = last_odometer + distance_real
         accum = self.pool.get('fleet.vehicle').browse(cr, uid, [vehicle_id], context=context)[0].odometer + distance_real
         return {'value': {
@@ -495,7 +496,7 @@ class tms_expense(osv.osv):
 
 
     def on_change_vehicle_odometer(self, cr, uid, ids, vehicle_id, last_odometer, vehicle_odometer, context=None):
-        print "Entrando a on_change_vehicle_odometer (3)"
+        #print "Entrando a on_change_vehicle_odometer (3)"
         distance = vehicle_odometer - self.pool.get('fleet.vehicle').browse(cr, uid, [vehicle_id], context=context)[0].odometer
         current_odometer = last_odometer + distance
         return {'value': {
@@ -512,7 +513,7 @@ class tms_expense(osv.osv):
         super(tms_expense, self).write(cr, uid, ids, values, context=context)
         for rec in self.browse(cr, uid, ids):
             if ('state' in vals and vals['state'] not in ('cancel', 'confirmed')) ^ (rec.state not in  ('cancel', 'confirmed')):
-                print "Si entra a calcular sueldo..."
+                #print "Si entra a calcular sueldo..."
                 self.get_salary_advances_and_fuel_vouchers(cr, uid, ids, vals)
                 self.get_salary_retentions(cr, uid, ids, vals)
 
@@ -535,7 +536,7 @@ class tms_expense(osv.osv):
         if 'vehicle_id' in vals and vals['vehicle_id']:
             values['unit_id'] = vals['vehicle_id']
 
-        print "vals: ", vals
+        #print "vals: ", vals
         res = super(tms_expense, self).create(cr, uid, values, context=context)
         self.get_salary_advances_and_fuel_vouchers(cr, uid, [res], vals)
         self.get_salary_retentions(cr, uid, [res])
@@ -584,7 +585,7 @@ class tms_expense(osv.osv):
                     if travel.trailer2_id and travel.trailer2_id.id:
                         odom_obj.create_odometer_log(cr, uid, expense.id, travel.id, travel.trailer2_id.id, xdistance)
 
-            print "Checando si existe algun calculo de Distribucion de sueldo en conceptos de gastos... "
+            #print "Checando si existe algun calculo de Distribucion de sueldo en conceptos de gastos... "
             factor_special_obj = self.pool.get('tms.factor.special')
             factor_special_ids = factor_special_obj.search(cr, uid, [('type', '=', 'salary_distribution'), ('active', '=', True)])        
             if len(factor_special_ids):
@@ -641,7 +642,7 @@ class tms_expense_line(osv.osv):
         for line in self.browse(cr, uid, ids, context=context):
             price = line.price_unit
             partner_id = self.pool.get('res.users').browse(cr, uid, uid).company_id.partner_id.id
-            print partner_id
+            #print partner_id
             addr_id = self.pool.get('res.partner').address_get(cr, uid, [partner_id], ['invoice'])['invoice']
 
 
@@ -721,9 +722,9 @@ class tms_expense_line(osv.osv):
 
     def on_change_price_total(self, cr, uid, ids, product_id, product_uom_qty, price_total):
         res = {}
-        print "product_id: ", product_id
-        print "product_uom_qty: ", product_uom_qty
-        print "price_total: ", price_total
+        #print "product_id: ", product_id
+        #print "product_uom_qty: ", product_uom_qty
+        #print "price_total: ", price_total
 
         if not (product_uom_qty and product_id and price_total):
             return res
@@ -745,9 +746,9 @@ class tms_expense_line(osv.osv):
 
     def on_change_qty(self, cr, uid, ids, product_id, product_uom_qty, price_unit):
         res = {}
-        print "product_id: ", product_id
-        print "product_uom_qty: ", product_uom_qty
-        print "price_total: ", price_unit
+        #print "product_id: ", product_id
+        #print "product_uom_qty: ", product_uom_qty
+        #print "price_total: ", price_unit
 
         if not (product_uom_qty and product_id and price_unit):
             return res
@@ -791,7 +792,7 @@ class tms_expense_cancel(osv.osv_memory):
 
         record_id =  context.get('active_ids',[])
 
-        print record_id
+        #print record_id
 
         if record_id:
             expense_obj = self.pool.get('tms.expense')
@@ -849,9 +850,9 @@ class tms_expense_cancel(osv.osv_memory):
                         _('Could not Confirm Expense Record !'),
                         _('Parameter to determine Vehicle distance update from does not exist.'))
                 elif expense.parameter_distance == 2 and expense.state=='confirmed': # Revisamos el parametro (tms_property_update_vehicle_distance) donde se define donde se actualizan los kms/millas a las unidades 
-                    print "Intentando eliminar las lecturas del odometro generadas por la liquidacion..."
+                    #print "Intentando eliminar las lecturas del odometro generadas por la liquidacion..."
                     self.pool.get('fleet.vehicle.odometer').unlink_odometer_rec(cr, uid, ids, travel_ids, expense.unit_id.id)
-                    print "Todo OK..."
+                    #print "Todo OK..."
 
         return {'type': 'ir.actions.act_window_close'}
 
@@ -915,7 +916,7 @@ class tms_expense_invoice(osv.osv_memory):
             if not len(data_ids):
                 raise osv.except_osv('Warning !',
                                  'Selected records are not Approved or already sent for payment...')
-            print data_ids
+            #print data_ids
 
             for data in data_ids:
 
@@ -1033,7 +1034,7 @@ class tms_expense_invoice(osv.osv_memory):
 
                     else: # El operador quedó a deber o salio tablas (cero), se tiene que generar la póliza contable correspondiente.
                         move_lines = []
- 
+                        precision = self.pool.get('decimal.precision').precision_get(cr, uid, 'Account')
                         notes = _("Travel Expense Record ")
 
                         if expense.amount_advance:
@@ -1041,13 +1042,13 @@ class tms_expense_invoice(osv.osv_memory):
                                     'name'          : _('Advance Discount'),
                                     'account_id'    : advance_account,
                                     'debit'         : 0.0,
-                                    'credit'        : expense.amount_advance,
+                                    'credit'        : round(expense.amount_advance, precision),
                                     'journal_id'    : journal_id,
                                     'period_id'     : period_id[0],
                                     })
                             move_lines.append(move_line)
                             notes += '\n' + _('Advance Discount')
-
+                        #print "Partida => Anticipos: ", move_line, "\n"
                         for line in expense.expense_line:
                             if line.line_type != ('madeup_expense') and not line.fuel_voucher:
                                 prod_account = negative_balance_account if line.product_id.tms_category == 'negative_balance' else line.product_id.property_account_expense.id if line.product_id.property_account_expense.id else line.product_id.categ_id.property_account_expense_categ.id if line.product_id.categ_id.property_account_expense_categ.id else False
@@ -1061,49 +1062,55 @@ class tms_expense_invoice(osv.osv_memory):
                                     'product_id'        : line.product_id.id,
                                     'product_uom_id'    : line.product_uom.id,
                                     'account_id'        : account_fiscal_obj.map_account(cr, uid, False, prod_account),
-                                    'debit'             : line.price_subtotal if line.price_subtotal > 0.0 else 0.0,
-                                    'credit'            : abs(line.price_subtotal) if line.price_subtotal <= 0.0 else 0.0,
+                                    'debit'             : round(line.price_subtotal, precision) if line.price_subtotal > 0.0 else 0.0,
+                                    'credit'            : round(abs(line.price_subtotal), precision) if line.price_subtotal <= 0.0 else 0.0,
                                     'quantity'          : line.product_uom_qty,
                                     'journal_id'        : journal_id,
                                     'period_id'         : period_id[0],
                                     })
                                 move_lines.append(move_line)
+                                #print "Partida => ", line.product_id.name, " : ", round(line.price_subtotal, precision) if line.price_subtotal > 0.0 else round(abs(line.price_subtotal), precision) , "\n ", move_line, "\n"
                                 notes += '\n' + line.name
-                                for tax in line.tax_id:
+                                
+                                for tax in line.product_id.supplier_taxes_id:
+                                    #print "tax.name: ", tax.name
                                     tax_account = tax.account_collected_id.id
                                     if not tax_account:
                                         raise osv.except_osv(_('Warning !'),
                                                 _('Tax Account is not defined for Tax %s (id:%d)') % \
                                                     (tax.name, tax.id,))
-                                    tax_amount = line.price_subtotal * amount
-                                    move_lines = (0,0, {
-                                        'name'              : expense.name + ' - ' + tax.name + ' - ' + line.name + ' - ' + line.employee_id.name + ' (' + line.employee_id.id + ')',
+                                    tax_amount = round(line.price_subtotal * tax.amount, precision)
+                                    #print "tax_amount: ", tax_amount, " type: ", type(tax_amount)
+                                    move_line = (0,0, {
+                                        'name'              : expense.name + ' - ' + tax.name + ' - ' + line.name + ' - ' + line.employee_id.name + ' (' + str(line.employee_id.id) + ')',
 #                                        'product_id'        : line.product_id.id,
 #                                        'product_uom_id'    : line.product_uom.id,
                                         'account_id'        : account_fiscal_obj.map_account(cr, uid, False, tax_account),
-                                        'debit'             : tax_amount if tax_amount > 0.0 else 0.0,
-                                        'credit'            : abs(tax_amount) if tax_amount <= 0.0 else 0.0,
-                                        'account_tax_id'    : tax.id,
-                                        'tax_amount'        : tax_amount,
-                                        'tax_code_id'       : tax.tax_code_id.id,
+                                        'debit'             : round(tax_amount, precision) if tax_amount > 0.0 else 0.0,
+                                        'credit'            : round(abs(tax_amount), precision) if tax_amount <= 0.0 else 0.0,
+#                                        'account_tax_id'    : tax.id,
+#                                        'tax_amount'        : tax_amount,
+#                                        'tax_code_id'       : tax.tax_code_id.id,
                                         'journal_id'        : journal_id,
                                         'period_id'         : period_id[0],
                                         })
-                                    move_line.append(inv_line)
+                                    move_lines.append(move_line)
+                                    #print "Partida (impuesto) => ", line.product_id.name, " :\n", move_line, "\n"
 
                         if expense.amount_balance:
                             move_line = (0,0, {
                                         'name'          : _('Debit Balance'),
                                         'account_id'    : advance_account,
-                                        'debit'         : expense.amount_balance * -1.0,
+                                        'debit'         : round(expense.amount_balance * -1.0, precision),
                                         'credit'        : 0.0,
                                         'journal_id'    : journal_id,
                                         'period_id'     : period_id[0],
                                         })
                             move_lines.append(move_line)
+                            #print "Partida => Nuevo Saldo en contra: ", move_line, "\n"
                             notes += '\n' + _('Debit Balance')
 
-                        print "move_lines: \n", move_lines
+                        #print "\n\n\nmove_lines: \n", move_lines, "\n"
                         move = {
                             'ref'               : expense.name,
                             'journal_id'        : journal_id,
@@ -1112,7 +1119,7 @@ class tms_expense_invoice(osv.osv_memory):
                             'date'              : expense.date,
                             'period_id'         : period_id[0],
                             }
-                        print "move: \n", move
+                        ##print "\n\n\n\nmove: \n", move
                         move_id = move_obj.create(cr, uid, move)
                         if move_id:
                             move_obj.button_validate(cr, uid, [move_id])                            

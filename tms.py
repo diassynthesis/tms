@@ -210,12 +210,17 @@ class fleet_vehicle(osv.osv):
         'active_odometer'       : openerp.osv.fields.float('Odometer', required=False, digits=(20,10), help='Odometer'),
         'active_odometer_id'    : openerp.osv.fields.function(_get_current_odometer, type='many2one', relation="fleet.vehicle.odometer.device", string="Active Odometer"),
         'current_odometer_read' : openerp.osv.fields.related('active_odometer_id', 'odometer_end', type='float', string='Last Odometer Read', readonly=True),
+        'odometer_uom'          : openerp.osv.fields.selection([('distance','Distance (mi./km)'),
+                                                                ('hours','Time (Hours)'),
+                                                                ('days','Time (Days)')], 'Odometer UoM', help="Odometer UoM"),
+        
 
     }
 
     _defaults = {
-        'fleet_type' : lambda *a : 'tractor',
-        'active': True,
+        'fleet_type'  : lambda *a : 'tractor',
+        'active'      : True,
+        'odometer_uom': lambda *a : 'distance',
     	}
 
 

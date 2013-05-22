@@ -43,9 +43,9 @@ TMS.EXPENSE
             <field name="priority">2</field>
             <field name="arch" type="xml">
                 <tree string="Waybills" colors="red:state=='cancel';green:state=='approve';blue:state=='confirm';">
-                    <button name="%(action_expense_cancel)d" states="draft,approved,confirmed" string="Cancel" icon="gtk-cancel"  type="action" /> 
+<!--                    <button name="%(action_expense_cancel)d" states="draft,approved,confirmed" string="Cancel" icon="gtk-cancel"  type="action" /> 
 		            <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
-		            <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
+-->		            <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
 		            <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok"/>
                     <field name="state"/>
                     <field name="name"/>
@@ -73,9 +73,8 @@ TMS.EXPENSE
             <form string="Travel Expenses" version="7.0">
               <header>
                 <button name="%(action_expense_cancel)d" states="draft,approved,confirmed" string="Cancel" type="action"/> 
-		<button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
-		<button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward" class="oe_highlight" />
-		<button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok" class="oe_highlight" />
+		        <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward" class="oe_highlight" />
+		        <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok" class="oe_highlight" />
                 <field name="state" widget="statusbar" statusbar_visible="cancel,draft,approved,confirmed"/> 
               </header>
               <sheet>

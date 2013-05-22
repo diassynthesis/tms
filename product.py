@@ -47,9 +47,6 @@ class product_product(osv.osv):
                                           ('negative_balance','Negative Balance'),
                                           ('fuel','Fuel'),
                                           ('indirect_expense','Indirect Expense (Agreements)'),
-                                          ('maint_part','MRO Spare Part'),
-                                          ('maint_activity','MRO Task'),
-                                          ('maint_service_type','MRO Work Order Types'),
                                           ], 'TMS Type', required=True,
                                           help="""Product Type for using with TMS Module
   - No TMS Product: Not related to TMS
@@ -63,9 +60,6 @@ class product_product(osv.osv):
   - Made-Up Expense: Represent made-up expenses related to Travel, those that will be used in Travel Expense Checkup.
   - Fuel: Used for filtering products used in Fuel Vouchers.
   - Indirect Expense (Agreements): Used to define Accounts for Agreements Indirect Expenses.
-  - MRO Spare Part: Parts used for maintenance services.
-  - MRO Task: Activities related to maintenance services.
-  - MRO Work Order Types: Different types of maintenance services
   All of these products MUST be used as a service because they will never interact with Inventory.
 """),
             'tms_account_ids' : fields.many2many('account.account', 'tms_product_account_rel', 'product_id', 'account_id', 'Accounts for this product'),
@@ -74,27 +68,26 @@ class product_product(osv.osv):
         }
 
     _default = {
-        'tms_category': 'no_tms_product',
+        'tms_category': lambda *a: 'no_tms_product',
         }
 
 
     def _check_tms_product(self,cr,uid,ids,context=None):
         for record in self.browse(cr, uid, ids, context=context): 
-            if record.tms_category in ['transportable', 'madeup_expense'] and \
-                (record.type=='service' and record.procure_method == 'make_to_stock' and record.supply_method =='buy' and \
-                    not record.sale_ok and not record.purchase_ok):
-                return True
-            elif record.tms_category in ['freight', 'move','insurance','highway_tolls','other'] and \
-                not(record.type=='service' and record.procure_method == 'make_to_stock' and record.supply_method =='buy' and record.sale_ok):
-                return True
-            elif record.tms_category in ['real_expense', 'madeup_expense', 'salary', 'salary_retention', 'salary_discount', 'negative_balance'] and \
-                    not(record.type=='service' and record.procure_method == 'make_to_stock' and record.supply_method =='buy' and record.purchase_ok):
-                return False
+            if record.tms_category in ['transportable']:
+                return (record.type=='service' and record.procure_method == 'make_to_stock' and record.supply_method =='buy' and not record.sale_ok and not record.purchase_ok)
+            elif record.tms_category in ['freight', 'move','insurance','highway_tolls','other']:
+                return (record.type=='service' and record.procure_method == 'make_to_stock' and record.supply_method =='buy' and record.sale_ok)
+            elif record.tms_category in ['real_expense', 'madeup_expense', 'salary', 'salary_retention', 'salary_discount', 'negative_balance', 'indirect_expense']:
+                return (record.type=='service' and record.procure_method == 'make_to_stock' and record.supply_method =='buy' and record.purchase_ok)
+            elif record.tms_category in ['fuel']:
+                return (record.type=='product' and record.procure_method == 'make_to_stock' and record.supply_method =='buy' and record.purchase_ok)
+
         return True
 
 
     _constraints = [
-        (_check_tms_product, 'Error ! Product is not defined correctly...', ['tms_category'])
+        (_check_tms_product, 'Error ! Product is not defined correctly...Please see tooltip for TMS Category', ['tms_category'])
         ]
 
     def onchange_tms_category(self, cr, uid, ids, tms_category):
