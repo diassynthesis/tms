@@ -184,7 +184,7 @@ TMS.waybill.category
           <field name="priority">2</field>
           <field name="arch" type="xml">
             <tree string="Waybills" colors="gray:state=='cancel';red:state=='draft';green:state=='approved';">
-              <button name="%(action_waybill_cancel)d" states="draft,approved,confirmed" string="Cancel" icon="gtk-cancel"  type="action" /> 
+  <!--            <button name="%(action_waybill_cancel)d" states="draft,approved,confirmed" string="Cancel" icon="gtk-cancel"  type="action" />  -->
 	          <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
 	          <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-goto-last"/>
               <field name="state"/>
@@ -192,21 +192,21 @@ TMS.waybill.category
               <field name="date_order"/>
               <field name="travel_id" />
               <field name="client_order_ref"/>
-              <field name="partner_id"/>
-	          <!--                    <field name="product_uom_type"/>-->
+              <field name="partner_id"/>              
               <field name="product_qty" sum="Product Quantity"/>
-	          <!--                    <field name="amount_freight" sum="Freight"/>
-                   <field name="amount_move" sum="Moves"/>
-                   <field name="amount_insurance" sum="Insurance"/>
-                   <field name="amount_highway_tolls" sum="Highway Tolls"/>
-                   <field name="amount_other" sum="Other"/>-->
               <field name="amount_untaxed" sum="Amount Untaxed"/>
               <field name="amount_tax" sum="Taxes"/>
               <field name="amount_total" sum="Total "/>
+              <field name="supplier_amount" sum="Amount Supplier"/>
               <field name="invoice_id" invisible="1"/>
-              <field name="invoice_name"/>
-              <field name="supplier_id" />
-              <field name="supplier_amount" />
+              <field name="invoice_name" invisible="1"/>
+              <field name="supplier_id" invisible="1"/>
+              <field name="user_id" invisible="1"/>
+              <field name="shop_id" invisible="1"/>
+              <field name="employee_id" invisible="1"/>
+              <field name="waybill_type" invisible="1"/>
+              <field name="waybill_category" invisible="1"/>
+	          <field name="product_uom_type" invisible="1"/>
             </tree> 
           </field>
         </record>
@@ -510,10 +510,23 @@ TMS.waybill.category
       <field name="type">search</field>
       <field name="arch" type="xml">
         <search string="Search Waybills">
+          <field name="partner_id" />
+          <field name="travel_id" />
+          <field name="supplier_id" />
+          <field name="date_order" string="Waybill date" />
+          <field name="name" select="1"/>
+          <field name="client_order_ref"/>
+	      <field name="user_id" select="1"/>
+	      <field name="route_id" />
+	      <field name="departure_id" />
+	      <field name="arrival_id" />
+	      <field name="product_uom_type" />
+          
+          <separator/>
           <filter icon="terp-gtk-media-pause" string="Pending" domain="[('state','=','draft')]"/>
           <filter icon="terp-gtk-jump-to-ltr" string="Approved" domain="[('state','=','approved')]"/>
           <filter icon="terp-check" string="Confirmed" domain="[('state','=','confirmed')]"/>
-          <separator orientation="vertical"/>
+          <separator/>
           <filter icon="terp-dialog-close" string="Without Travel" domain="[('travel_id','=',False)]"/>
 	      <filter string="Invoiced" icon="terp-stock_symbol-selection" domain="[('invoice_id','!=', False)]"/>
 	      <filter string="Not Invoiced" icon="terp-dialog-close" domain="[('invoice_id','=', False)]"/>
@@ -521,28 +534,12 @@ TMS.waybill.category
           <filter string="Outsourced" icon="terp-dialog-close" domain="[('waybill_type','=', 'outsourced')]"/>
           <filter string="Outsourced and Not Invoiced" icon="terp-dialog-close" domain="[('waybill_type','=', 'outsourced'),('supplier_invoiced', '=', False)]"/>
           <filter string="From this month" icon="terp-check" domain="[('date_order','&gt;=', time.strftime('%%Y-%%m-01'))]" name="this_month" />
-	      
           <newline/>
-          <field name="partner_id" />
-          <field name="travel_id" />
-          <field name="date_order" string="Waybill date" />
-          <field name="name" select="1"/>
-	  
-          <field name="client_order_ref"/>
-	      <field name="user_id" select="1">
-	    <filter domain="[('user_id','=',uid)]" help="My Waybills" icon="terp-personal"/>
-	  </field>
-	  <newline />
-          <group expand="0" string="More filters..." colspan="11" col="8" groups="base.group_extended">
-	        <field name="route_id" />
-	        <field name="departure_id" />
-	        <field name="arrival_id" />
-	        <field name="product_uom_type" />
-	      </group>
-          <newline/>
-          <group expand="0" string="Group By..." colspan="11" col="11" groups="base.group_extended">
+	      <filter domain="[('user_id','=',uid)]" help="My Waybills" icon="terp-personal"/>
+	      <newline />
+          <group expand="0" string="Group By..." >
             <filter string="Customer" icon="terp-personal" domain="[]" context="{'group_by':'partner_id'}"/>
-            <filter string="Salesman" icon="terp-personal" domain="[]" context="{'group_by':'user_id'}"/>
+            <filter string="Driver" icon="terp-personal" domain="[]" context="{'group_by':'employee_id'}"/>
             <filter string="Waybill Type" icon="terp-personal" domain="[]" context="{'group_by':'waybill_type'}"/>
             <filter string="Waybill Category" icon="terp-personal" domain="[]" context="{'group_by':'waybill_category'}"/>
             <separator orientation="vertical"/>
@@ -551,10 +548,10 @@ TMS.waybill.category
             <separator orientation="vertical"/>
             <filter string="Order Date" icon="terp-go-month" domain="[]" context="{'group_by':'date_order'}"/>
             <filter string='Invoice' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'invoice_name'}" />
-            <filter string="User" icon="terp-personal" domain="[]" context="{'group_by':'user_id'}"/>
-            <filter string='Shop' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'shop_id'}" />
-	    
-	    
+            <filter string="Salesman" icon="terp-personal" domain="[]" context="{'group_by':'user_id'}"/>
+            <filter string='Shop' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'shop_id'}" />	    
+            <filter string='Supplier' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'supplier_id'}" />	    
+
           </group>
         </search>
       </field>

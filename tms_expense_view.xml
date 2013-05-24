@@ -125,7 +125,7 @@ TMS.EXPENSE
 			  <field name="vehicle_id" class="oe_text_right" attrs="{'invisible':[('odometer_log_id','=',False)]}"/>
 			  <field name="odometer_id" class="oe_text_right"  attrs="{'invisible':[('odometer_log_id','=',False)]}"/>
 			  <field name="last_odometer" class="oe_text_right" invisible="1" /> 
-			  <field name="vehicle_odometer" class="oe_text_right" on_change="on_change_vehicle_odometer(vehicle_id, last_odometer, vehicle_odometer)"/>
+			  <field name="vehicle_odometer" class="oe_text_right" on_change="on_change_vehicle_odometer(vehicle_id, last_odometer, vehicle_odometer)" invisible="1"/>
 			  <field name="current_odometer" class="oe_text_right" on_change="on_change_current_odometer(vehicle_id, last_odometer, current_odometer, distance_real)"/>
               <field name="distance_real" class="oe_text_right" on_change="on_change_distance_real(vehicle_id, last_odometer, distance_real)"/>
               <field name="distance_routes" class="oe_text_right"/>

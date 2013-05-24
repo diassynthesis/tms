@@ -14,65 +14,8 @@
             parent="menu_tms_config_product" sequence="0"/>
 
 
-
-
 ############################################################################################################################
-### Cambios en la vista de Product ###                                                                                                                                                                                                                                                                                                                                             
-
-
-        <record id="tms_product_search_form_view" model="ir.ui.view">
-            <field name="name">tms.product.search.form</field>
-            <field name="model">product.product</field>
-            <field name="arch" type="xml">
-                <search string="Product">
-                   <field name="name" string="Product" filter_domain="['|',('name','ilike',self),('default_code','ilike',self)]"/>
-                   <field name="categ_id" string="Category" />
-                   <filter string="Transportable (Waybills)" icon="terp-accessories-archiver" domain="[('tms_category','=','transportable')]"/>
-                   <filter string="Freight (Waybills)" icon="terp-accessories-archiver" domain="[('tms_category','=','freight')]"/>
-                   <filter string="Move (Waybills)" icon="terp-accessories-archiver" domain="[('tms_category','=','move')]"/>
-                   <filter string="Insurance (Waybills)" icon="terp-accessories-archiver" domain="[('tms_category','=','insurance')]"/>
-                   <filter string="Highway Tolls (Waybills)" icon="terp-accessories-archiver" domain="[('tms_category','=','highway_tolls')]"/>
-                   <filter string="Other Income (Waybills)" icon="terp-accessories-archiver" domain="[('tms_category','=','other')]"/>
-                   <separator/>
-                   <filter string="Expense (Travel Expense)" icon="terp-accessories-archiver" domain="[('tms_category','=','real_expense')]"/>
-                   <filter string="Salary (Travel Expense)" icon="terp-accessories-archiver" domain="[('tms_category','=','salary')]"/>
-                   <filter string="Salary Retentions (Travel Expense)" icon="terp-accessories-archiver" domain="[('tms_category','=','salary_retention')]"/>
-                   <filter string="Salary Discounts (Travel Expense)" icon="terp-accessories-archiver" domain="[('tms_category','=','salary_discount')]"/>
-                   <filter string="Negative Balance (Travel Expense)" icon="terp-accessories-archiver" domain="[('tms_category','=','negative_balance')]"/>
-                   <filter string="Fuel (Travel Expense)" icon="terp-accessories-archiver" domain="[('tms_category','=','fuel')]"/>
-                   <filter string="MadeUp Expense (Travel Expense)" icon="terp-accessories-archiver" domain="[('tms_category','=','madeup_expense')]"/>
-                   <filter string="Indirect Expense (Agreements)" icon="terp-accessories-archiver" domain="[('tms_category','=','indirect_expense')]"/>
-                   <field name="categ_id"/>
-                   <group  expand='0' string='Group by...'>
-                       <filter string='MRO Type' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'tms_category'}"/>
-                       <filter string='Category' icon="terp-mrp" domain="[]" context="{'group_by' : 'categ_id'}"/>
-                   </group>
-                </search>
-            </field>
-        </record>
-
-        <record id="tms_product_product_tree_view" model="ir.ui.view">
-            <field name="name">tms.product.product.tree</field>
-            <field name="model">product.product</field>
-            <field eval="7" name="priority"/>
-            <field name="arch" type="xml">
-                <tree colors="red:virtual_available&lt;0;blue:virtual_available&gt;=0 and state in ('draft', 'end', 'obsolete');black:virtual_available&gt;=0 and state not in ('draft', 'end', 'obsolete')" string="Products">
-                    <field name="default_code"/>
-                    <field name="name"/>
-                    <field name="categ_id" invisible="1"/>
-                    <field name="tms_category" invisible="1"/>
-                    <field name="type" invisible="1"/>
-                    <field name="uom_id" string="Unit of Measure" groups="product.group_uom"/>
-                    <field name="qty_available"/>
-                    <field name="virtual_available"/>
-                    <field name="lst_price"/>
-                    <field name="price" invisible="not context.get('pricelist',False)"/>
-                    <field name="standard_price" invisible="1"/>
-                    <field name="state"/>
-                    <field name="company_id" groups="base.group_multi_company" invisible="1"/>
-                </tree>
-            </field>
-        </record>
+### Cambios en la vista de Product ###
 
 
         <record id="tms_product_normal_action" model="ir.actions.act_window">
@@ -81,10 +24,10 @@
             <field name="res_model">product.product</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form,kanban</field>
-            <field name="view_id" ref="tms_product_product_tree_view"/>
+            <field name="view_id" ref="product.product_product_tree_view"/> 
             <field name="search_view_id" ref="tms_product_search_form_view"/>
-            <field name="domain">[('tms_category','in',('transportable','freight','move','insurance','highway_tolls','other','real_expense','madeup_expense','salary','salary_retention''salary_discount','negative_balance','fuel','indirect_expense'))]</field>
-            <field name="help" type="html">
+            <field name="domain">[('tms_category','in',('transportable','freight','move','insurance','highway_tolls','other','real_expense','madeup_expense','salary','salary_retention','salary_discount','negative_balance','fuel','indirect_expense'))]</field>
+           <field name="help" type="html">
               <p class="oe_view_nocontent_create">
                 Click to define a new Freight related product.
               </p><p>
@@ -92,7 +35,6 @@
               </p>
             </field>
         </record>
-
 
         <menuitem action="tms_product_normal_action" id="menu_tms_config_product_product" parent="menu_tms_config_product" sequence="1"/>
 
@@ -279,7 +221,7 @@ FLEET.VEHICLE - (former TMS.UNIT)
                                     <label for="odometer" />
                                     <div>
                                         <field name="odometer" class="oe_inline" readonly="1"/>
-                                        <field name="odometer_unit" class="oe_inline"/>                                        
+                                        <field name="odometer_unit" class="oe_inline" attrs="{'invisible':[('odometer_uom','!=','distance')]}"/>                                        
                     					<newline />
                                     </div>
                                     <label for="active_odometer_id" />
@@ -395,10 +337,10 @@ FLEET.VEHICLE - (former TMS.UNIT)
                         <field name="model_id" />
                 </field>
                 <field name="license_plate" position="after">
-                    <field name="fleet_type"/>
-                    <field name="unit_type_id" />
-                    <field name="unit_motor_id" />
-        	        <field name="employee_id" string="TMS Driver"/>
+                    <field name="fleet_type" invisible="1"/>
+                    <field name="unit_type_id" invisible="1"/>
+                    <field name="unit_motor_id" invisible="1"/>
+        	        <field name="employee_id" string="TMS Driver" invisible="1"/>
                 </field>
 
 

@@ -181,16 +181,7 @@ class fleet_vehicle(osv.osv):
         'gps_id': openerp.osv.fields.char('GPS Id', size=64),
         'employee_id': openerp.osv.fields.many2one('hr.employee', 'Driver', required=False, domain=[('tms_category', '=', 'driver')], help="This is used in TMS Module..."),
         'fleet_type': openerp.osv.fields.selection([('tractor','Motorized Unit'), ('trailer','Trailer'), ('dolly','Dolly'), ('other','Other')], 'Unit Fleet Type', required=True),
-# Pendiente de construir los objetos relacionados
-#        'tires_number': openerp.osv.fields.integer('Number of Tires'),
-#        'tires_extra': openerp.osv.fields.integer('Number of Extra Tires'),
-#        'unit_status': openerp.osv.fields.many2one('tms.unit.fleet.unit.status', 'Unit Status', required=True),
-#        'maint_cycle': openerp.osv.fields.many2one('tms.maintenance.cycle', 'Maintenance Cycle', required=True),
-        'avg_distance_per_day'  :openerp.osv.fields.float('Avg Distance per day', required=False, digits=(16,2), help='Specify average distance (mi./kms) per day for this unit'),
-#        'fuel_efficiency_std':openerp.osv.fields.float('Fuel Efficiency', required=False, digits=(14,4), help='Fuel Efficiency as specified by the manufacturer'),
-#        'maint_cycle_by':openerp.osv.fields.selection([('distance','Distance (mi./km)'), ('time','Time (Operation hours)')], 'Manage Maintenance Cycle by'),
-#        'last_maint_service': openerp.osv.fields.function(_get_last_maint_service, method=True, type="char", string='Last Maintenance Service'),
-#        'next_maint_service': openerp.osv.fields.many2one('tms.maintenance.cycle.service', 'Next Maintenance ServiceCompany', required=False),
+        'avg_odometer_uom_per_day'  :openerp.osv.fields.float('Avg Odometer UoM per day', required=False, digits=(16,2), help='Specify average distance (mi./kms) per day for this unit'),
         
         
         'notes'                 : openerp.osv.fields.text('Notes'),
@@ -1105,6 +1096,8 @@ class fleet_vehicle_odometer(osv.osv):
                    'tms_travel_id'    : travel_id,
                    }
         res = self.create(cr, uid, values)
+        # Falta crear un método para actualizar el promedio diario de recorrido de la unidad
+        
         return
 
     def unlink_odometer_rec(self, cr, uid, ids, travel_ids, unit_id, context=None):
