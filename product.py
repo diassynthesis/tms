@@ -61,7 +61,7 @@ class product_product(osv.osv):
   - Fuel: Used for filtering products used in Fuel Vouchers.
   - Indirect Expense (Agreements): Used to define Accounts for Agreements Indirect Expenses.
   All of these products MUST be used as a service because they will never interact with Inventory.
-"""),
+""", translate=True),
             'tms_account_ids' : fields.many2many('account.account', 'tms_product_account_rel', 'product_id', 'account_id', 'Accounts for this product'),
             'tms_activity_duration': fields.float('Duration', digits=(14,2), help="Activity duration in hours"),
 

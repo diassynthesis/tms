@@ -309,13 +309,13 @@ FLEET.VEHICLE - (former TMS.UNIT)
 			        </form>
 		            </field>
                         </page>
-                        <page string="Active/Inactive History">
+<!--                        <page string="Active/Inactive History">
                             <field name="unit_active_history_ids" nolabel="1" /> 
                         </page>
                         <page string="Red Tapes">
                             <field name="unit_red_tape_ids" nolabel="1" /> 
                         </page>
-                        <page string="Notes">
+-->                        <page string="Notes">
                             <field name="notes" nolabel="1" />
                         </page>
                     </notebook> 

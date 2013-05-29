@@ -269,6 +269,22 @@ class fleet_vehicle(osv.osv):
         return res
 
 
+    def return_action_to_open_tms(self, cr, uid, ids, context=None):
+        """ This opens the xml view specified in xml_id for the current vehicle """
+        if context is None:
+            context = {}
+        if context.get('xml_id'):
+            res = self.pool.get('ir.actions.act_window').for_xml_id(cr, uid ,'tms', context['xml_id'], context=context)
+            res['context'] = context
+            res['context'].update({'default_unit_id': ids[0]})
+            res['domain'] = [('unit_id','=', ids[0])]
+            return res
+        return False
+
+
+
+
+
 # Units PHOTOS
 class tms_unit_photo(osv.osv):
     _name = "tms.unit.photo"
