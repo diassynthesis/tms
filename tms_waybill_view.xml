@@ -414,6 +414,7 @@ TMS.waybill.category
 		            <field name="waybill_supplier_factor" 
 		                   context="{'default_waybill_id': active_id,'default_category':'supplier'}" 
 		                   domain="[('category','=','supplier')]"
+                           attrs="{'readonly':[('supplier_invoiced','=',1)]}"
 		                   colspan="4" nolabel="1" />
                     <field name="supplier_amount" />
 	              </page>
