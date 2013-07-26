@@ -338,7 +338,7 @@ class tms_travel(osv.osv):
                         _('Could not Confirm Expense Record !'),
                         _('Parameter to determine Vehicle distance update from does not exist.'))
             elif travel.parameter_distance == 2: # Revisamos el parametro (tms_property_update_vehicle_distance) donde se define donde se actualizan los kms/millas a las unidades 
-                self.pool.get('fleet.vehicle.odometer').unlink_odometer_rec(cr, uid, ids, travel_ids)
+                self.pool.get('fleet.vehicle.odometer').unlink_odometer_rec(cr, uid, ids, ids, False)
 
         self.write(cr, uid, ids, {'state':'cancel', 'cancelled_by':uid,'date_cancelled':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
 
