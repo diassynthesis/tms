@@ -71,11 +71,41 @@
                         <field name="tms_account_ids" nolabel="1" />
                     </page>
                 </notebook>
+                <field name="property_account_income" position="after">
+                    <field name="tms_property_account_income" 
+                           attrs="{'required':[('tms_category','in',('freight', 'insurance', 'highway_tolls','other'))], 'invisible' : [('tms_category','not in',('freight', 'insurance', 'highway_tolls','other'))]}"
+                           domain="[('type','=','other')]"/>
+                </field>
+                <field name="property_account_expense" position="after">
+                    <field name="tms_property_account_expense" 
+                           attrs="{'required':[('tms_category','in',('fuel'))], 'invisible' : [('tms_category','not in',('fuel'))]}"
+                           domain="[('type','=','other')]"/>
+                </field>
+
             </field>
         </record>
 
 
+    
+        <record id="tms_view_category_property_form" model="ir.ui.view">
+            <field name="name">tms.product.category.property.form.inherit</field>
+            <field name="model">product.category</field>
+            <field name="inherit_id" ref="account.view_category_property_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    <field name="property_account_income_categ" position="after">
+                        <field name="tms_property_account_income_categ"                            
+                           domain="[('type','=','other')]"/>
+                    </field>
+                    <field name="property_account_expense_categ" position="after">
+                        <field name="tms_property_account_expense_categ"                            
+                           domain="[('type','=','other')]"/>
+                    </field>
 
+                </data>
+            </field>
+        </record>
+    
 
 
 </data>

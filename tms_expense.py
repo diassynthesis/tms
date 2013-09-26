@@ -1028,6 +1028,8 @@ class tms_expense_invoice(osv.osv_memory):
                             'comment'           : notes,
                             'check_total'       : inv_amount,
                             'date_invoice'      : expense.date,
+                            'vehicle_id'        : expense.unit_id.id,
+                            'employee_id'       : expense.employee_id.id,
                             }
 
                         inv_id = invoice_obj.create(cr, uid, inv)
@@ -1054,6 +1056,8 @@ class tms_expense_invoice(osv.osv_memory):
                                     'credit'        : round(expense.amount_advance, precision),
                                     'journal_id'    : journal_id,
                                     'period_id'     : period_id[0],
+                                    'vehicle_id'    : expense.unit_id.id,
+                                    'employee_id'   : expense.employee_id.id,
                                     })
                             move_lines.append(move_line)
                             notes += '\n' + _('Advance Discount')
@@ -1076,6 +1080,8 @@ class tms_expense_invoice(osv.osv_memory):
                                     'quantity'          : line.product_uom_qty,
                                     'journal_id'        : journal_id,
                                     'period_id'         : period_id[0],
+                                    'vehicle_id'        : expense.unit_id.id,
+                                    'employee_id'       : expense.employee_id.id,
                                     })
                                 move_lines.append(move_line)
                                 #print "Partida => ", line.product_id.name, " : ", round(line.price_subtotal, precision) if line.price_subtotal > 0.0 else round(abs(line.price_subtotal), precision) , "\n ", move_line, "\n"
@@ -1114,6 +1120,8 @@ class tms_expense_invoice(osv.osv_memory):
                                         'credit'        : 0.0,
                                         'journal_id'    : journal_id,
                                         'period_id'     : period_id[0],
+                                        'vehicle_id'    : expense.unit_id.id,
+                                        'employee_id'   : expense.employee_id.id,
                                         })
                             move_lines.append(move_line)
                             #print "Partida => Nuevo Saldo en contra: ", move_line, "\n"

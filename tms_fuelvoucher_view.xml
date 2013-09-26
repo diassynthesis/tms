@@ -147,12 +147,14 @@ TMS.FUELVOUCHER
                                     <field name="date_cancelled" readonly="1" />
                                     <field name="drafted_by" readonly="1" />
                                     <field name="date_drafted" readonly="1" />
-							        <group colspan="4" col="8">
-									        <field name="invoiced"/>  
-									        <field name="invoice_id" />
-									        <field name="invoice_name" />
-									        <field name="invoice_paid"/>  
-							        </group>
+                                    <separator string="Account Move" colspan="4"/>
+                                    <field name="move_id"/>
+                                    <newline />
+							        <separator string="Invoice Information" colspan="4"/>
+                                    <field name="invoiced"/>  
+                                    <field name="invoice_id" />
+                                    <field name="invoice_name" />
+                                    <field name="invoice_paid"/>
                                 </group>
                             </page>
                         </notebook>

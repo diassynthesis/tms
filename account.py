@@ -52,19 +52,31 @@ class account_journal(osv.osv):
     _inherit ='account.journal'
 
     _columns = {
-        'tms_advance_journal': openerp.osv.fields.boolean('TMS Advance Journal', help= 'If set to True then it will be used for TMS Advance Invoices. It must be a Purchase Type Journal'),
-        'tms_expense_journal': openerp.osv.fields.boolean('TMS Expense Journal', help= 'If set to True then it will be used for TMS Expense Invoices. It must be a Purchase Type Journal'),
-        'tms_supplier_journal': openerp.osv.fields.boolean('TMS Freight Supplier Journal', help= 'If set to True then it will be used for TMS Waybill Supplier Invoices. It must be a Purchase Type Journal'),
+        'tms_advance_journal': fields.boolean('TMS Advance Journal', help= 'If set to True then it will be used for TMS Advance Invoices. It must be a Purchase Type Journal'),
+        'tms_fuelvoucher_journal': fields.boolean('TMS Fuel Voucher Journal', help= 'If set to True then it will be used to create Moves when confirming TMS Fuel Voucher. It must be a General Type Journal'),
+        'tms_expense_journal': fields.boolean('TMS Expense Journal', help= 'If set to True then it will be used for TMS Expense Invoices. It must be a Purchase Type Journal'),
+        'tms_supplier_journal': fields.boolean('TMS Freight Supplier Journal', help= 'If set to True then it will be used for TMS Waybill Supplier Invoices. It must be a Purchase Type Journal'),
+        'tms_waybill_journal': fields.boolean('TMS Waybill Journal', help= 'If set to True then it will be used to create Moves when confirming TMS Waybill . It must be a General Type Journal'),
         }
 
     _defaults = {
-        'tms_advance_journal':False,
-        'tms_expense_journal':False,
-        'tms_supplier_journal':False,
+        'tms_advance_journal' : lambda *a :False,
+        'tms_fuelvoucher_journal':lambda *a :False,
+        'tms_expense_journal':lambda *a :False,
+        'tms_supplier_journal':lambda *a :False,
         }
 
 account_journal()
 
+# Fields <vechicle_id>, <employee_id> added to acount_move_line for reporting and analysis
+class account_move_line(osv.osv):
+    _inherit ='account.move.line'
 
+    _columns = {
+        'vehicle_id': fields.many2one('fleet.vehicle', 'Vehicle', required=False),
+        'employee_id': fields.many2one('hr.employee', 'Driver', required=False),
+        }
+
+account_move_line()
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

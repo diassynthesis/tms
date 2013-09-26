@@ -64,6 +64,12 @@ class product_product(osv.osv):
 """, translate=True),
             'tms_account_ids' : fields.many2many('account.account', 'tms_product_account_rel', 'product_id', 'account_id', 'Accounts for this product'),
             'tms_activity_duration': fields.float('Duration', digits=(14,2), help="Activity duration in hours"),
+            'tms_property_account_income' : fields.many2one('account.account', 'Substitute Income Account', 
+                                                                help='Use this to define  substitute income account for Freights, Moves, Insurance, etc', 
+                                                                required=False),
+            'tms_property_account_expense' : fields.many2one('account.account', 'Substitute Expense Account', 
+                                                                help='Use this to define substitute account for Fuel Voucher Expense', 
+                                                                required=False),
 
         }
 
@@ -107,4 +113,25 @@ class product_product(osv.osv):
 product_product()
 
 
+class product_category(osv.osv):
+    _name = "product.category"
+    _inherit = "product.category"
+    
+    _columns = {
+        'tms_property_account_income_categ': fields.property(
+            'account.account',
+            type='many2one',
+            relation='account.account',
+            string="Substitute Income Account",
+            view_load=True,
+            help="This account will be used instead of previous field to break down every move line by Vehicle and Driver."),
+        'tms_property_account_expense_categ': fields.property(
+            'account.account',  
+            type='many2one',
+            relation='account.account',
+            string="Substitute Expense Account",
+            view_load=True,
+            help="This account will be used instead of previous field to break down every move line by Vehicle and Driver."),
+    }
+    
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

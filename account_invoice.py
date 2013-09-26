@@ -42,6 +42,10 @@ class account_invoice(osv.osv):
         'waybill_ids': openerp.osv.fields.one2many('tms.waybill', 'invoice_id', 'Waybills', readonly=True, required=False),
         'departure_address_id': openerp.osv.fields.many2one('res.partner', 'Departure Address', readonly=True, required=False),
         'arrival_address_id': openerp.osv.fields.many2one('res.partner', 'Arrival Address', readonly=True, required=False),
+        'expense_ids': openerp.osv.fields.one2many('tms.expense', 'invoice_id', 'Travel Expenses', readonly=True, required=False),
+        'travel_id': openerp.osv.fields.many2one('tms.travel', 'Travel', readonly=True, required=False),
+        'vehicle_id': openerp.osv.fields.many2one('fleet.vehicle', 'Vehicle', readonly=True, required=False),
+        'employee_id': openerp.osv.fields.many2one('hr.employee', 'Driver', readonly=True, required=False),
     }
     
     _defaults = {
@@ -57,7 +61,19 @@ class account_invoice(osv.osv):
                 self.write(cr, uid, ids, {'internal_number':False})
                 
         return super(account_invoice, self).unlink(cr, uid, ids, context=context)
-
+    
+    def action_move_create(self, cr, uid, ids, context=None):
+        res = super(account_invoice, self).action_move_create(cr, uid, ids, context=context)
+        move_line_obj = self.pool.get('account.move.line')
+        for invoice in self.browse(cr, uid, ids):
+            lines = move_line_obj.search(cr, uid, [('move_id','=', invoice.move_id.id)])
+            if invoice.vehicle_id.id:
+                move_line_obj.write(cr, uid, lines, {'vehicle_id': invoice.vehicle_id.id})
+            if invoice.employee_id.id:
+                move_line_obj.write(cr, uid, lines, {'employee_id': invoice.employee_id.id})    
+                
+        return res
+        
 account_invoice()
 
 

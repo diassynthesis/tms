@@ -339,6 +339,9 @@ class tms_advance_invoice(osv.osv_memory):
                     advance_name = line.name
                     advance_travel_name = line.travel_id.name
                     advance_prod = line.product_id.name
+                    advance_travel = line.travel_id.id
+                    advance_employee = line.travel_id.employee_id.id
+                    advance_vehicle = line.travel_id.unit_id.id
 
                 a = partner.property_account_payable.id
                 if partner and partner.property_payment_term.id:
@@ -364,6 +367,9 @@ class tms_advance_invoice(osv.osv_memory):
                     'fiscal_position'   : partner.property_account_position.id,
                     'comment'           : notes,
                     'check_total'       : inv_amount,
+                    'travel_id'         : advance_travel,
+                    'vehicle_id'        : advance_vehicle,
+                    'employee_id'       : advance_employee,
                 }
 
                 inv_id = invoice_obj.create(cr, uid, inv)

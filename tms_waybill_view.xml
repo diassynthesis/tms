@@ -246,8 +246,8 @@ TMS.waybill.category
                   <field name="currency_id" />
                   <field name="partner_order_id" domain="[('partner_id','=',partner_id)]" />
                   <field name="partner_invoice_id" domain="[('partner_id','=',partner_id)]" />
-	              <field name="departure_address_id" />
-	              <field name="arrival_address_id" />
+	              <field name="departure_address_id" context="{'search_default_customer':1, 'show_address': 1}" options="{&quot;always_reload&quot;: True}"/>
+	              <field name="arrival_address_id" context="{'search_default_customer':1, 'show_address': 1}" options="{&quot;always_reload&quot;: True}"/>
 	              <field name="upload_point" />
 	              <field name="download_point" />
                 </group>
@@ -492,6 +492,8 @@ TMS.waybill.category
                         <field name="supplier_invoiced_date" readonly="1" />
 		                <!--<field name="shipped" /> -->
 		              </group>
+                        <field name="move_id" />
+                        
                     </group>
                   </page>
 	            </notebook>

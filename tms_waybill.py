@@ -37,11 +37,11 @@ class tms_waybill_category(osv.osv):
     _description = 'Waybill Categories'
 
     _columns = {
-        'shop_id'     : openerp.osv.fields.many2one('sale.shop', 'Shop'),
-        'company_id'  : openerp.osv.fields.related('shop_id','company_id',type='many2one',relation='res.company',string='Company',store=True,readonly=True),
-        'name'        : openerp.osv.fields.char('Name', size=64, required=True),
-        'description' : openerp.osv.fields.text('Description'),
-        'active'      : openerp.osv.fields.boolean('Active'),
+        'shop_id'     : fields.many2one('sale.shop', 'Shop'),
+        'company_id'  : fields.related('shop_id','company_id',type='many2one',relation='res.company',string='Company',store=True,readonly=True),
+        'name'        : fields.char('Name', size=64, required=True),
+        'description' : fields.text('Description'),
+        'active'      : fields.boolean('Active'),
         }
 
     _defaults = {
@@ -193,152 +193,174 @@ class tms_waybill(osv.osv):
 
 
     _columns = {
-        'name'             : openerp.osv.fields.char('Name', size=64, readonly=True, select=True),
-        'shop_id'          : openerp.osv.fields.many2one('sale.shop', 'Shop', required=True, readonly=False, states={'confirmed': [('readonly', True)]}),
-        'waybill_category' : openerp.osv.fields.many2one('tms.waybill.category', 'Waybill Category', required=False, readonly=False, states={'confirmed': [('readonly', True)]}),
-        'sequence_id'      : openerp.osv.fields.many2one('ir.sequence', 'Sequence', required=True, readonly=False, states={'confirmed': [('readonly', True)]}),
-        'travel_ids'       : openerp.osv.fields.many2many('tms.travel', 'tms_waybill_travel_rel', 'waybill_id', 'travel_id', 'Travels', readonly=False, states={'confirmed': [('readonly', True)]}),
+        'name'             : fields.char('Name', size=64, readonly=True, select=True),
+        'shop_id'          : fields.many2one('sale.shop', 'Shop', required=True, readonly=False, states={'confirmed': [('readonly', True)]}),
+        'waybill_category' : fields.many2one('tms.waybill.category', 'Waybill Category', required=False, readonly=False, states={'confirmed': [('readonly', True)]}),
+        'sequence_id'      : fields.many2one('ir.sequence', 'Sequence', required=True, readonly=False, states={'confirmed': [('readonly', True)]}),
+        'travel_ids'       : fields.many2many('tms.travel', 'tms_waybill_travel_rel', 'waybill_id', 'travel_id', 'Travels', readonly=False, states={'confirmed': [('readonly', True)]}),
 
-        'travel_id'        : openerp.osv.fields.function(_get_newer_travel_id, method=True, relation='tms.travel', type="many2one", string='Actual Travel', readonly=True, store=True),
-        'supplier_id'      : openerp.osv.fields.related('unit_id', 'supplier_id', type='many2one', relation='res.partner', string='Freight Supplier', store=True, readonly=True),                
-        'supplier_amount'  : openerp.osv.fields.function(_get_supplier_amount, string='Supplier Freight Amount', method=True, type='float', digits_compute= dp.get_precision('Sale Price'), help="Freight Amount from Supplier.", multi=False, store=True),
+        'travel_id'        : fields.function(_get_newer_travel_id, method=True, relation='tms.travel', type="many2one", string='Actual Travel', readonly=True, store=True),
+        'supplier_id'      : fields.related('unit_id', 'supplier_id', type='many2one', relation='res.partner', string='Freight Supplier', store=True, readonly=True),                
+        'supplier_amount'  : fields.function(_get_supplier_amount, string='Supplier Freight Amount', method=True, type='float', digits_compute= dp.get_precision('Sale Price'), help="Freight Amount from Supplier.", multi=False, store=True),
 
-        'unit_id'          : openerp.osv.fields.related('travel_id', 'unit_id', type='many2one', relation='fleet.vehicle', string='Unit', store=True, readonly=True),                
-        'trailer1_id'      : openerp.osv.fields.related('travel_id', 'trailer1_id', type='many2one', relation='fleet.vehicle', string='Trailer 1', store=True, readonly=True),                
-        'dolly_id'         : openerp.osv.fields.related('travel_id', 'dolly_id', type='many2one', relation='fleet.vehicle', string='Dolly', store=True, readonly=True),                
-        'trailer2_id'      : openerp.osv.fields.related('travel_id', 'trailer2_id', type='many2one', relation='fleet.vehicle', string='Trailer 2', store=True, readonly=True),                
-        'employee_id'      : openerp.osv.fields.related('travel_id', 'employee_id', type='many2one', relation='hr.employee', string='Driver', store=True, readonly=True),                
-        'route_id'         : openerp.osv.fields.related('travel_id', 'route_id', type='many2one', relation='tms.route', string='Route', store=True, readonly=True),                
-        'departure_id'     : openerp.osv.fields.related('route_id', 'departure_id', type='many2one', relation='tms.place', string='Departure', store=True, readonly=True),                
-        'arrival_id'       : openerp.osv.fields.related('route_id', 'arrival_id', type='many2one', relation='tms.place', string='Arrival', store=True, readonly=True),                
+        'unit_id'          : fields.related('travel_id', 'unit_id', type='many2one', relation='fleet.vehicle', string='Unit', store=True, readonly=True),                
+        'trailer1_id'      : fields.related('travel_id', 'trailer1_id', type='many2one', relation='fleet.vehicle', string='Trailer 1', store=True, readonly=True),                
+        'dolly_id'         : fields.related('travel_id', 'dolly_id', type='many2one', relation='fleet.vehicle', string='Dolly', store=True, readonly=True),                
+        'trailer2_id'      : fields.related('travel_id', 'trailer2_id', type='many2one', relation='fleet.vehicle', string='Trailer 2', store=True, readonly=True),                
+        'employee_id'      : fields.related('travel_id', 'employee_id', type='many2one', relation='hr.employee', string='Driver', store=True, readonly=True),                
+        'route_id'         : fields.related('travel_id', 'route_id', type='many2one', relation='tms.route', string='Route', store=True, readonly=True),                
+        'departure_id'     : fields.related('route_id', 'departure_id', type='many2one', relation='tms.place', string='Departure', store=True, readonly=True),                
+        'arrival_id'       : fields.related('route_id', 'arrival_id', type='many2one', relation='tms.place', string='Arrival', store=True, readonly=True),                
 
-        'origin'           : openerp.osv.fields.char('Source Document', size=64, help="Reference of the document that generated this Waybill request.",readonly=False, states={'confirmed': [('readonly', True)]}),
-        'client_order_ref' : openerp.osv.fields.char('Customer Reference', size=64, readonly=False, states={'confirmed': [('readonly', True)]}),
-        'state'            : openerp.osv.fields.selection([
+        'origin'           : fields.char('Source Document', size=64, help="Reference of the document that generated this Waybill request.",readonly=False, states={'confirmed': [('readonly', True)]}),
+        'client_order_ref' : fields.char('Customer Reference', size=64, readonly=False, states={'confirmed': [('readonly', True)]}),
+        'state'            : fields.selection([
                 ('draft', 'Pending'),
                 ('approved', 'Approved'),
                 ('confirmed', 'Confirmed'),
                 ('cancel', 'Cancelled')
                 ], 'State', readonly=True, help="Gives the state of the Waybill. \n ", select=True),
-        'billing_policy'   : openerp.osv.fields.selection([
+        'billing_policy'   : fields.selection([
                 ('manual', 'Manual'),
                 ('automatic', 'Automatic'),
                 ], 'Billing Policy', readonly=False, states={'confirmed': [('readonly', True)]},
                                                           help="Gives the state of the Waybill. \n -The exception state is automatically set when a cancel operation occurs in the invoice validation (Invoice Exception) or in the picking list process (Shipping Exception). \nThe 'Waiting Schedule' state is set when the invoice is confirmed but waiting for the scheduler to run on the date 'Ordered Date'.", select=True),
 
-        'waybill_type'     : openerp.osv.fields.function(_get_waybill_type, method=True, type='selection', selection=[('self', 'Self'), ('outsourced', 'Outsourced')], 
+        'waybill_type'     : fields.function(_get_waybill_type, method=True, type='selection', selection=[('self', 'Self'), ('outsourced', 'Outsourced')], 
                                         string='Waybill Type', store=True, help=" - Self: Travel with our own units. \n - Outsourced: Travel without our own units."),
 
-        'date_order'       : openerp.osv.fields.date('Date', required=True, select=True,readonly=False, states={'confirmed': [('readonly', True)]}),
-        'user_id'          : openerp.osv.fields.many2one('res.users', 'Salesman', select=True, readonly=False, states={'confirmed': [('readonly', True)]}),
+        'date_order'       : fields.date('Date', required=True, select=True,readonly=False, states={'confirmed': [('readonly', True)]}),
+        'user_id'          : fields.many2one('res.users', 'Salesman', select=True, readonly=False, states={'confirmed': [('readonly', True)]}),
 
-        'partner_id'       : openerp.osv.fields.many2one('res.partner', 'Customer', required=True, change_default=True, select=True, readonly=False, states={'confirmed': [('readonly', True)]}),
-        'currency_id'      : openerp.osv.fields.many2one('res.currency', 'Currency', required=True, states={'confirmed': [('readonly', True)]}),
-#        'pricelist_id': openerp.osv.fields.many2one('product.pricelist', 'Pricelist', required=True, help="Pricelist for Waybill.", readonly=False, states={'confirmed': [('readonly', True)]}),
-        'partner_invoice_id': openerp.osv.fields.many2one('res.partner', 'Invoice Address', required=True, help="Invoice address for current Waybill.", readonly=False, states={'confirmed': [('readonly', True)]}),
-        'partner_order_id': openerp.osv.fields.many2one('res.partner', 'Ordering Contact', required=True,  help="The name and address of the contact who requested the order or quotation.", readonly=False, states={'confirmed': [('readonly', True)]}),
-        'account_analytic_id': openerp.osv.fields.many2one('account.analytic.account', 'Analytic Account',  help="The analytic account related to a Waybill.", readonly=False, states={'confirmed': [('readonly', True)]}),
-        'departure_address_id': openerp.osv.fields.many2one('res.partner', 'Departure Address', required=True, help="Departure address for current Waybill.", readonly=False, states={'confirmed': [('readonly', True)]}),
-        'arrival_address_id': openerp.osv.fields.many2one('res.partner', 'Arrival Address', required=True, help="Arrival address for current Waybill.", readonly=False, states={'confirmed': [('readonly', True)]}),
-        'upload_point'     : openerp.osv.fields.char('Upload Point', size=128, readonly=False, states={'confirmed': [('readonly', True)]}),
-        'download_point'   : openerp.osv.fields.char('Download Point', size=128, required=False, readonly=False, states={'confirmed': [('readonly', True)]}),
-        'shipped'          : openerp.osv.fields.boolean('Delivered', readonly=True, help="It indicates that the Waybill has been delivered. This field is updated only after the scheduler(s) have been launched."),
-
-        'invoice_id'       : openerp.osv.fields.many2one('account.invoice','Invoice Record', readonly=True),
-        'invoiced'         :  openerp.osv.fields.function(_invoiced, method=True, string='Invoiced', type='boolean', multi='invoiced', store=True),
-        'invoice_paid'     :  openerp.osv.fields.function(_invoiced, method=True, string='Paid', type='boolean', multi='invoiced', store=True),
-        'invoice_name'     :  openerp.osv.fields.function(_invoiced, method=True, string='Invoice', type='char', size=64, multi='invoiced', store=True),
-
-        'supplier_invoice_id': openerp.osv.fields.many2one('account.invoice','Supplier Invoice Rec', readonly=True),
-        'supplier_invoiced':  openerp.osv.fields.function(_supplier_invoiced, method=True, string='Supplier Invoiced', type='boolean', multi='supplier_invoiced', store=True),
-        'supplier_invoice_paid':  openerp.osv.fields.function(_supplier_invoiced, method=True, string='Supplier Invoice Paid', type='boolean', multi='invoiced', store=True),
-        'supplier_invoice_name':  openerp.osv.fields.function(_supplier_invoiced, method=True, string='Supplier Invoice', type='char', size=64, multi='invoiced', store=True),
-        'supplier_invoiced_by' : openerp.osv.fields.many2one('res.users', 'Suppl. Invoiced by', readonly=True),
-        'supplier_invoiced_date'      : openerp.osv.fields.datetime('Suppl. Inv. Date', readonly=True, select=True),
-
-        'waybill_line'     : openerp.osv.fields.one2many('tms.waybill.line', 'waybill_id', 'Waybill Lines', readonly=False, states={'confirmed': [('readonly', True)]}),
-        'waybill_shipped_product': openerp.osv.fields.one2many('tms.waybill.shipped_product', 'waybill_id', 'Shipped Products', readonly=False, states={'confirmed': [('readonly', True)]}),
-        'product_qty'      : openerp.osv.fields.function(_shipped_product, method=True, string='Sum Qty', type='float', digits=(20, 6),  store=True, multi='product_qty'),
-        'product_volume'   : openerp.osv.fields.function(_shipped_product, method=True, string='Sum Volume', type='float', digits=(20, 6),  store=True, multi='product_qty'),
-        'product_weight'   : openerp.osv.fields.function(_shipped_product, method=True, string='Sum Weight', type='float', digits=(20, 6),  store=True, multi='product_qty'),
-        'product_uom_type' : openerp.osv.fields.function(_shipped_product, method=True, string='Product UoM Type', type='char', size=64, store=True, multi='product_qty'),
-
-        'waybill_extradata': openerp.osv.fields.one2many('tms.waybill.extradata', 'waybill_id', 'Extra Data Fields', readonly=False, states={'confirmed': [('readonly', True)]}),
+        'partner_id'       : fields.many2one('res.partner', 'Customer', required=True, change_default=True, select=True, readonly=False, states={'confirmed': [('readonly', True)]}),
+        'currency_id'      : fields.many2one('res.currency', 'Currency', required=True, states={'confirmed': [('readonly', True)]}),
+#        'pricelist_id': fields.many2one('product.pricelist', 'Pricelist', required=True, help="Pricelist for Waybill.", readonly=False, states={'confirmed': [('readonly', True)]}),
+        'partner_invoice_id': fields.many2one('res.partner', 'Invoice Address', required=True, help="Invoice address for current Waybill.", readonly=False, states={'confirmed': [('readonly', True)]}),
+        'partner_order_id': fields.many2one('res.partner', 'Ordering Contact', required=True,  help="The name and address of the contact who requested the order or quotation.", readonly=False, states={'confirmed': [('readonly', True)]}),
+        'account_analytic_id': fields.many2one('account.analytic.account', 'Analytic Account',  help="The analytic account related to a Waybill.", readonly=False, states={'confirmed': [('readonly', True)]}),
+        'departure_address_id': fields.many2one('res.partner', 'Departure Address', required=True, help="Departure address for current Waybill.", readonly=False, states={'confirmed': [('readonly', True)]}),
+        #'departure_street'    : fields.related('departure_address_id', 'street', string='Departure Street', type='char', size=128, store=True, readonly=True),
+        #'departure_street3'    : fields.related('departure_address_id', 'l10n_mx_street3', string='Departure Ext. Number', type='char', size=128, store=True, readonly=True),
+        #'departure_street4'    : fields.related('departure_address_id', 'l10n_mx_street4', string='Departure Int. Number', type='char', size=128, store=True, readonly=True),
+        #'departure_street2'    : fields.related('departure_address_id', 'street2', string='Departure Street2', type='char', size=128, store=True, readonly=True),
+        #'departure_city'    : fields.related('departure_address_id', 'city', string='Departure City', type='char', size=128, store=True, readonly=True),
+        #'departure_state_id'    : fields.related('departure_address_id', 'state_id', type='many2one', relation='res.country.state', string='Departure State', store=True, readonly=True),
+        #'departure_country_id'    : fields.related('departure_address_id', 'country_id', type='many2one', relation='res.country', string='Departure Country', store=True, readonly=True),
+        #'departure_zip'    : fields.related('departure_address_id', 'zip', type='char', size=128, string='Departure Zip', store=True, readonly=True),
 
 
-        'amount_freight'   : openerp.osv.fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='Freight', type='float', store=False, multi=True),
-        'amount_move'      : openerp.osv.fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='Moves', type='float', store=False, multi=True),
-        'amount_highway_tolls': openerp.osv.fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='Highway Tolls', type='float', store=False, multi=True),
-        'amount_insurance' : openerp.osv.fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='Insurance', type='float', store=False, multi=True),
-        'amount_other'     : openerp.osv.fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='Other', type='float', store=False, multi=True),
-        'amount_untaxed'   : openerp.osv.fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='SubTotal', type='float', store=False, multi=True),
-        'amount_tax'       : openerp.osv.fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='Taxes', type='float', store=False, multi=True),
-        'amount_total'     : openerp.osv.fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='Total', type='float', store=False, multi=True),
 
-        'distance_route'   : openerp.osv.fields.function(_get_route_distance, string='Distance from route', method=True, type='float', digits=(18,6), help="Route Distance.", multi=False),
-        'distance_real'    : openerp.osv.fields.float('Distance Real', digits=(18,6), help="Route obtained by electronic reading"),
+        'arrival_address_id': fields.many2one('res.partner', 'Arrival Address', required=True, help="Arrival address for current Waybill.", readonly=False, states={'confirmed': [('readonly', True)]}),
+        #'arrival_street'    : fields.related('arrival_address_id', 'street', string='Arrival Street', type='char', size=128, store=True, readonly=True),
+        #'arrival_street3'    : fields.related('arrival_address_id', 'l10n_mx_street3', string='Arrival Ext. Number', type='char', size=128, store=True, readonly=True),
+        #'arrival_street4'    : fields.related('arrival_address_id', 'l10n_mx_street4', string='Arrival Int. Number', type='char', size=128, store=True, readonly=True),
+        #'arrival_street2'    : fields.related('arrival_address_id', 'street2', string='Arrival Street2', type='char', size=128, store=True, readonly=True),
+        #'arrival_city'    : fields.related('arrival_address_id', 'city', string='Arrival City', type='char', size=128, store=True, readonly=True),
+        #'arrival_state_id'    : fields.related('arrival_address_id', 'state_id', type='many2one', relation='res.country.state', string='Arrival State', store=True, readonly=True),
+        #'arrival_country_id'    : fields.related('arrival_address_id', 'country_id', type='many2one', relation='res.country', string='Arrival Country', store=True, readonly=True),
+        #'arrival_zip'    : fields.related('arrival_address_id', 'zip', string='Arrival Zip', type='char', size=128, store=True, readonly=True),
+
+
+        'upload_point'     : fields.char('Upload Point', size=128, readonly=False, states={'confirmed': [('readonly', True)]}),
+        'download_point'   : fields.char('Download Point', size=128, required=False, readonly=False, states={'confirmed': [('readonly', True)]}),
+        'shipped'          : fields.boolean('Delivered', readonly=True, help="It indicates that the Waybill has been delivered. This field is updated only after the scheduler(s) have been launched."),
+
+        'invoice_id'       : fields.many2one('account.invoice','Invoice Record', readonly=True),
+        'invoiced'         :  fields.function(_invoiced, method=True, string='Invoiced', type='boolean', multi='invoiced', store=True),
+        'invoice_paid'     :  fields.function(_invoiced, method=True, string='Paid', type='boolean', multi='invoiced', store=True),
+        'invoice_name'     :  fields.function(_invoiced, method=True, string='Invoice', type='char', size=64, multi='invoiced', store=True),
+
+        'supplier_invoice_id': fields.many2one('account.invoice','Supplier Invoice Rec', readonly=True),
+        'supplier_invoiced':  fields.function(_supplier_invoiced, method=True, string='Supplier Invoiced', type='boolean', multi='supplier_invoiced', store=True),
+        'supplier_invoice_paid':  fields.function(_supplier_invoiced, method=True, string='Supplier Invoice Paid', type='boolean', multi='invoiced', store=True),
+        'supplier_invoice_name':  fields.function(_supplier_invoiced, method=True, string='Supplier Invoice', type='char', size=64, multi='invoiced', store=True),
+        'supplier_invoiced_by' : fields.many2one('res.users', 'Suppl. Invoiced by', readonly=True),
+        'supplier_invoiced_date'      : fields.datetime('Suppl. Inv. Date', readonly=True, select=True),
+
+        'waybill_line'     : fields.one2many('tms.waybill.line', 'waybill_id', 'Waybill Lines', readonly=False, states={'confirmed': [('readonly', True)]}),
+        'waybill_shipped_product': fields.one2many('tms.waybill.shipped_product', 'waybill_id', 'Shipped Products', readonly=False, states={'confirmed': [('readonly', True)]}),
+        'product_qty'      : fields.function(_shipped_product, method=True, string='Sum Qty', type='float', digits=(20, 6),  store=True, multi='product_qty'),
+        'product_volume'   : fields.function(_shipped_product, method=True, string='Sum Volume', type='float', digits=(20, 6),  store=True, multi='product_qty'),
+        'product_weight'   : fields.function(_shipped_product, method=True, string='Sum Weight', type='float', digits=(20, 6),  store=True, multi='product_qty'),
+        'product_uom_type' : fields.function(_shipped_product, method=True, string='Product UoM Type', type='char', size=64, store=True, multi='product_qty'),
+
+        'waybill_extradata': fields.one2many('tms.waybill.extradata', 'waybill_id', 'Extra Data Fields', readonly=False, states={'confirmed': [('readonly', True)]}),
+
+
+        'amount_freight'   : fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='Freight', type='float', store=False, multi=True),
+        'amount_move'      : fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='Moves', type='float', store=False, multi=True),
+        'amount_highway_tolls': fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='Highway Tolls', type='float', store=False, multi=True),
+        'amount_insurance' : fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='Insurance', type='float', store=False, multi=True),
+        'amount_other'     : fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='Other', type='float', store=False, multi=True),
+        'amount_untaxed'   : fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='SubTotal', type='float', store=False, multi=True),
+        'amount_tax'       : fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='Taxes', type='float', store=False, multi=True),
+        'amount_total'     : fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='Total', type='float', store=False, multi=True),
+
+        'distance_route'   : fields.function(_get_route_distance, string='Distance from route', method=True, type='float', digits=(18,6), help="Route Distance.", multi=False),
+        'distance_real'    : fields.float('Distance Real', digits=(18,6), help="Route obtained by electronic reading"),
        
-        'create_uid'       : openerp.osv.fields.many2one('res.users', 'Created by', readonly=True),
-        'create_date'      : openerp.osv.fields.datetime('Creation Date', readonly=True, select=True),
-        'cancelled_by'     : openerp.osv.fields.many2one('res.users', 'Cancelled by', readonly=True),
-        'date_cancelled'   : openerp.osv.fields.datetime('Date Cancelled', readonly=True),
-        'approved_by'      : openerp.osv.fields.many2one('res.users', 'Approved by', readonly=True),
-        'date_approved'    : openerp.osv.fields.datetime('Date Approved', readonly=True),
-        'confirmed_by'     : openerp.osv.fields.many2one('res.users', 'Confirmed by', readonly=True),
-        'date_confirmed'   : openerp.osv.fields.datetime('Date Confirmed', readonly=True),
-        'drafted_by'       : openerp.osv.fields.many2one('res.users', 'Drafted by', readonly=True),
-        'date_drafted'     : openerp.osv.fields.datetime('Date Drafted', readonly=True),
+        'create_uid'       : fields.many2one('res.users', 'Created by', readonly=True),
+        'create_date'      : fields.datetime('Creation Date', readonly=True, select=True),
+        'cancelled_by'     : fields.many2one('res.users', 'Cancelled by', readonly=True),
+        'date_cancelled'   : fields.datetime('Date Cancelled', readonly=True),
+        'approved_by'      : fields.many2one('res.users', 'Approved by', readonly=True),
+        'date_approved'    : fields.datetime('Date Approved', readonly=True),
+        'confirmed_by'     : fields.many2one('res.users', 'Confirmed by', readonly=True),
+        'date_confirmed'   : fields.datetime('Date Confirmed', readonly=True),
+        'drafted_by'       : fields.many2one('res.users', 'Drafted by', readonly=True),
+        'date_drafted'     : fields.datetime('Date Drafted', readonly=True),
 
-        'notes'            : openerp.osv.fields.text('Notes', readonly=False, states={'confirmed': [('readonly', True)]}),
+        'notes'            : fields.text('Notes', readonly=False, states={'confirmed': [('readonly', True)]}),
         
-        'payment_term'     : openerp.osv.fields.many2one('account.payment.term', 'Payment Term', readonly=False, states={'confirmed': [('readonly', True)]}),
-        'fiscal_position'  : openerp.osv.fields.many2one('account.fiscal.position', 'Fiscal Position', readonly=False, states={'confirmed': [('readonly', True)]}),
-        'company_id'       : openerp.osv.fields.related('shop_id','company_id',type='many2one',relation='res.company',string='Company',store=True,readonly=True),
+        'payment_term'     : fields.many2one('account.payment.term', 'Payment Term', readonly=False, states={'confirmed': [('readonly', True)]}),
+        'fiscal_position'  : fields.many2one('account.fiscal.position', 'Fiscal Position', readonly=False, states={'confirmed': [('readonly', True)]}),
+        'company_id'       : fields.related('shop_id','company_id',type='many2one',relation='res.company',string='Company',store=True,readonly=True),
 
 
-        'date_start'       : openerp.osv.fields.datetime('Load Date Sched', required=False, help="Date Start time for Load"),
-        'date_up_start_sched': openerp.osv.fields.datetime('UpLd Start Sched', required=False),
-        'date_up_end_sched': openerp.osv.fields.datetime('UpLd End Sched', required=False),
-        'date_up_docs_sched': openerp.osv.fields.datetime('UpLd Docs Sched', required=False),
-        'date_appoint_down_sched': openerp.osv.fields.datetime('Download Date Sched', required=False),
-        'date_down_start_sched': openerp.osv.fields.datetime('Download Start Sched', required=False),
-        'date_down_end_sched': openerp.osv.fields.datetime('Download End Sched', required=False),
-        'date_down_docs_sched': openerp.osv.fields.datetime('Download Docs Sched', required=False),
-        'date_end'         : openerp.osv.fields.datetime('Travel End Sched', required=False, help="Date End time for Load"),        
+        'date_start'       : fields.datetime('Load Date Sched', required=False, help="Date Start time for Load"),
+        'date_up_start_sched': fields.datetime('UpLd Start Sched', required=False),
+        'date_up_end_sched': fields.datetime('UpLd End Sched', required=False),
+        'date_up_docs_sched': fields.datetime('UpLd Docs Sched', required=False),
+        'date_appoint_down_sched': fields.datetime('Download Date Sched', required=False),
+        'date_down_start_sched': fields.datetime('Download Start Sched', required=False),
+        'date_down_end_sched': fields.datetime('Download End Sched', required=False),
+        'date_down_docs_sched': fields.datetime('Download Docs Sched', required=False),
+        'date_end'         : fields.datetime('Travel End Sched', required=False, help="Date End time for Load"),        
 
-        'date_start_real'  : openerp.osv.fields.datetime('Load Date Real', required=False),
-        'date_up_start_real': openerp.osv.fields.datetime('UpLoad Start Real', required=False),
-        'date_up_end_real' : openerp.osv.fields.datetime('UpLoad End Real', required=False),
-        'date_up_docs_real': openerp.osv.fields.datetime('Load Docs Real', required=False),
-        'date_appoint_down_real': openerp.osv.fields.datetime('Download Date Real', required=False),
-        'date_down_start_real': openerp.osv.fields.datetime('Download Start Real', required=False),
-        'date_down_end_real': openerp.osv.fields.datetime('Download End Real', required=False),
-        'date_down_docs_real': openerp.osv.fields.datetime('Download Docs Real', required=False),
-        'date_end_real'    : openerp.osv.fields.datetime('Travel End Real', required=False),
+        'date_start_real'  : fields.datetime('Load Date Real', required=False),
+        'date_up_start_real': fields.datetime('UpLoad Start Real', required=False),
+        'date_up_end_real' : fields.datetime('UpLoad End Real', required=False),
+        'date_up_docs_real': fields.datetime('Load Docs Real', required=False),
+        'date_appoint_down_real': fields.datetime('Download Date Real', required=False),
+        'date_down_start_real': fields.datetime('Download Start Real', required=False),
+        'date_down_end_real': fields.datetime('Download End Real', required=False),
+        'date_down_docs_real': fields.datetime('Download Docs Real', required=False),
+        'date_end_real'    : fields.datetime('Travel End Real', required=False),
 
 
-
-        
-#        'time_from_appointment_to_uploading_std': openerp.osv.fields.float('Std Time from Appointment to Loading (Hrs)', digits=(10, 2), required=True, readonly=False),
-#        'time_for_uploading_std': openerp.osv.fields.float('Std Time for loading (Hrs)', digits=(10, 2), required=True, readonly=False),
-#        'time_from_uploading_to_docs_sched': openerp.osv.fields.float('Std Time from Load to Document Release (Hrs)', digits=(10, 2), required=True, readonly=False),
-#        'time_travel_sched': openerp.osv.fields.float('Std Time for Travel (Hrs)', digits=(10, 2), required=True, readonly=False),
-#        'time_from_appointment_to_downloading_std': openerp.osv.fields.float('Std Time from Download Appointment to Downloading (Hrs)', digits=(10, 2), required=True, readonly=False),
-#        'time_for_downloading_sched': openerp.osv.fields.float('Std Time for downloading (Hrs)', digits=(10, 2), required=True, readonly=False),
-#        'time_from_downloading_to_docs_sched': openerp.osv.fields.float('Std Time for Download Document Release (Hrs)', digits=(10, 2), required=True, readonly=False),                                                                                                        
 
         
-#        'payment_type': openerp.osv.fields.selection([
+#        'time_from_appointment_to_uploading_std': fields.float('Std Time from Appointment to Loading (Hrs)', digits=(10, 2), required=True, readonly=False),
+#        'time_for_uploading_std': fields.float('Std Time for loading (Hrs)', digits=(10, 2), required=True, readonly=False),
+#        'time_from_uploading_to_docs_sched': fields.float('Std Time from Load to Document Release (Hrs)', digits=(10, 2), required=True, readonly=False),
+#        'time_travel_sched': fields.float('Std Time for Travel (Hrs)', digits=(10, 2), required=True, readonly=False),
+#        'time_from_appointment_to_downloading_std': fields.float('Std Time from Download Appointment to Downloading (Hrs)', digits=(10, 2), required=True, readonly=False),
+#        'time_for_downloading_sched': fields.float('Std Time for downloading (Hrs)', digits=(10, 2), required=True, readonly=False),
+#        'time_from_downloading_to_docs_sched': fields.float('Std Time for Download Document Release (Hrs)', digits=(10, 2), required=True, readonly=False),                                                                                                        
+
+        
+#        'payment_type': fields.selection([
 #                                          ('quantity','Charge by Quantity'), 
 #                                          ('tons','Charge by Tons'), 
 #                                          ('distance','Charge by Distance (mi./kms)'), 
 #                                          ('travel','Charge by Travel'), 
 #                                          ('volume', 'Charge by Volume'),
 #                                          ], 'Charge Type',required=True,),
-#        'payment_factor': openerp.osv.fields.float('Factor', digits=(16, 4), required=True),
+#        'payment_factor': fields.float('Factor', digits=(16, 4), required=True),
 #      
-        'amount_declared' : openerp.osv.fields.float('Amount Declared', digits_compute= dp.get_precision('Sale Price'), help=" Load value amount declared for insurance purposes..."),
-        'replaced_waybill_id' : openerp.osv.fields.many2one('tms.waybill', 'Replaced Waybill', readonly=True),
+        'amount_declared' : fields.float('Amount Declared', digits_compute= dp.get_precision('Sale Price'), help=" Load value amount declared for insurance purposes..."),
+        'replaced_waybill_id' : fields.many2one('tms.waybill', 'Replaced Waybill', readonly=True),
+        'move_id'       : fields.many2one('account.move', 'Account Move', required=False, readonly=True),
 
     }
     _defaults = {
@@ -560,11 +582,90 @@ class tms_waybill(osv.osv):
         for waybill in self.browse(cr, uid, ids, context=None):
             if waybill.amount_untaxed <= 0.0:
                 raise osv.except_osv(_('Could not confirm Waybill !'),_('Total Amount must be greater than zero.'))
+            elif not waybill.travel_id.id:
+                raise osv.except_osv(_('Could not confirm Waybill !'),_('Waybill must be assigned to a Travel before confirming.'))
             elif waybill.billing_policy == 'automatic':
                 #print "Entrando para generar la factura en automatico..."
                 wb_invoice = self.pool.get('tms.waybill.invoice')
                 wb_invoice.makeWaybillInvoices(cr, uid, ids, context=None)
-            self.write(cr, uid, ids, {'state':'confirmed', 'confirmed_by' : uid, 'date_confirmed':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
+            
+            # *******************
+            move_obj = self.pool.get('account.move')
+            period_obj = self.pool.get('account.period')
+            account_jrnl_obj=self.pool.get('account.journal')
+            
+            period_id = period_obj.search(cr, uid, [('date_start', '<=', waybill.date_order),('date_stop','>=', waybill.date_order), ('state','=','draft')], context=None)
+            
+            if not period_id:
+                raise osv.except_osv(_('Warning !'),
+                        _('There is no valid account period for this date %s. Period does not exists or is already closed') % \
+                                (waybill.date_order,))
+            
+            journal_id = account_jrnl_obj.search(cr, uid, [('type', '=', 'general'),('tms_waybill_journal','=', 1)], context=None)
+            if not journal_id:
+                raise osv.except_osv('Error !',
+                                 'You have not defined Waybill Journal...')
+            journal_id = journal_id and journal_id[0]
+            
+            
+            move_lines = []
+            
+            precision = self.pool.get('decimal.precision').precision_get(cr, uid, 'Account')
+            notes = _("Waybill: %s\nTravel: %s\nDriver: (ID %s) %s\nVehicle: %s") % (waybill.name, waybill.travel_id.name, waybill.travel_id.employee_id.id, waybill.travel_id.employee_id.name, waybill.travel_id.unit_id.name)
+            # print "notes: ", notes
+            
+            for waybill_line in waybill.waybill_line:
+                if not waybill_line.line_type == "product":
+                    continue
+                tms_prod_income_account = waybill_line.product_id.tms_property_account_income.id if waybill_line.product_id.tms_property_account_income.id else waybill_line.product_id.categ_id.tms_property_account_income_categ.id if waybill_line.product_id.categ_id.tms_property_account_income_categ.id else False
+                prod_income_account     = waybill_line.product_id.property_account_income.id if waybill_line.product_id.property_account_income.id else waybill_line.product_id.categ_id.property_account_income_categ.id if waybill_line.product_id.categ_id.property_account_income_categ.id else False
+
+                
+                if not (tms_prod_income_account & prod_income_account):
+                    raise osv.except_osv('Error !',
+                                 _('You have not defined Income Account for product %s') % (waybill_line.product_id.name))
+                
+                move_line = (0,0, {
+                                'name'          : _('Waybill: %s - Product: %s') % (waybill.name, waybill_line.name),
+                                'account_id'    : tms_prod_income_account,
+                                'debit'         : 0.0,
+                                'credit'        : round(waybill_line.price_subtotal, precision),
+                                'journal_id'    : journal_id,
+                                'period_id'     : period_id[0],
+                                'product_id'    : waybill_line.product_id.id,
+                                ''
+                                'vehicle_id'    : waybill.travel_id.unit_id.id,
+                                'employee_id'   : waybill.travel_id.employee_id.id,
+                                })
+            move_lines.append(move_line)
+            
+            move_line = (0,0, {
+                                'name'          : _('Waybill: %s - Product: %s') % (waybill.name, waybill_line.name),
+                                'account_id'    : prod_income_account,
+                                'debit'         : round(waybill_line.price_subtotal, precision),
+                                'credit'        : 0.0,
+                                'journal_id'    : journal_id,
+                                'period_id'     : period_id[0],
+                                #'vehicle_id'    : waybill.travel_id.unit_id.id,
+                                #'employee_id'   : waybill.travel_id.employee_id.id,
+                                })
+            move_lines.append(move_line)
+
+            move = {
+                    'ref'        : _('Waybill: %s') % (waybill.name),
+                    'journal_id' : journal_id,
+                    'narration'  : notes,
+                    'line_id'    : [x for x in move_lines],
+                    'date'       : waybill.date_order,
+                    'period_id'  : period_id[0],
+                    }
+                    
+            move_id = move_obj.create(cr, uid, move)
+            if move_id:
+                move_obj.button_validate(cr, uid, [move_id])                            
+
+            
+            self.write(cr, uid, ids, {'move_id': move_id, 'state':'confirmed', 'confirmed_by' : uid, 'date_confirmed':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
         return True
 
     def button_dummy(self, cr, uid, ids, context=None):
@@ -601,7 +702,7 @@ class tms_travel(osv.osv):
     _inherit="tms.travel"
 
     _columns = {
-        'waybill_ids': openerp.osv.fields.many2many('tms.waybill', 'tms_waybill_travel_rel', 'travel_id', 'waybill_id', 'Waybills'),
+        'waybill_ids': fields.many2many('tms.waybill', 'tms_waybill_travel_rel', 'travel_id', 'waybill_id', 'Waybills'),
     }
 
 tms_travel()
@@ -640,16 +741,16 @@ class tms_waybill_line(osv.osv):
 
 
     _columns = {
-#        'agreement_id': openerp.osv.fields.many2one('tms.agreement', 'Agreement', required=False, ondelete='cascade', select=True, readonly=True),
-        'waybill_id': openerp.osv.fields.many2one('tms.waybill', 'Waybill', required=False, ondelete='cascade', select=True, readonly=True),
-        'line_type': openerp.osv.fields.selection([
+#        'agreement_id': fields.many2one('tms.agreement', 'Agreement', required=False, ondelete='cascade', select=True, readonly=True),
+        'waybill_id': fields.many2one('tms.waybill', 'Waybill', required=False, ondelete='cascade', select=True, readonly=True),
+        'line_type': fields.selection([
             ('product', 'Product'),
             ('note', 'Note'),
             ], 'Line Type', require=True),
 
-        'name': openerp.osv.fields.char('Description', size=256, required=True),
-        'sequence': openerp.osv.fields.integer('Sequence', help="Gives the sequence order when displaying a list of sales order lines."),
-        'product_id': openerp.osv.fields.many2one('product.product', 'Product', 
+        'name': fields.char('Description', size=256, required=True),
+        'sequence': fields.integer('Sequence', help="Gives the sequence order when displaying a list of sales order lines."),
+        'product_id': fields.many2one('product.product', 'Product', 
                             domain=[('sale_ok', '=', True),
                                     ('tms_category', '=','freight'), 
                                     ('tms_category', '=','move'), 
@@ -657,21 +758,21 @@ class tms_waybill_line(osv.osv):
                                     ('tms_category', '=','highway_tolls'), 
                                     ('tms_category', '=','other'),
                                     ], change_default=True),
-        'price_unit': openerp.osv.fields.float('Unit Price', required=True, digits_compute= dp.get_precision('Sale Price')),
-        'price_subtotal': openerp.osv.fields.function(_amount_line, method=True, string='Subtotal', type='float', digits_compute= dp.get_precision('Sale Price'),  store=True, multi='price_subtotal'),
-        'price_amount': openerp.osv.fields.function(_amount_line, method=True, string='Price Amount', type='float', digits_compute= dp.get_precision('Sale Price'),  store=True, multi='price_subtotal'),
-        'price_discount': openerp.osv.fields.function(_amount_line, method=True, string='Discount', type='float', digits_compute= dp.get_precision('Sale Price'),  store=True, multi='price_subtotal'),
-        'price_total'   : openerp.osv.fields.function(_amount_line, method=True, string='Total Amount', type='float', digits_compute= dp.get_precision('Sale Price'),  store=True, multi='price_subtotal'),
-        'tax_amount'   : openerp.osv.fields.function(_amount_line, method=True, string='Tax Amount', type='float', digits_compute= dp.get_precision('Sale Price'),  store=True, multi='price_subtotal'),
-        'tax_id'            : openerp.osv.fields.many2many('account.tax', 'waybill_tax', 'waybill_line_id', 'tax_id', 'Taxes'),
-        'product_uom_qty': openerp.osv.fields.float('Quantity (UoM)', digits=(16, 2)),
-        'product_uom': openerp.osv.fields.many2one('product.uom', 'Unit of Measure '),
-        'discount': openerp.osv.fields.float('Discount (%)', digits=(16, 2), help="Please use 99.99 format..."),
-        'notes': openerp.osv.fields.text('Notes'),
-        'waybill_partner_id': openerp.osv.fields.related('waybill_id', 'partner_id', type='many2one', relation='res.partner', store=True, string='Customer'),
-        'salesman_id':openerp.osv.fields.related('waybill_id', 'user_id', type='many2one', relation='res.users', store=True, string='Salesman'),
-        'company_id': openerp.osv.fields.related('waybill_id', 'company_id', type='many2one', relation='res.company', string='Company', store=True, readonly=True),
-        'control': openerp.osv.fields.boolean('Control'),
+        'price_unit': fields.float('Unit Price', required=True, digits_compute= dp.get_precision('Sale Price')),
+        'price_subtotal': fields.function(_amount_line, method=True, string='Subtotal', type='float', digits_compute= dp.get_precision('Sale Price'),  store=True, multi='price_subtotal'),
+        'price_amount': fields.function(_amount_line, method=True, string='Price Amount', type='float', digits_compute= dp.get_precision('Sale Price'),  store=True, multi='price_subtotal'),
+        'price_discount': fields.function(_amount_line, method=True, string='Discount', type='float', digits_compute= dp.get_precision('Sale Price'),  store=True, multi='price_subtotal'),
+        'price_total'   : fields.function(_amount_line, method=True, string='Total Amount', type='float', digits_compute= dp.get_precision('Sale Price'),  store=True, multi='price_subtotal'),
+        'tax_amount'   : fields.function(_amount_line, method=True, string='Tax Amount', type='float', digits_compute= dp.get_precision('Sale Price'),  store=True, multi='price_subtotal'),
+        'tax_id'            : fields.many2many('account.tax', 'waybill_tax', 'waybill_line_id', 'tax_id', 'Taxes'),
+        'product_uom_qty': fields.float('Quantity (UoM)', digits=(16, 2)),
+        'product_uom': fields.many2one('product.uom', 'Unit of Measure '),
+        'discount': fields.float('Discount (%)', digits=(16, 2), help="Please use 99.99 format..."),
+        'notes': fields.text('Notes'),
+        'waybill_partner_id': fields.related('waybill_id', 'partner_id', type='many2one', relation='res.partner', store=True, string='Customer'),
+        'salesman_id':fields.related('waybill_id', 'user_id', type='many2one', relation='res.users', store=True, string='Salesman'),
+        'company_id': fields.related('waybill_id', 'company_id', type='many2one', relation='res.company', string='Company', store=True, readonly=True),
+        'control': fields.boolean('Control'),
     }
     _order = 'sequence, id desc'
 
@@ -757,10 +858,10 @@ class tms_waybill_shipped_product(osv.osv):
 
 
     _columns = {
-#        'agreement_id': openerp.osv.fields.many2one('tms.agreement', 'Agreement', required=False, ondelete='cascade', select=True, readonly=True),
-        'waybill_id': openerp.osv.fields.many2one('tms.waybill', 'waybill', required=False, ondelete='cascade', select=True, readonly=True),
-        'name': openerp.osv.fields.char('Description', size=256, required=True, select=True),
-        'product_id': openerp.osv.fields.many2one('product.product', 'Product', 
+#        'agreement_id': fields.many2one('tms.agreement', 'Agreement', required=False, ondelete='cascade', select=True, readonly=True),
+        'waybill_id': fields.many2one('tms.waybill', 'waybill', required=False, ondelete='cascade', select=True, readonly=True),
+        'name': fields.char('Description', size=256, required=True, select=True),
+        'product_id': fields.many2one('product.product', 'Product', 
                             domain=[
                                     ('tms_category', '=','transportable'), 
                                     ('tms_category', '=','move'), 
@@ -768,14 +869,14 @@ class tms_waybill_shipped_product(osv.osv):
                                     ('tms_category', '=','highway_tolls'), 
                                     ('tms_category', '=','other'),
                                     ], change_default=True, required=True),
-        'product_uom': openerp.osv.fields.many2one('product.uom', 'Unit of Measure ', required=True),
-        'product_uom_qty': openerp.osv.fields.float('Quantity (UoM)', digits=(16, 4), required=True),
-        'notes': openerp.osv.fields.text('Notes'),
-        'waybill_partner_id': openerp.osv.fields.related('waybill_id', 'partner_id', type='many2one', relation='res.partner', store=True, string='Customer'),
-        'salesman_id':openerp.osv.fields.related('waybill_id', 'user_id', type='many2one', relation='res.users', store=True, string='Salesman'),
-        'shop_id': openerp.osv.fields.related('waybill_id', 'shop_id', type='many2one', relation='sale.shop', string='Shop', store=True, readonly=True),
-        'company_id': openerp.osv.fields.related('waybill_id', 'company_id', type='many2one', relation='res.company', string='Company', store=True, readonly=True),
-        'sequence': openerp.osv.fields.integer('Sequence', help="Gives the sequence order when displaying a list of sales order lines."),
+        'product_uom': fields.many2one('product.uom', 'Unit of Measure ', required=True),
+        'product_uom_qty': fields.float('Quantity (UoM)', digits=(16, 4), required=True),
+        'notes': fields.text('Notes'),
+        'waybill_partner_id': fields.related('waybill_id', 'partner_id', type='many2one', relation='res.partner', store=True, string='Customer'),
+        'salesman_id':fields.related('waybill_id', 'user_id', type='many2one', relation='res.users', store=True, string='Salesman'),
+        'shop_id': fields.related('waybill_id', 'shop_id', type='many2one', relation='sale.shop', string='Shop', store=True, readonly=True),
+        'company_id': fields.related('waybill_id', 'company_id', type='many2one', relation='res.company', string='Company', store=True, readonly=True),
+        'sequence': fields.integer('Sequence', help="Gives the sequence order when displaying a list of sales order lines."),
     }
     _order = 'sequence, id desc'
     _defaults = {
@@ -805,11 +906,11 @@ class tms_waybill_extradata(osv.osv):
     _description = "Tms Waybill Extra Data"
 
     _columns = {        
-        'name': openerp.osv.fields.char('Name', size=30, required=True),
-        'notes': openerp.osv.fields.text('Notes'),
-        'sequence': openerp.osv.fields.integer('Sequence', help="Gives the sequence order when displaying this list of categories."),
-        'mandatory': openerp.osv.fields.boolean('Mandatory'),
-        'type_extra': openerp.osv.fields.selection([
+        'name': fields.char('Name', size=30, required=True),
+        'notes': fields.text('Notes'),
+        'sequence': fields.integer('Sequence', help="Gives the sequence order when displaying this list of categories."),
+        'mandatory': fields.boolean('Mandatory'),
+        'type_extra': fields.selection([
             ('char', 'String (250)'),
             ('text', 'Text'),
             ('integer', 'Integer'),
@@ -818,16 +919,16 @@ class tms_waybill_extradata(osv.osv):
             ('datetime', 'Datetime')
             ], 'Data Type', help="Useful to set wich field is used for extra data field", select=True),
 
-        'value_char'    : openerp.osv.fields.char('Value', size=250),
-        'value_text'    : openerp.osv.fields.text('Value'),
-        'value_integer' : openerp.osv.fields.integer('Value'),
-        'value_float'   : openerp.osv.fields.float('Value',digits=(16, 4)),
-        'value_date'    : openerp.osv.fields.date('Value'),
-        'value_datetime': openerp.osv.fields.datetime('Value'),
-        'value_extra'   : openerp.osv.fields.text('Value'),
+        'value_char'    : fields.char('Value', size=250),
+        'value_text'    : fields.text('Value'),
+        'value_integer' : fields.integer('Value'),
+        'value_float'   : fields.float('Value',digits=(16, 4)),
+        'value_date'    : fields.date('Value'),
+        'value_datetime': fields.datetime('Value'),
+        'value_extra'   : fields.text('Value'),
 
-        'waybill_id': openerp.osv.fields.many2one('tms.waybill', 'Waybill', required=False, ondelete='cascade'), #, select=True, readonly=True),
-#        'agreement_id': openerp.osv.fields.many2one('tms.agreement', 'Agreement', required=False, ondelete='cascade', select=True, readonly=True),
+        'waybill_id': fields.many2one('tms.waybill', 'Waybill', required=False, ondelete='cascade'), #, select=True, readonly=True),
+#        'agreement_id': fields.many2one('tms.agreement', 'Agreement', required=False, ondelete='cascade', select=True, readonly=True),
         
     }
 
@@ -880,10 +981,10 @@ class tms_waybill_cancel(osv.osv_memory):
     _description = 'Make a copy of Cancelled Waybill'
 
     _columns = {
-            'company_id'    : openerp.osv.fields.many2one('res.company', 'Company'),
-            'copy_waybill'  : openerp.osv.fields.boolean('Create copy of this waybill?', required=False),
-            'sequence_id'   : openerp.osv.fields.many2one('ir.sequence', 'Sequence', required=False),
-            'date_order'    : openerp.osv.fields.date('Date', required=False),
+            'company_id'    : fields.many2one('res.company', 'Company'),
+            'copy_waybill'  : fields.boolean('Create copy of this waybill?', required=False),
+            'sequence_id'   : fields.many2one('ir.sequence', 'Sequence', required=False),
+            'date_order'    : fields.date('Date', required=False),
         }
 
     _defaults = {'date_order'   : fields.date.context_today,
@@ -943,7 +1044,14 @@ class tms_waybill_cancel(osv.osv_memory):
                         raise osv.except_osv(
                             _('Could not cancel Waybill !'),
                             _('This Waybill\'s Supplier Invoice is already created. First, cancel Supplier Invoice and then try again'))
-                    waybill_obj.write(cr, uid, record_id, {'state':'cancel', 'cancelled_by':uid,'date_cancelled':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
+                        
+                    if waybill.move_id.id:                
+                        move_obj = self.pool.get('account.move')
+                        if waybill.move_id.state != 'draft':
+                            move_obj.button_cancel(cr, uid, [waybill.move_id.id]) 
+                        move_obj.unlink(cr, uid, [waybill.move_id.id])
+                    
+                    waybill_obj.write(cr, uid, record_id, {'move_id' : False, 'state':'cancel', 'cancelled_by':uid,'date_cancelled':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
           
                     if record.copy_waybill:                        
                         default ={} 

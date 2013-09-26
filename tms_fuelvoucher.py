@@ -75,41 +75,42 @@ class tms_fuelvoucher(osv.osv):
 
     
     _columns = {
-        'name': openerp.osv.fields.char('Fuel Voucher', size=64, required=False),
-        'state': openerp.osv.fields.selection([('draft','Draft'), ('approved','Approved'), ('confirmed','Confirmed'), ('closed','Closed'), ('cancel','Cancelled')], 'State', readonly=True),
-        'date': openerp.osv.fields.date('Date', states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}, required=True),
-        'travel_id':openerp.osv.fields.many2one('tms.travel', 'Travel', required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
-        'unit_id': openerp.osv.fields.related('travel_id', 'unit_id', type='many2one', relation='fleet.vehicle', string='Unit', store=True, readonly=True),                
-        'employee_id': openerp.osv.fields.related('travel_id', 'employee_id', type='many2one', relation='hr.employee', string='Driver', store=True, readonly=True),                
-        'shop_id': openerp.osv.fields.related('travel_id', 'shop_id', type='many2one', relation='sale.shop', string='Shop', store=True, readonly=True),                
-        'partner_id': openerp.osv.fields.many2one('res.partner', 'Fuel Supplier', domain=[('tms_category', '=', 'fuel')],  required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
-        'product_id': openerp.osv.fields.many2one('product.product', 'Product', domain=[('purchase_ok', '=', True),('tms_category','=','fuel')],  required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
-        'product_uom_qty': openerp.osv.fields.float('Quantity', digits=(16, 4), required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
-        'product_uom': openerp.osv.fields.many2one('product.uom', 'UoM ', required=True),
-        'price_unit': openerp.osv.fields.function(_amount_calculation, method=True, string='Unit Price', type='float', digits=(16, 4), multi='price_unit', store=True),
-        'price_subtotal': openerp.osv.fields.function(_amount_calculation, method=True, string='SubTotal', type='float', digits_compute= dp.get_precision('Sale Price'), multi='price_unit', store=True),
-        'tax_amount': openerp.osv.fields.float('Taxes', required=True, digits_compute= dp.get_precision('Sale Price'), states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
-        'special_tax_amount' : openerp.osv.fields.function(_amount_calculation, method=True, string='IEPS', type='float', digits_compute= dp.get_precision('Sale Price'), multi='price_unit', store=True),
-        'price_total': openerp.osv.fields.float('Total', required=True, digits_compute= dp.get_precision('Sale Price'), states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
-        'notes': openerp.osv.fields.text('Notes', states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
+        'name'          : fields.char('Fuel Voucher', size=64, required=False),
+        'state'         : fields.selection([('draft','Draft'), ('approved','Approved'), ('confirmed','Confirmed'), ('closed','Closed'), ('cancel','Cancelled')], 'State', readonly=True),
+        'date'          : fields.date('Date', states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}, required=True),
+        'travel_id'     :fields.many2one('tms.travel', 'Travel', required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
+        'unit_id'       : fields.related('travel_id', 'unit_id', type='many2one', relation='fleet.vehicle', string='Unit', store=True, readonly=True),                
+        'employee_id'   : fields.related('travel_id', 'employee_id', type='many2one', relation='hr.employee', string='Driver', store=True, readonly=True),                
+        'shop_id'       : fields.related('travel_id', 'shop_id', type='many2one', relation='sale.shop', string='Shop', store=True, readonly=True),                
+        'partner_id'    : fields.many2one('res.partner', 'Fuel Supplier', domain=[('tms_category', '=', 'fuel')],  required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
+        'product_id'    : fields.many2one('product.product', 'Product', domain=[('purchase_ok', '=', True),('tms_category','=','fuel')],  required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
+        'product_uom_qty': fields.float('Quantity', digits=(16, 4), required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
+        'product_uom'   : fields.many2one('product.uom', 'UoM ', required=True),
+        'price_unit'    : fields.function(_amount_calculation, method=True, string='Unit Price', type='float', digits=(16, 4), multi='price_unit', store=True),
+        'price_subtotal': fields.function(_amount_calculation, method=True, string='SubTotal', type='float', digits_compute= dp.get_precision('Sale Price'), multi='price_unit', store=True),
+        'tax_amount'    : fields.float('Taxes', required=True, digits_compute= dp.get_precision('Sale Price'), states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
+        'special_tax_amount' : fields.function(_amount_calculation, method=True, string='IEPS', type='float', digits_compute= dp.get_precision('Sale Price'), multi='price_unit', store=True),
+        'price_total'   : fields.float('Total', required=True, digits_compute= dp.get_precision('Sale Price'), states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
+        'notes'         : fields.text('Notes', states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
 
-        'create_uid' : openerp.osv.fields.many2one('res.users', 'Created by', readonly=True),
-        'create_date': openerp.osv.fields.datetime('Creation Date', readonly=True, select=True),        
-        'cancelled_by' : openerp.osv.fields.many2one('res.users', 'Cancelled by', readonly=True),
-        'date_cancelled': openerp.osv.fields.datetime('Date Cancelled', readonly=True),
-        'approved_by' : openerp.osv.fields.many2one('res.users', 'Approved by', readonly=True),
-        'date_approved': openerp.osv.fields.datetime('Date Approved', readonly=True),
-        'confirmed_by' : openerp.osv.fields.many2one('res.users', 'Confirmed by', readonly=True),
-        'date_confirmed': openerp.osv.fields.datetime('Date Confirmed', readonly=True),
-        'closed_by' : openerp.osv.fields.many2one('res.users', 'Closed by', readonly=True),
-        'date_closed': openerp.osv.fields.datetime('Date Closed', readonly=True),
-        'drafted_by' : openerp.osv.fields.many2one('res.users', 'Drafted by', readonly=True),
-        'date_drafted': openerp.osv.fields.datetime('Date Drafted', readonly=True),
-        'invoice_id': openerp.osv.fields.many2one('account.invoice','Invoice Record', readonly=True, domain=[('state', '!=', 'cancel')],),
-        'invoiced':  openerp.osv.fields.function(_invoiced, method=True, string='Invoiced', type='boolean', multi='invoiced'),               
-        'invoice_paid':  openerp.osv.fields.function(_invoiced, method=True, string='Paid', type='boolean', multi='invoiced'),
-        'invoice_name':  openerp.osv.fields.function(_invoiced, method=True, string='Invoice', type='char', size=64, multi='invoiced', store=True),
-        'currency_id': openerp.osv.fields.many2one('res.currency', 'Currency', required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
+        'create_uid' : fields.many2one('res.users', 'Created by', readonly=True),
+        'create_date': fields.datetime('Creation Date', readonly=True, select=True),        
+        'cancelled_by' : fields.many2one('res.users', 'Cancelled by', readonly=True),
+        'date_cancelled': fields.datetime('Date Cancelled', readonly=True),
+        'approved_by' : fields.many2one('res.users', 'Approved by', readonly=True),
+        'date_approved': fields.datetime('Date Approved', readonly=True),
+        'confirmed_by' : fields.many2one('res.users', 'Confirmed by', readonly=True),
+        'date_confirmed': fields.datetime('Date Confirmed', readonly=True),
+        'closed_by' : fields.many2one('res.users', 'Closed by', readonly=True),
+        'date_closed': fields.datetime('Date Closed', readonly=True),
+        'drafted_by' : fields.many2one('res.users', 'Drafted by', readonly=True),
+        'date_drafted': fields.datetime('Date Drafted', readonly=True),
+        'invoice_id': fields.many2one('account.invoice','Invoice Record', readonly=True, domain=[('state', '!=', 'cancel')],),
+        'invoiced':  fields.function(_invoiced, method=True, string='Invoiced', type='boolean', multi='invoiced'),               
+        'invoice_paid':  fields.function(_invoiced, method=True, string='Paid', type='boolean', multi='invoiced'),
+        'invoice_name':  fields.function(_invoiced, method=True, string='Invoice', type='char', size=64, multi='invoiced', store=True),
+        'currency_id': fields.many2one('res.currency', 'Currency', required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
+        'move_id'       : fields.many2one('account.move', 'Account Move', required=False, readonly=True),
         }
     
     _defaults = {
@@ -194,7 +195,15 @@ class tms_fuelvoucher(osv.osv):
                 raise osv.except_osv(
                         _('Could not cancel Fuel Voucher !'),
                         _('This Fuel Voucher is already linked to Travel Expenses record'))
-            self.write(cr, uid, ids, {'state':'cancel', 'invoice_id':False, 'cancelled_by':uid,'date_cancelled':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
+                
+            if fuelvoucher.move_id.id:                
+                move_obj = self.pool.get('account.move')
+                if fuelvoucher.move_id.state != 'draft':
+                    move_obj.button_cancel(cr, uid, [fuelvoucher.move_id.id]) 
+                move_obj.unlink(cr, uid, [fuelvoucher.move_id.id])
+            
+            
+            self.write(cr, uid, ids, {'state':'cancel', 'invoice_id':False, 'cancelled_by':uid,'date_cancelled':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT), 'move_id': False})
         return True
 
     def action_approve(self, cr, uid, ids, context=None):
@@ -209,8 +218,79 @@ class tms_fuelvoucher(osv.osv):
                  raise osv.except_osv(
                         _('Could not confirm Fuel Voucher !'),
                         _('Product quantity must be greater than zero.'))
+            
+            
+            move_obj = self.pool.get('account.move')
+            period_obj = self.pool.get('account.period')
+            account_jrnl_obj=self.pool.get('account.journal')
+            
+            period_id = period_obj.search(cr, uid, [('date_start', '<=', fuelvoucher.date),('date_stop','>=', fuelvoucher.date), ('state','=','draft')], context=None)
+            
+            if not period_id:
+                raise osv.except_osv(_('Warning !'),
+                        _('There is no valid account period for this date %s. Period does not exists or is already closed') % \
+                                (fuelvoucher.date,))
+            
+            journal_id = account_jrnl_obj.search(cr, uid, [('type', '=', 'purchase'),('tms_fuelvoucher_journal','=', 1)], context=None)
+            if not journal_id:
+                raise osv.except_osv('Error !',
+                                 'You have not defined Fuel Voucher Journal...')
+            journal_id = journal_id and journal_id[0]
+            
+            
+            move_lines = []
+            precision = self.pool.get('decimal.precision').precision_get(cr, uid, 'Account')
+            notes = _("Fuel Voucher: %s\nTravel: %s\nDriver: (ID %s) %s\nVehicle: %s") % (fuelvoucher.name, fuelvoucher.travel_id.name, fuelvoucher.travel_id.employee_id.id, fuelvoucher.travel_id.employee_id.name, fuelvoucher.travel_id.unit_id.name)
+            #print "notes: ", notes
+            
+            
+            if not (fuelvoucher.product_id.property_account_expense.id if fuelvoucher.product_id.property_account_expense.id else fuelvoucher.product_id.categ_id.property_account_expense_categ.id if line.product_id.categ_id.property_account_expense_categ.id else False):
+                raise osv.except_osv(_('Missing configuration !!!'),
+                                 _('You have not defined expense Account for Product %s...') % (fuelvoucher.product_id.name))
 
-            self.write(cr,uid,ids,{'state':'confirmed', 'confirmed_by':uid, 'date_confirmed':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
+            move_line = (0,0, {
+                                'name'          : _('Fuel Voucher: %s') % (fuelvoucher.name),
+                                'account_id'    : fuelvoucher.product_id.property_account_expense.id if fuelvoucher.product_id.property_account_expense.id else fuelvoucher.product_id.categ_id.property_account_expense_categ.id,
+                                'debit'         : 0.0,
+                                'credit'        : round(fuelvoucher.price_subtotal, precision),
+                                'journal_id'    : journal_id,
+                                'period_id'     : period_id[0],
+                                #'vehicle_id'    : fuelvoucher.travel_id.unit_id.id,
+                                #'employee_id'   : fuelvoucher.travel_id.employee_id.id,
+                                })
+            move_lines.append(move_line)
+            
+            if not (fuelvoucher.product_id.tms_property_account_expense.id if fuelvoucher.product_id.tms_property_account_expense.id else fuelvoucher.product_id.categ_id.tms_property_account_expense_categ.id if line.product_id.categ_id.tms_property_account_expense_categ.id else False):
+                raise osv.except_osv(_('Missing configuration !!!'),
+                                 _('You have not defined substitute Account for Product %s...') % (fuelvoucher.product_id.name))
+                
+            move_line = (0,0, {
+                                'name'          : _('Fuel Voucher: %s') % (fuelvoucher.name),
+                                'account_id'    : fuelvoucher.product_id.tms_property_account_expense.id if fuelvoucher.product_id.tms_property_account_expense.id else fuelvoucher.product_id.categ_id.tms_property_account_expense_categ.id,
+                                'debit'         : round(fuelvoucher.price_subtotal, precision),
+                                'credit'        : 0.0,
+                                'journal_id'    : journal_id,
+                                'period_id'     : period_id[0],
+                                'vehicle_id'    : fuelvoucher.travel_id.unit_id.id,
+                                'employee_id'   : fuelvoucher.travel_id.employee_id.id,
+                                })
+            move_lines.append(move_line)
+
+            move = {
+                    'ref'        : _('Fuel Voucher: %s') % (fuelvoucher.name),
+                    'journal_id' : journal_id,
+                    'narration'  : notes,
+                    'line_id'    : [x for x in move_lines],
+                    'date'       : fuelvoucher.date,
+                    'period_id'  : period_id[0],
+                    }
+                    
+            move_id = move_obj.create(cr, uid, move)
+            if move_id:
+                move_obj.button_validate(cr, uid, [move_id])                            
+
+            self.write(cr,uid,ids,{'move_id': move_id, 'state':'confirmed', 'confirmed_by':uid, 'date_confirmed':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
+        
         return True
 
     def copy(self, cr, uid, id, default=None, context=None):
@@ -269,7 +349,7 @@ class tms_fuelvoucher_invoice(osv.osv_memory):
             invoice_obj=self.pool.get('account.invoice')
             fuelvoucher_obj=self.pool.get('tms.fuelvoucher')
 
-            journal_id = account_jrnl_obj.search(cr, uid, [('type', '=', 'purchase')], context=None)
+            journal_id = account_jrnl_obj.search(cr, uid, [('type', '=', 'purchase'),('tms_fuelvoucher_journal', '=', 1)], context=None)
             journal_id = journal_id and journal_id[0] or False
 
             cr.execute("select distinct partner_id, currency_id from tms_fuelvoucher where invoice_id is null and state in ('confirmed', 'closed') and id IN %s",(tuple(record_ids),))
