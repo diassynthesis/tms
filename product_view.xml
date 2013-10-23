@@ -59,8 +59,12 @@
                     <group>
                         <label for="tms_category"/>
                         <newline />
-                        <field name="tms_category" on_change="onchange_tms_category(tms_category)" class="oe_left" nolabel="1"/>
+                        <field name="tms_category" on_change="onchange_tms_category(tms_category)" class="oe_left" nolabel="1"/>                        
                         <newline />
+                        <div attrs="{'invisible':[('tms_category','!=','freight')]}">
+                            <label for="tms_default_freight" />
+                            <field name="tms_default_freight" />
+                        </div>
                         <label for="tms_activity_duration" attrs="{'invisible':[('tms_category','!=','maint_activity')]}" class="oe_left" />
                         <newline />
                         <field name="tms_activity_duration" attrs="{'invisible':[('tms_category','!=','maint_activity')], 'required':[('tms_category','=','maint_activity')]}" class="oe_left" nolabel="1" widget="float_time"/>
@@ -72,14 +76,12 @@
                     </page>
                 </notebook>
                 <field name="property_account_income" position="after">
-                    <field name="tms_property_account_income" 
-                           attrs="{'required':[('tms_category','in',('freight', 'insurance', 'highway_tolls','other'))], 'invisible' : [('tms_category','not in',('freight', 'insurance', 'highway_tolls','other'))]}"
-                           domain="[('type','=','other')]"/>
+                    <field name="tms_property_account_income"                            
+                           domain="[('type','=','other')]"/> <!-- attrs="{'required':[('tms_category','in',('freight', 'insurance', 'highway_tolls','other'))], 'invisible' : [('tms_category','not in',('freight', 'insurance', 'highway_tolls','other'))]}" -->
                 </field>
                 <field name="property_account_expense" position="after">
-                    <field name="tms_property_account_expense" 
-                           attrs="{'required':[('tms_category','in',('fuel'))], 'invisible' : [('tms_category','not in',('fuel'))]}"
-                           domain="[('type','=','other')]"/>
+                    <field name="tms_property_account_expense"                            
+                           domain="[('type','=','other')]"/> <!-- attrs="{'required':[('tms_category','in',('fuel'))], 'invisible' : [('tms_category','not in',('fuel'))]}" -->
                 </field>
 
             </field>
@@ -95,11 +97,11 @@
                 <data>
                     <field name="property_account_income_categ" position="after">
                         <field name="tms_property_account_income_categ"                            
-                           domain="[('type','=','other')]"/>
+                           domain="[('type','=','other'), ('tms_vehicle_mandatory', '=', 1)]"/>
                     </field>
                     <field name="property_account_expense_categ" position="after">
                         <field name="tms_property_account_expense_categ"                            
-                           domain="[('type','=','other')]"/>
+                           domain="[('type','=','other'), ('tms_vehicle_mandatory', '=', 1)]"/>
                     </field>
 
                 </data>

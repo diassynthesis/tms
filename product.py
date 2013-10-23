@@ -64,12 +64,13 @@ class product_product(osv.osv):
 """, translate=True),
             'tms_account_ids' : fields.many2many('account.account', 'tms_product_account_rel', 'product_id', 'account_id', 'Accounts for this product'),
             'tms_activity_duration': fields.float('Duration', digits=(14,2), help="Activity duration in hours"),
-            'tms_property_account_income' : fields.many2one('account.account', 'Substitute Income Account', 
-                                                                help='Use this to define  substitute income account for Freights, Moves, Insurance, etc', 
+            'tms_property_account_income' : fields.many2one('account.account', 'Breakdown Income Account', 
+                                                                help='Use this to define breakdown income account per vehicle for Freights, Moves, Insurance, etc.', 
                                                                 required=False),
-            'tms_property_account_expense' : fields.many2one('account.account', 'Substitute Expense Account', 
-                                                                help='Use this to define substitute account for Fuel Voucher Expense', 
+            'tms_property_account_expense' : fields.many2one('account.account', 'Breakdown Expense Account', 
+                                                                help='Use this to define breakdown expense account per vehicle for Fuel, Travel Expenses, etc.', 
                                                                 required=False),
+            'tms_default_freight' : fields.boolean('Default'),
 
         }
 
@@ -91,9 +92,21 @@ class product_product(osv.osv):
 
         return True
 
+    
+    def _check_default_freight(self, cr, uid, ids, context=None):
+        prod_obj = self.pool.get('product.product')
+        for record in self.browse(cr, uid, ids, context=context):
+            if record.tms_category == 'freight' and record.tms_default_freight:
+                res = prod_obj.search(cr, uid, [('tms_default_freight', '=', 1)], context=None)                
+                if res and res[0] and res[0] != record.id:
+                    return False
+        return True
+    
 
     _constraints = [
-        (_check_tms_product, 'Error ! Product is not defined correctly...Please see tooltip for TMS Category', ['tms_category'])
+        (_check_tms_product, 'Error ! Product is not defined correctly...Please see tooltip for TMS Category', ['tms_category']),
+        (_check_default_freight, 'Error ! You can not have two or more products defined as Default Freight Product', ['tms_default_freight']),
+        
         ]
 
     def onchange_tms_category(self, cr, uid, ids, tms_category):
@@ -122,16 +135,16 @@ class product_category(osv.osv):
             'account.account',
             type='many2one',
             relation='account.account',
-            string="Substitute Income Account",
+            string="Breakdown Income Account",
             view_load=True,
-            help="This account will be used instead of previous field to break down every move line by Vehicle and Driver."),
+            help="Use this to define breakdown income account per vehicle for Freights, Moves, Insurance, etc."),
         'tms_property_account_expense_categ': fields.property(
             'account.account',  
             type='many2one',
             relation='account.account',
-            string="Substitute Expense Account",
+            string="Breakdown Expense Account",
             view_load=True,
-            help="This account will be used instead of previous field to break down every move line by Vehicle and Driver."),
+            help="Use this to define breakdown expense account per vehicle for Fuel, Travel Expenses, etc."),
     }
     
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

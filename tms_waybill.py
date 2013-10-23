@@ -393,11 +393,11 @@ class tms_waybill(osv.osv):
 
     def get_freight_from_factors(self, cr, uid, ids, context=None):
         prod_obj = self.pool.get('product.product')
-        prod_id = prod_obj.search(cr, uid, [('tms_category', '=', 'freight'),('active','=', 1)], limit=1)
+        prod_id = prod_obj.search(cr, uid, [('tms_category', '=', 'freight'),('tms_default_freight','=', 1),('active','=', 1)], limit=1)
         if not prod_id:
             raise osv.except_osv(
                         _('Missing configuration !'),
-                        _('There is no product defined as Freight !!!'))
+                        _('There is no product defined as Default Freight !!!'))
 
         product = prod_obj.browse(cr, uid, prod_id,	 context=None)
         
@@ -1254,7 +1254,7 @@ class tms_waybill_supplier_invoice(osv.osv_memory):
             journal_id = journal_id and journal_id[0]
 
 
-            prod_id = prod_obj.search(cr, uid, [('tms_category', '=', 'freight'),('active','=', 1)], limit=1)
+            prod_id = prod_obj.search(cr, uid, [('tms_category', '=', 'freight'),('tms_default_freight','=', 1),('active','=', 1)], limit=1)
             if not prod_id:
                 raise osv.except_osv(
                     _('Missing configuration !'),

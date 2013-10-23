@@ -68,7 +68,24 @@ class account_journal(osv.osv):
 
 account_journal()
 
-# Fields <vechicle_id>, <employee_id> added to acount_move_line for reporting and analysis
+
+# Additionat field to set Account Journal for Advances and Travel Expenses
+class account_account(osv.osv):
+    _inherit ='account.account'
+
+    _columns = {
+        'tms_vehicle_mandatory': fields.boolean('TMS Vehicle Mandatory', help= 'If set to True then it will require to add Vehicle to Move Line'),
+        }
+
+    _defaults = {
+        'tms_vehicle_mandatory' : lambda *a :False,
+        }
+
+account_journal()
+
+
+
+# Fields <vechicle_id>, <employee_id> added to acount_move_line for reporting and analysis and constraint added
 class account_move_line(osv.osv):
     _inherit ='account.move.line'
 
@@ -76,6 +93,16 @@ class account_move_line(osv.osv):
         'vehicle_id': fields.many2one('fleet.vehicle', 'Vehicle', required=False),
         'employee_id': fields.many2one('hr.employee', 'Driver', required=False),
         }
+    
+    def _check_mandatory_vehicle(self, cr, uid, ids, context=None):
+        for record in self.browse(cr, uid, ids, context=context):
+            return (record.accouht_id.tms_vehicle_mandatory and record.vehicle_id.id) if record.accouht_id.tms_vehicle_mandatory else True
+        return True
+    
+
+    _constraints = [
+        (_check_mandatory_vehicle, 'Error ! You have not add Vehicle to Move Line', ['vehicle_id']),        
+        ]
 
 account_move_line()
 

@@ -22,6 +22,19 @@
         </record>
 
 
+    <record id="view_account_account_form_inherit_tms" model="ir.ui.view">
+            <field name="name">account.account.form</field>
+            <field name="model">account.account</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="account.view_account_form"/>
+            <field name="arch" type="xml">
+                <field name="active" position="after">
+                    <field name="tms_vehicle_mandatory"  attrs="{'invisible':[('type','!=','other')]  }"/>
+                </field>
+            </field>
+        </record>
+    
+    
         <record id="view_invoice_form_inherit_tms" model="ir.ui.view">
             <field name="name">account.invoice.form.tms</field>
             <field name="model">account.invoice</field>
@@ -62,7 +75,7 @@
             <field name="type">form</field>
             <field name="inherit_id" ref="account.view_move_line_tree"/>
             <field name="arch" type="xml">
-                <field name="company_id" position="after">
+                <field name="company_id" position="before">
                     <field name="vehicle_id" />
                     <field name="employee_id" />
                 </field>

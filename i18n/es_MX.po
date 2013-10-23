@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenERP Server 7.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-09-26 17:29+0000\n"
-"PO-Revision-Date: 2013-09-26 13:08-0600\n"
+"POT-Creation-Date: 2013-10-23 17:04+0000\n"
+"PO-Revision-Date: 2013-10-23 12:20-0600\n"
 "Last-Translator: Israel CA <israel.cruz@hesatecnica.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -300,12 +300,6 @@ msgstr "¡ Error !  No puede crear categorías recursivas."
 #: model:ir.model,name:tms.model_account_tax view:tms.waybill:0
 msgid "Tax"
 msgstr "Impuesto"
-
-#. module: tms
-#: field:product.category,tms_property_account_income_categ:0
-#: field:product.product,tms_property_account_income:0
-msgid "Substitute Income Account"
-msgstr "Cuenta Ingresos Sustituta"
 
 #. module: tms
 #: field:tms.waybill,account_analytic_id:0
@@ -609,7 +603,7 @@ msgstr "Martes"
 #: code:addons/tms/tms_waybill.py:655
 #, python-format
 msgid "Waybill: %s"
-msgstr "Waybill: %s"
+msgstr "Carta Porte: %s"
 
 #. module: tms
 #: model:res.groups,name:tms.group_waybill_approve
@@ -822,14 +816,26 @@ msgid "Fuel Efficiency for this motor type"
 msgstr "Rendimiento para este tipo de motor"
 
 #. module: tms
-#: model:res.groups,name:tms.group_expense_approve
-msgid "Can Approve Travel Expense Records"
-msgstr "Puede aprobar Registro de Gastos de Viaje"
+#: code:addons/tms/tms_expense.py:1095
+#, python-format
+msgid "Tax Account is not defined for Tax %s (id:%d)"
+msgstr ""
+"La cuenta de Impuestos no se encuentra definida para el Impuesto %s (id: %d)"
+
+#. module: tms
+#: field:tms.unit.kit,date_end:0
+msgid "Date end"
+msgstr "Fecha Fin"
 
 #. module: tms
 #: model:res.groups,comment:tms.group_advance_confirm
 msgid "The user will be able to Confirm Money Advances for Driver."
 msgstr "Puede confirmar Anticipos a Operador"
+
+#. module: tms
+#: field:product.product,tms_default_freight:0
+msgid "Default"
+msgstr "Default"
 
 #. module: tms
 #: code:addons/tms/tms_fuelvoucher.py:167
@@ -1078,7 +1084,7 @@ msgstr "Eventos"
 #. module: tms
 #: model:ir.model,name:tms.model_account_journal
 msgid "Journal"
-msgstr "Diário"
+msgstr "Diario"
 
 #. module: tms
 #: view:tms.waybill:0
@@ -1112,9 +1118,10 @@ msgid "The user will be able to Cancel Money Advances for Driver."
 msgstr "Puede Cancelar Anticipos al Operador"
 
 #. module: tms
-#: model:ir.ui.menu,name:tms.menu_tms_config_unit_form
-msgid "Vehicles"
-msgstr "Vehículos"
+#: field:product.category,tms_property_account_income_categ:0
+#: field:product.product,tms_property_account_income:0
+msgid "Breakdown Income Account"
+msgstr "Cuenta de Ingresos (Desglose)"
 
 #. module: tms
 #: code:addons/tms/tms_expense.py:813 code:addons/tms/tms_expense.py:819
@@ -1254,7 +1261,7 @@ msgstr "Viaje:"
 #: code:addons/tms/tms_waybill.py:1320
 #, python-format
 msgid "Supplier << %s >> has not Payable Account defined."
-msgstr "Supplier << %s >> has not Payable Account defined."
+msgstr "El Proveedor << %s >> no tiene Cuenta definida."
 
 #. module: tms
 #: help:tms.event,position_real:0
@@ -1683,6 +1690,12 @@ msgid "Price Amount"
 msgstr "Monto"
 
 #. module: tms
+#: field:product.category,tms_property_account_expense_categ:0
+#: field:product.product,tms_property_account_expense:0
+msgid "Breakdown Expense Account"
+msgstr "Breakdown Expense Account"
+
+#. module: tms
 #: field:product.product,tms_account_ids:0
 msgid "Accounts for this product"
 msgstr "Cuentas contables para este producto"
@@ -1751,12 +1764,12 @@ msgstr "Puede regresar a Estado Borrador Cartas Porte"
 #: code:addons/tms/tms_fuelvoucher.py:280
 #, python-format
 msgid "Fuel Voucher: %s"
-msgstr "Fuel Voucher: %s"
+msgstr "Vale de Combustible: %s"
 
 #. module: tms
 #: field:tms.waybill,supplier_invoiced_by:0
 msgid "Suppl. Invoiced by"
-msgstr "Suppl. Invoiced by"
+msgstr "Factura Prov. por"
 
 #. module: tms
 #: model:res.groups,comment:tms.group_travel_end
@@ -1817,7 +1830,7 @@ msgstr "Puntos Intermedios"
 #: code:addons/tms/tms_waybill.py:626
 #, python-format
 msgid "You have not defined Income Account for product %s"
-msgstr "You have not defined Income Account for product %s"
+msgstr "No ha definido la cuenta de Ingresos para el Producto: %s"
 
 #. module: tms
 #: view:fleet.vehicle:0
@@ -1952,11 +1965,9 @@ msgid "Trailer 2 Type"
 msgstr "Tipo Remolque 2"
 
 #. module: tms
-#: code:addons/tms/tms_expense.py:1095
-#, python-format
-msgid "Tax Account is not defined for Tax %s (id:%d)"
-msgstr ""
-"La cuenta de Impuestos no se encuentra definida para el Impuesto %s (id: %d)"
+#: help:account.account,tms_vehicle_mandatory:0
+msgid "If set to True then it will require to add Vehicle to Move Line"
+msgstr "If set to True then it will require to add Vehicle to Move Line"
 
 #. module: tms
 #: code:addons/tms/tms.py:508 code:addons/tms/tms.py:600
@@ -2342,7 +2353,7 @@ msgid "Cancel"
 msgstr "Cancelar"
 
 #. module: tms
-#: code:addons/tms/tms_waybill.py:400 code:addons/tms/tms_waybill.py:1261
+#: code:addons/tms/tms_waybill.py:1261
 #, python-format
 msgid "There is no product defined as Freight !!!"
 msgstr "No existe ningún producto definido como Flete !!!"
@@ -2400,15 +2411,6 @@ msgstr "Maniobras (Cartas Porte)"
 msgid "Expense Account is not defined for product %s (id:%d)"
 msgstr ""
 "La Cuenta Contable de Gastos no está definida para el producto %s (id:%d)"
-
-#. module: tms
-#: help:product.product,tms_property_account_income:0
-msgid ""
-"Use this to define  substitute income account for Freights, Moves, "
-"Insurance, etc"
-msgstr ""
-"Use para definir la cuenta de ingresos sustituta para Ingresos relacionados "
-"a Fletes, Maniobras, Seguro, etc."
 
 #. module: tms
 #: model:ir.model,name:tms.model_fleet_vehicle_odometer
@@ -2475,6 +2477,12 @@ msgstr "Dato de Validez"
 #: model:ir.ui.menu,name:tms.menu_tms_config_fleet_vehicle_odometer_device_form
 msgid "Vehicle Odometer Device"
 msgstr "Medidor de Unidad"
+
+#. module: tms
+#: code:addons/tms/tms_factor.py:130 selection:tms.factor,factor_type:0
+#, python-format
+msgid "Volume"
+msgstr "Volumen"
 
 #. module: tms
 #: field:tms.waybill,partner_order_id:0
@@ -2547,12 +2555,6 @@ msgstr "Tipo de Unidad en Flotilla"
 #: view:sale.shop:0
 msgid "Fuel Voucher Sequences"
 msgstr "Secuencias de Vales de Combustible"
-
-#. module: tms
-#: help:product.product,tms_property_account_expense:0
-msgid "Use this to define substitute account for Fuel Voucher Expense"
-msgstr ""
-"Use para definir la cuenta sustituta de gastos para Vales de Combustible."
 
 #. module: tms
 #: field:tms.waybill,product_volume:0
@@ -2800,9 +2802,9 @@ msgid "Distance Route (Km/Mi)"
 msgstr "Distancia Ruta"
 
 #. module: tms
-#: model:ir.actions.act_window,name:tms.open_view_tms_unit_form
-msgid "Vehicles - TMS"
-msgstr "Unidades"
+#: view:tms.unit.active_history:0
+msgid "Units Active/Inactive History"
+msgstr "Historial de Altas/Bajas"
 
 #. module: tms
 #: model:ir.model,name:tms.model_fleet_vehicle_odometer_device
@@ -2908,9 +2910,9 @@ msgid "Validity Error !"
 msgstr "Error en Vigencia !"
 
 #. module: tms
-#: view:tms.unit.active_history:0
-msgid "Units Active/Inactive History"
-msgstr "Historial de Altas/Bajas"
+#: model:ir.model,name:tms.model_account_account
+msgid "Account"
+msgstr "Cuenta"
 
 #. module: tms
 #: field:tms.expense,vehicle_odometer:0
@@ -3062,7 +3064,7 @@ msgstr "No puede crear Registro de Gastos de Viaje para varias unidades"
 #. module: tms
 #: field:tms.waybill,date_up_end_sched:0
 msgid "UpLd End Sched"
-msgstr "Fin Carga PRog."
+msgstr "Fin Carga Prog."
 
 #. module: tms
 #: field:tms.travel,fuel_efficiency_extraction:0
@@ -3353,7 +3355,7 @@ msgstr "Lib. Docs. Carga Prog."
 #. module: tms
 #: field:hr.employee,tms_credit_charge_prod_id:0
 msgid "Credit Charge Product"
-msgstr "Credit Charge Product"
+msgstr "Producto para Créditos"
 
 #. module: tms
 #: view:tms.waybill.cancel:0
@@ -3420,7 +3422,7 @@ msgstr ""
 #. module: tms
 #: field:fleet.vehicle,day_no_circulation:0
 msgid "Day no Circulation"
-msgstr "Hoy No Circul"
+msgstr "Hoy No Circula"
 
 #. module: tms
 #: code:addons/tms/tms_factor.py:153
@@ -4056,7 +4058,7 @@ msgstr "GPS Info"
 #. module: tms
 #: field:tms.unit.red_tape,pending_by:0
 msgid "Pending by"
-msgstr "En Pendiente por"
+msgstr "Pendiente por"
 
 #. module: tms
 #: view:tms.advance:0 view:tms.expense:0 view:tms.fuelvoucher:0
@@ -4271,10 +4273,14 @@ msgid "TMS Event Actions"
 msgstr "Acciones de Eventos"
 
 #. module: tms
-#: code:addons/tms/tms_factor.py:130 selection:tms.factor,factor_type:0
-#, python-format
-msgid "Volume"
-msgstr "Volumen"
+#: help:product.category,tms_property_account_income_categ:0
+#: help:product.product,tms_property_account_income:0
+msgid ""
+"Use this to define breakdown income account per vehicle for Freights, Moves, "
+"Insurance, etc."
+msgstr ""
+"Aquí defina la cuenta de Ingresos con desglose por Vehiculo para Fletes, "
+"Maniobras, Seguros, etc."
 
 #. module: tms
 #: field:tms.unit.red_tape,progress_by:0
@@ -4329,16 +4335,6 @@ msgstr "Armado"
 #: field:fleet.vehicle,serial_number:0
 msgid "Serial Number"
 msgstr "Número de Serie"
-
-#. module: tms
-#: help:product.category,tms_property_account_expense_categ:0
-#: help:product.category,tms_property_account_income_categ:0
-msgid ""
-"This account will be used instead of previous field to break down every move "
-"line by Vehicle and Driver."
-msgstr ""
-"This account will be used instead of previous field to break down every move "
-"line by Vehicle and Driver."
 
 #. module: tms
 #: view:tms.waybill:0 field:tms.waybill,waybill_type:0
@@ -4953,6 +4949,12 @@ msgid "You have not defined Advance Sequence for shop "
 msgstr "No ha definido Secuencia en la tienda para los Anticipos"
 
 #. module: tms
+#: code:addons/tms/tms_waybill.py:400
+#, python-format
+msgid "There is no product defined as Default Freight !!!"
+msgstr "No existe producto definido como Flete por defecto !!!"
+
+#. module: tms
 #: field:tms.travel,dispatched_by:0
 msgid "Dispatched by"
 msgstr "Despachado Por"
@@ -4976,12 +4978,6 @@ msgstr "Entero"
 #: field:tms.waybill,date_end_real:0
 msgid "Travel End Real"
 msgstr "Fin Real Viaje"
-
-#. module: tms
-#: field:product.category,tms_property_account_expense_categ:0
-#: field:product.product,tms_property_account_expense:0
-msgid "Substitute Expense Account"
-msgstr "Cuenta de Gastos Sustituta"
 
 #. module: tms
 #: field:account.journal,tms_supplier_journal:0
@@ -5039,6 +5035,11 @@ msgstr "Cuenta para Saldo en Contra"
 #: model:ir.model,name:tms.model_account_move_line
 msgid "Journal Items"
 msgstr "Apuntes contables"
+
+#. module: tms
+#: model:ir.ui.menu,name:tms.menu_tms_config_unit_form
+msgid "Vehicles"
+msgstr "Vehículos"
 
 #. module: tms
 #: help:tms.waybill,partner_invoice_id:0
@@ -5112,6 +5113,11 @@ msgstr ""
 "= Peso o la Cantidad de Producto = 0.0"
 
 #. module: tms
+#: constraint:account.move.line:0
+msgid "Error ! You have not add Vehicle to Move Line"
+msgstr "Error ! You have not add Vehicle to Move Line"
+
+#. module: tms
 #: code:addons/tms/tms_fuelvoucher.py:193
 #, python-format
 msgid "This Fuel Voucher is already Invoiced"
@@ -5176,9 +5182,9 @@ msgid "Thursday"
 msgstr "Jueves"
 
 #. module: tms
-#: field:tms.unit.kit,date_end:0
-msgid "Date end"
-msgstr "Fecha Fin"
+#: model:res.groups,name:tms.group_expense_approve
+msgid "Can Approve Travel Expense Records"
+msgstr "Puede aprobar Registro de Gastos de Viaje"
 
 #. module: tms
 #: selection:tms.factor.special,type:0
@@ -5250,6 +5256,16 @@ msgid "You can not have Current Reading <= Last Reading !"
 msgstr "No puede tener la Lectura Actual <= Última Lectura !"
 
 #. module: tms
+#: help:product.category,tms_property_account_expense_categ:0
+#: help:product.product,tms_property_account_expense:0
+msgid ""
+"Use this to define breakdown expense account per vehicle for Fuel, Travel "
+"Expenses, etc."
+msgstr ""
+"Aquí defina la cuenta de Gastos con desglose por Vehiculo para los Gastos "
+"como Combustible, Gastos de Viaje, etc."
+
+#. module: tms
 #: code:addons/tms/tms_fuelvoucher.py:220
 #, python-format
 msgid "Product quantity must be greater than zero."
@@ -5308,6 +5324,11 @@ msgstr "Retenciones de Salario"
 #: help:tms.waybill,supplier_amount:0
 msgid "Freight Amount from Supplier."
 msgstr "Flete Permisionario"
+
+#. module: tms
+#: field:account.account,tms_vehicle_mandatory:0
+msgid "TMS Vehicle Mandatory"
+msgstr "TMS Requiere Vehiculo"
 
 #. module: tms
 #: selection:tms.factor,framework:0
@@ -5378,6 +5399,14 @@ msgid "Credit"
 msgstr "A Crédito"
 
 #. module: tms
+#: constraint:product.product:0
+msgid ""
+"Error ! You can not have two or more products defined as Default Freight "
+"Product"
+msgstr ""
+"Error ! No puede tener mas de un product definido como Flete pro defecto"
+
+#. module: tms
 #: view:tms.route:0
 msgid "Route Fuel Efficiency Expected"
 msgstr "Rendimiento Esperado"
@@ -5411,6 +5440,11 @@ msgstr "Ciclo Preventivo (Mtto)"
 #: help:tms.factor,sequence:0
 msgid "Gives the sequence calculation for these factors."
 msgstr "Indica la secuencia para el cálculo de estos factores."
+
+#. module: tms
+#: model:ir.actions.act_window,name:tms.open_view_tms_unit_form
+msgid "Vehicles - TMS"
+msgstr "Unidades"
 
 #. module: tms
 #: view:fleet.vehicle.odometer.device:0
