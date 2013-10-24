@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenERP Server 7.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-24 18:42+0000\n"
-"PO-Revision-Date: 2013-10-24 13:50-0600\n"
+"POT-Creation-Date: 2013-10-24 19:12+0000\n"
+"PO-Revision-Date: 2013-10-24 14:13-0600\n"
 "Last-Translator: Israel CA <israel.cruz@hesatecnica.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -637,7 +637,7 @@ msgstr "Mas grupos…"
 #. module: tms
 #: view:tms.waybill:0
 msgid "Waybill Factor Client"
-msgstr "Factor Cobro en Carta Porte"
+msgstr "Tarifa Cliente"
 
 #. module: tms
 #: view:fleet.vehicle:0 field:fleet.vehicle,unit_motor_id:0
@@ -1242,7 +1242,7 @@ msgstr "Vista"
 #: code:addons/tms/tms_expense.py:418
 #, python-format
 msgid " from Fuel Vouchers - Travel: "
-msgstr "de Vales de Combustible - Viaje:"
+msgstr " de Vales de Combustible - Viaje:"
 
 #. module: tms
 #: view:fleet.vehicle.odometer.device:0
@@ -1390,7 +1390,7 @@ msgstr ""
 #. module: tms
 #: field:tms.expense,amount_madeup_expense:0
 msgid "Fake Expenses"
-msgstr "Facilidades Admvas"
+msgstr "Gts sin Afectación en Result."
 
 #. module: tms
 #: model:ir.model,name:tms.model_tms_sale_shop_fuel_supplier_seq
@@ -1669,7 +1669,7 @@ msgstr "Monto"
 #: field:product.category,tms_property_account_expense_categ:0
 #: field:product.product,tms_property_account_expense:0
 msgid "Breakdown Expense Account"
-msgstr "Cuenta de Desglose de Gasto "
+msgstr "Breakdown Expense Account"
 
 #. module: tms
 #: field:product.product,tms_account_ids:0
@@ -1940,9 +1940,7 @@ msgstr "Tipo Remolque 2"
 #. module: tms
 #: help:account.account,tms_vehicle_mandatory:0
 msgid "If set to True then it will require to add Vehicle to Move Line"
-msgstr ""
-"Si activa esta casilla entonces requerirá que se agregue el Vehículo a cada "
-"partida contable de esta cuenta."
+msgstr "If set to True then it will require to add Vehicle to Move Line"
 
 #. module: tms
 #: field:account.account,tms_employee_mandatory:0
@@ -1987,8 +1985,8 @@ msgid ""
 "If set to True then it will be used to create Moves when confirming TMS "
 "Waybill . It must be a General Type Journal"
 msgstr ""
-"Usado para drear Pólizas cuando se confirman Cartas Porte. Debe ser de tipo "
-"General."
+"If set to True then it will be used to create Moves when confirming TMS "
+"Waybill . It must be a General Type Journal"
 
 #. module: tms
 #: view:tms.travel:0
@@ -2012,7 +2010,7 @@ msgstr ""
 #. module: tms
 #: field:tms.waybill,supplier_invoice_name:0
 msgid "Supplier Invoice"
-msgstr "Factura Proveedor"
+msgstr "Factura Permisionario"
 
 #. module: tms
 #: view:tms.expense:0 view:tms.waybill:0
@@ -2861,8 +2859,8 @@ msgid ""
 "Error ! Product is not defined correctly...Please see tooltip for TMS "
 "Category"
 msgstr ""
-"Error ! El producto no está definido correctamente… Por favor revise el "
-"comentario para el campo TMS Categoría…"
+"Error ! El product no está definido correctamente… Por favor revise el "
+"comentario para el campo TMS Categoría..."
 
 #. module: tms
 #: field:tms.event,trailer1_id:0 field:tms.unit.kit,trailer1_id:0
@@ -3038,7 +3036,7 @@ msgstr "Registro"
 #. module: tms
 #: view:tms.waybill:0
 msgid "Shipped Product"
-msgstr "Producto Embarcado"
+msgstr "Carga"
 
 #. module: tms
 #: sql_constraint:fleet.vehicle:0
@@ -3277,7 +3275,7 @@ msgstr "Línea de Carta Porte"
 #. module: tms
 #: view:tms.route:0 view:tms.travel:0 view:tms.waybill:0
 msgid "Driver Salary Factors"
-msgstr "Factores de Pago de Operadores"
+msgstr "Forma de Pago al Operador"
 
 #. module: tms
 #: code:addons/tms/tms.py:535
@@ -3466,7 +3464,7 @@ msgstr "Log"
 #. module: tms
 #: field:tms.advance,auto_expense:0
 msgid "Auto Expense"
-msgstr "Gasto Automático"
+msgstr "Pre-Aprobado"
 
 #. module: tms
 #: field:account.invoice,travel_id:0 code:addons/tms/tms_factor.py:128
@@ -3640,7 +3638,7 @@ msgstr "Crear una copia"
 #. module: tms
 #: field:tms.waybill,supplier_invoice_paid:0
 msgid "Supplier Invoice Paid"
-msgstr "Fact. Prov. Pagada"
+msgstr "Fact. Perm. Pagada"
 
 #. module: tms
 #: field:fleet.vehicle,unit_red_tape_ids:0 view:tms.unit.red_tape:0
@@ -3976,7 +3974,7 @@ msgstr "Distancia recorrida por el operador (mi./km)"
 #. module: tms
 #: field:tms.waybill,supplier_invoiced:0
 msgid "Supplier Invoiced"
-msgstr "Facturado Proveedor"
+msgstr "Facturado por el Perm."
 
 #. module: tms
 #: field:fleet.vehicle.odometer.device,odometer_end:0
@@ -4685,7 +4683,7 @@ msgstr "Descargar en"
 #. module: tms
 #: field:tms.operation,date_start:0
 msgid "Starting Date"
-msgstr "Starting Date"
+msgstr "Fecha de inicio"
 
 #. module: tms
 #: field:tms.event.category,complete_name:0 field:tms.place,complete_name:0
@@ -5269,7 +5267,7 @@ msgstr "Distancia Ruta"
 #. module: tms
 #: view:tms.waybill:0
 msgid "Client Invoice Data"
-msgstr "Datos Factura Cliente"
+msgstr "Factura Cliente"
 
 #. module: tms
 #: field:tms.event,name:0 field:tms.expense.line,name:0
