@@ -31,6 +31,7 @@ TMS.travel
                    <field name="route_id"/>
                    <field name="departure"/>
                    <field name="arrival"/>
+                   <field name="operation_id"/>
                    <newline/>
                    <group expand="0" string="More filters..." colspan="4" col="8">
                        <field name="trailer1_id" />
@@ -58,6 +59,7 @@ TMS.travel
                        <separator orientation="vertical"/>                                                                
                        <filter string='State' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'state'}" />
                        <filter string='Framework' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'framework'}" />
+                       <filter string='Operation  ' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'operation_id'}" />
                    </group>
                 </search>
             </field>
@@ -117,7 +119,7 @@ TMS.travel
                             <field name="shop_id"/>
                             <field name="date" />
                             <field name="kit_id" on_change="onchange_kit_id(kit_id)"/>
-                            <newline />
+                            <field name="operation_id" domain="[('state','=','process')]"/>
                             <group col="2" colspan="2">
 
                               <field name="unit_id" />
@@ -147,7 +149,7 @@ TMS.travel
                         <notebook colspan="4">
                             <page string="Fuel Vouchers" attrs="{'invisible':[('supplier_unit','=',True)]}">
                                 <group>
-                                    <field name="fuelvoucher_ids" nolabel="1" context="{'default_travel_id': active_id}" >
+                                    <field name="fuelvoucher_ids" nolabel="1" context="{'default_travel_id': active_id, 'default_operation_id' : operation_id}"  >
                                         <tree string="TMS Fuel Vouchers">
                                             <field name="state" />
                                             <field name="name" />
@@ -163,7 +165,7 @@ TMS.travel
                             </page>                        
                             <page string="Advances" attrs="{'invisible':[('supplier_unit','=',True)]}">
                                 <group>
-                            	    <field name="advance_ids" nolabel="1"  context="{'default_travel_id': active_id}" 
+                            	    <field name="advance_ids" nolabel="1"  context="{'default_travel_id': active_id, 'default_operation_id' : operation_id}" 
                                            attrs="{'readonly':[('supplier_unit','=',True)]}">
                                         <tree string="TMS Advances">
                                             <field name="state" />
@@ -175,7 +177,7 @@ TMS.travel
                                             <field name="tax_amount" sum="Tax Amount"/>
                                             <field name="total" sum="Total"/>
                                             <field name="auto_expense" />
-                                            <field name="invoice_paid" />
+                                            <field name="paid" />
                                         </tree>
                                     </field>
                                 </group>
@@ -184,8 +186,8 @@ TMS.travel
                                 <group>
                                     <field name="waybill_ids" nolabel="1">
                                         <tree string="Waybills" colors="red:state=='cancel';green:state=='approved';blue:state=='confirmed';">
-<!--                                            <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
-                                            <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok"/> -->
+                                            <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
+                                            <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok"/>
                                             <field name="state"/>
                                             <field name="name"/>
                                             <field name="date_order"/>

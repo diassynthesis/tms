@@ -58,7 +58,8 @@ TMS.EXPENSE
                     <field name="amount_subtotal_real" sum="SubTotal (Real)"/>
                     <field name="amount_tax_real" sum="Tax Real"/>
                     <field name="amount_total_real" sum="Total Real"/>
-                    <field name="invoice_id" invisible="1"/>
+                    <field name="move_id" invisible="1"/>
+                    <field name="paid" invisible="1"/>
                     <field name="shop_id" />
 
                 </tree> 
@@ -207,11 +208,8 @@ TMS.EXPENSE
                       <field name="date_cancelled" readonly="1" />
                       <field name="drafted_by" readonly="1" />
                       <field name="date_drafted" readonly="1" />
-	              <field name="invoiced"/>
-	              <field name="invoice_id" readonly="1"/>
-	              <field name="invoice_name" readonly="1"/>
-	              <field name="invoice_paid" readonly="1"/>
-	              <field name="move_id"/>
+	                  <field name="move_id"/>
+                      <field name="paid"/>
 		      
                     </group>
                   </page>
@@ -234,6 +232,8 @@ TMS.EXPENSE
                     <filter icon="terp-gtk-media-pause" string="Draft" domain="[('state','=','draft')]"/>
                     <filter icon="terp-gtk-jump-to-ltr" string="Approved" domain="[('state','=','approved')]"/>
                     <filter icon="terp-check" string="Confirmed" domain="[('state','=','confirmed')]"/>
+                    <filter icon="terp-check" string="Not Paid" domain="[('paid','=',0)]"/>
+                    <filter icon="terp-check" string="Paid" domain="[('paid','=',1)]"/>
                     <newline/>
                     <field name="employee_id" />
                     <field name="date" string="Expense date" />
@@ -245,6 +245,7 @@ TMS.EXPENSE
                         <separator orientation="vertical"/>
                         <filter string="State" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'state'}"/>
                         <filter string="Expense Date" icon="terp-go-month" domain="[]" context="{'group_by':'date_order'}"/>
+                        <filter string="Paid" icon="terp-go-month" domain="[]" context="{'group_by':'paid'}"/>
                     </group>
                </search>
             </field>
@@ -313,6 +314,7 @@ TMS.EXPENSE.LINE
 	  <field name="tax_amount" sum="Tax Amount"/>
 	  <field name="price_total" sum="Price Total"/>
 	  <field name="sequence" />
+      <field name="operation_id" />
 	</tree>
       </field>
     </record>
@@ -325,7 +327,7 @@ TMS.EXPENSE.LINE
       <field name="arch" type="xml">
         <form string="Expense Lines">
 	  <field name="travel_id" domain="[('id','in', tuple(parent.travel_ids[0][2]),)]" /> 
-          <newline />
+          <field name="operation_id" />
           <field name="control" invisible="1" />
 	  <field name="line_type" required="1" attrs="{'readonly':[('control','!=',False)]}"/>
 	  <newline />

@@ -42,14 +42,15 @@ class tms_advance(osv.osv):
     _inherit = ['mail.thread', 'ir.needaction_mixin']
     _description = 'Money advance payments for Travel expenses'
 
-    def _invoiced(self, cr, uid, ids, field_name, args, context=None):
+    def _paid(self, cr, uid, ids, field_name, args, context=None):
         res = {}
         for record in self.browse(cr, uid, ids, context=context):
-            invoiced = (record.invoice_id.id)
-            paid = (record.invoice_id.state == 'paid') if record.invoice_id.id else False
-            res[record.id] =  {'invoiced': invoiced,
-                               'invoice_paid': paid
-                                }
+            val = False
+            if record.move_id.id:
+                for ml in record.move_id.line_id:
+                    if ml.credit > 0 and record.employee_id.address_home_id.id == ml.partner_id.id:
+                        val = (ml.reconcile_id.id or ml.reconcile_partial_id.id)
+            res[record.id] = val
         return res
 
     def _amount(self, cr, uid, ids, field_name, args, context=None):
@@ -68,44 +69,58 @@ class tms_advance(osv.osv):
                     }
         return res
 
+    
+    def _get_move_line_from_reconcile(self, cr, uid, ids, context=None):
+        move = {}
+        for r in self.pool.get('account.move.reconcile').browse(cr, uid, ids, context=context):
+            for line in r.line_partial_ids:
+                move[line.move_id.id] = True
+            for line in r.line_id:
+                move[line.move_id.id] = True
+
+        advance_ids = []
+        if move:
+            advance_ids = self.pool.get('tms.advance').search(cr, uid, [('move_id','in',move.keys())], context=context)
+        return advance_ids
 
     
     _columns = {
-        'name'          : openerp.osv.fields.char('Anticipo', size=64, required=False),
-        'state'         : openerp.osv.fields.selection([('draft','Draft'), ('approved','Approved'), ('confirmed','Confirmed'), ('closed','Closed'), ('cancel','Cancelled')], 'State', readonly=True),
-        'date'          : openerp.osv.fields.date('Date', states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}, required=True),
-        'travel_id'     :openerp.osv.fields.many2one('tms.travel', 'Travel', required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
-        'unit_id'       : openerp.osv.fields.related('travel_id', 'unit_id', type='many2one', relation='fleet.vehicle', string='Unit', store=True, readonly=True),                
-        'employee_id'   : openerp.osv.fields.related('travel_id', 'employee_id', type='many2one', relation='hr.employee', string='Driver', store=True, readonly=True),                
-        'shop_id'       : openerp.osv.fields.related('travel_id', 'shop_id', type='many2one', relation='sale.shop', string='Shop', store=True, readonly=True),
-        'product_id'    : openerp.osv.fields.many2one('product.product', 'Product', domain=[('purchase_ok', '=', 1),('tms_category','=','real_expense')],  required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
-        'product_uom_qty': openerp.osv.fields.float('Quantity', digits=(16, 4), required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
-        'product_uom'   : openerp.osv.fields.many2one('product.uom', 'Unit of Measure ', required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
-        'price_unit'    : openerp.osv.fields.float('Price Unit', required=True, digits_compute= dp.get_precision('Sale Price')),
-        'price_unit_control' : openerp.osv.fields.float('Price Unit', digits_compute= dp.get_precision('Sale Price'), readonly=True),
-        'subtotal'      : openerp.osv.fields.function(_amount, method=True, string='Subtotal', type='float', digits_compute= dp.get_precision('Sale Price'), multi=True, store=True),
-        'tax_amount'    : openerp.osv.fields.function(_amount, method=True, string='Tax Amount', type='float', digits_compute= dp.get_precision('Sale Price'), multi=True, store=True),
-        'total'         : openerp.osv.fields.float('Total', required=True, digits_compute= dp.get_precision('Sale Price'), states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
+        'operation_id'  : fields.many2one('tms.operation', 'Operation', ondelete='restrict', required=False, readonly=False, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)], 'closed':[('readonly',True)]}),
+        'name'          : fields.char('Anticipo', size=64, required=False),
+        'state'         : fields.selection([('draft','Draft'), ('approved','Approved'), ('confirmed','Confirmed'), ('closed','Closed'), ('cancel','Cancelled')], 'State', readonly=True),
+        'date'          : fields.date('Date', states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}, required=True),
+        'travel_id'     :fields.many2one('tms.travel', 'Travel', required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
+        'unit_id'       : fields.related('travel_id', 'unit_id', type='many2one', relation='fleet.vehicle', string='Unit', store=True, readonly=True),                
+        'employee_id'   : fields.related('travel_id', 'employee_id', type='many2one', relation='hr.employee', string='Driver', store=True, readonly=True),                
+        'shop_id'       : fields.related('travel_id', 'shop_id', type='many2one', relation='sale.shop', string='Shop', store=True, readonly=True),
+        'product_id'    : fields.many2one('product.product', 'Product', domain=[('purchase_ok', '=', 1),('tms_category','=','real_expense')],  required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
+        'product_uom_qty': fields.float('Quantity', digits=(16, 4), required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
+        'product_uom'   : fields.many2one('product.uom', 'Unit of Measure ', required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
+        'price_unit'    : fields.float('Price Unit', required=True, digits_compute= dp.get_precision('Sale Price')),
+        'price_unit_control' : fields.float('Price Unit', digits_compute= dp.get_precision('Sale Price'), readonly=True),
+        'subtotal'      : fields.function(_amount, method=True, string='Subtotal', type='float', digits_compute= dp.get_precision('Sale Price'), multi=True, store=True),
+        'tax_amount'    : fields.function(_amount, method=True, string='Tax Amount', type='float', digits_compute= dp.get_precision('Sale Price'), multi=True, store=True),
+        'total'         : fields.float('Total', required=True, digits_compute= dp.get_precision('Sale Price'), states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
 
-        'notes'         : openerp.osv.fields.text('Notes', states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
+        'notes'         : fields.text('Notes', states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
         
-        'create_uid'    : openerp.osv.fields.many2one('res.users', 'Created by', readonly=True),
-        'create_date'   : openerp.osv.fields.datetime('Creation Date', readonly=True, select=True),
-        'cancelled_by'  : openerp.osv.fields.many2one('res.users', 'Cancelled by', readonly=True),
-        'date_cancelled': openerp.osv.fields.datetime('Date Cancelled', readonly=True),
-        'approved_by'   : openerp.osv.fields.many2one('res.users', 'Approved by', readonly=True),
-        'date_approved' : openerp.osv.fields.datetime('Date Approved', readonly=True),
-        'confirmed_by'  : openerp.osv.fields.many2one('res.users', 'Confirmed by', readonly=True),
-        'date_confirmed': openerp.osv.fields.datetime('Date Confirmed', readonly=True),
-        'closed_by'     : openerp.osv.fields.many2one('res.users', 'Closed by', readonly=True),
-        'date_closed'   : openerp.osv.fields.datetime('Date Closed', readonly=True),
-        'drafted_by'    : openerp.osv.fields.many2one('res.users', 'Drafted by', readonly=True),
-        'date_drafted'  : openerp.osv.fields.datetime('Date Drafted', readonly=True),
-        'invoice_id'    : openerp.osv.fields.many2one('account.invoice','Invoice Record', readonly=True),
-        'invoiced'      :  openerp.osv.fields.function(_invoiced, method=True, string='Invoiced', type='boolean', multi='invoiced'),               
-        'invoice_paid'  :  openerp.osv.fields.function(_invoiced, method=True, string='Paid', type='boolean', multi='invoiced'),
-        'currency_id'   : openerp.osv.fields.many2one('res.currency', 'Currency', required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
-        'auto_expense'  : openerp.osv.fields.boolean('Auto Expense', help="Check this if you want this product and amount to be automatically created when Travel Expense Record is created."),
+        'create_uid'    : fields.many2one('res.users', 'Created by', readonly=True),
+        'create_date'   : fields.datetime('Creation Date', readonly=True, select=True),
+        'cancelled_by'  : fields.many2one('res.users', 'Cancelled by', readonly=True),
+        'date_cancelled': fields.datetime('Date Cancelled', readonly=True),
+        'approved_by'   : fields.many2one('res.users', 'Approved by', readonly=True),
+        'date_approved' : fields.datetime('Date Approved', readonly=True),
+        'confirmed_by'  : fields.many2one('res.users', 'Confirmed by', readonly=True),
+        'date_confirmed': fields.datetime('Date Confirmed', readonly=True),
+        'closed_by'     : fields.many2one('res.users', 'Closed by', readonly=True),
+        'date_closed'   : fields.datetime('Date Closed', readonly=True),
+        'drafted_by'    : fields.many2one('res.users', 'Drafted by', readonly=True),
+        'date_drafted'  : fields.datetime('Date Drafted', readonly=True),
+        'move_id'       : fields.many2one('account.move', 'Journal Entry', readonly=True, select=1, ondelete='restrict', help="Link to the automatically generated Journal Items.\nThis move is only for Travel Expense Records with balance < 0.0"),
+        'paid'          : fields.function(_paid, method=True, string='Paid', type='boolean', multi=False,
+                                          store = {'account.move.reconcile': (_get_move_line_from_reconcile, None, 50)}),
+        'currency_id'   : fields.many2one('res.currency', 'Currency', required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
+        'auto_expense'  : fields.boolean('Auto Expense', help="Check this if you want this product and amount to be automatically created when Travel Expense Record is created."),
         }
     
     _defaults = {
@@ -123,9 +138,6 @@ class tms_advance(osv.osv):
 
     def on_change_price_total(self, cr, uid, ids, product_id, product_uom_qty, price_total):
         res = {}
-        print "product_id: ", product_id
-        print "product_uom_qty: ", product_uom_qty
-        print "price_total: ", price_total
 
         if not (product_uom_qty and product_id and price_total):
             return res
@@ -161,9 +173,12 @@ class tms_advance(osv.osv):
         res = {}
         if not travel_id:
             return {}
-        travel_obj = self.pool.get('tms.travel')
-        return {'value': {'employee_id' : travel_obj.browse(cr, uid, [travel_id], context=None)[0].employee_id.id,
-                          'unit_id' : travel_obj.browse(cr, uid, [travel_id], context=None)[0].unit_id.id,  }               }
+        travel = self.pool.get('tms.travel').browse(cr, uid, [travel_id], context=None)[0]
+        return {'value': {'employee_id' : travel.employee_id.id,
+                          'unit_id' : travel.unit_id.id,  
+                          'operation_id' : travel.operation_id.id,  
+                          }
+                }
 
                 
     def create(self, cr, uid, vals, context=None):
@@ -193,21 +208,23 @@ class tms_advance(osv.osv):
     
     def action_cancel(self, cr, uid, ids, context=None):
         for advance in self.browse(cr, uid, ids, context=context):
-            if advance.invoiced and not advance.invoice_paid:
-                wf_service = netsvc.LocalService("workflow")
-                wf_service.trg_validate(uid, 'account.invoice', advance.invoice_id.id, 'invoice_cancel', cr)               
-                invoice_obj=self.pool.get('account.invoice')
-                invoice_obj.write(cr,uid,[advance.invoice_id.id], {'internal_number':False})
-                invoice_obj.unlink(cr, uid, [advance.invoice_id.id], context=None)
-            elif advance.invoiced and advance.invoice_paid:
-                raise osv.except_osv(
-                        _('Could not cancel Advance !'),
-                        _('This Advance is already paid'))
-            elif advance.state in ('draft','approved','confirmed') and advance.travel_id.state in ('closed'):
+            if advance.travel_id.state in ('closed'):
                 raise osv.except_osv(
                         _('Could not cancel Advance !'),
                         _('This Advance is already linked to Travel Expenses record'))
-            self.write(cr, uid, ids, {'state':'cancel', 'cancelled_by':uid,'date_cancelled':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
+            elif advance.move_id.id:
+                move_obj = self.pool.get('account.move')
+                move_id = advance.move_id.id                
+                if not advance.paid: #(move_line.reconcile_id.id or move_line.reconcile_partial_id.id):
+                    if advance.move_id.state == 'posted':
+                        move_obj.button_cancel(cr, uid, [move_id])
+                    self.write(cr, uid, ids, {'move_id' : False, 'state':'cancel', 'cancelled_by':uid,'date_cancelled':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
+                    move_obj.unlink(cr, uid, [move_id])
+                else:
+                    raise osv.except_osv( _('Could not cancel Advance !'),
+                                          _('This Advance is already paid'))
+            else:
+                self.write(cr, uid, ids, {'move_id' : False, 'state':'cancel', 'cancelled_by':uid,'date_cancelled':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
         return True
 
     def action_approve(self, cr, uid, ids, context=None):
@@ -238,7 +255,7 @@ class tms_advance(osv.osv):
             'date_closed': False,
             'drafted_by' : False,
             'date_drafted': False,
-            'invoice_id': False,
+            'move_id': False,
             'notes': False,
         })
         return super(tms_advance, self).copy(cr, uid, id, default, context)
@@ -276,12 +293,11 @@ class tms_advance_invoice(osv.osv_memory):
             res = False
             invoices = []
             property_obj=self.pool.get('ir.property')
-            partner_obj=self.pool.get('res.partner')
             user_obj=self.pool.get('res.users')
             account_fiscal_obj=self.pool.get('account.fiscal.position')
-            invoice_line_obj=self.pool.get('account.invoice.line')
             account_jrnl_obj=self.pool.get('account.journal')
-            invoice_obj=self.pool.get('account.invoice')
+            period_obj = self.pool.get('account.period')
+            move_obj = self.pool.get('account.move')
             advance_obj=self.pool.get('tms.advance')
             adv_line_obj=self.pool.get('tms.advance.line')
 
@@ -291,108 +307,96 @@ class tms_advance_invoice(osv.osv_memory):
                                  'You have not defined Advance Purchase Journal...')
             journal_id = journal_id and journal_id[0]
 
-            partner = partner_obj.browse(cr,uid,user_obj.browse(cr,uid,[uid])[0].company_id.partner_id.id)
+            #partner = partner_obj.browse(cr,uid,user_obj.browse(cr,uid,[uid])[0].company_id.partner_id.id)
 
 
-            cr.execute("select distinct employee_id, currency_id from tms_advance where invoice_id is null and state='approved' and id IN %s",(tuple(record_ids),))
+            cr.execute("select distinct employee_id, currency_id from tms_advance where move_id is null and state='approved' and id IN %s",(tuple(record_ids),))
             data_ids = cr.fetchall()
             if not len(data_ids):
-                raise osv.except_osv('Aviso !',
+                raise osv.except_osv('Warning !',
                                  'Selected records are not Approved or already sent for payment...')
-            print data_ids
+            #print data_ids
 
             for data in data_ids:
 
-                cr.execute("select id from tms_advance where invoice_id is null and state='approved' and employee_id=" + str(data[0]) + ' and currency_id=' + str(data[1]) + " and id IN %s", (tuple(record_ids),))
+                cr.execute("select id from tms_advance where move_id is null and state='approved' and employee_id=" + str(data[0]) + ' and currency_id=' + str(data[1]) + " and id IN %s", (tuple(record_ids),))
                 advance_ids = filter(None, map(lambda x:x[0], cr.fetchall()))
                 
                 inv_lines = []
-                notes = "Anticipos de Viaje."
-                inv_amount = 0.0
-                for line in advance_obj.browse(cr,uid,advance_ids):                    
+                notes = _('Driver Advances.')                
+                move_lines = []
+                precision = self.pool.get('decimal.precision').precision_get(cr, uid, 'Account')
+                for line in advance_obj.browse(cr,uid,advance_ids):
                     a = line.employee_id.tms_advance_account_id.id
                     if not a:
                         raise osv.except_osv(_('Warning !'),
-                                _('There is no advance account defined ' \
-                                        'for this driver: "%s" (id:%d)') % \
+                                _('There is no advance account defined for this driver: "%s" (id:%d)') % \
                                         (line.employee_id.name, line.employee_id.id,))
                     a = account_fiscal_obj.map_account(cr, uid, False, a)
 
+                    b = line.employee_id.address_home_id.property_account_payable.id
+                    if not b:
+                        raise osv.except_osv(_('Warning !'),
+                                _('There is no address created for this driver: "%s" (id:%d)') % \
+                                        (line.employee_id.name, line.employee_id.id,))
+                    b = account_fiscal_obj.map_account(cr, uid, False, b)
 
-                    inv_line = (0,0, {
-                        'name': line.product_id.name + ' - ' + line.travel_id.name + ' - ' + line.name,
-                        'origin': line.name,
-                        'account_id': a,
-                        'price_unit': line.total / line.product_uom_qty,
-                        'quantity': line.product_uom_qty,
-                        'uos_id': line.product_uom.id,
-                        'product_id': line.product_id.id,
-#                        'invoice_line_tax_id': [(6, 0, [x.id for x in line.product_id.supplier_taxes_id])],
-                        'note': line.notes,
-                        'account_analytic_id': False,
-                        })
-                    inv_lines.append(inv_line)
-                    inv_amount += line.total
-                
-                    notes += '\n' + line.travel_id.name + ' - ' + line.name
-                    employee_name = line.employee_id.name + ' (' + str(line.employee_id.id) + ')' # + time.strftime(DEFAULT_SERVER_DATE_FORMAT)
-                    advance_name = line.name
-                    advance_travel_name = line.travel_id.name
-                    advance_prod = line.product_id.name
-                    advance_travel = line.travel_id.id
-                    advance_employee = line.travel_id.employee_id.id
-                    advance_vehicle = line.travel_id.unit_id.id
+                    period_id = period_obj.search(cr, uid, [('date_start', '<=', line.date),('date_stop','>=', line.date), ('state','=','draft')], context=None)
+                    if not period_id:
+                        raise osv.except_osv(_('Warning !'),
+                                _('There is no valid account period for this date %s. Period does not exists or is already closed') % \
+                                        (expense.date,))
+                    
+                    move_line = (0,0, {
+                            'name'          : line.product_id.name + ' - ' + line.travel_id.name + ' - ' + line.name,
+                            'ref'           : line.product_id.name + ' - ' + line.travel_id.name + ' - ' + line.name,
+                            'account_id'    : a,
+                            'debit'         : round(line.total, precision),
+                            'credit'        : 0.0,
+                            'journal_id'    : journal_id,
+                            'period_id'     : period_id[0],
+                            'vehicle_id'    : line.unit_id.id,
+                            'employee_id'   : line.employee_id.id,
+                            'partner_id'    : line.employee_id.address_home_id.id,
+                            })
+                    
+                    move_lines.append(move_line)
+                    
+                    move_line = (0,0, {
+                            'name'          : line.product_id.name + ' - ' + line.travel_id.name + ' - ' + line.name,
+                            'ref'           : line.product_id.name + ' - ' + line.travel_id.name + ' - ' + line.name,
+                            'account_id'    : b,
+                            'debit'         : 0.0,
+                            'credit'        : round(line.total, precision),
+                            'journal_id'    : journal_id,
+                            'period_id'     : period_id[0],
+                            'vehicle_id'    : line.unit_id.id,
+                            'employee_id'   : line.employee_id.id,
+                            'partner_id'    : line.employee_id.address_home_id.id,
+                            })
+                    move_lines.append(move_line)                    
 
-                a = partner.property_account_payable.id
-                if partner and partner.property_payment_term.id:
-                    pay_term = partner.property_payment_term.id
-                else:
-                    pay_term = False
+                    notes += '\n' + line.product_id.name + ' - ' + line.travel_id.name + ' - ' + line.name
+                    
+                move = {
+                            'ref'               : line.product_id.name + ' - ' + line.travel_id.name + ' - ' + line.name,
+                            'journal_id'        : journal_id,
+                            'narration'         : notes,
+                            'line_id'           : [x for x in move_lines],
+                            'date'              : line.date,
+                            'period_id'         : period_id[0],
+                        }
 
-                inv = {
-                    'name'              : 'Advance',
-                    'origin'            : 'TMS-Advances',
-                    'type'              : 'in_invoice',
-                    'journal_id'        : journal_id,
-                    'reference'         : advance_name + ' -' + employee_name + ' - ' +  advance_prod,
-                    'supplier_invoice_number': advance_name + ' -' + employee_name + ' - ' +  advance_prod,
-                    'account_id'        : a,
-                    'partner_id'        : partner.id,
-                    'address_invoice_id': self.pool.get('res.partner').address_get(cr, uid, [partner.id], ['default'])['default'],
-                    'address_contact_id': self.pool.get('res.partner').address_get(cr, uid, [partner.id], ['default'])['default'],
-                    'invoice_line'      : [x for x in inv_lines],
-                    'currency_id'       : data[1],
-                    'comment'           : 'TMS-Advance',
-                    'payment_term'      : pay_term,
-                    'fiscal_position'   : partner.property_account_position.id,
-                    'comment'           : notes,
-                    'check_total'       : inv_amount,
-                    'travel_id'         : advance_travel,
-                    'vehicle_id'        : advance_vehicle,
-                    'employee_id'       : advance_employee,
-                }
+                move_id = move_obj.create(cr, uid, move)
+                if move_id:
+                    move_obj.button_validate(cr, uid, [move_id])                            
 
-                inv_id = invoice_obj.create(cr, uid, inv)
-                if inv_id:
-                    wf_service = netsvc.LocalService("workflow")
-                    wf_service.trg_validate(uid, 'account.invoice', inv_id, 'invoice_open', cr)
-
-                invoices.append(inv_id)
-
-                advance_obj.write(cr,uid,advance_ids, {'invoice_id': inv_id, 'state':'confirmed', 'confirmed_by':uid, 'date_confirmed':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})               
+                advance_obj.write(cr,uid,advance_ids, {'move_id': move_id, 'state':'confirmed', 'confirmed_by':uid, 'date_confirmed':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})               
 
 
 
-        return {
-            'domain': "[('id','in', ["+','.join(map(str,invoices))+"])]",
-            'name': _('Drivers Advances'),
-            'view_type': 'form',
-            'view_mode': 'tree,form',
-            'res_model': 'account.invoice',
-            'view_id': False,
-            'context': "{'type':'in_invoice', 'journal_type': 'purchase'}",
-            'type': 'ir.actions.act_window'
-        }
+        return True
+    
 tms_advance_invoice()
 
 

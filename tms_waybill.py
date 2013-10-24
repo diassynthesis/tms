@@ -193,72 +193,56 @@ class tms_waybill(osv.osv):
 
 
     _columns = {
-        'name'             : fields.char('Name', size=64, readonly=True, select=True),
-        'shop_id'          : fields.many2one('sale.shop', 'Shop', required=True, readonly=False, states={'confirmed': [('readonly', True)]}),
-        'waybill_category' : fields.many2one('tms.waybill.category', 'Waybill Category', required=False, readonly=False, states={'confirmed': [('readonly', True)]}),
-        'sequence_id'      : fields.many2one('ir.sequence', 'Sequence', required=True, readonly=False, states={'confirmed': [('readonly', True)]}),
-        'travel_ids'       : fields.many2many('tms.travel', 'tms_waybill_travel_rel', 'waybill_id', 'travel_id', 'Travels', readonly=False, states={'confirmed': [('readonly', True)]}),
+        'name'              : fields.char('Name', size=64, readonly=False, select=True),
+        'shop_id'           : fields.many2one('sale.shop', 'Shop', required=True, readonly=False, states={'confirmed': [('readonly', True)]}),
+        'operation_id'      : fields.many2one('tms.operation', 'Operation', ondelete='restrict', required=False, readonly=False, states={'cancel':[('readonly',True)], 'done':[('readonly',True)], 'closed':[('readonly',True)]}),
+        'waybill_category'  : fields.many2one('tms.waybill.category', 'Category', ondelete='restrict', required=False, readonly=False, states={'cancel':[('readonly',True)], 'done':[('readonly',True)], 'closed':[('readonly',True)]}),        
+        'sequence_id'       : fields.many2one('ir.sequence', 'Sequence', required=True, ondelete='restrict', readonly=False, states={'confirmed': [('readonly', True)]}),
+        'travel_ids'        : fields.many2many('tms.travel', 'tms_waybill_travel_rel', 'waybill_id', 'travel_id', 'Travels', readonly=False, states={'confirmed': [('readonly', True)]}),
 
-        'travel_id'        : fields.function(_get_newer_travel_id, method=True, relation='tms.travel', type="many2one", string='Actual Travel', readonly=True, store=True),
-        'supplier_id'      : fields.related('unit_id', 'supplier_id', type='many2one', relation='res.partner', string='Freight Supplier', store=True, readonly=True),                
-        'supplier_amount'  : fields.function(_get_supplier_amount, string='Supplier Freight Amount', method=True, type='float', digits_compute= dp.get_precision('Sale Price'), help="Freight Amount from Supplier.", multi=False, store=True),
+        'travel_id'         : fields.function(_get_newer_travel_id, method=True, relation='tms.travel', type="many2one", string='Actual Travel', readonly=True, store=True),
+        'supplier_id'       : fields.related('unit_id', 'supplier_id', type='many2one', relation='res.partner', string='Freight Supplier', store=True, readonly=True),                
+        'supplier_amount'   : fields.function(_get_supplier_amount, string='Supplier Freight Amount', method=True, type='float', digits_compute= dp.get_precision('Sale Price'), help="Freight Amount from Supplier.", multi=False, store=True),
 
-        'unit_id'          : fields.related('travel_id', 'unit_id', type='many2one', relation='fleet.vehicle', string='Unit', store=True, readonly=True),                
-        'trailer1_id'      : fields.related('travel_id', 'trailer1_id', type='many2one', relation='fleet.vehicle', string='Trailer 1', store=True, readonly=True),                
-        'dolly_id'         : fields.related('travel_id', 'dolly_id', type='many2one', relation='fleet.vehicle', string='Dolly', store=True, readonly=True),                
-        'trailer2_id'      : fields.related('travel_id', 'trailer2_id', type='many2one', relation='fleet.vehicle', string='Trailer 2', store=True, readonly=True),                
-        'employee_id'      : fields.related('travel_id', 'employee_id', type='many2one', relation='hr.employee', string='Driver', store=True, readonly=True),                
-        'route_id'         : fields.related('travel_id', 'route_id', type='many2one', relation='tms.route', string='Route', store=True, readonly=True),                
-        'departure_id'     : fields.related('route_id', 'departure_id', type='many2one', relation='tms.place', string='Departure', store=True, readonly=True),                
-        'arrival_id'       : fields.related('route_id', 'arrival_id', type='many2one', relation='tms.place', string='Arrival', store=True, readonly=True),                
+        'unit_id'           : fields.related('travel_id', 'unit_id', type='many2one', relation='fleet.vehicle', string='Unit', store=True, readonly=True),                
+        'trailer1_id'       : fields.related('travel_id', 'trailer1_id', type='many2one', relation='fleet.vehicle', string='Trailer 1', store=True, readonly=True),                
+        'dolly_id'          : fields.related('travel_id', 'dolly_id', type='many2one', relation='fleet.vehicle', string='Dolly', store=True, readonly=True),                
+        'trailer2_id'       : fields.related('travel_id', 'trailer2_id', type='many2one', relation='fleet.vehicle', string='Trailer 2', store=True, readonly=True),                
+        'employee_id'       : fields.related('travel_id', 'employee_id', type='many2one', relation='hr.employee', string='Driver', store=True, readonly=True),                
+        'route_id'          : fields.related('travel_id', 'route_id', type='many2one', relation='tms.route', string='Route', store=True, readonly=True),                
+        'departure_id'      : fields.related('route_id', 'departure_id', type='many2one', relation='tms.place', string='Departure', store=True, readonly=True),                
+        'arrival_id'        : fields.related('route_id', 'arrival_id', type='many2one', relation='tms.place', string='Arrival', store=True, readonly=True),                
 
-        'origin'           : fields.char('Source Document', size=64, help="Reference of the document that generated this Waybill request.",readonly=False, states={'confirmed': [('readonly', True)]}),
-        'client_order_ref' : fields.char('Customer Reference', size=64, readonly=False, states={'confirmed': [('readonly', True)]}),
-        'state'            : fields.selection([
-                ('draft', 'Pending'),
-                ('approved', 'Approved'),
-                ('confirmed', 'Confirmed'),
-                ('cancel', 'Cancelled')
-                ], 'State', readonly=True, help="Gives the state of the Waybill. \n ", select=True),
-        'billing_policy'   : fields.selection([
-                ('manual', 'Manual'),
-                ('automatic', 'Automatic'),
-                ], 'Billing Policy', readonly=False, states={'confirmed': [('readonly', True)]},
-                                                          help="Gives the state of the Waybill. \n -The exception state is automatically set when a cancel operation occurs in the invoice validation (Invoice Exception) or in the picking list process (Shipping Exception). \nThe 'Waiting Schedule' state is set when the invoice is confirmed but waiting for the scheduler to run on the date 'Ordered Date'.", select=True),
+        'origin'            : fields.char('Source Document', size=64, help="Reference of the document that generated this Waybill request.",readonly=False, states={'confirmed': [('readonly', True)]}),
+        'client_order_ref'  : fields.char('Customer Reference', size=64, readonly=False, states={'confirmed': [('readonly', True)]}),
+        'state'             : fields.selection([
+                                ('draft', 'Pending'),
+                                ('approved', 'Approved'),
+                                ('confirmed', 'Confirmed'),
+                                ('cancel', 'Cancelled')
+                                ], 'State', readonly=True, help="Gives the state of the Waybill. \n ", select=True),
+        'billing_policy'    : fields.selection([
+                                ('manual', 'Manual'),
+                                ('automatic', 'Automatic'),
+                                ], 'Billing Policy', readonly=False, states={'confirmed': [('readonly', True)]},
+                                help="Gives the state of the Waybill. \n -The exception state is automatically set when a cancel operation occurs in the invoice validation (Invoice Exception) or in the picking list process (Shipping Exception). \nThe 'Waiting Schedule' state is set when the invoice is confirmed but waiting for the scheduler to run on the date 'Ordered Date'.", select=True),
 
-        'waybill_type'     : fields.function(_get_waybill_type, method=True, type='selection', selection=[('self', 'Self'), ('outsourced', 'Outsourced')], 
+        'waybill_type'      : fields.function(_get_waybill_type, method=True, type='selection', selection=[('self', 'Self'), ('outsourced', 'Outsourced')], 
                                         string='Waybill Type', store=True, help=" - Self: Travel with our own units. \n - Outsourced: Travel without our own units."),
 
-        'date_order'       : fields.date('Date', required=True, select=True,readonly=False, states={'confirmed': [('readonly', True)]}),
-        'user_id'          : fields.many2one('res.users', 'Salesman', select=True, readonly=False, states={'confirmed': [('readonly', True)]}),
+        'date_order'        : fields.date('Date', required=True, select=True,readonly=False, states={'confirmed': [('readonly', True)]}),
+        'user_id'           : fields.many2one('res.users', 'Salesman', select=True, readonly=False, states={'confirmed': [('readonly', True)]}),
 
-        'partner_id'       : fields.many2one('res.partner', 'Customer', required=True, change_default=True, select=True, readonly=False, states={'confirmed': [('readonly', True)]}),
-        'currency_id'      : fields.many2one('res.currency', 'Currency', required=True, states={'confirmed': [('readonly', True)]}),
-#        'pricelist_id': fields.many2one('product.pricelist', 'Pricelist', required=True, help="Pricelist for Waybill.", readonly=False, states={'confirmed': [('readonly', True)]}),
+        'partner_id'        : fields.many2one('res.partner', 'Customer', required=True, change_default=True, select=True, readonly=False, states={'confirmed': [('readonly', True)]}),
+        'currency_id'       : fields.many2one('res.currency', 'Currency', required=True, states={'confirmed': [('readonly', True)]}),
         'partner_invoice_id': fields.many2one('res.partner', 'Invoice Address', required=True, help="Invoice address for current Waybill.", readonly=False, states={'confirmed': [('readonly', True)]}),
-        'partner_order_id': fields.many2one('res.partner', 'Ordering Contact', required=True,  help="The name and address of the contact who requested the order or quotation.", readonly=False, states={'confirmed': [('readonly', True)]}),
+        'partner_order_id'  : fields.many2one('res.partner', 'Ordering Contact', required=True,  help="The name and address of the contact who requested the order or quotation.", readonly=False, states={'confirmed': [('readonly', True)]}),
         'account_analytic_id': fields.many2one('account.analytic.account', 'Analytic Account',  help="The analytic account related to a Waybill.", readonly=False, states={'confirmed': [('readonly', True)]}),
         'departure_address_id': fields.many2one('res.partner', 'Departure Address', required=True, help="Departure address for current Waybill.", readonly=False, states={'confirmed': [('readonly', True)]}),
-        #'departure_street'    : fields.related('departure_address_id', 'street', string='Departure Street', type='char', size=128, store=True, readonly=True),
-        #'departure_street3'    : fields.related('departure_address_id', 'l10n_mx_street3', string='Departure Ext. Number', type='char', size=128, store=True, readonly=True),
-        #'departure_street4'    : fields.related('departure_address_id', 'l10n_mx_street4', string='Departure Int. Number', type='char', size=128, store=True, readonly=True),
-        #'departure_street2'    : fields.related('departure_address_id', 'street2', string='Departure Street2', type='char', size=128, store=True, readonly=True),
-        #'departure_city'    : fields.related('departure_address_id', 'city', string='Departure City', type='char', size=128, store=True, readonly=True),
-        #'departure_state_id'    : fields.related('departure_address_id', 'state_id', type='many2one', relation='res.country.state', string='Departure State', store=True, readonly=True),
-        #'departure_country_id'    : fields.related('departure_address_id', 'country_id', type='many2one', relation='res.country', string='Departure Country', store=True, readonly=True),
-        #'departure_zip'    : fields.related('departure_address_id', 'zip', type='char', size=128, string='Departure Zip', store=True, readonly=True),
 
 
 
         'arrival_address_id': fields.many2one('res.partner', 'Arrival Address', required=True, help="Arrival address for current Waybill.", readonly=False, states={'confirmed': [('readonly', True)]}),
-        #'arrival_street'    : fields.related('arrival_address_id', 'street', string='Arrival Street', type='char', size=128, store=True, readonly=True),
-        #'arrival_street3'    : fields.related('arrival_address_id', 'l10n_mx_street3', string='Arrival Ext. Number', type='char', size=128, store=True, readonly=True),
-        #'arrival_street4'    : fields.related('arrival_address_id', 'l10n_mx_street4', string='Arrival Int. Number', type='char', size=128, store=True, readonly=True),
-        #'arrival_street2'    : fields.related('arrival_address_id', 'street2', string='Arrival Street2', type='char', size=128, store=True, readonly=True),
-        #'arrival_city'    : fields.related('arrival_address_id', 'city', string='Arrival City', type='char', size=128, store=True, readonly=True),
-        #'arrival_state_id'    : fields.related('arrival_address_id', 'state_id', type='many2one', relation='res.country.state', string='Arrival State', store=True, readonly=True),
-        #'arrival_country_id'    : fields.related('arrival_address_id', 'country_id', type='many2one', relation='res.country', string='Arrival Country', store=True, readonly=True),
-        #'arrival_zip'    : fields.related('arrival_address_id', 'zip', string='Arrival Zip', type='char', size=128, store=True, readonly=True),
 
 
         'upload_point'     : fields.char('Upload Point', size=128, readonly=False, states={'confirmed': [('readonly', True)]}),
@@ -489,6 +473,7 @@ class tms_waybill(osv.osv):
                                 'departure_id'  : travel.route_id.departure_id.id,
                                 'arrival_id'    : travel.route_id.arrival_id.id,
                                 'travel_id'     : travel_id,
+                                'operation_id'  : travel.operation_id.id,                                
                              }
                     }
         return {'value': {'travel_id': travel_id}}

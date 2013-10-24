@@ -32,6 +32,7 @@ TMS.ADVANCE
           <field name="unit_id"/>
           <field name="employee_id"/>
           <field name="product_id"/>
+          <field name="operation_id"/>
           <newline/>
           <group  expand='0' string='Group by...'>
             <filter string='travel_id' icon="terp-gdu-smart-failing" domain="[]" context="{'group_by' : 'travel_id'}" />
@@ -41,6 +42,7 @@ TMS.ADVANCE
             <filter string='State' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'state'}" />
             <separator orientation="vertical"/>                                                                
             <filter string='Product' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'product_id'}" />
+            <filter string='Operation' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'operation_id'}" />
           </group>
         </search>
       </field>
@@ -53,7 +55,7 @@ TMS.ADVANCE
       <field name="type">tree</field>
       <field name="arch" type="xml">
         <tree string="TMS Advances" colors="gray:state=='cancel';red:state=='draft';green:state=='approved';blue:state=='confirmed';">
-          <button name="action_cancel" states="draft,approved,confirmed" string="Cancel" type="object" icon="gtk-cancel"/>
+          <!-- <button name="action_cancel" states="draft,approved,confirmed" string="Cancel" type="object" icon="gtk-cancel"/> -->
           <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
           <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-goto-last"/>
           <field name="state" />
@@ -68,7 +70,8 @@ TMS.ADVANCE
 	  <field name="tax_amount" sum="Tax Amount"/>
 	  <field name="total" sum="Total"/>
           <field name="auto_expense" />
-          <field name="invoice_paid" />
+          <field name="paid" />
+          <field name="operation_id" invisible="1"/>    
 	</tree>
       </field>
     </record>
@@ -96,7 +99,7 @@ TMS.ADVANCE
               <field name="shop_id" />
               <field name="date" />
               <field name="travel_id" domain="[('state','!=','cancel'),('state','!=','closed'), ('supplier_unit', '=', False)]" on_change="on_change_travel_id(travel_id)"/>
-              <newline />
+              <field name="operation_id" domain="[('state','=','process')]" />
               <field name="unit_id" readonly="1"/>
               <field name="employee_id" readonly="1"/>
               <group colspan="2">
@@ -138,12 +141,12 @@ TMS.ADVANCE
                   <field name="date_cancelled" readonly="1" />
                   <field name="drafted_by" readonly="1" />
                   <field name="date_drafted" readonly="1" />
+                  <field name="move_id"/>
+                  <field name="paid"/> 
                 </group>
-		<group colspan="4" col="6">
-		  <field name="invoiced"/>  
-		  <field name="invoice_id" />
-		  <field name="invoice_paid"/>  
-		</group>
+		
+         
+            
               </page>
             </notebook>
           </sheet>

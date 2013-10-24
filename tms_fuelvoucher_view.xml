@@ -31,11 +31,13 @@ TMS.FUELVOUCHER
                    <field name="travel_id" />
                    <field name="unit_id"/>
                    <field name="employee_id"/>
+                   
                    <newline/>
                    <group expand="0" string="More filters...">
                         <field name="partner_id"/>
                         <field name="invoice_id" domain="[('type', '=', 'invoice_in')]"/>
                         <field name="product_id"/>
+                        <field name="operation_id"/>
                    </group>   
                    <newline/>
                    <group  expand='0' string='Group by...'>
@@ -46,6 +48,7 @@ TMS.FUELVOUCHER
                        <filter string='Invoice' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'invoice_name'}" />
                        <separator orientation="vertical"/>                                                                
                        <filter string='State' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'state'}" />
+                       <filter string='Operation' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'operation_id'}" />
                    </group>
                 </search>
             </field>
@@ -79,7 +82,8 @@ TMS.FUELVOUCHER
                 <field name="invoice_id" invisible="1"/>
                 <field name="invoice_name" />
                 <field name="invoice_paid"/>
-                <field name="shop_id" />
+                <field name="shop_id" invisible="1"/>
+                <field name="operation_id" invisible="1"/>
 		    </tree>
 		</field>
 	</record>
@@ -107,7 +111,7 @@ TMS.FUELVOUCHER
                             <field name="shop_id" />
                             <field name="date" />
                             <field name="travel_id" domain="[('state','!=','cancel'),('state','!=','closed'), ('supplier_unit', '=', False)]" on_change="on_change_travel_id(travel_id)"/>
-                            <newline />
+                            <field name="operation_id" domain="[('state','=','process')]" />
                             <field name="unit_id" readonly="1"/>
                             <field name="employee_id" readonly="1"/>
                             <field name="partner_id" 	domain="[('supplier','=',1),('tms_category','=','fuel')]" 

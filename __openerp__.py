@@ -74,6 +74,7 @@ It also can manage:
         'tms_expense_view.xml',
         'tms_factor_view.xml',
         'tms_history_view.xml',
+        'tms_operation_view.xml',
         ],
     "application": True,
     "installable": True

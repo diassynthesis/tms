@@ -75,6 +75,7 @@ class tms_fuelvoucher(osv.osv):
 
     
     _columns = {
+        'operation_id'  : fields.many2one('tms.operation', 'Operation', ondelete='restrict', required=False, readonly=False, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)], 'closed':[('readonly',True)]}),        
         'name'          : fields.char('Fuel Voucher', size=64, required=False),
         'state'         : fields.selection([('draft','Draft'), ('approved','Approved'), ('confirmed','Confirmed'), ('closed','Closed'), ('cancel','Cancelled')], 'State', readonly=True),
         'date'          : fields.date('Date', states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}, required=True),
@@ -136,9 +137,12 @@ class tms_fuelvoucher(osv.osv):
         res = {}
         if not travel_id:
             return {}
-        travel_obj = self.pool.get('tms.travel')
-        return {'value': {'employee_id' : travel_obj.browse(cr, uid, [travel_id], context=None)[0].employee_id.id,
-                          'unit_id' : travel_obj.browse(cr, uid, [travel_id], context=None)[0].unit_id.id,  }               }
+        travel = self.pool.get('tms.travel').browse(cr, uid, [travel_id], context=None)[0]
+        return {'value': {'employee_id' : travel.employee_id.id,
+                          'unit_id'     : travel.unit_id.id,  
+                          'operation_id': travel.operation_id.id,  
+                          }
+                }
 
 
     def on_change_amount(self, cr, uid, ids, product_uom_qty, price_total, tax_amount, product_id):
@@ -244,7 +248,7 @@ class tms_fuelvoucher(osv.osv):
             #print "notes: ", notes
             
             
-            if not (fuelvoucher.product_id.property_account_expense.id if fuelvoucher.product_id.property_account_expense.id else fuelvoucher.product_id.categ_id.property_account_expense_categ.id if line.product_id.categ_id.property_account_expense_categ.id else False):
+            if not (fuelvoucher.product_id.property_account_expense.id if fuelvoucher.product_id.property_account_expense.id else fuelvoucher.product_id.categ_id.property_account_expense_categ.id if fuelvoucher.product_id.categ_id.property_account_expense_categ.id else False):
                 raise osv.except_osv(_('Missing configuration !!!'),
                                  _('You have not defined expense Account for Product %s...') % (fuelvoucher.product_id.name))
 
@@ -260,7 +264,7 @@ class tms_fuelvoucher(osv.osv):
                                 })
             move_lines.append(move_line)
             
-            if not (fuelvoucher.product_id.tms_property_account_expense.id if fuelvoucher.product_id.tms_property_account_expense.id else fuelvoucher.product_id.categ_id.tms_property_account_expense_categ.id if line.product_id.categ_id.tms_property_account_expense_categ.id else False):
+            if not (fuelvoucher.product_id.tms_property_account_expense.id if fuelvoucher.product_id.tms_property_account_expense.id else fuelvoucher.product_id.categ_id.tms_property_account_expense_categ.id if fuelvoucher.product_id.categ_id.tms_property_account_expense_categ.id else False):
                 raise osv.except_osv(_('Missing configuration !!!'),
                                  _('You have not defined substitute Account for Product %s...') % (fuelvoucher.product_id.name))
                 

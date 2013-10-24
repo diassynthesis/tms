@@ -75,10 +75,12 @@ class account_account(osv.osv):
 
     _columns = {
         'tms_vehicle_mandatory': fields.boolean('TMS Vehicle Mandatory', help= 'If set to True then it will require to add Vehicle to Move Line'),
+        'tms_employee_mandatory': fields.boolean('TMS Employee Mandatory', help= 'If set to True then it will require to add Employee to Move Line'),
         }
 
     _defaults = {
         'tms_vehicle_mandatory' : lambda *a :False,
+        'tms_employee_mandatory' : lambda *a :False,
         }
 
 account_journal()
@@ -96,12 +98,18 @@ class account_move_line(osv.osv):
     
     def _check_mandatory_vehicle(self, cr, uid, ids, context=None):
         for record in self.browse(cr, uid, ids, context=context):
-            return (record.accouht_id.tms_vehicle_mandatory and record.vehicle_id.id) if record.accouht_id.tms_vehicle_mandatory else True
+            return (record.account_id.tms_vehicle_mandatory and record.vehicle_id.id) if record.account_id.tms_vehicle_mandatory else True
         return True
     
+    def _check_mandatory_employee(self, cr, uid, ids, context=None):
+        for record in self.browse(cr, uid, ids, context=context):
+            return (record.account_id.tms_employee_mandatory and record.employee_id.id) if record.account_id.tms_employee_mandatory else True
+        return True
 
+    
     _constraints = [
-        (_check_mandatory_vehicle, 'Error ! You have not add Vehicle to Move Line', ['vehicle_id']),        
+        (_check_mandatory_vehicle, 'Error ! You have not added Vehicle to Move Line', ['vehicle_id']),
+        (_check_mandatory_employee, 'Error ! You have not added Employee to Move Line', ['employee_id']),
         ]
 
 account_move_line()

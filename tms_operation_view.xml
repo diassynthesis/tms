@@ -1,0 +1,158 @@
+<openerp>
+<data>
+
+<!-- 
+##############################
+TMS.Operation
+##############################
+-->
+<!-- SEARCH View for tms.operation  --> 
+    <record id="view_tms_operation_search" model="ir.ui.view">
+        <field name="name">tms.operation.search</field>
+        <field name="model">tms.operation</field>
+        <field name="type">search</field>
+        <field name="arch" type="xml">
+            <search string="TMS Operations">
+                <filter string="Draft" icon="terp-gtk-media-pause" domain="[('state','=','draft')]"/>
+                <separator orientation="vertical"/>
+                <filter string="Process" icon="terp-gtk-jump-to-ltr" domain="[('state','=','process')]"/>
+                <separator orientation="vertical"/>
+                <filter string="Done" icon="terp-gtk-jump-to-ltr" domain="[('state','=','done')]"/>
+                <separator orientation="vertical"/>
+                <filter string="Cancelled" icon="terp-dialog-close" domain="[('state','=','cancel')]"/>
+                <filter string="Not Cancelled" icon="terp-stock_symbol-selection" domain="[('state','!=','cancel')]" name="not_cancelled"/>
+                <filter string="This month" icon="terp-check" domain="[('date','&gt;=', time.strftime('%%Y-%%m-01'))]" name="this_month" />
+                <newline/>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="date"/>
+                <newline/>
+                <group  expand='0' string='Group by...'>
+                    <filter string='State' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'state'}" />
+                    <filter string='Customer' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'partner_id'}" />
+                </group>
+            </search>
+        </field>
+    </record>
+
+<!-- TREE View for tms.operation  -->
+    <record model="ir.ui.view" id="view_tms_operation_tree">
+        <field name="name">tms.operation.tree</field>
+        <field name="model">tms.operation</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree string="TMS operations" colors="gray:state=='cancel';red:state=='draft';green:state=='process';">
+                <button name="action_cancel" states="draft,process,done" string="Cancel" type="object" icon="gtk-cancel"/>
+                <button name="action_process" states="draft" string="Process" type="object" icon="gtk-go-forward"/>
+                <button name="action_done" states="process" string="Done" type="object" icon="gtk-goto-last"/>
+                <field name="name" />
+                <field name="date" />
+                <field name="partner_id" />
+                <field name="date_start" />
+                <field name="date_end" />
+                <field name="state" />
+            </tree>
+        </field>
+    </record>
+	
+<!-- FORM View for tms.operation -->
+    <record id="view_tms_operation_form" model="ir.ui.view">
+        <field name="name">tms.operation.form</field>
+        <field name="model">tms.operation</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="TMS Operations" version="7.0">
+            <header>
+                <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
+                <button name="action_cancel" states="draft,process,done" string="Cancel" type="object" icon="gtk-cancel"/>
+                <button name="action_process" states="draft" string="Process" type="object" icon="gtk-go-forward" class="oe_highlight" />
+                <button name="action_done" states="process" string="Done" type="object" icon="gtk-goto-last" class="oe_highlight" />
+                <field name="state" widget="statusbar" statusbar_visible="cancel,draft,process,done"/>
+            </header>
+            <sheet>
+                <group col="4" colspan="4">
+                    <h1>
+                        <label string="Operation" colspan="1"/>
+                        <field name="name"  class="oe_inline" colspan="3"/>
+                    </h1>
+                </group>
+                <group col="4" colspan="4">
+                    <field name="date" />
+                    <field name="partner_id" />
+                    <field name="date_start" />
+                    <field name="date_end" />
+                </group>
+                <notebook colspan="4">
+                    <page string="Notes">
+                        <group>
+                            <field name="notes" nolabel="1" />
+                        </group>
+                    </page>
+                    <page string="Log Info">
+                        <group colspan="4" col="4">
+                            <field name="create_uid" readonly="1" />
+                            <field name="create_date" readonly="1" />
+                            <field name="process_by" readonly="1" />
+                            <field name="date_process" readonly="1" />
+                            <field name="done_by" readonly="1" />
+                            <field name="date_done" readonly="1" />
+                            <field name="cancelled_by" readonly="1" />
+                            <field name="date_cancelled" readonly="1" />
+                            <field name="drafted_by" readonly="1" />
+                            <field name="date_drafted" readonly="1" />
+                        </group>
+                    </page>
+                </notebook>
+            </sheet>
+            <div class="oe_chatter">
+                <field name="message_follower_ids" widget="mail_followers"/>
+                <field name="message_ids" widget="mail_thread" placeholder="Share a message..."/>
+            </div>
+            </form>
+        </field>
+    </record>
+
+    
+    <record id="view_tms_operation_gantt" model="ir.ui.view">
+        <field name="name">tms.operation.gantt</field>
+        <field name="model">tms.operation</field>
+        <field name="arch" type="xml">
+            <gantt date_start="date_start" date_stop="date_end" string="Operations" default_group_by="partner_id" color="partner_id">
+                <field name="name" />
+            </gantt>
+        </field>
+    </record>
+
+
+    <record id="view_tms_operation_calendar" model="ir.ui.view">
+        <field name="name">tms.operation.calendar</field>
+        <field name="model">tms.operation</field>
+        <field name="arch" type="xml">
+            <calendar string="Operations" color="state" date_start="date_start" date_stop="date_end">
+                <field name="name" />
+                <field name="partner_id" />
+            </calendar>
+        </field>
+    </record>
+
+        
+    
+<!-- Action for tms.operation -->
+    <record model="ir.actions.act_window" id="open_view_tms_operation_form">
+        <field name="name">TMS Operations</field>
+        <field name="res_model">tms.operation</field>
+        <field name="context">{'search_default_this_month': 1}</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form,calendar,gantt</field>
+    </record>
+
+<!-- Menu for tms.operation -->
+    <menuitem name="Operations" sequence="1"
+              parent="menu_tms_travels" 
+              id="menu_tms_operation_form" 
+              action="open_view_tms_operation_form"/>
+
+
+	
+</data>
+</openerp>
