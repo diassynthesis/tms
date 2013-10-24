@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenERP Server 7.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-24 19:12+0000\n"
-"PO-Revision-Date: 2013-10-24 14:13-0600\n"
+"POT-Creation-Date: 2013-10-24 22:37+0000\n"
+"PO-Revision-Date: 2013-10-24 17:37-0600\n"
 "Last-Translator: Israel CA <israel.cruz@hesatecnica.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -4380,7 +4380,7 @@ msgstr "Aprobado"
 #: view:tms.waybill.category:0 field:tms.waybill.category,shop_id:0
 #: field:tms.waybill.shipped_product,shop_id:0
 msgid "Shop"
-msgstr "Tienda"
+msgstr "Base"
 
 #. module: tms
 #: view:tms.route:0 view:tms.travel:0 view:tms.waybill:0
