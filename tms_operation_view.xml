@@ -69,7 +69,7 @@ TMS.Operation
                 <button name="action_done" states="process" string="Done" type="object" icon="gtk-goto-last" class="oe_highlight" />
                 <field name="state" widget="statusbar" statusbar_visible="cancel,draft,process,done"/>
             </header>
-            <sheet>
+            <!--<sheet>-->
                 <group col="4" colspan="4">
                     <h1>
                         <label string="Operation" colspan="1"/>
@@ -88,6 +88,19 @@ TMS.Operation
                             <field name="notes" nolabel="1" />
                         </group>
                     </page>
+                    <page string="Related Info">
+                        <separator string="Advances Driver" colspan="4" />
+                        <field name="advance_ids" colspan="4" />
+                        <!--<separator string="Advances Driver Helper" colspan="4" />
+                        <field name="advance_ids" colspan="4" /> -->
+                        <separator string="Fuel Vouchers" colspan="4" />
+                        <field name="fuelvoucher_ids" colspan="4" />
+                        <separator string="Waybills" colspan="4" />
+                        <field name="waybill_ids" colspan="4" />
+                        <separator string="Travel Expenses" colspan="4" />
+                        <field name="expense_line_ids" colspan="4" />
+                        
+                    </page>
                     <page string="Log Info">
                         <group colspan="4" col="4">
                             <field name="create_uid" readonly="1" />
@@ -103,7 +116,7 @@ TMS.Operation
                         </group>
                     </page>
                 </notebook>
-            </sheet>
+            <!--</sheet>-->
             <div class="oe_chatter">
                 <field name="message_follower_ids" widget="mail_followers"/>
                 <field name="message_ids" widget="mail_thread" placeholder="Share a message..."/>

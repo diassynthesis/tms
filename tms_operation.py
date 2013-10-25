@@ -63,6 +63,11 @@ class tms_operation(osv.osv):
         'date_done'     : fields.datetime('Date Confirmed', readonly=True),
         'drafted_by'    : fields.many2one('res.users', 'Drafted by', readonly=True),
         'date_drafted'  : fields.datetime('Date Drafted', readonly=True),
+        'fuelvoucher_ids':fields.one2many('tms.fuelvoucher', 'operation_id', string='Fuel Vouchers', readonly=True),
+        'advance_ids'   :fields.one2many('tms.advance', 'operation_id', string='Expense Advance', readonly=True),
+        'waybill_ids'   :fields.one2many('tms.waybill', 'operation_id', string='Waybills', readonly=True),
+        'expense_line_ids' :fields.one2many('tms.expense.line', 'operation_id', string='Travel Expense Lines', readonly=True),
+        
         }
     
     _defaults = {

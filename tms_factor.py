@@ -45,23 +45,23 @@ class tms_factor(osv.osv):
 
 
     _columns = {        
-        'name': openerp.osv.fields.char('Name', size=64, required=True),
-        'category': openerp.osv.fields.selection([
-            ('driver', 'Driver'),
-            ('customer', 'Customer'),
-            ('supplier', 'Supplier'),
-            ], 'Type', required=True),
+        'name'          : fields.char('Name', size=64, required=True),
+        'category'      : fields.selection([
+                                        ('driver', 'Driver'),
+                                        ('customer', 'Customer'),
+                                        ('supplier', 'Supplier'),
+                                        ], 'Type', required=True),
 
-        'factor_type': openerp.osv.fields.selection([
-            ('distance', 'Distance Route (Km/Mi)'),
-            ('distance_real', 'Distance Real (Km/Mi)'),
-            ('weight', 'Weight'),
-            ('travel', 'Travel'),
-            ('qty', 'Quantity'),
-            ('volume', 'Volume'),
-            ('percent', 'Income Percent'),
-            ('special', 'Special'),
-            ], 'Factor Type', required=True, help="""
+        'factor_type'   : fields.selection([
+                                        ('distance', 'Distance Route (Km/Mi)'),
+                                        ('distance_real', 'Distance Real (Km/Mi)'),
+                                        ('weight', 'Weight'),
+                                        ('travel', 'Travel'),
+                                        ('qty', 'Quantity'),
+                                        ('volume', 'Volume'),
+                                        ('percent', 'Income Percent'),
+                                        ('special', 'Special'),
+                                        ], 'Factor Type', required=True, help="""
 For next options you have to type Ranges or Fixed Amount
  - Distance Route (Km/mi)
  - Distance Real (Km/Mi)
@@ -74,39 +74,40 @@ For next option you only have to type Factor like 10.5 for 10.50%:
  - Income Percent
 For next option you only have to type Special Python Code:
  - Special
-                """),
+                        """),
         
-        'framework': openerp.osv.fields.selection([
-            ('Any', 'Any'),
-            ('Unit', 'Unit'),
-            ('Single', 'Single'),
-            ('Double', 'Double'),
-            ], 'Framework', required=True),
+        'framework'     : fields.selection([
+                                ('Any', 'Any'),
+                                ('Unit', 'Unit'),
+                                ('Single', 'Single'),
+                                ('Double', 'Double'),
+                                ], 'Framework', required=True),
 
-        'range_start'   : openerp.osv.fields.float('Range Start',   digits=(16, 4)),
-        'range_end'     : openerp.osv.fields.float('Range End',     digits=(16, 4)),
-        'factor'        : openerp.osv.fields.float('Factor',        digits=(16, 4)),
-        'fixed_amount'  : openerp.osv.fields.float('Fixed Amount',  digits=(16, 4)),
-        'mixed'         : openerp.osv.fields.boolean('Mixed'),
-        'factor_special_id': openerp.osv.fields.many2one('tms.factor.special', 'Special'),
+        'range_start'   : fields.float('Range Start',   digits=(16, 4)),
+        'range_end'     : fields.float('Range End',     digits=(16, 4)),
+        'factor'        : fields.float('Factor',        digits=(16, 4)),
+        'fixed_amount'  : fields.float('Fixed Amount',  digits=(16, 4)),
+        'mixed'         : fields.boolean('Mixed'),
+        'factor_special_id': fields.many2one('tms.factor.special', 'Special'),
 
-        'variable_amount' : openerp.osv.fields.float('Variable',  digits=(16, 4)),
-        'total_amount'  : openerp.osv.fields.function(_get_total, method=True, digits_compute=dp.get_precision('Sale Price'), string='Total', type='float',
+        'variable_amount' : fields.float('Variable',  digits=(16, 4)),
+        'total_amount'  : fields.function(_get_total, method=True, digits_compute=dp.get_precision('Sale Price'), string='Total', type='float',
                                             store=True),
 
-#        'waybill_ids'   : openerp.osv.fields.many2many('tms.waybill', 'tms_factor_waybill_rel', 'factor_id', 'waybill_id', 'Waybills with this factor'), 
-#        'expense_ids'   : openerp.osv.fields.many2many('tms.expense', 'tms_factor_expense_rel', 'factor_id', 'expense_id', 'Expenses with this factor'), 
-#        'route_ids'     : openerp.osv.fields.many2many('tms.route',   'tms_factor_route_rel',   'factor_id', 'route_id',   'Routes with this factor'), 
-#        'travel_ids'    : openerp.osv.fields.many2many('tms.travel',  'tms_factor_travel_rel',  'factor_id', 'travel_id',  'Travels with this factor'), 
+#        'waybill_ids'   : fields.many2many('tms.waybill', 'tms_factor_waybill_rel', 'factor_id', 'waybill_id', 'Waybills with this factor'), 
+#        'expense_ids'   : fields.many2many('tms.expense', 'tms_factor_expense_rel', 'factor_id', 'expense_id', 'Expenses with this factor'), 
+#        'route_ids'     : fields.many2many('tms.route',   'tms_factor_route_rel',   'factor_id', 'route_id',   'Routes with this factor'), 
+#        'travel_ids'    : fields.many2many('tms.travel',  'tms_factor_travel_rel',  'factor_id', 'travel_id',  'Travels with this factor'), 
 
-        'waybill_id': openerp.osv.fields.many2one('tms.waybill', 'Waybill', required=False, ondelete='cascade'), #, select=True, readonly=True),
-        'expense_id': openerp.osv.fields.many2one('tms.expense', 'Expense', required=False, ondelete='cascade'), #, select=True, readonly=True),
-        'route_id': openerp.osv.fields.many2one('tms.route',   'Route', required=False, ondelete='cascade'), #, select=True, readonly=True),
-        'travel_id': openerp.osv.fields.many2one('tms.travel', 'Travel', required=False, ondelete='cascade'), #, select=True, readonly=True),
-#        'agreement_id': openerp.osv.fields.many2one('tms.negotiation', 'Negotiation', required=False, ondelete='cascade'),# select=True, readonly=True),
-        'sequence': openerp.osv.fields.integer('Sequence', help="Gives the sequence calculation for these factors."),
-        'notes': openerp.osv.fields.text('Notes'),
-        'control' : openerp.osv.fields.boolean('Control'),
+        'waybill_id'    : fields.many2one('tms.waybill', 'Waybill', required=False, ondelete='cascade'), #, select=True, readonly=True),
+        'expense_id'    : fields.many2one('tms.expense', 'Expense', required=False, ondelete='cascade'), #, select=True, readonly=True),
+        'route_id'      : fields.many2one('tms.route',   'Route', required=False, ondelete='cascade'), #, select=True, readonly=True),
+        'travel_id'     : fields.many2one('tms.travel', 'Travel', required=False, ondelete='cascade'), #, select=True, readonly=True),
+#        'agreement_id': fields.many2one('tms.negotiation', 'Negotiation', required=False, ondelete='cascade'),# select=True, readonly=True),
+        'sequence'      : fields.integer('Sequence', help="Gives the sequence calculation for these factors."),
+        'notes'         : fields.text('Notes'),
+        'control'       : fields.boolean('Control'),
+        'driver_helper' : fields.boolean('For Driver Helper'),
     }
 
     _defaults = {
@@ -133,26 +134,26 @@ For next option you only have to type Special Python Code:
             }
         return {'value': {'name': values[factor_type]}}
 
-    def calculate(self, cr, uid, record_type, record_ids, calc_type=None, travel_ids=False, context=None):
+    def calculate(self, cr, uid, record_type, record_ids, calc_type=None, travel_ids=False, driver_helper=False, context=None):
         result = 0.0
 
         if record_type == 'waybill':
-            print "==================================="
-            print "Calculando"
+            #print "==================================="
+            #print "Calculando"
             waybill_obj = self.pool.get('tms.waybill')
-            for waybill in waybill_obj.browse(cr, uid, record_ids, context=context):
+            for waybill in waybill_obj.browse(cr, uid, record_ids, context=context):  # No soporta segundo operador
                 print "Recorriendo Waybills"
                 for factor in (waybill.waybill_customer_factor if calc_type=='client' else waybill.expense_driver_factor if calc_type=='driver' else waybill.waybill_supplier_factor):
                     print "Recorriendo factors"
                     print "Tipo de factor: ", factor.factor_type
-                    if factor.factor_type in ('distance', 'distance_real'):
+                    if factor.factor_type in ('distance', 'distance_real'): 
                         print "Tipo Distancia"
                         if not waybill.travel_id.id:
                             raise osv.except_osv(
-                                _('Could calculate Freight amount for Waybill !'),
+                                _('Could calculate Amount for Waybill !'),
                                 _('Waybill %s is not assigned to a Travel') % (waybill.name))
                         print waybill.travel_id.route_id.distance
-                        x = (float(waybill.travel_id.route_id.distance) if factor.factor_type=='distance' else float(waybill.travel_id.route_id.distance_extraction)) if factor.framework == 'Any' or factor.framework == waybill.travel_id.framework else 0.0
+                        x = (float(waybill.travel_id.route_id.distance) if factor.factor_type=='distance' else float(waybill.travel_id.distance_extraction)) if factor.framework == 'Any' or factor.framework == waybill.travel_id.framework else 0.0
 
                     elif factor.factor_type == 'weight':
                         print "waybill.product_weight", waybill.product_weight
@@ -188,25 +189,32 @@ For next option you only have to type Special Python Code:
                     elif factor.factor_type == 'special':
                         exec factor.factor_special_id.python_code
 
-                    result += ((factor.fixed_amount if (factor.mixed or factor.factor_type=='travel') else 0.0) + (factor.factor * x if factor.factor_type != 'special' else x)) if ((x >= factor.range_start and x <= factor.range_end) or (factor.range_start == factor.range_end == 0.0)) else 0.0
-                    print "factor.fixed_amount : ", factor.fixed_amount
-                    print "factor.mixed : ", factor.mixed
-                    print "factor.factor_type : ", factor.factor_type
-                    print "factor.factor : ", factor.factor
-                    print "x : ", x
+                    
+                    result += ((factor.fixed_amount if (factor.mixed or factor.factor_type=='travel') else 0.0)+ (factor.factor * x if factor.factor_type != 'special' else x)) if (((x >= factor.range_start and x <= factor.range_end) or (factor.range_start == factor.range_end == 0.0)) and factor.driver_helper==driver_helper) else 0.0
+                    #print "factor.fixed_amount : ", factor.fixed_amount
+                    #print "factor.mixed : ", factor.mixed
+                    #print "factor.factor_type : ", factor.factor_type
+                    #print "factor.factor : ", factor.factor
+                    #print "x : ", x
 
         elif record_type == 'expense' and travel_ids:
+            print "====================="
+            print "Tipo expense"
+            print "travel_ids: ", travel_ids
+            print "driver_helper: ", driver_helper
+            print "====================="
             travel_obj = self.pool.get('tms.travel')
             for travel in travel_obj.browse(cr, uid, travel_ids, context=context):
                 res1 = res2 = weight = qty = volume = x = 0.0
                 if travel.waybill_ids:
                     for waybill in travel.waybill_ids:
-                        res1 += self.calculate(cr, uid, 'waybill', [waybill.id], 'driver', travel_ids=False)
+                        res1 += self.calculate(cr, uid, 'waybill', [waybill.id], 'driver', travel_ids=False, driver_helper=driver_helper)
                         weight  += waybill.product_weight
                         qty     += waybill.product_qty
                         volume  += waybill.product_volume
                 if not res1:
-                    for factor in travel.expense_driver_factor:                        
+                    for factor in travel.expense_driver_factor:
+                        print "= = = = = = = = = = ="
                         if factor.factor_type == 'distance':
                             x = (float(travel.route_id.distance) if factor.factor_type=='distance' else float(travel.route_id.distance_extraction)) if factor.framework == 'Any' or factor.framework == travel.framework else 0.0
 
@@ -237,8 +245,17 @@ For next option you only have to type Special Python Code:
                         elif factor.factor_type == 'special':
                             exec factor.factor_special_id.python_code
                             
-                        res2 = ((factor.fixed_amount if (factor.mixed or factor.factor_type=='travel') else 0.0) + (factor.factor * x if factor.factor_type != 'special' else x)) if ((x >= factor.range_start and x <= factor.range_end) or (factor.range_start == factor.range_end == 0.0)) else 0.0
+                        res2 += ((factor.fixed_amount if (factor.mixed or factor.factor_type=='travel') else 0.0) + (factor.factor * x if factor.factor_type != 'special' else x)) if (((x >= factor.range_start and x <= factor.range_end) or (factor.range_start == factor.range_end == 0.0)) and factor.driver_helper==driver_helper) else 0.0
+                        print "factor.fixed_amount: ", factor.fixed_amount
+                        print "factor.factor_type: ", factor.factor_type
+                        print "factor.factor: ", factor.factor
+                        print "factor.driver_helper: ", factor.driver_helper
+                        print "res1: ", res1
+                        print "res2: ", res2
+                        print "= = = = = = = = = = ="
+                        
                 result += res1 + res2
+                print "= = = = = = = = = = ="
         print "result :", result
 
         return result
@@ -252,13 +269,13 @@ class tms_factor_special(osv.osv):
 
 
     _columns = {
-        'name'            : openerp.osv.fields.char('Special Name', size=200, required=True),
-        'active'          : openerp.osv.fields.boolean('Active'),
-        'date'            : openerp.osv.fields.date('Date', required=True),
-        'description'     : openerp.osv.fields.text('Description'),
-        'python_code'     : openerp.osv.fields.text('Python Code', required=True),
-        'factor_ids'      : openerp.osv.fields.one2many('tms.factor', 'factor_special_id', 'Factor'),
-        'type'            : openerp.osv.fields.selection([
+        'name'            : fields.char('Special Name', size=200, required=True),
+        'active'          : fields.boolean('Active'),
+        'date'            : fields.date('Date', required=True),
+        'description'     : fields.text('Description'),
+        'python_code'     : fields.text('Python Code', required=True),
+        'factor_ids'      : fields.one2many('tms.factor', 'factor_special_id', 'Factor'),
+        'type'            : fields.selection([
                 ('salary', 'Driver Salary'),
                 ('salary_distribution', 'Salary Distribution'),
                 ('retention', 'Salary Retentions & Discounts'),
@@ -270,7 +287,7 @@ Salary Retentions & Discounts => Use this for Driver Tax retentions
 Supplier => Use this to calculate Supplier Travel Payment
                 """),
 
-        'company_id'      : openerp.osv.fields.many2one('res.company', 'Company', required=False),
+        'company_id'      : fields.many2one('res.company', 'Company', required=False),
         }
     
     _defaults = {
@@ -298,11 +315,11 @@ class tms_waybill(osv.osv):
 
     _columns = {
 
-        'waybill_customer_factor': openerp.osv.fields.one2many('tms.factor', 'waybill_id', 'Waybill Customer Charge Factors', domain=[('category', '=', 'customer')],
+        'waybill_customer_factor': fields.one2many('tms.factor', 'waybill_id', 'Waybill Customer Charge Factors', domain=[('category', '=', 'customer')],
                                 readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}), 
-        'waybill_supplier_factor': openerp.osv.fields.one2many('tms.factor', 'waybill_id', 'Waybill Supplier Payment Factors', domain=[('category', '=', 'supplier')],
+        'waybill_supplier_factor': fields.one2many('tms.factor', 'waybill_id', 'Waybill Supplier Payment Factors', domain=[('category', '=', 'supplier')],
                                 readonly=False, states={'cancel': [('readonly', True)],'closed':[('readonly',True)]}),
-        'expense_driver_factor': openerp.osv.fields.one2many('tms.factor', 'waybill_id', 'Travel Driver Payment Factors', domain=[('category', '=', 'driver')],
+        'expense_driver_factor': fields.one2many('tms.factor', 'waybill_id', 'Travel Driver Payment Factors', domain=[('category', '=', 'driver')],
                                 readonly=False, states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
 
     }
@@ -313,7 +330,7 @@ class tms_travel(osv.osv):
     _inherit = 'tms.travel'
 
     _columns = {
-        'expense_driver_factor': openerp.osv.fields.one2many('tms.factor', 'travel_id', 'Travel Driver Payment Factors', domain=[('category', '=', 'driver')],
+        'expense_driver_factor': fields.one2many('tms.factor', 'travel_id', 'Travel Driver Payment Factors', domain=[('category', '=', 'driver')],
                                 readonly=False, states={'cancel':[('readonly',True)], 'done':[('readonly',True)]}),
 
     }
@@ -324,7 +341,7 @@ class tms_route(osv.osv):
     _inherit = 'tms.route'
 
     _columns = {
-        'expense_driver_factor': openerp.osv.fields.one2many('tms.factor', 'route_id', 'Travel Driver Payment Factors', domain=[('category', '=', 'driver')],
+        'expense_driver_factor': fields.one2many('tms.factor', 'route_id', 'Travel Driver Payment Factors', domain=[('category', '=', 'driver')],
                                 readonly=False),
 
     }

@@ -209,6 +209,7 @@ class tms_waybill(osv.osv):
         'dolly_id'          : fields.related('travel_id', 'dolly_id', type='many2one', relation='fleet.vehicle', string='Dolly', store=True, readonly=True),                
         'trailer2_id'       : fields.related('travel_id', 'trailer2_id', type='many2one', relation='fleet.vehicle', string='Trailer 2', store=True, readonly=True),                
         'employee_id'       : fields.related('travel_id', 'employee_id', type='many2one', relation='hr.employee', string='Driver', store=True, readonly=True),                
+        'employee2_id'      : fields.related('travel_id', 'employee2_id', type='many2one', relation='hr.employee', string='Driver Helper', store=True, readonly=True),                
         'route_id'          : fields.related('travel_id', 'route_id', type='many2one', relation='tms.route', string='Route', store=True, readonly=True),                
         'departure_id'      : fields.related('route_id', 'departure_id', type='many2one', relation='tms.place', string='Departure', store=True, readonly=True),                
         'arrival_id'        : fields.related('route_id', 'arrival_id', type='many2one', relation='tms.place', string='Arrival', store=True, readonly=True),                

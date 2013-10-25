@@ -24,6 +24,7 @@ TMS.FACTOR
 	          <field name="mixed"   />
 	          <field name="framework" />
 	          <field name="sequence" />
+            <field name="driver_helper" />
 	        </tree>
           </field>
         </record>
@@ -58,7 +59,7 @@ TMS.FACTOR
 	            <field name="factor_special_id"  colspan="4"
 		               attrs="{'invisible':[('factor_type','!=','special')],'required':[('factor_type','=','special')]}"/>
 	            <field name="sequence" />
-	            <newline />
+	            <field name="driver_helper" />
 	            <field name="notes" colspan="4" />
               </group>
 	        </form>

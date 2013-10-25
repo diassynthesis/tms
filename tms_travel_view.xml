@@ -71,12 +71,7 @@ TMS.travel
         <field name="model">tms.travel</field>
 		<field name="type">tree</field>
 		<field name="arch" type="xml">
-            <tree string="Travels" colors="gray:state=='cancel';red:state=='draft';green:state=='progress';blue:state=='done';">
-<!--                <button name="action_cancel" states="draft,progress,done" string="Cancel Travel" type="object" icon="gtk-cancel"/> 
-                <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/> -->
-                <button name="action_dispatch" states="draft" string="Dispatch Travel" type="object" icon="gtk-go-forward"/>
-                <button name="action_end" states="progress" string="End Travel" type="object" icon="gtk-goto-last"/>
-                <field name="state" />
+            <tree string="Travels" colors="gray:state=='cancel';red:state=='draft';green:state=='progress';blue:state=='done';">                
                 <field name="name" />
                 <field name="date" />
                 <field name="unit_id" string="Unit" />
@@ -85,6 +80,7 @@ TMS.travel
                 <field name="trailer2_id" />
                 <field name="framework" invisible="1"/> 
                 <field name="employee_id" />
+                <field name="employee2_id" />
                 <field name="route_id" />
                 <field name="departure" invisible="1"/>
                 <field name="arrival" invisible="1"/>
@@ -92,6 +88,11 @@ TMS.travel
                 <field name="date_end" string="End Sched." invisible="1"/>
                 <field name="shop_id" invisible="1"/>
                 <field name="user_id" invisible="1"/>
+                <field name="state" />
+                <!--                <button name="action_cancel" states="draft,progress,done" string="Cancel Travel" type="object" icon="gtk-cancel"/> 
+                <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/> -->
+                <button name="action_dispatch" states="draft" string="Dispatch Travel" type="object" icon="gtk-go-forward"/>
+                <button name="action_end" states="progress" string="End Travel" type="object" icon="gtk-goto-last"/>
 		    </tree>
 		</field>
 	</record>
@@ -138,26 +139,28 @@ TMS.travel
                             <group col="2" colspan="2">
                               <field name="supplier_unit" attrs="{'invisible':[('supplier_unit','!=',True)]}" />
                               <field name="supplier_id" string="Outsourced with" attrs="{'invisible':[('supplier_unit','!=',True)]}" />
-                              <field name="employee_id" context="{'default_tms_category': 'driver'}"/>
-                              <field name="employee2_id"  context="{'default_tms_category': 'driver'}"/>
+                              <field name="employee_id" context="{'default_tms_category': 'driver'}" />
+                              <field name="employee2_id"  context="{'default_tms_category': 'driver'}" />
                             </group>
                             <field name="route_id" on_change="onchange_route_id(route_id, unit_id, trailer1_id, dolly_id, trailer2_id)" colspan="4"/>
                             <field name="departure" readonly="1" />
                             <field name="arrival" readonly="1" />
-			    <field name="user_id" />
+			                 <field name="user_id" />
                         </group>                    
                         <notebook colspan="4">
                             <page string="Fuel Vouchers" attrs="{'invisible':[('supplier_unit','=',True)]}">
                                 <group>
-                                    <field name="fuelvoucher_ids" nolabel="1" context="{'default_travel_id': active_id, 'default_operation_id' : operation_id}"  >
+                                    <field name="fuelvoucher_ids" nolabel="1" 
+                                             context="{'default_travel_id': active_id, 'default_operation_id' : operation_id, 'default_employee_id': employee_id, 'default_employee1_id': employee_id,'default_employee2_id': employee2_id,}" >
                                         <tree string="TMS Fuel Vouchers">
-                                            <field name="state" />
                                             <field name="name" />
                                             <field name="date" />
+                                            <field name="employee_id" />
                                             <field name="partner_id" />
                                             <field name="product_uom_qty" sum="Quatity"/>
                                             <field name="product_uom" />
                                             <field name="price_total" sum="Total"/>
+                                            <field name="state" />
                                         </tree>
                                     </field>
 
@@ -165,19 +168,22 @@ TMS.travel
                             </page>                        
                             <page string="Advances" attrs="{'invisible':[('supplier_unit','=',True)]}">
                                 <group>
-                            	    <field name="advance_ids" nolabel="1"  context="{'default_travel_id': active_id, 'default_operation_id' : operation_id}" 
-                                           attrs="{'readonly':[('supplier_unit','=',True)]}">
+                            	    <field name="advance_ids" nolabel="1"  
+                                           context="{'default_travel_id': active_id, 'default_operation_id' : operation_id, 'default_employee_id': employee_id, 'default_employee1_id': employee_id,'default_employee2_id': employee2_id,}" 
+                                           attrs="{'readonly':[('supplier_unit','=',True)]}"
+                                           domain="[('state','!=','cancel')]">
                                         <tree string="TMS Advances">
-                                            <field name="state" />
                                             <field name="name" />
                                             <field name="date" />
+                                            <field name="employee_id" />
                                             <field name="product_id" />
-                                            <field name="product_uom_qty" />
+                                            <!--<field name="product_uom_qty" />
                                             <field name="subtotal" sum="SubTotal" />
-                                            <field name="tax_amount" sum="Tax Amount"/>
+                                            <field name="tax_amount" sum="Tax Amount"/>-->
                                             <field name="total" sum="Total"/>
                                             <field name="auto_expense" />
                                             <field name="paid" />
+                                            <field name="state" />
                                         </tree>
                                     </field>
                                 </group>
@@ -261,6 +267,8 @@ TMS.travel
                                     <field name="date_cancelled" readonly="1" />
                                     <field name="drafted_by" readonly="1" />
                                     <field name="date_drafted" readonly="1" />
+                                    <field name="expense_id"/>
+                                    <field name="expense2_id"/>
                                 </group>
                             </page>
                         </notebook>

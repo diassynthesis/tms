@@ -89,9 +89,11 @@ class tms_advance(osv.osv):
         'name'          : fields.char('Anticipo', size=64, required=False),
         'state'         : fields.selection([('draft','Draft'), ('approved','Approved'), ('confirmed','Confirmed'), ('closed','Closed'), ('cancel','Cancelled')], 'State', readonly=True),
         'date'          : fields.date('Date', states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}, required=True),
-        'travel_id'     :fields.many2one('tms.travel', 'Travel', required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
+        'travel_id'     : fields.many2one('tms.travel', 'Travel', required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),        
         'unit_id'       : fields.related('travel_id', 'unit_id', type='many2one', relation='fleet.vehicle', string='Unit', store=True, readonly=True),                
-        'employee_id'   : fields.related('travel_id', 'employee_id', type='many2one', relation='hr.employee', string='Driver', store=True, readonly=True),                
+        'employee1_id'  : fields.related('travel_id', 'employee_id', type='many2one', relation='hr.employee', string='Driver', store=True, readonly=True),
+        'employee2_id'  : fields.related('travel_id', 'employee2_id', type='many2one', relation='hr.employee', string='Driver Helper', store=True, readonly=True),
+        'employee_id'   : fields.many2one('hr.employee', 'Driver', states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}, required=True),
         'shop_id'       : fields.related('travel_id', 'shop_id', type='many2one', relation='sale.shop', string='Shop', store=True, readonly=True),
         'product_id'    : fields.many2one('product.product', 'Product', domain=[('purchase_ok', '=', 1),('tms_category','=','real_expense')],  required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
         'product_uom_qty': fields.float('Quantity', digits=(16, 4), required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
@@ -120,14 +122,18 @@ class tms_advance(osv.osv):
         'paid'          : fields.function(_paid, method=True, string='Paid', type='boolean', multi=False,
                                           store = {'account.move.reconcile': (_get_move_line_from_reconcile, None, 50)}),
         'currency_id'   : fields.many2one('res.currency', 'Currency', required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
-        'auto_expense'  : fields.boolean('Auto Expense', help="Check this if you want this product and amount to be automatically created when Travel Expense Record is created."),
+        'auto_expense'  : fields.boolean('Auto Expense', 
+                                            help="Check this if you want this product and amount to be automatically created when Travel Expense Record is created.",
+                                            states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
+        'driver_helper' : fields.boolean('For Driver Helper', help="Check this if you want to give this advance to Driver Helper.",states={'cancel':[('readonly',True)], 'approved':[('readonly',True)], 'confirmed':[('readonly',True)], 'closed':[('readonly',True)]}),
+        
         }
     
     _defaults = {
-        'date': lambda *a: time.strftime(DEFAULT_SERVER_DATE_FORMAT),
-        'state': lambda *a: 'draft',
-        'currency_id': lambda self,cr,uid,c: self.pool.get('res.users').browse(cr, uid, uid, c).company_id.currency_id.id,
-        'product_uom_qty': 1,
+        'date'              : lambda *a: time.strftime(DEFAULT_SERVER_DATE_FORMAT),
+        'state'             : lambda *a: 'draft',
+        'currency_id'       : lambda self,cr,uid,c: self.pool.get('res.users').browse(cr, uid, uid, c).company_id.currency_id.id,
+        'product_uom_qty'   : 1,
         }
     
     _sql_constraints = [
@@ -168,15 +174,32 @@ class tms_advance(osv.osv):
         return {'value': {'product_uom' : prod[0].uom_id.id}}
 
 
-
+    def on_change_driver_helper(self, cr, uid, ids, driver_helper, employee1_id, employee2_id):
+        return {'value': {'employee_id' : employee2_id,}} if driver_helper else {'value': {'employee_id' : employee1_id,}}
+        
+    
+    def on_change_driver(self, cr, uid, ids, employee_id, employee1_id, employee2_id):
+        return {'value': {'driver_helper' : (employee_id == employee2_id),}}
+    
+    
     def on_change_travel_id(self, cr, uid, ids, travel_id):
         res = {}
         if not travel_id:
-            return {}
+            return {'value': {  'employee_id'   : False,
+                                'employee1_id'  : False,
+                                'employee2_id'  : False,
+                                'unit_id'       : False,
+                                'operation_id'  : False,
+                                'shop_id'       : False,
+                            }
+                    }
         travel = self.pool.get('tms.travel').browse(cr, uid, [travel_id], context=None)[0]
-        return {'value': {'employee_id' : travel.employee_id.id,
-                          'unit_id' : travel.unit_id.id,  
-                          'operation_id' : travel.operation_id.id,  
+        return {'value': {'employee_id'   : travel.employee_id.id,
+                          'employee1_id'  : travel.employee_id.id,
+                          'employee2_id'  : travel.employee2_id.id,
+                          'unit_id'       : travel.unit_id.id,  
+                          'operation_id'  : travel.operation_id.id,  
+                          'shop_id'       : travel.shop_id.id,  
                           }
                 }
 

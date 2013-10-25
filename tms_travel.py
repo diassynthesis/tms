@@ -142,7 +142,7 @@ class tms_travel(osv.osv):
         'dolly_id'      : fields.many2one('fleet.vehicle', 'Dolly', required=False,        domain=[('fleet_type', '=', 'dolly')],   states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
         'trailer2_id'   : fields.many2one('fleet.vehicle', 'Trailer2', required=False,  domain=[('fleet_type', '=', 'trailer')], states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
         'employee_id'   : fields.many2one('hr.employee', 'Driver', required=True, domain=[('tms_category', '=', 'driver')], states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
-        'employee2_id'  : fields.many2one('hr.employee', 'Driver 2', required=False, domain=[('tms_category', '=', 'driver')], states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
+        'employee2_id'  : fields.many2one('hr.employee', 'Driver Helper', required=False, domain=[('tms_category', '=', 'driver')], states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
         'date'          : fields.datetime('Date registered',required=True, states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
         'date_start'    : fields.datetime('Start Sched',required=False, states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
         'date_end'      : fields.datetime('End Sched',required=False, states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
@@ -172,7 +172,8 @@ class tms_travel(osv.osv):
 #        'loaded': fields.boolean('Cargado'),
         'notes': fields.text('Descripción', required=False, states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
 
-        'expense_id': fields.many2one('tms.expense', 'Travel Expenses Record', required=False),
+        #'expense_id': fields.many2one('tms.expense', 'Travel Expenses Record', required=False),
+        #'expense2_id': fields.many2one('tms.expense', 'Travel Expenses Record for Driver Helper', required=False),
         'fuelvoucher_ids':fields.one2many('tms.fuelvoucher', 'travel_id', string='Fuel Vouchers', states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
         'advance_ids':fields.one2many('tms.advance', 'travel_id', string='Advances', states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
         'framework': fields.function(_get_framework, string='Framework', method=True, store=True, type='char', size=15, multi='framework'),
@@ -212,6 +213,33 @@ class tms_travel(osv.osv):
     _order = "date desc"
         
 
+        
+    def _check_drivers_change(self, cr, uid, ids, context=None):         
+        for record in self.browse(cr, uid, ids, context=context):
+            travel_id = record.id
+            employee1_id = record.employee_id.id if record.employee_id.id else 0
+            employee2_id = record.employee2_id.id if record.employee2_id.id else 0
+            cr.execute("""select id from tms_advance where travel_id = %s and state not in ('cancel') and employee_id <> %s and not driver_helper
+                            union 
+                            select id from tms_advance where travel_id = %s and state not in ('cancel') and employee_id <> %s and driver_helper
+                            union
+                            select id from tms_fuelvoucher where travel_id = %s and state not in ('cancel') and employee_id <> %s and not driver_helper
+                            union 
+                            select id from tms_fuelvoucher where travel_id = %s and state not in ('cancel') and employee_id <> %s and driver_helper
+                            """, 
+                       (travel_id, employee1_id, travel_id, employee2_id,travel_id, employee1_id, travel_id, employee2_id)
+                       )
+            data_ids = cr.fetchall()
+            print data_ids
+            return (not len(data_ids))
+
+    _constraints = [
+        (_check_drivers_change, 'You can not modify Driver and/or Driver Helper if there are linked records (Fuel vouchers, Advances, etc).', ['employee_id', 'employee2_id']),
+    ]
+
+        
+        
+        
     def onchange_kit_id(self, cr, uid, ids, kit_id):
         if not kit_id:
             return {}        
@@ -239,7 +267,9 @@ class tms_travel(osv.osv):
                             'factor_special_id': factor.factor_special_id.id,
                             'travel_id'     : ids[0],
                             'control'       : True,
+                            'driver_helper' : factor.driver_helper,
                             }
+                print "x: ", x
                 factor_obj.create(cr, uid, x)
         return True
 
@@ -271,6 +301,8 @@ class tms_travel(osv.osv):
                         'fixed_amount'  : factor.fixed_amount,
                         'mixed'         : factor.mixed,
                         'factor_special_id': factor.factor_special_id.id,
+                        'control'       : True,
+                        'driver_helper' : factor.driver_helper,
 #                        'travel_id'     : ids[0],
                         })
             factors.append(x)

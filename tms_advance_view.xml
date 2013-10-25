@@ -25,6 +25,8 @@ TMS.ADVANCE
           <filter string="Not Cancelled" icon="terp-stock_symbol-selection" domain="[('state','!=','cancel')]" name="not_cancelled"/>
           <filter string="Not Closed" icon="terp-stock_symbol-selection" domain="[('state','!=','closed')]" name="not_closed"/>
           <filter string="From this month" icon="terp-check" domain="[('date','&gt;=', time.strftime('%%Y-%%m-01'))]" name="this_month" />
+          <filter string="For Driver" icon="terp-check" domain="[('driver_helper','=', 0)]"  />
+          <filter string="For Driver Helper" icon="terp-check" domain="[('driver_helper','=', 1)]"  />
           <newline/>
           <field name="date"/>
           <field name="name"/>
@@ -37,12 +39,13 @@ TMS.ADVANCE
           <group  expand='0' string='Group by...'>
             <filter string='travel_id' icon="terp-gdu-smart-failing" domain="[]" context="{'group_by' : 'travel_id'}" />
             <filter string='Unit' icon="terp-gdu-smart-failing" domain="[]" context="{'group_by' : 'unit_id'}" />
-            <filter string='Driver 1' icon="terp-personal" domain="[]" context="{'group_by' : 'employee_id'}" />
+            <filter string='Driver' icon="terp-personal" domain="[]" context="{'group_by' : 'employee_id'}" />
             <separator orientation="vertical"/>                                                                
             <filter string='State' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'state'}" />
             <separator orientation="vertical"/>                                                                
             <filter string='Product' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'product_id'}" />
             <filter string='Operation' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'operation_id'}" />
+            <filter string='For Driver Helper' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'driver_helper'}" />
           </group>
         </search>
       </field>
@@ -55,24 +58,25 @@ TMS.ADVANCE
       <field name="type">tree</field>
       <field name="arch" type="xml">
         <tree string="TMS Advances" colors="gray:state=='cancel';red:state=='draft';green:state=='approved';blue:state=='confirmed';">
-          <!-- <button name="action_cancel" states="draft,approved,confirmed" string="Cancel" type="object" icon="gtk-cancel"/> -->
-          <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
-          <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-goto-last"/>
-          <field name="state" />
-          <field name="name" />
-          <field name="date" />
-          <field name="travel_id" />
-          <field name="unit_id" />
-          <field name="employee_id" />
-          <field name="product_id" />
-	  <field name="product_uom_qty" />
-	  <field name="subtotal" sum="SubTotal" />
-	  <field name="tax_amount" sum="Tax Amount"/>
-	  <field name="total" sum="Total"/>
-          <field name="auto_expense" />
-          <field name="paid" />
-          <field name="operation_id" invisible="1"/>    
-	</tree>
+            <field name="name" />
+            <field name="date" />
+            <field name="travel_id" />
+            <field name="unit_id" />
+            <field name="employee_id" />
+            <field name="product_id" />
+            <field name="product_uom_qty" />
+            <field name="subtotal" sum="SubTotal" />
+            <field name="tax_amount" sum="Tax Amount"/>
+            <field name="total" sum="Total"/>
+            <field name="auto_expense" />
+            <field name="paid" />
+            <field name="operation_id" invisible="1"/>
+            <field name="state" />
+            <!-- <button name="action_cancel" states="draft,approved,confirmed" string="Cancel" type="object" icon="gtk-cancel"/> -->
+            <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
+            <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-goto-last"/>            
+
+	   </tree>
       </field>
     </record>
 	
@@ -95,32 +99,37 @@ TMS.ADVANCE
               <label string="TMS Advance"/>
               <field name="name" class="oe_inline" readonly="1"/>
             </h1>
-            <group col="4" colspan="4">
-              <field name="shop_id" />
-              <field name="date" />
-              <field name="travel_id" domain="[('state','!=','cancel'),('state','!=','closed'), ('supplier_unit', '=', False)]" on_change="on_change_travel_id(travel_id)"/>
-              <field name="operation_id" domain="[('state','=','process')]" />
-              <field name="unit_id" readonly="1"/>
-              <field name="employee_id" readonly="1"/>
-              <group colspan="2">
-		<field name="product_id" on_change="on_change_product_id(product_id)"
-		       context="{'default_tms_category': 'real_expense', 'default_type': 'service', 'default_procure_method':'make_to_stock', 'default_supply_method': 'buy'}"/>
-		<field name="product_uom_qty" class="oe_text_right" on_change="on_change_price_total(product_id, product_uom_qty, total)" />
-		<field name="product_uom" invisible="1"/>
-		<field name="price_unit_control" class="oe_text_right" widget='monetary' />
-		<field name="price_unit" invisible="1"/>
-		<field name="subtotal" readonly="1"  
-                       class="oe_text_right" widget='monetary' options="{'currency_field': 'currency_id'}"/>
-		<field name="tax_amount" readonly="1"  
-                       class="oe_text_right" widget='monetary' options="{'currency_field': 'currency_id'}"/>
-		<field name="total" on_change="on_change_price_total(product_id, product_uom_qty, total)" 
-                       class="oe_text_right" widget='monetary' options="{'currency_field': 'currency_id'}"/>
-                <field name="currency_id" />
-                <field name="auto_expense" />
-		
-              </group>
+            <group colspan="4" col="4">
+                <field name="employee1_id" invisible="1"/>
+                <field name="employee2_id" invisible="1"/>
+                <field name="shop_id" />
+                <field name="date" />
+                <field name="travel_id" domain="[('state','!=','cancel'),('state','!=','closed'), ('supplier_unit', '=', False)]" on_change="on_change_travel_id(travel_id)"/>
+                <field name="operation_id" domain="[('state','=','process')]" />
+                <field name="unit_id" readonly="1"/>
+                <field name="employee_id" domain="[('id','in',(employee1_id, employee2_id))]"
+                                        on_change="on_change_driver(employee_id,employee1_id, employee2_id)"  />
+                <separator string=" " colspan="2"/>
+                <field name="driver_helper" on_change="on_change_driver_helper(driver_helper, employee1_id, employee2_id)" 
+                     attrs="{'invisible':['|', ('employee2_id','=',False),('travel_id', '=', False)]}" />
+                
+                <group colspan="2" col="2">
+                    <field name="product_id" on_change="on_change_product_id(product_id)"
+                           context="{'default_tms_category': 'real_expense', 'default_type': 'service', 'default_procure_method':'make_to_stock', 'default_supply_method': 'buy'}"/>
+                    <field name="product_uom_qty" class="oe_text_right" on_change="on_change_price_total(product_id, product_uom_qty, total)" />
+                    <field name="product_uom" invisible="1"/>
+                    <field name="price_unit_control" class="oe_text_right" widget='monetary' />
+                    <field name="price_unit" invisible="1"/>
+                    <field name="subtotal" readonly="1"  
+                                   class="oe_text_right" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+                    <field name="tax_amount" readonly="1"  
+                                   class="oe_text_right" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+                    <field name="total" on_change="on_change_price_total(product_id, product_uom_qty, total)" 
+                                   class="oe_text_right" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+                    <field name="currency_id" />
+                    <field name="auto_expense" />		
+                </group>
             </group>
-                    
             <notebook colspan="4">
               <page string="Notes">
                 <group>
@@ -143,6 +152,7 @@ TMS.ADVANCE
                   <field name="date_drafted" readonly="1" />
                   <field name="move_id"/>
                   <field name="paid"/> 
+                  <field name="expense_id"/>
                 </group>
 		
          

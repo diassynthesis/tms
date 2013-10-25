@@ -65,7 +65,7 @@ class tms_fuelvoucher(osv.osv):
 
             subtotal = (record.tax_amount / tax_factor) if tax_factor <> 0.0 else record.price_total
             special_tax_amount = (record.price_total - subtotal - record.tax_amount) if tax_factor else 0.0
-            price_unit = subtotal / record.product_uom_qty
+            price_unit = subtotal / (record.product_uom_qty or 1.0)
             print "price_unit: ", price_unit 
             res[record.id] =   {'price_subtotal': subtotal,
                                 'special_tax_amount': special_tax_amount,
@@ -79,10 +79,13 @@ class tms_fuelvoucher(osv.osv):
         'name'          : fields.char('Fuel Voucher', size=64, required=False),
         'state'         : fields.selection([('draft','Draft'), ('approved','Approved'), ('confirmed','Confirmed'), ('closed','Closed'), ('cancel','Cancelled')], 'State', readonly=True),
         'date'          : fields.date('Date', states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}, required=True),
-        'travel_id'     :fields.many2one('tms.travel', 'Travel', required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
+        
+        'employee1_id'  : fields.related('travel_id', 'employee_id', type='many2one', relation='hr.employee', string='Driver', store=True, readonly=True),
+        'employee2_id'  : fields.related('travel_id', 'employee2_id', type='many2one', relation='hr.employee', string='Driver Helper', store=True, readonly=True),
+        'employee_id'   : fields.many2one('hr.employee', 'Driver', states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]},required=True),
+        'shop_id'       : fields.related('travel_id', 'shop_id', type='many2one', relation='sale.shop', string='Shop', store=True, readonly=True),
+        'travel_id'     : fields.many2one('tms.travel', 'Travel', required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
         'unit_id'       : fields.related('travel_id', 'unit_id', type='many2one', relation='fleet.vehicle', string='Unit', store=True, readonly=True),                
-        'employee_id'   : fields.related('travel_id', 'employee_id', type='many2one', relation='hr.employee', string='Driver', store=True, readonly=True),                
-        'shop_id'       : fields.related('travel_id', 'shop_id', type='many2one', relation='sale.shop', string='Shop', store=True, readonly=True),                
         'partner_id'    : fields.many2one('res.partner', 'Fuel Supplier', domain=[('tms_category', '=', 'fuel')],  required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
         'product_id'    : fields.many2one('product.product', 'Product', domain=[('purchase_ok', '=', True),('tms_category','=','fuel')],  required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
         'product_uom_qty': fields.float('Quantity', digits=(16, 4), required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
@@ -94,24 +97,26 @@ class tms_fuelvoucher(osv.osv):
         'price_total'   : fields.float('Total', required=True, digits_compute= dp.get_precision('Sale Price'), states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
         'notes'         : fields.text('Notes', states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
 
-        'create_uid' : fields.many2one('res.users', 'Created by', readonly=True),
-        'create_date': fields.datetime('Creation Date', readonly=True, select=True),        
-        'cancelled_by' : fields.many2one('res.users', 'Cancelled by', readonly=True),
+        'create_uid'    : fields.many2one('res.users', 'Created by', readonly=True),
+        'create_date'   : fields.datetime('Creation Date', readonly=True, select=True),        
+        'cancelled_by'  : fields.many2one('res.users', 'Cancelled by', readonly=True),
         'date_cancelled': fields.datetime('Date Cancelled', readonly=True),
-        'approved_by' : fields.many2one('res.users', 'Approved by', readonly=True),
-        'date_approved': fields.datetime('Date Approved', readonly=True),
-        'confirmed_by' : fields.many2one('res.users', 'Confirmed by', readonly=True),
+        'approved_by'   : fields.many2one('res.users', 'Approved by', readonly=True),
+        'date_approved' : fields.datetime('Date Approved', readonly=True),
+        'confirmed_by'  : fields.many2one('res.users', 'Confirmed by', readonly=True),
         'date_confirmed': fields.datetime('Date Confirmed', readonly=True),
-        'closed_by' : fields.many2one('res.users', 'Closed by', readonly=True),
-        'date_closed': fields.datetime('Date Closed', readonly=True),
-        'drafted_by' : fields.many2one('res.users', 'Drafted by', readonly=True),
-        'date_drafted': fields.datetime('Date Drafted', readonly=True),
-        'invoice_id': fields.many2one('account.invoice','Invoice Record', readonly=True, domain=[('state', '!=', 'cancel')],),
-        'invoiced':  fields.function(_invoiced, method=True, string='Invoiced', type='boolean', multi='invoiced'),               
-        'invoice_paid':  fields.function(_invoiced, method=True, string='Paid', type='boolean', multi='invoiced'),
-        'invoice_name':  fields.function(_invoiced, method=True, string='Invoice', type='char', size=64, multi='invoiced', store=True),
-        'currency_id': fields.many2one('res.currency', 'Currency', required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
+        'closed_by'     : fields.many2one('res.users', 'Closed by', readonly=True),
+        'date_closed'   : fields.datetime('Date Closed', readonly=True),
+        'drafted_by'    : fields.many2one('res.users', 'Drafted by', readonly=True),
+        'date_drafted'  : fields.datetime('Date Drafted', readonly=True),
+        'invoice_id'    : fields.many2one('account.invoice','Invoice Record', readonly=True, domain=[('state', '!=', 'cancel')],),
+        'invoiced'      : fields.function(_invoiced, method=True, string='Invoiced', type='boolean', multi='invoiced'),               
+        'invoice_paid'  : fields.function(_invoiced, method=True, string='Paid', type='boolean', multi='invoiced'),
+        'invoice_name'  : fields.function(_invoiced, method=True, string='Invoice', type='char', size=64, multi='invoiced', store=True),
+        'currency_id'   : fields.many2one('res.currency', 'Currency', required=True, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)],'closed':[('readonly',True)]}),
         'move_id'       : fields.many2one('account.move', 'Account Move', required=False, readonly=True),
+        'driver_helper' : fields.boolean('For Driver Helper', help="Check this if you want to give this Fuel Voucher to Driver Helper.", states={'cancel':[('readonly',True)], 'approved':[('readonly',True)], 'confirmed':[('readonly',True)], 'closed':[('readonly',True)]}),
+
         }
     
     _defaults = {
@@ -133,17 +138,37 @@ class tms_fuelvoucher(osv.osv):
         prod_obj = self.pool.get('product.product')
         return {'value': {'product_uom' : prod_obj.browse(cr, uid, [product_id], context=None)[0].uom_id.id }}
 
+
+    def on_change_driver_helper(self, cr, uid, ids, driver_helper, employee1_id, employee2_id):
+        return {'value': {'employee_id' : employee2_id,}} if driver_helper else {'value': {'employee_id' : employee1_id,}}
+        
+    
+    def on_change_driver(self, cr, uid, ids, employee_id, employee1_id, employee2_id):
+        return {'value': {'driver_helper' : (employee_id == employee2_id),}}
+
+    
     def on_change_travel_id(self, cr, uid, ids, travel_id):
         res = {}
         if not travel_id:
-            return {}
+            return {'value': {  'employee_id'   : False,
+                                'employee1_id'  : False,
+                                'employee2_id'  : False,
+                                'unit_id'       : False,
+                                'operation_id'  : False,
+                                'shop_id'       : False,
+                            }
+                    }
         travel = self.pool.get('tms.travel').browse(cr, uid, [travel_id], context=None)[0]
-        return {'value': {'employee_id' : travel.employee_id.id,
-                          'unit_id'     : travel.unit_id.id,  
-                          'operation_id': travel.operation_id.id,  
+        return {'value': {'employee_id'   : travel.employee_id.id,
+                          'employee1_id'  : travel.employee_id.id,
+                          'employee2_id'  : travel.employee2_id.id,
+                          'unit_id'       : travel.unit_id.id,  
+                          'operation_id'  : travel.operation_id.id,  
+                          'shop_id'       : travel.shop_id.id,  
                           }
                 }
 
+    
 
     def on_change_amount(self, cr, uid, ids, product_uom_qty, price_total, tax_amount, product_id):
         res = {'value': {'price_unit': 0.0, 'price_subtotal': 0.0, 'special_tax_amount': 0.0}}

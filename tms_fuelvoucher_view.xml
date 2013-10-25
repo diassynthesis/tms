@@ -37,7 +37,7 @@ TMS.FUELVOUCHER
                         <field name="partner_id"/>
                         <field name="invoice_id" domain="[('type', '=', 'invoice_in')]"/>
                         <field name="product_id"/>
-                        <field name="operation_id"/>
+                        <field name="operation_id" />
                    </group>   
                    <newline/>
                    <group  expand='0' string='Group by...'>
@@ -61,11 +61,6 @@ TMS.FUELVOUCHER
 		<field name="type">tree</field>
 		<field name="arch" type="xml">
             <tree string="TMS Fuel Vouchers" colors="gray:state=='cancel';red:state=='draft';green:state=='approved';blue:state=='confirmed';">
-                <button name="action_cancel" states="draft,approved,confirmed" string="Cancel" type="object" icon="gtk-cancel"/>
-                <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
-                <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
-                <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-goto-last"/>
-                <field name="state" />
                 <field name="name" />
                 <field name="date" />
                 <field name="travel_id" />
@@ -84,6 +79,11 @@ TMS.FUELVOUCHER
                 <field name="invoice_paid"/>
                 <field name="shop_id" invisible="1"/>
                 <field name="operation_id" invisible="1"/>
+                <field name="state" />
+                <!--<button name="action_cancel" states="draft,approved,confirmed" string="Cancel" type="object" icon="gtk-cancel"/> 
+                <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>-->
+                <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
+                <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-goto-last"/>                
 		    </tree>
 		</field>
 	</record>
@@ -108,12 +108,18 @@ TMS.FUELVOUCHER
                             <field name="name" class="oe_inline" readonly="1"/>
                         </h1>
                         <group colspan="4" col="4">
+                            <field name="employee1_id" invisible="1"/>
+                            <field name="employee2_id" invisible="1"/>
                             <field name="shop_id" />
                             <field name="date" />
                             <field name="travel_id" domain="[('state','!=','cancel'),('state','!=','closed'), ('supplier_unit', '=', False)]" on_change="on_change_travel_id(travel_id)"/>
                             <field name="operation_id" domain="[('state','=','process')]" />
                             <field name="unit_id" readonly="1"/>
-                            <field name="employee_id" readonly="1"/>
+                            <field name="employee_id" domain="[('id','in',(employee1_id, employee2_id))]"
+                                        on_change="on_change_driver(employee_id,employee1_id, employee2_id)"  />
+                            <separator string=" " colspan="2"/>
+                            <field name="driver_helper" on_change="on_change_driver_helper(driver_helper, employee1_id, employee2_id)" 
+                                   attrs="{'invisible':['|', ('employee2_id','=',False),('travel_id', '=', False)]}" />
                             <field name="partner_id" 	domain="[('supplier','=',1),('tms_category','=','fuel')]" 
 											         	context="{'default_supplier': 1, 'default_customer': 0, 'default_tms_category': 'fuel'}"/>
                             <field name="currency_id" />
@@ -153,7 +159,7 @@ TMS.FUELVOUCHER
                                     <field name="date_drafted" readonly="1" />
                                     <separator string="Account Move" colspan="4"/>
                                     <field name="move_id"/>
-                                    <newline />
+                                    <field name="expense_id"/>
 							        <separator string="Invoice Information" colspan="4"/>
                                     <field name="invoiced"/>  
                                     <field name="invoice_id" />
