@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenERP Server 7.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-25 23:54+0000\n"
-"PO-Revision-Date: 2013-10-25 18:54-0600\n"
+"POT-Creation-Date: 2013-10-29 00:19+0000\n"
+"PO-Revision-Date: 2013-10-28 18:20-0600\n"
 "Last-Translator: Israel CA <israel.cruz@hesatecnica.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -193,6 +193,11 @@ msgid "Ending counter from device"
 msgstr "Cuenta Final del Dispositivo"
 
 #. module: tms
+#: selection:product.product,tms_category:0
+msgid "Work Order Types (MRO)"
+msgstr "Tipo de Servicio (Mtto)"
+
+#. module: tms
 #: view:tms.expense:0
 msgid "Distance Resumen"
 msgstr "Resumen Distancia"
@@ -216,11 +221,6 @@ msgstr "El usuario podrá Aprobar Cartas Porte"
 #: field:tms.waybill,date_down_end_sched:0
 msgid "Download End Sched"
 msgstr "Fin Prog Descarga"
-
-#. module: tms
-#: field:fleet.vehicle,avg_odometer_uom_per_day:0
-msgid "Avg Odometer UoM per day"
-msgstr "Promedio Recorrido Diario"
 
 #. module: tms
 #: view:tms.unit.red_tape:0 field:tms.unit.red_tape,amount:0
@@ -251,11 +251,6 @@ msgid "If checked new messages require your attention."
 msgstr "Si está activo es que tiene nuevos mensajes que requieren su atención"
 
 #. module: tms
-#: help:fleet.vehicle,avg_odometer_uom_per_day:0
-msgid "Specify average distance (mi./kms) per day for this unit"
-msgstr "Indica la distancia promedio (mi/kms) por día para esta unidad"
-
-#. module: tms
 #: field:tms.event,origin:0
 msgid "Origin"
 msgstr "Origen"
@@ -266,7 +261,6 @@ msgid "Fuel Voucher"
 msgstr "Vale de Combustible"
 
 #. module: tms
-#: selection:product.product,tms_category:0
 #: selection:tms.expense.line,line_type:0
 msgid "Salary Discount"
 msgstr "Desc. en Salario"
@@ -327,18 +321,22 @@ msgstr ""
 "formato html para poder ser insertado en la vista kanban,"
 
 #. module: tms
-#: selection:product.product,tms_category:0
 #: selection:tms.expense.line,line_type:0
 msgid "Salary Retention"
 msgstr "Retención Sueldo"
 
 #. module: tms
-#: code:addons/tms/tms.py:507 code:addons/tms/tms.py:524
-#: code:addons/tms/tms.py:534 code:addons/tms/tms.py:599
-#: code:addons/tms/tms.py:608 code:addons/tms/tms.py:618
+#: code:addons/tms/tms.py:506 code:addons/tms/tms.py:523
+#: code:addons/tms/tms.py:533 code:addons/tms/tms.py:598
+#: code:addons/tms/tms.py:607 code:addons/tms/tms.py:617
 #, python-format
 msgid "Warning!"
 msgstr "Advertencia!"
+
+#. module: tms
+#: selection:product.product,tms_category:0
+msgid "No TMS"
+msgstr "No TMS"
 
 #. module: tms
 #: selection:tms.waybill.extradata,type_extra:0
@@ -362,6 +360,11 @@ msgstr "Empresa"
 #, python-format
 msgid "Travel is Closed or Cancelled !!!"
 msgstr "El Viaje está Cerrado o Cancelado !!!"
+
+#. module: tms
+#: selection:product.product,tms_category:0
+msgid "Salary (Travel Expense Related)"
+msgstr "Sueldo (Relativo a Gasto de Viaje)"
 
 #. module: tms
 #: model:ir.model,name:tms.model_tms_route_place
@@ -505,7 +508,7 @@ msgid "Make Invoices from Waybill"
 msgstr "Crear Factura de Carta Porte"
 
 #. module: tms
-#: code:addons/tms/tms.py:957
+#: code:addons/tms/tms.py:956
 #, python-format
 msgid "Ending Date (%s) is less than Starting Date (%s)"
 msgstr "Fecha Final (%s) es menor que la Fecha Inicial (%s)"
@@ -860,7 +863,7 @@ msgid "Summary"
 msgstr "Resumen"
 
 #. module: tms
-#: code:addons/tms/tms.py:1102
+#: code:addons/tms/tms.py:1101
 #, python-format
 msgid "Could not create Odometer Record!"
 msgstr "No se pudo crear el Registro del Odómetro !"
@@ -871,7 +874,7 @@ msgid "Fuel Sequence"
 msgstr "Secuencia de Combustible"
 
 #. module: tms
-#: code:addons/tms/tms.py:1103
+#: code:addons/tms/tms.py:1102
 #, python-format
 msgid "There is no Active Odometer for Vehicle %s"
 msgstr "La Unidad %s no tiene Odómetro Activo"
@@ -1264,6 +1267,11 @@ msgid "Position as GPS"
 msgstr "Posición de GPS"
 
 #. module: tms
+#: selection:product.product,tms_category:0
+msgid "Salary Retention (Travel Expense Related)"
+msgstr "Retención de Salario (Gastos de Viaje)"
+
+#. module: tms
 #: help:res.partner,tms_category:0
 msgid ""
 "This is used in TMS Module                 \n"
@@ -1444,8 +1452,7 @@ msgid "TMS Units Kits"
 msgstr "Kits de Unidades"
 
 #. module: tms
-#: selection:product.product,tms_category:0 field:tms.expense,amount_salary:0
-#: selection:tms.expense.line,line_type:0
+#: field:tms.expense,amount_salary:0 selection:tms.expense.line,line_type:0
 msgid "Salary"
 msgstr "Salario"
 
@@ -1530,10 +1537,54 @@ msgid "1 = Travel, 2 = Travel Expense, 3 = Manual, 4 = Tyre"
 msgstr "1 = Viajes, 2 = Registro de Gastos de Viaje, 3 = Manual, 4 = Llantas"
 
 #. module: tms
-#: code:addons/tms/tms_waybill.py:1011
-#, python-format
-msgid "This Waybill is already Invoiced"
-msgstr "Esta Carta Porte ya se encuentra Facturada"
+#: help:product.product,tms_category:0
+msgid ""
+"Product Type for using with TMS Module\n"
+"  - No TMS: Not related to TMS\n"
+"  - Transportable: Transportable Product used in Waybills\n"
+"  - Freight: Represents Freight Price used in Waybills\n"
+"  - Move (Freight Related): Represents Moves Price used in Waybills\n"
+"  - Insurance (Freight Related): Represents Insurance of Load used in "
+"Waybills\n"
+"  - Highway Tolls (Freight Related): Represents Highway Tolls used in "
+"Waybills\n"
+"  - Other (Freight Related): Represents any other charge for Freight Service "
+"used in Waybills\n"
+"  - Real Expense: Real expenses related to Travel Expense Checkup.\n"
+"  - Made-Up Expense: Made-up expenses related to Travel Expense Checkup.\n"
+"  - Fuel: Fuel related to Travel Expenses used in Fuel Vouchers.\n"
+"  - Indirect Expense (Agreements): Used to get Expenses registered in "
+"Accounts for Agreements.\n"
+"  - Spare Part (MRO): Parts used for maintenance services.\n"
+"  - Task (MRO): Tasks related to maintenance services.\n"
+"  - Work Order Types (MRO): Different types of maintenance services\n"
+"  - Service Cycles (MRO): Maintenance Cycles\n"
+"  - Service Program (MRO): Different Service Programs\n"
+"  All of these products (except for MRO Spare Part) MUST be used as a "
+"service because they will never interact with Inventory.\n"
+msgstr ""
+"Tipo de Producto para usarse con el módulo TMS\n"
+"  - No TMS: No tiene relación con el TMS\n"
+"  - Transportable: Producto Transportable usado en Cartas Porte\n"
+"  - Flete: Usado en Cartas Porte\n"
+"  - Maniobra: Usado en Cartas Porte\n"
+"  - Seguro: Usado en Cartas Porte\n"
+"  - Autopistas: Usado en Cartas Porte\n"
+"  - Otro: Representa cualquier otro servicio usado en Cartas Porte\n"
+"  - Gasto de Viaje: Conceptos de Gastos de Viaje usados en Registro de "
+"Gastos de Viaje.\n"
+"  - Facilidades Administrativas: Cualquier gastos que no afecta en Registro "
+"de Gastos de Viaje.\n"
+"  - Combustible: Usado para Vales de Combustible.\n"
+"  - Gastos Fijos (Acuerdos): Usado para los Acuerdos.\n"
+"  - Refacción (Mtto): Partes usadas en servicios de reparación de unidades.\n"
+"  - Tarea (Mtto): Tareas relacionadas a servicios de reparación de "
+"unidades.\n"
+"  - Tipo de Orden de Mtto (Mtto): Como su nombre lo indica\n"
+"  - Ciclos de Servicios de Mtto (Mtto): Como su nombre lo indica\n"
+"  - Programa de Mtto (Mtto): Como su nombre lo indica\n"
+"  Todos estos productos DEBEN ser definidos como servicio (a excepción de "
+"Combustible y Refacción) porque nunca tendrán interacción con Inventarios.\n"
 
 #. module: tms
 #: field:tms.expense.line,control:0 field:tms.factor,control:0
@@ -1825,7 +1876,7 @@ msgstr "Lib. Docs. Desc. Real"
 #. module: tms
 #: help:tms.expense,driver_helper:0
 msgid "Check this if you want to make record for Driver Helper."
-msgstr "Check this if you want to make record for Driver Helper."
+msgstr "Active si el Registro de Gastos es para Segundo Operador"
 
 #. module: tms
 #: view:tms.travel:0
@@ -1922,7 +1973,7 @@ msgstr "Unidad"
 #. module: tms
 #: view:tms.expense:0 field:tms.expense,travel_ids2:0
 msgid "Travels for Driver Helper"
-msgstr "Travels for Driver Helper"
+msgstr "Viajes Segundo Operador"
 
 #. module: tms
 #: view:tms.expense:0 field:tms.expense.line,expense_id:0
@@ -1964,7 +2015,7 @@ msgid "Travel Expense Lines"
 msgstr "Travel Expense Lines"
 
 #. module: tms
-#: code:addons/tms/tms.py:508 code:addons/tms/tms.py:600
+#: code:addons/tms/tms.py:507 code:addons/tms/tms.py:599
 #, python-format
 msgid ""
 "You can not create a new record for this unit because theres is already a "
@@ -2100,7 +2151,7 @@ msgstr "Categoría de Eventos"
 #. module: tms
 #: field:tms.travel,expense2_id:0 field:tms.travel,expense_ids2:0
 msgid "Expense Record for Driver Helper"
-msgstr "Expense Record for Driver Helper"
+msgstr "Registro de Gastos de Segundo Operador"
 
 #. module: tms
 #: model:res.groups,name:tms.group_advance_cancel
@@ -2118,6 +2169,11 @@ msgid "Travel Real duration in hours"
 msgstr "Duración Real del Viaje en horas"
 
 #. module: tms
+#: selection:product.product,tms_category:0
+msgid "Insurance (Freight Related)"
+msgstr "Seguro (Cartas Porte)"
+
+#. module: tms
 #: field:hr.employee,tms_house_rent_prod_id:0
 msgid "House Rental Product"
 msgstr "Producto Infonavit"
@@ -2128,12 +2184,6 @@ msgid "Monday"
 msgstr "Lunes"
 
 #. module: tms
-#: selection:product.product,tms_category:0
-msgid "Negative Balance"
-msgstr "Balance en contra"
-
-#. module: tms
-#: selection:product.product,tms_category:0
 #: selection:tms.expense.line,line_type:0
 msgid "Made-up Expense"
 msgstr "Gasto Inventado"
@@ -2157,6 +2207,11 @@ msgstr "Puede Cancelar Cartas Porte"
 #: view:tms.advance:0
 msgid "TMS Advance"
 msgstr "Anticipos"
+
+#. module: tms
+#: selection:product.product,tms_category:0
+msgid "Task (MRO)"
+msgstr "Tarea (Mtto)"
 
 #. module: tms
 #: selection:fleet.vehicle,fleet_type:0
@@ -2298,6 +2353,11 @@ msgid "Seq"
 msgstr "Sec"
 
 #. module: tms
+#: selection:product.product,tms_category:0
+msgid "Made-up Expense (Travel Expense Related)"
+msgstr "Facilidades Admvas (Gastos de Viaje)"
+
+#. module: tms
 #: model:ir.ui.menu,name:tms.menu_tms
 #: model:ir.ui.menu,name:tms.menu_tms_travels
 msgid "Freights"
@@ -2407,6 +2467,11 @@ msgstr "No se pudo aprobar el Anticipo !"
 #: view:tms.expense:0
 msgid "Expense Date"
 msgstr "Fecha"
+
+#. module: tms
+#: selection:product.product,tms_category:0
+msgid "Move (Freight Related)"
+msgstr "Maniobras (Cartas Porte)"
 
 #. module: tms
 #: code:addons/tms/tms_expense.py:1030
@@ -2620,8 +2685,8 @@ msgstr ""
 
 #. module: tms
 #: selection:product.product,tms_category:0
-msgid "No TMS Product"
-msgstr "No relacionado al TMS"
+msgid "Real Expense (Travel Expense Related)"
+msgstr "Gasto (Gastos de Viaje)"
 
 #. module: tms
 #: view:fleet.vehicle:0
@@ -2811,8 +2876,8 @@ msgid ""
 "You can not modify Driver and/or Driver Helper if there are linked records "
 "(Fuel vouchers, Advances, etc)."
 msgstr ""
-"You can not modify Driver and/or Driver Helper if there are linked records "
-"(Fuel vouchers, Advances, etc)."
+"No puede modificar el Operador o Segundo Operador si ya existen registros "
+"relacionados (Vales de Comb, / Anticipos / etc)"
 
 #. module: tms
 #: code:addons/tms/tms_factor.py:126 selection:tms.factor,factor_type:0
@@ -2923,8 +2988,8 @@ msgid "Red Tape"
 msgstr "Trámite"
 
 #. module: tms
-#: code:addons/tms/tms.py:391 code:addons/tms/tms.py:403
-#: code:addons/tms/tms.py:412 code:addons/tms/tms.py:423
+#: code:addons/tms/tms.py:390 code:addons/tms/tms.py:402
+#: code:addons/tms/tms.py:411 code:addons/tms/tms.py:422
 #, python-format
 msgid "Validity Error !"
 msgstr "Error en Vigencia !"
@@ -2940,7 +3005,7 @@ msgid "Vehicle Odometer"
 msgstr "Odómetro de Unidad"
 
 #. module: tms
-#: code:addons/tms/tms.py:771
+#: code:addons/tms/tms.py:770
 #, python-format
 msgid "You cannot get route info because one of the places has no coordinates."
 msgstr ""
@@ -3050,11 +3115,6 @@ msgid "Done by"
 msgstr "Realizado por"
 
 #. module: tms
-#: selection:product.product,tms_category:0
-msgid "Move"
-msgstr "Move"
-
-#. module: tms
 #: code:addons/tms/tms_factor.py:132 selection:tms.factor,factor_type:0
 #, python-format
 msgid "Income Percent"
@@ -3107,7 +3167,6 @@ msgid "Fuel Efficiency Extraction"
 msgstr "Extracción Rendimiento"
 
 #. module: tms
-#: selection:product.product,tms_category:0
 #: field:tms.waybill,amount_highway_tolls:0
 msgid "Highway Tolls"
 msgstr "Casetas"
@@ -3160,7 +3219,7 @@ msgstr ""
 "haber confirmado el anterior.!!!"
 
 #. module: tms
-#: code:addons/tms/tms.py:412 code:addons/tms/tms.py:423
+#: code:addons/tms/tms.py:411 code:addons/tms/tms.py:422
 #, python-format
 msgid ""
 "You cannot have overlaping expiration dates for trailer %s !\n"
@@ -3210,7 +3269,7 @@ msgid "Trailer2"
 msgstr "Rem2"
 
 #. module: tms
-#: code:addons/tms/tms.py:771 code:addons/tms/tms.py:957
+#: code:addons/tms/tms.py:770 code:addons/tms/tms.py:956
 #: code:addons/tms/tms_fuelvoucher.py:407 code:addons/tms/tms_waybill.py:1124
 #: code:addons/tms/tms_waybill.py:1256
 #, python-format
@@ -3311,6 +3370,11 @@ msgid "Departure"
 msgstr "Origen"
 
 #. module: tms
+#: selection:product.product,tms_category:0
+msgid "Highway Tolls (Freight Related)"
+msgstr "Autopistas (Cartas Porte)"
+
+#. module: tms
 #: model:ir.model,name:tms.model_tms_waybill_line
 msgid "Waybill Line"
 msgstr "Línea de Carta Porte"
@@ -3321,7 +3385,7 @@ msgid "Driver Salary Factors"
 msgstr "Forma de Pago al Operador"
 
 #. module: tms
-#: code:addons/tms/tms.py:535
+#: code:addons/tms/tms.py:534
 #, python-format
 msgid "You can not cancel a record if is already Confirmed!!!"
 msgstr "No puede cancelar este registro si ya se encuentra Confirmado !!!"
@@ -3335,6 +3399,11 @@ msgstr "Puede Cancelar Vales de Combustible"
 #: selection:hr.employee,tms_category:0
 msgid "Mechanic"
 msgstr "Mecánico"
+
+#. module: tms
+#: constraint:fleet.vehicle.odometer.device:0
+msgid "You can not have Odometer End less than Odometer Start"
+msgstr "No puede tener el Odómetro Final menor que el Odómetro Inicial"
 
 #. module: tms
 #: code:addons/tms/tms_factor.py:127 selection:tms.factor,factor_type:0
@@ -3361,6 +3430,15 @@ msgstr "GPS Id"
 #: field:sale.shop,tms_travel_expenses_seq:0
 msgid "Travel Expenses Sequence"
 msgstr "Secuencia de Registro de Gastos de Viaje"
+
+#. module: tms
+#: help:fleet.vehicle,avg_odometer_uom_per_day:0
+msgid ""
+"Specify average distance traveled (mi./kms) or Time (Days, hours) of use per "
+"day for this"
+msgstr ""
+"Specify average distance traveled (mi./kms) or Time (Days, hours) of use per "
+"day for this"
 
 #. module: tms
 #: view:tms.expense:0 field:tms.expense,expense_line:0 view:tms.expense.line:0
@@ -3406,7 +3484,6 @@ msgid "Fuel Efficiency Expected"
 msgstr "Rendimiento Esperado"
 
 #. module: tms
-#: selection:product.product,tms_category:0
 #: field:tms.waybill,amount_insurance:0
 msgid "Insurance"
 msgstr "Seguro"
@@ -3466,7 +3543,7 @@ msgid "Waybill %s is not assigned to a Travel"
 msgstr "La Carta Porte %s no está asignado a ningún Viaje"
 
 #. module: tms
-#: code:addons/tms/tms.py:1050 code:addons/tms/tms_expense.py:534
+#: code:addons/tms/tms.py:1049 code:addons/tms/tms_expense.py:534
 #, python-format
 msgid "Record Warning !"
 msgstr "Advertencia de Registro !"
@@ -3497,6 +3574,11 @@ msgstr "Puede Aprobar Anticipos de Viaje"
 #: view:ir.sequence:0 view:sale.shop:0
 msgid "TMS"
 msgstr "TMS"
+
+#. module: tms
+#: selection:product.product,tms_category:0
+msgid "Other (Freight Related)"
+msgstr "Otro (Cartas Porte)"
 
 #. module: tms
 #: view:tms.expense:0 view:tms.unit.active_history:0 view:tms.unit.red_tape:0
@@ -3563,8 +3645,7 @@ msgid "GPS Latitude"
 msgstr "GPS Latitud"
 
 #. module: tms
-#: selection:fleet.vehicle,fleet_type:0
-#: selection:product.product,tms_category:0 field:tms.waybill,amount_other:0
+#: selection:fleet.vehicle,fleet_type:0 field:tms.waybill,amount_other:0
 msgid "Other"
 msgstr "Otro"
 
@@ -3755,7 +3836,7 @@ msgstr "Obligatorio"
 #: field:tms.advance,employee2_id:0 field:tms.fuelvoucher,employee2_id:0
 #: field:tms.travel,employee2_id:0 field:tms.waybill,employee2_id:0
 msgid "Driver Helper"
-msgstr "Driver Helper"
+msgstr "Segundo Operador"
 
 #. module: tms
 #: view:tms.operation:0 selection:tms.operation,state:0
@@ -3850,9 +3931,9 @@ msgid "Search Waybills"
 msgstr "Buscar"
 
 #. module: tms
-#: constraint:fleet.vehicle.odometer.device:0
-msgid "You can not have Odometer End less than Odometer Start"
-msgstr "No puede tener el Odómetro Final menor que el Odómetro Inicial"
+#: selection:product.product,tms_category:0
+msgid "Fuel (Travel Expense Related)"
+msgstr "Combustible (Gastos de Viaje)"
 
 #. module: tms
 #: help:tms.expense,state:0
@@ -3926,7 +4007,6 @@ msgid "Vehicle Red Tape"
 msgstr "Trámite"
 
 #. module: tms
-#: selection:product.product,tms_category:0
 #: selection:res.partner,tms_category:0 selection:tms.expense.line,line_type:0
 msgid "Fuel"
 msgstr "Combustible"
@@ -3969,7 +4049,7 @@ msgstr "Ciudades / Lugares"
 #. module: tms
 #: help:tms.fuelvoucher,driver_helper:0
 msgid "Check this if you want to give this Fuel Voucher to Driver Helper."
-msgstr "Check this if you want to give this Fuel Voucher to Driver Helper."
+msgstr "Active si el Vale de Combustible es para Segundo Operador"
 
 #. module: tms
 #: code:addons/tms/tms_fuelvoucher.py:248
@@ -4013,6 +4093,11 @@ msgid "Active/Inactive History"
 msgstr "Historial de Altas/Bajas"
 
 #. module: tms
+#: selection:product.product,tms_category:0
+msgid "Spare Part (MRO Related)"
+msgstr "Refacción (Mtto)"
+
+#. module: tms
 #: field:tms.travel,distance_driver:0
 msgid "Distance traveled by driver (mi./km)"
 msgstr "Distancia recorrida por el operador (mi./km)"
@@ -4053,7 +4138,7 @@ msgid "Travel Expense"
 msgstr "Reg. Gasto de Viajes"
 
 #. module: tms
-#: code:addons/tms/tms.py:391
+#: code:addons/tms/tms.py:390
 #, python-format
 msgid ""
 "You cannot have overlaping expiration dates for unit %s !\n"
@@ -4393,10 +4478,15 @@ msgid "Waybill Type"
 msgstr "Tipo Carta Porte"
 
 #. module: tms
-#: code:addons/tms/tms.py:1051 code:addons/tms/tms_expense.py:535
+#: code:addons/tms/tms.py:1050 code:addons/tms/tms_expense.py:535
 #, python-format
 msgid "There is no Active Odometer for vehicle %s"
 msgstr "No hay Odometro Activo para la unidad %s"
+
+#. module: tms
+#: selection:product.product,tms_category:0
+msgid "Negative Balance (Travel Expense Related)"
+msgstr "Balance en contra (Gastos de Viaje)"
 
 #. module: tms
 #: model:res.groups,name:tms.group_advance_confirm
@@ -4434,7 +4524,7 @@ msgid "Factor Driver"
 msgstr "Factor Operador"
 
 #. module: tms
-#: code:addons/tms/tms.py:259
+#: code:addons/tms/tms.py:258
 #, python-format
 msgid "Odometer device created when vehicle %s was created"
 msgstr "Medidor creado cuando la unidad %s fue creada"
@@ -4482,6 +4572,11 @@ msgid "Ending Date"
 msgstr "Fecha Final"
 
 #. module: tms
+#: selection:product.product,tms_category:0
+msgid "Service Program (MRO)"
+msgstr "Programa de Servicios (Mtto)"
+
+#. module: tms
 #: field:tms.waybill,supplier_id:0
 msgid "Freight Supplier"
 msgstr "Permisionario"
@@ -4515,6 +4610,16 @@ msgstr "Rem 1"
 #: help:tms.waybill,arrival_address_id:0
 msgid "Arrival address for current Waybill."
 msgstr "Dirección Destino de la Carta Porte"
+
+#. module: tms
+#: code:addons/tms/tms.py:402
+#, python-format
+msgid ""
+"You cannot have overlaping expiration dates for dolly %s !\n"
+"This dolly is overlaping Kit << %s >>"
+msgstr ""
+"No puede traslapar vigencias para dolly  %s !\n"
+"Este registro se traslapa con el Kit << %s >>"
 
 #. module: tms
 #: view:tms.advance:0 field:tms.advance,operation_id:0
@@ -4558,7 +4663,7 @@ msgid "Confirmed"
 msgstr "Confirmado"
 
 #. module: tms
-#: code:addons/tms/tms.py:619
+#: code:addons/tms/tms.py:618
 #, python-format
 msgid "You can not cancel a record if already Confirmed!!!"
 msgstr "No puede cancelar registros que ya se encuentren Confirmados !!!"
@@ -4704,6 +4809,11 @@ msgstr "La Carta Porte debe ser asignada a un Viaje antes de confirmarla."
 #: model:res.groups,name:tms.group_travel_setdraft
 msgid "Can Set to Draft Travels"
 msgstr "Puede regresar a Borrador los Viajes"
+
+#. module: tms
+#: field:fleet.vehicle,avg_odometer_uom_per_day:0
+msgid "Avg Distance/Time per day"
+msgstr "Avg Distance/Time per day"
 
 #. module: tms
 #: field:tms.place,country_id:0 field:tms.route.place,country_id:0
@@ -4940,7 +5050,7 @@ msgstr "Facturado"
 #. module: tms
 #: help:tms.advance,driver_helper:0
 msgid "Check this if you want to give this advance to Driver Helper."
-msgstr "Check this if you want to give this advance to Driver Helper."
+msgstr "Active si el Anticipo es para Segundo Operador"
 
 #. module: tms
 #: field:tms.waybill,waybill_supplier_factor:0
@@ -4961,44 +5071,6 @@ msgstr "Acciones disparada según la Categoría de Eventos"
 #: field:tms.route,places_ids:0
 msgid "Intermediate places in Route"
 msgstr "Lugares Intermedios en Rutas"
-
-#. module: tms
-#: help:product.product,tms_category:0
-msgid ""
-"Product Type for using with TMS Module\n"
-"  - No TMS Product: Not related to TMS\n"
-"  - Transportable: Transportable Product used in Waybills\n"
-"  - Freight: Represents Freight Price used in Waybills\n"
-"  - Move: Represents Moves Price used in Waybills\n"
-"  - Insurance: Represents Insurance for Load used in Waybills\n"
-"  - Highway Tolls: Represents Highway Tolls used in Waybills\n"
-"  - Other: Represents any other charge for Freight Service used in Waybills\n"
-"  - Real Expense: Represent real expenses related to Travel, those that will "
-"be used in Travel Expense Checkup.\n"
-"  - Made-Up Expense: Represent made-up expenses related to Travel, those "
-"that will be used in Travel Expense Checkup.\n"
-"  - Fuel: Used for filtering products used in Fuel Vouchers.\n"
-"  - Indirect Expense (Agreements): Used to define Accounts for Agreements "
-"Indirect Expenses.\n"
-"  All of these products MUST be used as a service because they will never "
-"interact with Inventory.\n"
-msgstr ""
-"Tipo de Producto usado con el módulo TMS\n"
-"  - No TMS: No tiene relación con el TMS\n"
-"  - Transportable: Producto Transportable usado en Cartas Porte\n"
-"  - Flete: Usado en Cartas Porte\n"
-"  - Maniobra: Usado en Cartas Porte\n"
-"  - Seguro: Usado en Cartas Porte\n"
-"  - Autopistas: Usado en Cartas Porte\n"
-"  - Otro: Representa cualquier otro servicio usado en Cartas Porte\n"
-"  - Gasto de Viaje: Conceptos de Gastos de Viaje usados en Registro de "
-"Gastos de Viaje.\n"
-"  - Facilidades Administrativas: Cualquier gastos que no afecta en Registro "
-"de Gastos de Viaje.\n"
-"  - Combustible: Usado para Vales de Combustible.\n"
-"  - Gastos Fijos (Acuerdos): Usado para los Acuerdos.\n"
-"  Todos estos productos DEBEN ser definidos como servicio (a excepción de "
-"Combustible) porque nunca tendrán interacción con Inventarios.\n"
 
 #. module: tms
 #: code:addons/tms/tms_expense.py:341 code:addons/tms/tms_waybill.py:384
@@ -5233,7 +5305,7 @@ msgstr "Historial de Trámites de Unidades"
 #: field:tms.expense,driver_helper:0 field:tms.factor,driver_helper:0
 #: field:tms.fuelvoucher,driver_helper:0
 msgid "For Driver Helper"
-msgstr "For Driver Helper"
+msgstr "Para Segundo Operador"
 
 #. module: tms
 #: code:addons/tms/tms_factor.py:225
@@ -5293,6 +5365,11 @@ msgstr "Cantidad"
 #: field:tms.unit.category,fuel_efficiency_1trailer:0
 msgid "Fuel Efficiency One Trailer"
 msgstr "Rendimiento Sencillo"
+
+#. module: tms
+#: selection:product.product,tms_category:0
+msgid "Salary Discount (Travel Expense Related)"
+msgstr "Descuento en Salario (Gastos de Viaje)"
 
 #. module: tms
 #: model:ir.ui.menu,name:tms.tms_fleet_vehicle_model_brand_menu
@@ -5426,14 +5503,10 @@ msgid "Travel history"
 msgstr "Historial de Viaje"
 
 #. module: tms
-#: code:addons/tms/tms.py:403
+#: code:addons/tms/tms_waybill.py:1011
 #, python-format
-msgid ""
-"You cannot have overlaping expiration dates for dolly %s !\n"
-"This dolly is overlaping Kit << %s >>"
-msgstr ""
-"No puede traslapar vigencias para dolly  %s !\n"
-"Este registro se traslapa con el Kit << %s >>"
+msgid "This Waybill is already Invoiced"
+msgstr "Esta Carta Porte ya se encuentra Facturada"
 
 #. module: tms
 #: selection:tms.factor,category:0 view:tms.operation:0
@@ -5512,7 +5585,7 @@ msgid "Confirm Cancellation"
 msgstr "Confirmar Cancelación"
 
 #. module: tms
-#: code:addons/tms/tms.py:525 code:addons/tms/tms.py:609
+#: code:addons/tms/tms.py:524 code:addons/tms/tms.py:608
 #, python-format
 msgid ""
 "You can not delete a record if is already Confirmed!!! Click Cancel button "
@@ -5547,7 +5620,7 @@ msgstr "Rendimiento Esperado"
 #. module: tms
 #: model:ir.ui.menu,name:tms.menu_tms_config_unit_category_form
 msgid "Vehicles Related Catalogs"
-msgstr "Catálogos Relacionados a las Unidades"
+msgstr "Relacionados a Vehículos"
 
 #. module: tms
 #: field:tms.waybill,payment_term:0
@@ -5563,6 +5636,11 @@ msgstr "Tipo de Categoría"
 #: field:tms.expense,amount_real_expense:0
 msgid "Expenses"
 msgstr "Gastos"
+
+#. module: tms
+#: selection:product.product,tms_category:0
+msgid "Service Cycle (MRO)"
+msgstr "Ciclo Preventivo (Mtto)"
 
 #. module: tms
 #: help:tms.factor,sequence:0
@@ -5581,7 +5659,6 @@ msgid "Odometer Readings"
 msgstr "Lecturas de Odómetros"
 
 #. module: tms
-#: selection:product.product,tms_category:0
 #: selection:tms.expense.line,line_type:0
 msgid "Real Expense"
 msgstr "Gasto Real"

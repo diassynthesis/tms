@@ -181,8 +181,7 @@ class fleet_vehicle(osv.osv):
         'gps_id': openerp.osv.fields.char('GPS Id', size=64),
         'employee_id': openerp.osv.fields.many2one('hr.employee', 'Driver', required=False, domain=[('tms_category', '=', 'driver')], help="This is used in TMS Module..."),
         'fleet_type': openerp.osv.fields.selection([('tractor','Motorized Unit'), ('trailer','Trailer'), ('dolly','Dolly'), ('other','Other')], 'Unit Fleet Type', required=True),
-        'avg_odometer_uom_per_day'  :openerp.osv.fields.float('Avg Odometer UoM per day', required=False, digits=(16,2), help='Specify average distance (mi./kms) per day for this unit'),
-        
+        'avg_odometer_uom_per_day'  :openerp.osv.fields.float('Avg Distance/Time per day', required=False, digits=(16,2), help='Specify average distance traveled (mi./kms) or Time (Days, hours) of use per day for this'),
         
         'notes'                 : openerp.osv.fields.text('Notes'),
         'active'                : openerp.osv.fields.boolean('Active'),

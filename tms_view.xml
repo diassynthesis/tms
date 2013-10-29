@@ -229,7 +229,8 @@ FLEET.VEHICLE - (former TMS.UNIT)
                                         <field name="active_odometer_id" class="oe_inline" readonly="1"/>
                                         <newline />
                                     </div>
-                 		    <field name="current_odometer_read" readonly="1"/>
+                 		             <field name="current_odometer_read" readonly="1"/>
+                                     <field name="avg_odometer_uom_per_day" />
                                     <field name="acquisition_date" />
                                     <field name="car_value" />
                                 </group>
