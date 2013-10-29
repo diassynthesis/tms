@@ -89,10 +89,8 @@ TMS.travel
                 <field name="shop_id" invisible="1"/>
                 <field name="user_id" invisible="1"/>
                 <field name="state" />
-                <!--                <button name="action_cancel" states="draft,progress,done" string="Cancel Travel" type="object" icon="gtk-cancel"/> 
-                <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/> -->
-                <button name="action_dispatch" states="draft" string="Dispatch Travel" type="object" icon="gtk-go-forward"/>
-                <button name="action_end" states="progress" string="End Travel" type="object" icon="gtk-goto-last"/>
+                <button name="action_dispatch" states="draft" string="Dispatch Travel" type="object" icon="gtk-go-forward" groups="tms.group_travel_dispatch"/>
+                <button name="action_end" states="progress" string="End Travel" type="object" icon="gtk-goto-last" groups="tms.group_travel_end"/>
 		    </tree>
 		</field>
 	</record>
@@ -105,10 +103,10 @@ TMS.travel
             <field name="arch" type="xml">
                 <form string="Travels" version="7.0">
                     <header>
-                        <button name="action_cancel" states="draft,progress,done" string="Cancel" type="object" icon="gtk-cancel"/>
-                        <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
-                        <button name="action_dispatch" states="draft" string="Dispatch" type="object" icon="gtk-go-forward" class="oe_highlight" />
-                        <button name="action_end" states="progress" string="End" type="object" icon="gtk-goto-last" class="oe_highlight" />
+                        <button name="action_cancel" states="draft,progress,done" string="Cancel" type="object" icon="gtk-cancel" groups="tms.group_travel_cancel"/>
+                        <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert" groups="tms.group_travel_setdraft"/>
+                        <button name="action_dispatch" states="draft" string="Dispatch" type="object" icon="gtk-go-forward" class="oe_highlight" groups="tms.group_travel_dispatch"/>
+                        <button name="action_end" states="progress" string="End" type="object" icon="gtk-goto-last" class="oe_highlight" groups="tms.group_travel_end"/>
                         <field name="state" widget="statusbar" statusbar_visible="cancel,draft,progress,done,closed"/> 
                     </header>
                     <sheet>
@@ -192,8 +190,8 @@ TMS.travel
                                 <group>
                                     <field name="waybill_ids" nolabel="1">
                                         <tree string="Waybills" colors="red:state=='cancel';green:state=='approved';blue:state=='confirmed';">
-                                            <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
-                                            <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok"/>
+                                            <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward" groups="tms.group_waybill_approve"/>
+                                            <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok" groups="tms.group_waybill_confirm"/>
                                             <field name="state"/>
                                             <field name="name"/>
                                             <field name="date_order"/>

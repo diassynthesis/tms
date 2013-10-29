@@ -72,9 +72,8 @@ TMS.ADVANCE
             <field name="paid" />
             <field name="operation_id" invisible="1"/>
             <field name="state" />
-            <!-- <button name="action_cancel" states="draft,approved,confirmed" string="Cancel" type="object" icon="gtk-cancel"/> -->
-            <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
-            <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-goto-last"/>            
+            <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward" groups="tms.group_advance_approve"/>
+            <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-goto-last" groups="tms.group_advance_confirm"/>            
 
 	   </tree>
       </field>
@@ -88,10 +87,10 @@ TMS.ADVANCE
       <field name="arch" type="xml">
         <form string="TMS Advances" version="7.0">
           <header>
-            <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
-            <button name="action_cancel" states="draft,approved,confirmed" string="Cancel" type="object"/>
-            <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward" class="oe_highlight" />
-            <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-goto-last" class="oe_highlight"/>
+            <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert" groups="tms.group_advance_setdraft" />
+            <button name="action_cancel" states="draft,approved,confirmed" string="Cancel" type="object" groups="tms.group_advance_cancel"/>
+            <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward" class="oe_highlight" groups="tms.group_advance_approve"/>
+            <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-goto-last" class="oe_highlight" groups="tms.group_advance_confirm"/>
             <field name="state" widget="statusbar" statusbar_visible="cancel,draft,approved,confirmed"/>
           </header>
           <sheet>

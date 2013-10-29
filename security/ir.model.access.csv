@@ -29,3 +29,4 @@ access_tms_waybill_shipped_product,tms.waybill.shipped_product,model_tms_waybill
 access_tms_unit_red_tape,tms.unit.red_tape,model_tms_unit_red_tape,tms.group_tms_manager,1,1,1,1
 access_tms_unit_active_history,tms.unit.active_history,model_tms_unit_active_history,tms.group_tms_manager,1,1,1,1
 access_tms_fleet_vehicle_odometer_device,fleet.vehicle.odometer.device,model_fleet_vehicle_odometer_device,tms.group_tms_manager,1,1,1,1
+access_tms_operation,tms.operation,model_tms_operation,tms.group_tms_manager,1,1,1,1

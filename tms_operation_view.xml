@@ -42,15 +42,16 @@ TMS.Operation
         <field name="type">tree</field>
         <field name="arch" type="xml">
             <tree string="TMS operations" colors="gray:state=='cancel';red:state=='draft';green:state=='process';">
-                <button name="action_cancel" states="draft,process,done" string="Cancel" type="object" icon="gtk-cancel"/>
-                <button name="action_process" states="draft" string="Process" type="object" icon="gtk-go-forward"/>
-                <button name="action_done" states="process" string="Done" type="object" icon="gtk-goto-last"/>
                 <field name="name" />
                 <field name="date" />
                 <field name="partner_id" />
                 <field name="date_start" />
                 <field name="date_end" />
                 <field name="state" />
+                <button name="action_cancel" states="draft,process,done" string="Cancel" type="object" icon="gtk-cancel"/>
+                <button name="action_process" states="draft" string="Process" type="object" icon="gtk-go-forward"/>
+                <button name="action_done" states="process" string="Done" type="object" icon="gtk-goto-last"/>
+
             </tree>
         </field>
     </record>

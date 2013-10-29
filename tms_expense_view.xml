@@ -13,7 +13,7 @@
         <separator colspan="4" string="Cancel this Expense Record ?" />
         <group col="2" colspan="4">
             <button icon='gtk-cancel' special="cancel" string="Cancel" />
-            <button name="action_cancel" string="Confirm Cancellation" colspan="1" type="object" icon="gtk-ok" />
+            <button name="action_cancel" string="Confirm Cancellation" colspan="1" type="object" icon="gtk-ok" groups="tms.group_expense_cancel"/>
         </group>
 	</form>
 	</field>
@@ -43,10 +43,8 @@ TMS.EXPENSE
             <field name="priority">2</field>
             <field name="arch" type="xml">
                 <tree string="Waybills" colors="red:state=='cancel';green:state=='approve';blue:state=='confirm';">
-<!--                    <button name="%(action_expense_cancel)d" states="draft,approved,confirmed" string="Cancel" icon="gtk-cancel"  type="action" /> 
-		            <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
--->		            <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
-		            <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok"/>
+		            <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward" groups="tms.group_expense_approve"/>
+		            <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok" groups="tms.group_expense_confirm"/>
                     <field name="state"/>
                     <field name="name"/>
                     <field name="date"/>
@@ -74,9 +72,9 @@ TMS.EXPENSE
             <field name="arch" type="xml">
                 <form string="Travel Expenses" version="7.0">
                 <header>
-                    <button name="%(action_expense_cancel)d" states="draft,approved,confirmed" string="Cancel" type="action"/> 
-                    <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward" class="oe_highlight" />
-                    <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok" class="oe_highlight" />
+                    <button name="%(action_expense_cancel)d" states="draft,approved,confirmed" string="Cancel" type="action" groups="tms.group_expense_cancel"/>
+                    <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward" class="oe_highlight" groups="tms.group_expense_approve"/>
+                    <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok" class="oe_highlight" groups="tms.group_expense_confirm"/>
                     <field name="state" widget="statusbar" statusbar_visible="cancel,draft,approved,confirmed"/> 
                 </header>
                 <sheet>

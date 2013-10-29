@@ -154,7 +154,7 @@ TMS.waybill.category
               <separator colspan="4" string="Cancel this Waybill ?" />
               <group col="2" colspan="4">
                 <button icon='gtk-cancel' special="cancel" string="Cancel" />
-                <button name="make_copy" string="Confirm Cancellation" colspan="1" type="object" icon="gtk-ok" />
+                <button name="make_copy" string="Confirm Cancellation" colspan="1" type="object" icon="gtk-ok" groups="tms.group_waybill_cancel" />
               </group>
 	        </form>
           </field>
@@ -205,9 +205,8 @@ TMS.waybill.category
 	          <field name="product_uom_type" invisible="1"/>
               <field name="operation_id" invisible="1"/>
               <field name="state"/>
-                <!--            <button name="%(action_waybill_cancel)d" states="draft,approved,confirmed" string="Cancel" icon="gtk-cancel"  type="action" />  -->
-	          <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward"/>
-	          <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-goto-last"/>
+	          <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward" groups="tms.group_waybill_approve"/>
+	          <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-goto-last" groups="tms.group_waybill_confirm"/>
             </tree> 
           </field>
         </record>
@@ -219,10 +218,10 @@ TMS.waybill.category
             <field name="arch" type="xml">
                 <form string="Waybill" version="7.0">
                 <header>
-                    <button name="%(action_waybill_cancel)d" states="draft,approved,confirmed" string="Cancel" type="action"/> 
-                    <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert"/>
-                    <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward" class="oe_highlight" />
-                    <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-goto-last" class="oe_highlight" />
+                    <button name="%(action_waybill_cancel)d" states="draft,approved,confirmed" string="Cancel" type="action" groups="tms.group_waybill_cancel"/>
+                    <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert" groups="tms.group_waybill_setdraft"/>
+                    <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward" class="oe_highlight" groups="tms.group_waybill_approve"/>
+                    <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-goto-last" class="oe_highlight" groups="tms.group_waybill_confirm"/>
                     <field name="state" widget="statusbar" statusbar_visible="cancel,draft,approved,confirmed"/> 
                 </header>
                 <sheet>
@@ -605,7 +604,7 @@ TMS.waybill.category
 	    <button icon='gtk-cancel' special="cancel"
 		    string="Cancel" />
 	    <button name="makeWaybillInvoices" string="Confirm"
-		    colspan="1" type="object" icon="gtk-ok" />
+		    colspan="1" type="object" icon="gtk-ok"  groups="tms.group_waybill_confirm" />
 	  </group>
 	</form>
       </field>
@@ -633,7 +632,7 @@ TMS.waybill.category
 	    <button icon='gtk-cancel' special="cancel"
 		    string="Cancel" />
 	    <button name="makeWaybillInvoices" string="Confirm"
-		    colspan="1" type="object" icon="gtk-ok" />
+		    colspan="1" type="object" icon="gtk-ok"  groups="tms.group_waybill_confirm"/>
 	  </group>
 	</form>
       </field>
