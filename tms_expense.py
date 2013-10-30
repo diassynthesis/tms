@@ -450,7 +450,7 @@ class tms_expense(osv.osv):
                         continue
                     elif advance.state in ('draft', 'approved'):
                         raise osv.except_osv(_('Warning !'),
-                                     _('Fuel Voucher %s has State <> Confirmed...') % (fuelvoucher.name)
+                                     _('Advance %s is still in Draft or Approve State...') % (advance.name)
                                      )
                     elif advance.employee_id.id == expense.employee_id.id:
                         if advance.auto_expense:
