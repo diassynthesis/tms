@@ -26,11 +26,11 @@ TMS.FUELVOUCHER
                    <filter string="Invoiced" icon="terp-stock_symbol-selection" domain="[('invoice_id','!=', False)]"/>
                    <filter string="Not Invoiced" icon="terp-dialog-close" domain="[('invoice_id','=', False)]"/>
                    <newline/>
-                   <field name="date"/>
                    <field name="name"/>
                    <field name="travel_id" />
                    <field name="unit_id"/>
                    <field name="employee_id"/>
+                    <field name="date"/>
                    
                    <newline/>
                    <group expand="0" string="More filters...">
@@ -157,7 +157,9 @@ TMS.FUELVOUCHER
                                     <field name="date_drafted" readonly="1" />
                                     <separator string="Account Move" colspan="4"/>
                                     <field name="move_id"/>
+                                    <field name="picking_id"/>
                                     <field name="expense_id"/>
+                                    <field name="picking_id_cancel"/>
 							        <separator string="Invoice Information" colspan="4"/>
                                     <field name="invoiced"/>  
                                     <field name="invoice_id" />

@@ -65,6 +65,10 @@
                             <label for="tms_default_freight" />
                             <field name="tms_default_freight" />
                         </div>
+                        <div attrs="{'invisible':[('tms_category','!=','salary')]}">
+                            <label for="tms_default_salary" />
+                            <field name="tms_default_salary" />
+                        </div>
                         <label for="tms_activity_duration" attrs="{'invisible':[('tms_category','!=','maint_activity')]}" class="oe_left" />
                         <newline />
                         <field name="tms_activity_duration" attrs="{'invisible':[('tms_category','!=','maint_activity')], 'required':[('tms_category','=','maint_activity')]}" class="oe_left" nolabel="1" widget="float_time"/>

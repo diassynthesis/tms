@@ -325,23 +325,14 @@ class tms_expense(osv.osv):
                     
     def get_salary_advances_and_fuel_vouchers(self, cr, uid, ids, vals, context=None):  
 
-#        expenses = [x for x in expense_line if 'control' not in x[2] or not x[2]['control']] if expense_line else []
-
-        #print vals
-
         prod_obj = self.pool.get('product.product')
-
-        prod_search = ['salary', 'fuel']
-        products = {}
         
-        for xprod in prod_search:
-            xid = prod_obj.search(cr, uid, [('tms_category', '=', xprod),('active','=', 1)], limit=1)
-            if not xid:
-                raise osv.except_osv(
-                            _('Missing configuration !'),
-                            _('There is no product defined as Salary and/or Fuel !!!'))
-            for product in prod_obj.browse(cr, uid, xid, context=None):        
-                products[xprod] = { 'id': product.id, 'uom': product.uom_id.id, 'name': product.name, 'taxes' : [(6, 0, [x.id for x in product.supplier_taxes_id])], 'category' : product.tms_category }
+        salary_id = prod_obj.search(cr, uid, [('tms_category', '=', 'salary'),('tms_default_salary','=', 1),('active','=', 1)], limit=1)
+        if not salary_id:
+            raise osv.except_osv(
+                        _('Missing configuration !'),
+                        _('There is no product defined as Default Salary !!!'))
+        salary = prod_obj.browse(cr, uid, salary_id, context=None)[0]
 
 
         qty = amount_untaxed = 0.0
@@ -397,20 +388,20 @@ class tms_expense(osv.osv):
                 print "expense.driver_helper: ", expense.driver_helper
                 print "sueldo: ", result
 
-                salary += result
+                #salary += result
                 xline = {
                         'travel_id'         : travel.id,
                         'expense_id'        : expense.id,
-                        'line_type'         : products['salary']['category'],
-                        'name'              : products['salary']['name'] + ' - ' + _('Travel: ') + travel.name, 
+                        'line_type'         : salary.product_id.tms_category,
+                        'name'              : salary.name + ' - ' + _('Travel: ') + travel.name, 
                         'sequence'          : 1,
-                        'product_id'        : products['salary']['id'],
-                        'product_uom'       : products['salary']['uom'],
+                        'product_id'        : salary.product_id.id,
+                        'product_uom'       : salary.product_id.uom_id.id,
                         'product_uom_qty'   : 1,
                         'price_unit'        : result,
                         'control'           : True,
                         'operation_id'      : travel.operation_id.id,
-                        #'tax_id'            : products['salary']['taxes'],
+                        'tax_id'            : [(6, 0, [x.id for x in salary.product_id.supplier_taxes_id])],
                         }
 
                 #print "//////////////////////"
@@ -424,21 +415,21 @@ class tms_expense(osv.osv):
                         continue
                     elif fuelvoucher.state in ('draft', 'approved'):
                         raise osv.except_osv(_('Warning !'),
-                                     _('Fuel Voucher %s has State <> Confirmed...') % (fuelvoucher.name)
+                                     _('Fuel Voucher %s is not Confirmed...') % (fuelvoucher.name)
                                      )
                     elif fuelvoucher.employee_id.id == expense.employee_id.id:
                         xline = {
                                 'travel_id'         : travel.id,
                                 'expense_id'        : expense.id,
-                                'line_type'         : products['fuel']['category'],
-                                'name'              : products['fuel']['name'] + _(' from Fuel Vouchers - Travel: ') + travel.name,
+                                'line_type'         : fuelvoucher.product_id.tms_category,
+                                'name'              : fuelvoucher.product_id.name + _(' from Fuel Vouchers - Travel: ') + travel.name,
                                 'sequence'          : 5,
-                                'product_id'        : products['fuel']['id'],
-                                'product_uom'       : products['fuel']['uom'],
+                                'product_id'        : fuelvoucher.product_id.id,
+                                'product_uom'       : fuelvoucher.product_id.product_uom.id,
                                 'product_uom_qty'   : fuelvoucher.product_uom_qty,
                                 'price_unit'        : (fuelvoucher.price_subtotal / fuelvoucher.currency_id.rate) / fuelvoucher.product_uom_qty,
                                 'control'           : True,
-                                'tax_id'            : products['fuel']['taxes'],
+                                'tax_id'            : [(6, 0, [x.id for x in fuelvoucher.product_id.supplier_taxes_id])] if not fuelvoucher.partner_id.tms_fuel_internal else [],
                                 'fuel_voucher'      : True,
                                 'operation_id'      : fuelvoucher.operation_id.id,
                                 }
@@ -450,7 +441,7 @@ class tms_expense(osv.osv):
                         continue
                     elif advance.state in ('draft', 'approved'):
                         raise osv.except_osv(_('Warning !'),
-                                     _('Advance %s is still in Draft or Approve State...') % (advance.name)
+                                     _('Advance %s is not Confirmed...') % (advance.name)
                                      )
                     elif advance.employee_id.id == expense.employee_id.id:
                         if advance.auto_expense:

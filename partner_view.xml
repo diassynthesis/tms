@@ -11,10 +11,15 @@
             <field name="priority">50</field>
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='user_id']" position="before" >
-                    <field name="tms_category" />
-                    <newline />
-                </xpath> 
+                <div name="buttons" position="inside">
+                    <group col="2">
+                        <field name="tms_category" />
+                        <field name="tms_fuel_internal" attrs="{'invisible':[('tms_category','!=','fuel')]}" />
+                        <field name="tms_warehouse_id"  
+                               attrs="{'required':[('tms_fuel_internal','=',True)],'invisible':[('tms_fuel_internal','=',False)]}" />
+                        
+                    </group>
+                </div>
             </field>
         </record>
 

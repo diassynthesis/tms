@@ -62,17 +62,16 @@ class account_invoice(osv.osv):
                 
         return super(account_invoice, self).unlink(cr, uid, ids, context=context)
     
-    def action_move_create(self, cr, uid, ids, context=None):
-        res = super(account_invoice, self).action_move_create(cr, uid, ids, context=context)
-        move_line_obj = self.pool.get('account.move.line')
-        for invoice in self.browse(cr, uid, ids):
-            lines = move_line_obj.search(cr, uid, [('move_id','=', invoice.move_id.id)])
-            if invoice.vehicle_id.id:
-                move_line_obj.write(cr, uid, lines, {'vehicle_id': invoice.vehicle_id.id})
-            if invoice.employee_id.id:
-                move_line_obj.write(cr, uid, lines, {'employee_id': invoice.employee_id.id})    
-                
-        return res
+#    def action_move_create(self, cr, uid, ids, context=None):
+#        res = super(account_invoice, self).action_move_create(cr, uid, ids, context=context)
+#        move_line_obj = self.pool.get('account.move.line')
+#        for invoice in self.browse(cr, uid, ids):
+#            lines = move_line_obj.search(cr, uid, [('move_id','=', invoice.move_id.id)])
+#            if invoice.vehicle_id.id:
+#                move_line_obj.write(cr, uid, lines, {'vehicle_id': invoice.vehicle_id.id})
+#            if invoice.employee_id.id:
+#                move_line_obj.write(cr, uid, lines, {'employee_id': invoice.employee_id.id})                    
+#        return res
         
 account_invoice()
 
