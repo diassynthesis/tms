@@ -70,8 +70,9 @@ class product_product(osv.osv):
             'tms_property_account_expense' : fields.many2one('account.account', 'Breakdown Expense Account', 
                                                                 help='Use this to define breakdown expense account per vehicle for Fuel, Travel Expenses, etc.', 
                                                                 required=False),
-            'tms_default_freight'        : fields.boolean('Default', help='Use this as default product for Freight in Waybills'),
-            'tms_default_salary'         : fields.boolean('Default', help='Use this as default product for Salary in Travel Expense Records'),
+            'tms_default_freight'          : fields.boolean('Default Freight', help='Use this as default product for Freight in Waybills'),
+            'tms_default_supplier_freight' : fields.boolean('Default Supplier Freight', help='Use this as default product for Supplier Freight in Waybills'),
+            'tms_default_salary'           : fields.boolean('Default', help='Use this as default product for Salary in Travel Expense Records'),
 
         }
 
@@ -102,6 +103,16 @@ class product_product(osv.osv):
                 if res and res[0] and res[0] != record.id:
                     return False
         return True
+
+    def _check_default_supplier_freight(self, cr, uid, ids, context=None):
+        prod_obj = self.pool.get('product.product')
+        for record in self.browse(cr, uid, ids, context=context):
+            if record.tms_category == 'freight' and record.tms_default_freight:
+                res = prod_obj.search(cr, uid, [('tms_default_suplpier_freight', '=', 1)], context=None)                
+                if res and res[0] and res[0] != record.id:
+                    return False
+        return True
+
     
     def _check_default_salary(self, cr, uid, ids, context=None):
         prod_obj = self.pool.get('product.product')
@@ -116,6 +127,7 @@ class product_product(osv.osv):
     _constraints = [
         (_check_tms_product, 'Error ! Product is not defined correctly...Please see tooltip for TMS Category', ['tms_category']),
         (_check_default_freight, 'Error ! You can not have two or more products defined as Default Freight', ['tms_default_freight']),
+        (_check_default_supplier_freight, 'Error ! You can not have two or more products defined as Default Supplier Freight', ['tms_default_supplier_freight']),
         (_check_default_salary, 'Error ! You can not have two or more products defined as Default Salary', ['tms_default_salary']),
         
         ]

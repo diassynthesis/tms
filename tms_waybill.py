@@ -378,19 +378,17 @@ class tms_waybill(osv.osv):
 
     def get_freight_from_factors(self, cr, uid, ids, context=None):
         prod_obj = self.pool.get('product.product')
-        prod_id = prod_obj.search(cr, uid, [('tms_category', '=', 'freight'),('tms_default_freight','=', 1),('active','=', 1)], limit=1)
-        if not prod_id:
-            raise osv.except_osv(
-                        _('Missing configuration !'),
-                        _('There is no product defined as Default Freight !!!'))
-
-        product = prod_obj.browse(cr, uid, prod_id,	 context=None)
         
 
         factor = self.pool.get('tms.factor')
         line_obj = self.pool.get('tms.waybill.line')
         fpos_obj = self.pool.get('account.fiscal.position')
         for waybill in self.browse(cr, uid, ids):
+            prod_id = prod_obj.search(cr, uid, [('tms_category', '=', 'freight'),('tms_default_freight' if waybill.waybill_type =='self' else 'tms_default_supplier_freight','=', 1),('active','=', 1)], limit=1)
+            if not prod_id:
+                raise osv.except_osv(_('Missing configuration !'), _('There is no product defined as Default Freight !!!'))
+            product = prod_obj.browse(cr, uid, prod_id,	 context=None)
+
             for line in waybill.waybill_line:
                 if line.control:
                     line_obj.unlink(cr, uid, [line.id])
