@@ -1,7 +1,7 @@
 <openerp>
 <data>
 
-        <menuitem icon="terp-account" id="menu_tms" name="Freights" sequence="13"
+        <menuitem icon="terp-account" id="menu_tms" name="Freights" sequence="10"
             web_icon="images/logistics.png"
             web_icon_hover="images/logistics-hover.png"/>
         <menuitem id="menu_tms_travels" name="Freights" parent="menu_tms" sequence="10"/>            

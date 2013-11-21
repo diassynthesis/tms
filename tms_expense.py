@@ -332,7 +332,7 @@ class tms_expense(osv.osv):
             raise osv.except_osv(
                         _('Missing configuration !'),
                         _('There is no product defined as Default Salary !!!'))
-        salary = prod_obj.browse(cr, uid, salary_id, context=None)[0]
+        salary = prod_obj.browse(cr, uid, salary_id, context=None)
 
 
         qty = amount_untaxed = 0.0
@@ -348,7 +348,7 @@ class tms_expense(osv.osv):
         res = expense_line_obj.search(cr, uid, [('expense_id', '=', ids[0]),('control','=', 1)])
         if len(res):
             res = expense_line_obj.unlink(cr, uid, res)
-        salary = fuel = 0.0
+        fuel = 0.0
 
         for expense in self.browse(cr, uid, ids):
             currency_id = expense.currency_id.id
