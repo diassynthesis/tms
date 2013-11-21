@@ -392,16 +392,16 @@ class tms_expense(osv.osv):
                 xline = {
                         'travel_id'         : travel.id,
                         'expense_id'        : expense.id,
-                        'line_type'         : salary.product_id.tms_category,
+                        'line_type'         : salary.tms_category,
                         'name'              : salary.name + ' - ' + _('Travel: ') + travel.name, 
                         'sequence'          : 1,
-                        'product_id'        : salary.product_id.id,
-                        'product_uom'       : salary.product_id.uom_id.id,
+                        'product_id'        : salary.id,
+                        'product_uom'       : salary.uom_id.id,
                         'product_uom_qty'   : 1,
                         'price_unit'        : result,
                         'control'           : True,
                         'operation_id'      : travel.operation_id.id,
-                        'tax_id'            : [(6, 0, [x.id for x in salary.product_id.supplier_taxes_id])],
+                        'tax_id'            : [(6, 0, [x.id for x in salary.supplier_taxes_id])],
                         }
 
                 #print "//////////////////////"
