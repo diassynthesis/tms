@@ -332,7 +332,7 @@ class tms_expense(osv.osv):
             raise osv.except_osv(
                         _('Missing configuration !'),
                         _('There is no product defined as Default Salary !!!'))
-        salary = prod_obj.browse(cr, uid, salary_id, context=None)
+        salary = prod_obj.browse(cr, uid, salary_id, context=None)[0]
 
 
         qty = amount_untaxed = 0.0
@@ -425,7 +425,7 @@ class tms_expense(osv.osv):
                                 'name'              : fuelvoucher.product_id.name + _(' from Fuel Vouchers - Travel: ') + travel.name,
                                 'sequence'          : 5,
                                 'product_id'        : fuelvoucher.product_id.id,
-                                'product_uom'       : fuelvoucher.product_id.product_uom.id,
+                                'product_uom'       : fuelvoucher.product_id.uom_id.id,
                                 'product_uom_qty'   : fuelvoucher.product_uom_qty,
                                 'price_unit'        : (fuelvoucher.price_subtotal / fuelvoucher.currency_id.rate) / fuelvoucher.product_uom_qty,
                                 'control'           : True,

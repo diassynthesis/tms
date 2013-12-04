@@ -345,7 +345,7 @@ TMS.EXPENSE.LINE
       <field name="arch" type="xml">
         <form string="Expense Lines">
 	  <field name="travel_id" domain="[('id','in', tuple(parent.travel_ids[0][2]),)]" /> 
-          <field name="operation_id" domain="[('state','not in', ('draft', 'cancel')]" />
+          <field name="operation_id" domain="[('state','not in', ('draft', 'cancel'))]" />
           <field name="control" invisible="1" />
 	  <field name="line_type" required="1" attrs="{'readonly':[('control','!=',False)]}"/>
 	  <newline />
