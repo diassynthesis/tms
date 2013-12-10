@@ -38,6 +38,7 @@ class sale_shop(osv.osv):
             'tms_travel_seq': fields.many2one('ir.sequence', 'Travel Sequence'),
             'tms_advance_seq': fields.many2one('ir.sequence', 'Advance Sequence'),
             'tms_travel_expenses_seq': fields.many2one('ir.sequence', 'Travel Expenses Sequence'),
+            'tms_loan_seq': fields.many2one('ir.sequence', 'Loan Sequence'),
             'tms_fuel_sequence_ids': fields.one2many('tms.sale.shop.fuel.supplier.seq', 'shop_id', 'Fuel Sequence per Supplier'),
         }
 

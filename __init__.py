@@ -36,13 +36,7 @@ import tms_factor
 import tms_history
 import tms_operation
 import stock
-#import logistic_sale
-#import logistic_product
-#import logistic_fuel_efficiency
-#import logistic_route
-#import logistic_advance
-#import logistic_fuel_voucher
-
+import tms_expense_loan
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
 

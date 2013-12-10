@@ -91,7 +91,7 @@ TMS.ADVANCE
             <button name="action_cancel" states="draft,approved,confirmed" string="Cancel" type="object" groups="tms.group_advance_cancel"/>
             <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward" class="oe_highlight" groups="tms.group_advance_approve"/>
             <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-goto-last" class="oe_highlight" groups="tms.group_advance_confirm"/>
-            <field name="state" widget="statusbar" statusbar_visible="cancel,draft,approved,confirmed"/>
+            <field name="state" widget="statusbar" statusbar_visible="draft,approved,confirmed"/>
           </header>
           <sheet>
             <h1>

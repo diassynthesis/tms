@@ -107,7 +107,7 @@ TMS.travel
                         <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert" groups="tms.group_travel_setdraft"/>
                         <button name="action_dispatch" states="draft" string="Dispatch" type="object" icon="gtk-go-forward" class="oe_highlight" groups="tms.group_travel_dispatch"/>
                         <button name="action_end" states="progress" string="End" type="object" icon="gtk-goto-last" class="oe_highlight" groups="tms.group_travel_end"/>
-                        <field name="state" widget="statusbar" statusbar_visible="cancel,draft,progress,done,closed"/> 
+                        <field name="state" widget="statusbar" statusbar_visible="draft,progress,done,closed"/> 
                     </header>
                     <sheet>
                         <h1>

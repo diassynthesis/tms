@@ -98,7 +98,7 @@ TMS.FUELVOUCHER
                         <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert" groups="tms.group_fuelvoucher_setdraft"/>
                         <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward" class="oe_highlight"  groups="tms.group_fuelvoucher_approve"/>
                         <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-goto-last" class="oe_highlight"  groups="tms.group_fuelvoucher_confirm"/>
-                        <field name="state" widget="statusbar" statusbar_visible="cancel,draft,approved,confirmed,closed"/> 
+                        <field name="state" widget="statusbar" statusbar_visible="draft,approved,confirmed,closed"/> 
                     </header>
                     <sheet>
                         <h1>

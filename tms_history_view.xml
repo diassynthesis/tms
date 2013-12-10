@@ -220,7 +220,7 @@ TMS.EVENT
                         <button name="action_cancel" states="draft,confirmed" string="Cancel" type="object" /> 
                         <button name="action_draft" states="cancel" string="Set to Draft" icon="gtk-convert" type="object" /> 
 				        <button name="action_confirm" states="draft" string="Confirm" icon="gtk-ok" type="object" class="oe_highlight" />
-                        <field name="state" widget="statusbar" statusbar_visible="cancel,draft,confirmed"/> 
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirmed"/> 
                     </header>
                     <sheet>
                         <group col="4">

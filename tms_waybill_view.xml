@@ -222,7 +222,7 @@ TMS.waybill.category
                     <button name="action_cancel_draft" states="cancel" string="Set to Draft" type="object" icon="gtk-convert" groups="tms.group_waybill_setdraft"/>
                     <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward" class="oe_highlight" groups="tms.group_waybill_approve"/>
                     <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-goto-last" class="oe_highlight" groups="tms.group_waybill_confirm"/>
-                    <field name="state" widget="statusbar" statusbar_visible="cancel,draft,approved,confirmed"/> 
+                    <field name="state" widget="statusbar" statusbar_visible="draft,approved,confirmed"/> 
                 </header>
                 <sheet>
                     <h1>

@@ -16,7 +16,7 @@
                     <field name="tms_travel_seq" />
                     <field name="tms_advance_seq"/>
                     <field name="tms_travel_expenses_seq"/>
-                    <newline />
+                    <field name="tms_loan_seq"/>                    
                     <field name="tms_fuel_sequence_ids"  context="{'default_shop_id': active_id}" nolabel="1" colspan="4">
                         <tree string="Fuel Voucher Sequences" editable="bottom">
                             <field name="shop_id" invisible="1" />

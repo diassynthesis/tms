@@ -68,7 +68,7 @@ TMS.Operation
                 <button name="action_cancel" states="draft,process,done" string="Cancel" type="object" icon="gtk-cancel"/>
                 <button name="action_process" states="draft" string="Process" type="object" icon="gtk-go-forward" class="oe_highlight" />
                 <button name="action_done" states="process" string="Done" type="object" icon="gtk-goto-last" class="oe_highlight" />
-                <field name="state" widget="statusbar" statusbar_visible="cancel,draft,process,done"/>
+                <field name="state" widget="statusbar" statusbar_visible="draft,process,done"/>
             </header>
             <!--<sheet>-->
                 <group col="4" colspan="4">

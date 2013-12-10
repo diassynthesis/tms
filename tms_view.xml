@@ -868,7 +868,7 @@ TMS.UNIT.ACTIVE_HISTORY
                     <header>
                         <button name="action_cancel" states="draft" string="Cancel" type="object"/>
                         <button name="action_confirm" states="draft" string="Confirm" type="object" icon="gtk-goto-last" class="oe_highlight" />
-                        <field name="state" widget="statusbar" statusbar_visible="cancel,draft,confirmed"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirmed"/>
                     </header>
                     <sheet>
                         <h1>
@@ -992,7 +992,7 @@ TMS.UNIT.red_tape
                         <button name="action_pending" states="draft" string="Pending" type="object" icon="terp-gtk-media-pause" class="oe_highlight" />
                         <button name="action_progress" states="pending" string="Progress" type="object" icon="gtk-go-forward" class="oe_highlight" />
                         <button name="action_done" states="progress" string="Done" type="object" icon="gtk-goto-last" class="oe_highlight" />
-                        <field name="state" widget="statusbar" statusbar_visible="cancel,draft,pending,progress,done"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,pending,progress,done"/>
                     </header>
                     <sheet>
 		      <group col="4" colspan="4">
@@ -1123,7 +1123,7 @@ fleet.vehicle.odometer.device
                         <button name="action_cancel" states="draft" string="Cancel" type="object"/>
                         <button name="action_activate" states="draft" string="Activate" type="object" icon="gtk-go-forward" class="oe_highlight" />
                         <button name="action_inactivate" states="active" string="Inactivate" type="object" icon="gtk-goto-last" />
-                        <field name="state" widget="statusbar" statusbar_visible="cancel,draft,active,inactive"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,active,inactive"/>
                     </header>
                     <sheet>
                         <h1>

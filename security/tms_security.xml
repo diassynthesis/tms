@@ -118,6 +118,28 @@
         <field name="comment">The user will be able to Set to Draft Travel Expense Records.</field>
     </record>
 
+<!-- TMS.EXPENSE.LOAN -->
+    <record id="tms.group_expense_loan_approve" model="res.groups">
+        <field name="name">Can Approve Driver Loans</field>
+        <field name="category_id" ref="tms.module_category_tms_management"/>
+        <field name="comment">The user will be able to Approve Drivers Loans Records.</field>
+    </record>
+    <record id="tms.group_expense_loan_confirm" model="res.groups">
+        <field name="name">Can Confirm Drivers Loans</field>
+        <field name="category_id" ref="tms.module_category_tms_management"/>
+        <field name="comment">The user will be able to Confirm Drivers Loans Records.</field>
+    </record>
+    <record id="tms.group_expense_loan_cancel" model="res.groups">
+        <field name="name">Can Cancel Drivers Loans</field>
+        <field name="category_id" ref="tms.module_category_tms_management"/>
+        <field name="comment">The user will be able to Cancel Drivers Loans Records.</field>
+    </record>
+    <record id="tms.group_expense_loan_close" model="res.groups">
+        <field name="name">Can Close Drivers Loans</field>
+        <field name="category_id" ref="tms.module_category_tms_management"/>
+        <field name="comment">The user will be able to Set to Draft Drivers Loans Records.</field>
+    </record>
+
 <!-- TMS.OPERATION -->
     <record id="tms.group_operation_process" model="res.groups">
         <field name="name">Can set Operation to Process</field>

@@ -19,6 +19,7 @@
                     <page string="TMS">
                         <group>
 						    <field name="tms_category" />
+                            <field name="shop_id" />
 						    <field name="tms_advance_account_id" attrs="{'required':[('tms_category','=','driver'),('tms_supplier_driver','=', False)],'invisible':['|',('tms_category','!=','driver'),('tms_supplier_driver','=', True)]  }"/>
                             <field name="tms_expense_negative_balance_account_id" attrs="{'required':[('tms_category','=','driver'),('tms_supplier_driver','=', False)],'invisible':['|',('tms_category','!=','driver'),('tms_supplier_driver','=', True)]  }"/>
 						    <field name="tms_supplier_driver" attrs="{'invisible':[('tms_category','!=','driver')]  }"/>

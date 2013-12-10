@@ -465,6 +465,7 @@ class tms_expense(osv.osv):
                     travel_obj.write(cr, uid, [travel.id], {'expense_id': expense.id, 'state':'closed','closed_by':uid,'date_closed':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
                 else:
                     travel_obj.write(cr, uid, [travel.id], {'expense2_id': expense.id})
+                self.pool.get('tms.expense.loan').get_loan_discounts(cr, uid, expense.employee_id.id, expense.id)
         return
 
     def on_change_travel_ids(self, cr, uid, ids, travel_ids, driver_helper, context=None):
@@ -755,6 +756,8 @@ class tms_expense_line(osv.osv):
         'employee_id'       : fields.related('expense_id', 'employee_id', type='many2one', relation='hr.employee', store=True, string='Driver'),
         'shop_id'           : fields.related('expense_id', 'shop_id', type='many2one', relation='sale.shop', string='Shop', store=True, readonly=True),
         'company_id'        : fields.related('expense_id', 'company_id', type='many2one', relation='res.company', string='Company', store=True, readonly=True),
+        'date'              : fields.related('expense_id', 'date', string='Date', type='date', store=True, readonly=True),
+        'state'             : fields.related('expense_id', 'state', string='State', type='char', size=64, store=True, readonly=True),
         'fuel_voucher'      : fields.boolean('Fuel Voucher'),
 
         'control'           : fields.boolean('Control'), # Useful to mark those lines that must not be deleted for Expense Record (like Fuel from Fuel Voucher, Toll Stations payed without cash (credit card, voucher, etc)
@@ -860,6 +863,8 @@ class tms_expense_cancel(osv.osv_memory):
 
         if record_id:
             expense_obj = self.pool.get('tms.expense')
+            expense_line_obj = self.pool.get('tms.expense.line')
+            expense_loan_obj = self.pool.get('tms.expense.loan')
             for expense in expense_obj.browse(cr, uid, record_id):
                 cr.execute("select id from tms_expense where state <> 'cancel' and employee_id = " + str(expense.employee_id.id) + " order by date desc limit 1")
                 data = filter(None, map(lambda x:x[0], cr.fetchall()))
@@ -879,6 +884,11 @@ class tms_expense_cancel(osv.osv_memory):
                 move_id = expense.move_id.id
                 move_state = expense.move_id.state
                 expense_obj.write(cr, uid, record_id, {'state':'cancel', 'cancelled_by':uid,'date_cancelled':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT), 'move_id': False})
+                for x in expense_obj.browse(cr, uid, record_id)[0].expense_line:
+                    if x.loan_id.id:
+                        expense_loan_obj.write(cr, uid,[x.loan_id.id], {'state':'confirmed', 'closed_by' : False, 'date_closed':False} )
+                expense_line_obj.unlink(cr, uid, [x.id for x in expense_obj.browse(cr, uid, record_id)[0].expense_line])
+                
                 if move_id:
                     move_obj = self.pool.get('account.move')
                     if move_state == 'posted':
