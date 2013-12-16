@@ -107,7 +107,7 @@ class product_product(osv.osv):
     def _check_default_supplier_freight(self, cr, uid, ids, context=None):
         prod_obj = self.pool.get('product.product')
         for record in self.browse(cr, uid, ids, context=context):
-            if record.tms_category == 'freight' and record.tms_default_freight:
+            if record.tms_category == 'freight' and record.tms_default_supplier_freight:
                 res = prod_obj.search(cr, uid, [('tms_default_supplier_freight', '=', 1)], context=None)                
                 if res and res[0] and res[0] != record.id:
                     return False
