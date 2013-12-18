@@ -155,10 +155,21 @@ class tms_travel(osv.osv):
         'distance_route': fields.function(_route_data, string='Route Distance (mi./km)', method=True, store=True, type='float', multi=True), #digits=(18,6), multi=True),
         'fuel_efficiency_expected': fields.function(_route_data, string='Fuel Efficiency Expected', method=True, store=True, type='float', multi=True), #digits=(18,6), multi=True),
 
-        'advance_ok_for_expense_rec': fields.function(_validate_for_expense_rec, string='Advance OK', method=True, type='boolean',  multi='advance_ok_for_expense_rec'),
-        'fuelvoucher_ok_for_expense_rec': fields.function(_validate_for_expense_rec, string='Fuel Voucher OK', method=True,  type='boolean',  multi='advance_ok_for_expense_rec'),
-        'waybill_ok_for_expense_rec': fields.function(_validate_for_expense_rec, string='Waybill OK', method=True,  type='boolean',  multi='advance_ok_for_expense_rec'),
-        'waybill_income': fields.function(_validate_for_expense_rec, string='Income', method=True, type='float', digits=(18,6), multi='advance_ok_for_expense_rec', store=True),
+        
+        #****'balance'       : fields.function(_balance, method=True, digits_compute=dp.get_precision('Sale Price'), string='Balance', type='float', multi=True,
+        #                                  store={
+        #                                         'tms.expense.loan': (lambda self, cr, uid, ids, c={}: ids, ['notes', 'amount','state','expense_line_ids'], 10),
+        #                                         'tms.expense.line': (_get_loan_discounts_from_expense_lines, ['product_uom_qty', 'price_unit'], 10),
+        #                                         }),****
+        
+        'advance_ok_for_expense_rec': fields.function(_validate_for_expense_rec, string='Advance OK', method=True, type='boolean',  multi=True),
+                                            #store={
+                                            #     'tms.travel': (lambda self, cr, uid, ids, c={}: ids, ['state', 'fuelvoucher_ids','waybill_ids', 'advance_ids'], 10),
+                                            #     'tms.expense.line': (_get_loan_discounts_from_expense_lines, ['product_uom_qty', 'price_unit'], 10),
+                                            #     }),
+        'fuelvoucher_ok_for_expense_rec': fields.function(_validate_for_expense_rec, string='Fuel Voucher OK', method=True,  type='boolean',  multi=True),
+        'waybill_ok_for_expense_rec': fields.function(_validate_for_expense_rec, string='Waybill OK', method=True,  type='boolean',  multi=True),
+        'waybill_income': fields.function(_validate_for_expense_rec, string='Income', method=True, type='float', digits=(18,6), store=True, multi=True),
 
         'distance_driver': fields.float('Distance traveled by driver (mi./km)', required=False, digits=(16,2), states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
         'distance_loaded': fields.float('Distance Loaded (mi./km)', required=False, digits=(16,2), states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
@@ -178,7 +189,7 @@ class tms_travel(osv.osv):
         'advance_ids':fields.one2many('tms.advance', 'travel_id', string='Advances', states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
         'framework': fields.function(_get_framework, string='Framework', method=True, store=True, type='char', size=15, multi='framework'),
         'framework_count': fields.function(_get_framework, string='Framework Count', method=True, store=True, type='integer', multi='framework'),
-
+        'framework_supplier' : fields.selection([('Unit','Unit'), ('Single','Single'), ('Double','Double')], 'Framework', states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
         'create_uid' : fields.many2one('res.users', 'Created by', readonly=True),
         'create_date': fields.datetime('Creation Date', readonly=True, select=True),
         'cancelled_by' : fields.many2one('res.users', 'Cancelled by', readonly=True),
@@ -238,6 +249,11 @@ class tms_travel(osv.osv):
     ]
 
         
+    def onchange_unit_id(self, cr, uid, ids, unit_id):
+        if not unit_id:
+            return {}        
+        vehicle = self.pool.get('fleet.vehicle').browse(cr, uid, unit_id)
+        return {'value' : {'supplier_id': vehicle.supplier_id.id }}
         
         
     def onchange_kit_id(self, cr, uid, ids, kit_id):

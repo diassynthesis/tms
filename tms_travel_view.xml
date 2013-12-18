@@ -121,7 +121,7 @@ TMS.travel
                             <field name="operation_id" domain="[('state','=','process')]"/>
                             <group col="2" colspan="2">
 
-                              <field name="unit_id" />
+                              <field name="unit_id" on_change="onchange_unit_id(unit_id)"/>
                             
                               <field name="trailer1_id" 	domain="[('id','!=',trailer2_id), ('fleet_type','=','trailer')]"
 									 context="{'default_fleet_type': 'trailer'}"
@@ -137,8 +137,14 @@ TMS.travel
                             <group col="2" colspan="2">
                               <field name="supplier_unit" attrs="{'invisible':[('supplier_unit','!=',True)]}" />
                               <field name="supplier_id" string="Outsourced with" attrs="{'invisible':[('supplier_unit','!=',True)]}" />
-                              <field name="employee_id" context="{'default_tms_category': 'driver'}" />
-                              <field name="employee2_id"  context="{'default_tms_category': 'driver'}" />
+                              <field name="employee_id" context="{'default_tms_category': 'driver'}" 
+                                     domain="[('tms_supplier_id','=',supplier_id)]" />
+                              <field name="employee2_id"  context="{'default_tms_category': 'driver'}" 
+                                     domain="[('tms_supplier_id','=',supplier_id),('id','!=', employee_id)]" />
+                              <field name="framework" 
+                                     attrs="{'invisible':[('supplier_id','!=',False)]}"/>    
+                              <field name="framework_supplier" 
+                                     attrs="{'required':[('supplier_id','!=',False)], 'invisible':[('supplier_id','=',False)]}"/>
                             </group>
                             <field name="route_id" on_change="onchange_route_id(route_id, unit_id, trailer1_id, dolly_id, trailer2_id)" colspan="4"/>
                             <field name="departure" readonly="1" />
@@ -285,6 +291,7 @@ TMS.travel
             <field name="arch" type="xml">
               <gantt date_start="date_start" date_stop="date_end" string="Travels" default_group_by="unit_id" color="unit_id">
                 <field name="name" />
+                <field name="distance_route" />
               </gantt>
             </field>
         </record>

@@ -79,7 +79,7 @@ TMS.Operation
                 </group>
                 <group col="4" colspan="4">
                     <field name="date" />
-                    <field name="partner_id" />
+                    <field name="partner_id" domain="[('customer','=',True), ('is_company', '=', True)]" />
                     <field name="date_start" />
                     <field name="date_end" />
                 </group>
