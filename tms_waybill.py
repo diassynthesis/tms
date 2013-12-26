@@ -200,7 +200,7 @@ class tms_waybill(osv.osv):
         'sequence_id'       : fields.many2one('ir.sequence', 'Sequence', required=True, ondelete='restrict', readonly=False, states={'confirmed': [('readonly', True)]}),
         'travel_ids'        : fields.many2many('tms.travel', 'tms_waybill_travel_rel', 'waybill_id', 'travel_id', 'Travels', readonly=False, states={'confirmed': [('readonly', True)]}),
 
-        'travel_id'         : fields.function(_get_newer_travel_id, method=True, relation='tms.travel', type="many2one", string='Actual Travel', readonly=True, store=True),
+        'travel_id'         : fields.function(_get_newer_travel_id, method=True, relation='tms.travel', type="many2one", string='Actual Travel', readonly=True, store=True, ondelete='cascade'),
         'supplier_id'       : fields.related('unit_id', 'supplier_id', type='many2one', relation='res.partner', string='Freight Supplier', store=True, readonly=True),                
         'supplier_amount'   : fields.function(_get_supplier_amount, string='Supplier Freight Amount', method=True, type='float', digits_compute= dp.get_precision('Sale Price'), help="Freight Amount from Supplier.", multi=False, store=True),
 
@@ -208,7 +208,7 @@ class tms_waybill(osv.osv):
         'trailer1_id'       : fields.related('travel_id', 'trailer1_id', type='many2one', relation='fleet.vehicle', string='Trailer 1', store=True, readonly=True),                
         'dolly_id'          : fields.related('travel_id', 'dolly_id', type='many2one', relation='fleet.vehicle', string='Dolly', store=True, readonly=True),                
         'trailer2_id'       : fields.related('travel_id', 'trailer2_id', type='many2one', relation='fleet.vehicle', string='Trailer 2', store=True, readonly=True),                
-        'employee_id'       : fields.related('travel_id', 'employee_id', type='many2one', relation='hr.employee', string='Driver', store=True, readonly=True),                
+        'employee_id'       : fields.related('travel_id', 'employee_id', type='many2one', relation='hr.employee', string='Driver', store=True, readonly=True),
         'employee2_id'      : fields.related('travel_id', 'employee2_id', type='many2one', relation='hr.employee', string='Driver Helper', store=True, readonly=True),                
         'route_id'          : fields.related('travel_id', 'route_id', type='many2one', relation='tms.route', string='Route', store=True, readonly=True),                
         'departure_id'      : fields.related('route_id', 'departure_id', type='many2one', relation='tms.place', string='Departure', store=True, readonly=True),                

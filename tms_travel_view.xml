@@ -123,8 +123,8 @@ TMS.travel
 
                               <field name="unit_id" on_change="onchange_unit_id(unit_id)"/>
                             
-                              <field name="trailer1_id" 	domain="[('id','!=',trailer2_id), ('fleet_type','=','trailer')]"
-									 context="{'default_fleet_type': 'trailer'}"
+                              <field name="trailer1_id" domain="[('id','!=',trailer2_id), ('fleet_type','=','trailer')]" required="1"
+									 context="{'default_fleet_type': 'trailer'}"   
 									 attrs="{'required':['|', ('dolly_id','!=',False),('trailer2_id','!=',False)]}"/>
                               <field name="dolly_id" 	domain="[('fleet_type','=','dolly')]"
 									 context="{'default_fleet_type': 'dolly'}"
