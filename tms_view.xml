@@ -6,10 +6,19 @@
             web_icon_hover="images/logistics-hover.png"/>
         <menuitem id="menu_tms_travels" name="Freights" parent="menu_tms" sequence="10"/>            
         <menuitem id="menu_tms_config" name="Configuration" parent="menu_tms" sequence="99"/>
-        <menuitem id="menu_tms_config_unit" name="Units" parent="menu_tms_config" sequence="2"/>
-        <menuitem id="menu_tms_config_routes" name="Routes" parent="menu_tms_config" sequence="2"/>
-        <menuitem id="menu_tms_config_waybill" name="Waybill" parent="menu_tms_config" sequence="2"/>
-        <menuitem id="menu_tms_config_product" name="Products" parent="menu_tms_config" sequence="2"/>
+        <menuitem id="menu_tms_config_unit" name="Units" parent="menu_tms_config" sequence="3"/>
+        <menuitem id="menu_tms_config_routes" name="Routes" parent="menu_tms_config" sequence="4"/>
+        <menuitem id="menu_tms_config_waybill" name="Waybill" parent="menu_tms_config" sequence="6"/>
+        <menuitem id="menu_tms_config_product" name="Products" parent="menu_tms_config" sequence="5"/>
+        <menuitem id="menu_tms_config_customers" name="Customers" parent="menu_tms_config" sequence="1"/>
+        <menuitem id="menu_tms_partner_categories_in_form"
+            action="base.action_partner_category_form"  name="Partner Categories"
+            parent="menu_tms_config_customers" groups="base.group_no_one"/>
+        <menuitem id="menu_tms_account_customer" name="Customers"
+            parent="menu_tms_config_customers"
+            action="base.action_partner_customer_form" sequence="15"/>    
+    
+    
         <menuitem id="menu_tms_config_suppliers" name="Suppliers" parent="menu_tms_config" sequence="2"/>
         <menuitem id="menu_tm_partner_categories_in_form"
             action="base.action_partner_category_form"  name="Partner Categories"

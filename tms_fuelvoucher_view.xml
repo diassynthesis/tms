@@ -199,14 +199,13 @@ TMS.FUELVOUCHER
 	<field name="model">tms.fuelvoucher.invoice</field>
 	<field name="type">form</field>
 	<field name="arch" type="xml">
-	<form string="Create Invoice">
-			    <separator colspan="4" string="Create Supplier Invoice from selected Fuel Vouchers ?" />
-			    <group col="2" colspan="4">
-			<button icon='gtk-cancel' special="cancel"
-				string="Cancel" />
-			<button name="makeInvoices" string="Confirm"
-				colspan="1" type="object" icon="gtk-ok" />
-		</group>
+	<form string="Create Invoice" version="7.0">
+        <separator colspan="4" string="Create Supplier Invoice from selected Fuel Vouchers ?" />
+        <footer>
+			<button icon='gtk-cancel' special="cancel" string="Cancel" />
+            or
+			<button name="makeInvoices" string="Confirm" type="object" icon="gtk-ok" />
+		</footer>
 	</form>
 	</field>
 	</record>

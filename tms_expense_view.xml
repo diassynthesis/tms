@@ -45,7 +45,6 @@ TMS.EXPENSE
                 <tree string="Waybills" colors="red:state=='cancel';green:state=='approve';blue:state=='confirm';">
 		            <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward" groups="tms.group_expense_approve"/>
 		            <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok" groups="tms.group_expense_confirm"/>
-                    <field name="state"/>
                     <field name="name"/>
                     <field name="date"/>
                     <field name="employee_id"/>
@@ -57,9 +56,10 @@ TMS.EXPENSE
                     <field name="amount_tax_real" sum="Tax Real"/>
                     <field name="amount_total_real" sum="Total Real"/>
                     <field name="move_id" invisible="1"/>
-                    <field name="paid" invisible="1"/>
                     <field name="shop_id" />
                     <field name="driver_helper" />
+                    <field name="paid"/>
+                    <field name="state"/>
 
                 </tree> 
             </field>
@@ -386,40 +386,31 @@ TMS.EXPENSE.LINE
 
 								
 
-
-
-
-
-
-<!--  Make the invoice
-
-	<record id="view_expense_invoice" model="ir.ui.view">
-	<field name="name">Create Invoice from Waybills</field>
-	<field name="model">tms.expense.invoice</field>
+    <!--  Make Payment-->
+	<record id="tms_view_expense_payment" model="ir.ui.view">
+	<field name="name">Make Payment</field>
+	<field name="model">tms.expense.payment</field>
 	<field name="type">form</field>
 	<field name="arch" type="xml">
-	<form string="Create Invoice">
-			    <separator colspan="4" string="Create Customer Invoice from selected Waybills ?" />
-			    <group col="2" colspan="4">
-			<button icon='gtk-cancel' special="cancel"
-				string="Cancel" />
-			<button name="makeInvoices" string="Confirm"
-				colspan="1" type="object" icon="gtk-ok" />
-		</group>
+	<form string="Make Payment" version="7.0">
+        <separator colspan="4" string="Are you sure you want to create payment for selected driver's Travel Expenses ?" />
+        <footer>
+			<button name="makePayment" string="Confirm" type="object" icon="gtk-ok" />
+            or
+            <button class="oe_link" special="cancel" string="Cancel" />
+		</footer>
 	</form>
 	</field>
 	</record>
 
-	<act_window name="Create Invoice"		    
-	    res_model="tms.expense.invoice"
+	<act_window name="Make Travel Expense Payment"		    
+	    res_model="tms.expense.payment"
 	    src_model="tms.expense"
 	    view_mode="form"
 	    target="new"
-		key2="client_action_multi"    
-	    id="action_view_expense_invoice"/>	
+	     key2="client_action_multi"    
+	    id="action_view_expense_payment"/>	
 
--->
-
-
+        
     </data>
 </openerp>

@@ -283,12 +283,75 @@ class tms_advance(osv.osv):
         })
         return super(tms_advance, self).copy(cr, uid, id, default, context)
 
-
 tms_advance()
 
 
-# Wizard que permite generar la factura a pagar correspondiente al Anticipo del Operador
+class tms_advance_payment(osv.osv_memory):
 
+    """ To create payment for Advance"""
+
+    _name = 'tms.advance.payment'
+    _description = 'Make Payment for Advances'
+
+
+
+    def makePayment(self, cr, uid, ids, context=None):
+        
+        if context is None:
+            record_ids = ids
+        else:
+            record_ids =  context.get('active_ids',[])
+
+        if not record_ids: return []
+        ids = record_ids
+
+        dummy, view_id = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'account_voucher', 'view_vendor_receipt_dialog_form')
+
+        cr.execute("select count(distinct(employee_id, currency_id)) from tms_advance where state in ('confirmed') and id IN %s",(tuple(ids),))
+        xids = filter(None, map(lambda x:x[0], cr.fetchall()))
+        if len(xids) > 1:
+            raise osv.except_osv('Error !',
+                                 'You can not create Payment for several Driver Advances and or distinct currency...')
+        amount = 0.0
+        move_line_ids = []
+        advance_names = ""
+        for advance in self.pool.get('tms.advance').browse(cr, uid, ids, context=context):
+            if advance.state=='confirmed' and not advance.paid:
+                advance_names += ", " + advance.name
+                amount += advance.total                
+                for move_line in advance.move_id.line_id:
+                    if move_line.credit > 0.0:
+                        move_line_ids.append(move_line.id)
+            
+        if not amount:    
+            raise osv.except_osv('Warning !',
+                                 'All Driver Advances are already paid or are not in Confirmed State...')
+        
+        res = {
+            'name':_("Driver Advance Payment"),
+            'view_mode': 'form',
+            'view_id': view_id,
+            'view_type': 'form',
+            'res_model': 'account.voucher',
+            'type': 'ir.actions.act_window',
+            'nodestroy': True,
+            'target': 'new',
+            'domain': '[]', 
+            'context': {
+                'payment_expected_currency': advance.currency_id.id,
+                'default_partner_id': self.pool.get('res.partner')._find_accounting_partner(advance.employee_id.address_home_id).id,
+                'default_amount': amount,
+                'default_name': _('Driver Advance(s) %s') % (advance_names),
+                'close_after_process': False,
+                'move_line_ids': [x for x in move_line_ids],
+                'default_type': 'payment',
+                'type': 'payment'
+            }}
+    
+        return res
+
+    
+# Wizard que permite generar la partida contable a pagar correspondiente al Anticipo del Operador
 class tms_advance_invoice(osv.osv_memory):
 
     """ To create invoice for each Advance"""

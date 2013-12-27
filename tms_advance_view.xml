@@ -190,14 +190,13 @@ TMS.ADVANCE
 	<field name="model">tms.advance.invoice</field>
 	<field name="type">form</field>
 	<field name="arch" type="xml">
-	<form string="Requier payment">
-			    <separator colspan="4" string="Are you sure you want to require payment for these advances ?" />
-			    <group col="2" colspan="4">
-			<button icon='gtk-cancel' special="cancel"
-				string="Cancel" />
-			<button name="makeInvoices" string="Confirm"
-				colspan="1" type="object" icon="gtk-ok" />
-		</group>
+	<form string="Require payment" version="7.0">
+        <separator colspan="4" string="Are you sure you want to require payment for these advances ?" />
+        <footer>
+			<button icon='gtk-cancel' special="cancel" string="Cancel" />
+            or
+			<button name="makeInvoices" string="Confirm" type="object" icon="gtk-ok" />
+		</footer>
 	</form>
 	</field>
 	</record>
@@ -210,6 +209,31 @@ TMS.ADVANCE
 		key2="client_action_multi"    
 	    id="action_view_advance_invoice"/>	
 
+    
+    <!--  Make Payment-->
+	<record id="tms_view_advance_payment" model="ir.ui.view">
+	<field name="name">Make Payment</field>
+	<field name="model">tms.advance.payment</field>
+	<field name="type">form</field>
+	<field name="arch" type="xml">
+	<form string="Make Payment" version="7.0">
+        <separator colspan="4" string="Are you sure you want to create payment for selected driver advances ?" />
+        <footer>
+			<button name="makePayment" string="Confirm" type="object" icon="gtk-ok" />
+            or
+            <button class="oe_link" special="cancel" string="Cancel" />
+		</footer>
+	</form>
+	</field>
+	</record>
+
+	<act_window name="Make Driver Advance Payment"		    
+	    res_model="tms.advance.payment"
+	    src_model="tms.advance"
+	    view_mode="form"
+	    target="new"
+	     key2="client_action_multi"    
+	    id="action_view_advance_payment"/>	
 	
 </data>
 </openerp>
