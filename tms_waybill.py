@@ -48,7 +48,74 @@ class tms_waybill_category(osv.osv):
         'active' : True,
         }
 
+# Impuestos para desglose en Cartas Porte
+class tms_waybill_taxes(osv.osv):
+    _name = "tms.waybill.taxes"
+    _description = "Waybill Taxes"
 
+    _columns = {
+        'waybill_id': fields.many2one('tms.waybill', 'Waybill', readonly=True),
+        'name'      : fields.char('Impuesto', size=64, required=True),
+        'tax_id'    : fields.many2one('account.tax', 'Impuesto', readonly=True),
+        'account_id': fields.many2one('account.account', 'Tax Account', required=True, domain=[('type','<>','view'),('type','<>','income'), ('type', '<>', 'closed')]),
+        'account_analytic_id': fields.many2one('account.analytic.account', 'Analytic account'),
+        'base'      : fields.float('Base', digits_compute=dp.get_precision('Account'), readonly=True),
+        'tax_amount': fields.float('Monto Impuesto', digits_compute=dp.get_precision('Account'), readonly=True),
+    }
+    
+    def compute(self, cr, uid, waybill_ids, context=None):
+        for id in waybill_ids:
+            cr.execute("DELETE FROM tms_waybill_taxes WHERE waybill_id=%s", (id,))
+        tax_obj = self.pool.get('account.tax')
+        cur_obj = self.pool.get('res.currency')
+        wb_taxes_obj = self.pool.get('tms.waybill.taxes')
+        for waybill in self.pool.get('tms.waybill').browse(cr, uid, waybill_ids, context=context):
+            tax_grouped = {}
+            cur = waybill.currency_id
+            company_currency = self.pool['res.company'].browse(cr, uid, waybill.company_id.id).currency_id.id
+            for line in waybill.waybill_line: 
+                for tax in tax_obj.compute_all(cr, uid, line.tax_id, line.price_unit, line.product_uom_qty, line.product_id, waybill.partner_id)['taxes']:
+                    print "line.price_unit : ", line.price_unit
+                    print "line.product_uom_qty : ", line.product_uom_qty
+                    print "line.product_id : ", line.product_id.name
+                    print "waybill.partner_id : ", waybill.partner_id
+                    print "tax: ", tax
+                    val={}
+                    val['waybill_id'] = waybill.id
+                    val['name'] = tax['name']
+                    val['tax_id'] = tax['id']
+                    val['amount'] = tax['amount']
+                    val['base'] = cur_obj.round(cr, uid, cur, tax['price_unit'] * line['product_uom_qty'])
+                    val['base_amount'] = cur_obj.compute(cr, uid, waybill.currency_id.id, company_currency, val['base'] * tax['base_sign'], context={'date': waybill.date_order or time.strftime('%Y-%m-%d')}, round=False)
+                    val['tax_amount'] = cur_obj.compute(cr, uid, waybill.currency_id.id, company_currency, val['amount'] * tax['tax_sign'], context={'date': waybill.date_order or time.strftime('%Y-%m-%d')}, round=False)
+                    val['account_id'] = tax['account_collected_id'] or line.account_id.id
+                    val['account_analytic_id'] = tax['account_analytic_collected_id']
+                    key = (val['tax_id'], val['name'], val['account_id'], val['account_analytic_id'])
+                    if not key in tax_grouped:
+                        tax_grouped[key] = val
+                    else:
+                        tax_grouped[key]['amount'] += val['amount']
+                        tax_grouped[key]['base'] += val['base']
+                        tax_grouped[key]['base_amount'] += val['base_amount']
+                        tax_grouped[key]['tax_amount'] += val['tax_amount']
+            
+            for t in tax_grouped.values():
+                vals = {'waybill_id' : waybill.id,
+                        'name'     : t['name'],
+                        'tax_id'   : t['tax_id'],
+                        'account_id': t['account_id'],
+                        'account_analytic_id': t['account_analytic_id'],
+                        'tax_amount': t['tax_amount'],
+                        'base'      : t['base'],
+                        }
+                res = wb_taxes_obj.create(cr, uid, vals)
+                t['base'] = cur_obj.round(cr, uid, cur, t['base'])
+                t['amount'] = cur_obj.round(cr, uid, cur, t['amount'])
+                t['base_amount'] = cur_obj.round(cr, uid, cur, t['base_amount'])
+                t['tax_amount'] = cur_obj.round(cr, uid, cur, t['tax_amount'])
+        return 
+
+    
  # TMS Waybills
 class tms_waybill(osv.osv):
     _name = 'tms.waybill'
@@ -193,6 +260,7 @@ class tms_waybill(osv.osv):
 
 
     _columns = {
+        'tax_line'          : fields.one2many('tms.waybill.taxes', 'waybill_id', 'Tax Lines', readonly=True, states={'draft':[('readonly',False)]}),
         'name'              : fields.char('Name', size=64, readonly=False, select=True),
         'shop_id'           : fields.many2one('sale.shop', 'Shop', required=True, readonly=False, states={'confirmed': [('readonly', True)]}),
         'operation_id'      : fields.many2one('tms.operation', 'Operation', ondelete='restrict', required=False, readonly=False, states={'cancel':[('readonly',True)], 'done':[('readonly',True)], 'closed':[('readonly',True)]}),
@@ -422,15 +490,16 @@ class tms_waybill(osv.osv):
         
 
     def write(self, cr, uid, ids, vals, context=None):
-        super(tms_waybill, self).write(cr, uid, ids, vals, context=context)
-        
+        super(tms_waybill, self).write(cr, uid, ids, vals, context=context)        
         if 'state' in vals and vals['state'] not in ('confirmed', 'cancel') or self.browse(cr, uid, ids)[0].state in ('draft', 'approved')  :
             self.get_freight_from_factors(cr, uid, ids, context=context)
+        self.pool.get('tms.waybill.taxes').compute(cr, uid, waybill_ids=ids)
         return True
 
     def create(self, cr, uid, vals, context=None):
         res = super(tms_waybill, self).create(cr, uid, vals, context=context)
         self.get_freight_from_factors(cr, uid, [res], context=context)
+        self.pool.get('tms.waybill.taxes').compute(cr, uid, waybill_ids=[res])
         return res
 
 
