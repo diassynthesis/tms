@@ -57,11 +57,13 @@ class tms_waybill_taxes(osv.osv):
         'waybill_id': fields.many2one('tms.waybill', 'Waybill', readonly=True),
         'name'      : fields.char('Impuesto', size=64, required=True),
         'tax_id'    : fields.many2one('account.tax', 'Impuesto', readonly=True),
-        'account_id': fields.many2one('account.account', 'Tax Account', required=True, domain=[('type','<>','view'),('type','<>','income'), ('type', '<>', 'closed')]),
+        'account_id': fields.many2one('account.account', 'Tax Account', required=False, domain=[('type','<>','view'),('type','<>','income'), ('type', '<>', 'closed')]),
         'account_analytic_id': fields.many2one('account.analytic.account', 'Analytic account'),
         'base'      : fields.float('Base', digits_compute=dp.get_precision('Account'), readonly=True),
         'tax_amount': fields.float('Monto Impuesto', digits_compute=dp.get_precision('Account'), readonly=True),
     }
+    
+    _order = "tax_amount desc"
     
     def compute(self, cr, uid, waybill_ids, context=None):
         for id in waybill_ids:
@@ -88,7 +90,7 @@ class tms_waybill_taxes(osv.osv):
                     val['base'] = cur_obj.round(cr, uid, cur, tax['price_unit'] * line['product_uom_qty'])
                     val['base_amount'] = cur_obj.compute(cr, uid, waybill.currency_id.id, company_currency, val['base'] * tax['base_sign'], context={'date': waybill.date_order or time.strftime('%Y-%m-%d')}, round=False)
                     val['tax_amount'] = cur_obj.compute(cr, uid, waybill.currency_id.id, company_currency, val['amount'] * tax['tax_sign'], context={'date': waybill.date_order or time.strftime('%Y-%m-%d')}, round=False)
-                    val['account_id'] = tax['account_collected_id'] or line.account_id.id
+                    val['account_id'] = tax['account_collected_id'] or False
                     val['account_analytic_id'] = tax['account_analytic_collected_id']
                     key = (val['tax_id'], val['name'], val['account_id'], val['account_analytic_id'])
                     if not key in tax_grouped:

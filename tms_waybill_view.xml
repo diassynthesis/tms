@@ -306,38 +306,40 @@ TMS.waybill.category
                                         <field name="sequence" string="Seq"/>
                                     </tree>
                                     <form string="Waybill Lines">
-                                        <field name="line_type" />
-                                        <newline />
-                                        <field name="product_id" attrs="{'invisible':[('line_type','!=','product')],'required':[('line_type','=','product')]}"  colspan="4"
-                                                on_change="on_change_product_id(product_id, parent.partner_id)"
-                                                domain="[('tms_category','in',('freight', 'move','insurance','highway_tolls', 'other'))]"
-                                                context="{'default_tms_category': 'freight','default_type': 'service', 'default_procure_method':'make_to_stock', 'default_supply_method': 'buy'}"/>
-                                        <field name="product_uom" attrs="{'invisible':[('line_type','!=','product')],'required':[('line_type','=','product')]}" />
-                                        <newline />
-                                        <field name="product_uom_qty" on_change="on_change_amount(product_uom_qty, price_unit, discount, product_id, parent.partner_id)" 
-                                                attrs="{'invisible':[('line_type','!=','product')],'required':[('line_type','=','product')]}" />
-                                        <newline />
-                                        <field name="price_unit" on_change="on_change_amount(product_uom_qty, price_unit, discount, product_id, parent.partner_id)" 
-                                                attrs="{'invisible':[('line_type','!=','product')],'required':[('line_type','=','product')]}" />
-                                        <newline />
-                                        <field name="price_amount" readonly="1" sum="Price Amount" 
-                                                attrs="{'invisible':[('line_type','!=','product')]}" />
-                                        <newline />
-                                        <field name="discount" on_change="on_change_amount(product_uom_qty, price_unit, discount, product_id, parent.partner_id)" 
-                                                attrs="{'invisible':[('line_type','!=','product')],'required':[('line_type','=','product')]}" />
-                                        <newline />
-                                        <field name="price_discount" readonly="1" attrs="{'invisible':[('line_type','!=','product')]}" />
-                                        <newline />
-                                        <field name="price_subtotal" readonly="1" attrs="{'invisible':[('line_type','!=','product')]}" />
-                                        <newline />
-                                        <field name="tax_amount" readonly="1" attrs="{'invisible':[('line_type','!=','product')]}" />
-                                        <newline />
-                                        <field name="price_total" readonly="1" attrs="{'invisible':[('line_type','!=','product')]}" />
-                                        <newline />
-                                        <field name="name" colspan="4"/>
-                                        <field name="sequence" />
-                                        <newline />
-                                        <field name="tax_id" nolabel="1" colspan="4"/>
+                                        <group col="4" colspan="4">
+                                            <field name="line_type" />
+                                            <newline />
+                                            <field name="product_id" attrs="{'invisible':[('line_type','!=','product')],'required':[('line_type','=','product')]}"  
+                                                    on_change="on_change_product_id(product_id, parent.partner_id)"
+                                                    domain="[('tms_category','in',('freight', 'move','insurance','highway_tolls', 'other'))]"
+                                                    context="{'default_tms_category': 'freight','default_type': 'service', 'default_procure_method':'make_to_stock', 'default_supply_method': 'buy'}"/>
+                                            <field name="product_uom" attrs="{'invisible':[('line_type','!=','product')],'required':[('line_type','=','product')]}" />
+                                            
+                                            <field name="product_uom_qty" on_change="on_change_amount(product_uom_qty, price_unit, discount, product_id, parent.partner_id)" 
+                                                    attrs="{'invisible':[('line_type','!=','product')],'required':[('line_type','=','product')]}" />
+                                            <newline />
+                                            <field name="price_unit" on_change="on_change_amount(product_uom_qty, price_unit, discount, product_id, parent.partner_id)" 
+                                                    attrs="{'invisible':[('line_type','!=','product')],'required':[('line_type','=','product')]}" />
+                                            <newline />
+                                            <field name="price_amount" readonly="1" sum="Price Amount" 
+                                                    attrs="{'invisible':[('line_type','!=','product')]}" />
+                                            <newline />
+                                            <field name="discount" on_change="on_change_amount(product_uom_qty, price_unit, discount, product_id, parent.partner_id)" 
+                                                    attrs="{'invisible':[('line_type','!=','product')],'required':[('line_type','=','product')]}" />
+                                            <newline />
+                                            <field name="price_discount" readonly="1" attrs="{'invisible':[('line_type','!=','product')]}" />
+                                            <newline />
+                                            <field name="price_subtotal" readonly="1" attrs="{'invisible':[('line_type','!=','product')]}" />
+                                            <newline />
+                                            <field name="tax_amount" readonly="1" attrs="{'invisible':[('line_type','!=','product')]}" />
+                                            <newline />
+                                            <field name="price_total" readonly="1" attrs="{'invisible':[('line_type','!=','product')]}" />
+                                            <newline />
+                                            <field name="name" colspan="4"/>
+                                            <field name="sequence" />
+                                            
+                                            <field name="tax_id" widget="many2many_tags" placeholder="Taxes"/>
+                                        </group>
                                     </form>
                                 </field>
                                 <group colspan="4" col="4">
