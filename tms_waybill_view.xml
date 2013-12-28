@@ -340,6 +340,17 @@ TMS.waybill.category
                                         <field name="tax_id" nolabel="1" colspan="4"/>
                                     </form>
                                 </field>
+                                <group colspan="4" col="4">
+                                <group colspan="2">
+                                    <field name="tax_line" nolabel="1">
+                                        <tree>
+                                            <field name="name" />
+                                            <field name="tax_id" />
+                                            <field name="base" />
+                                            <field name="tax_amount" sum="Impuestos"/>
+                                        </tree>
+                                    </field>
+                                </group>
                                 <group class="oe_subtotal_footer oe_right" colspan="2" name="sale_total">
                                     <field name="amount_freight" widget='monetary' options="{'currency_field': 'currency_id'}"/>
                                     <field name="amount_move" widget='monetary' options="{'currency_field': 'currency_id'}"/>
@@ -357,6 +368,7 @@ TMS.waybill.category
                                                 states="draft" string="(update)" type="object" class="oe_edit_only oe_link"/>
                                     </div>
                                     <field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+                                </group>
                                 </group>
                             </group>
                         </page>
