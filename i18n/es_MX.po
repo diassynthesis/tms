@@ -88,7 +88,7 @@ msgstr "El usuario podrá Cancelar el Registro de Gastos de Viaje"
 #: code:addons/tms/tms_waybill.py:1004
 #, python-format
 msgid "This Waybill's Invoice is already paid"
-msgstr "La Factura de la Carta Porte ya se encuentrea pagada."
+msgstr "La Factura de la Carta Porte ya se encuentra pagada."
 
 #. module: tms
 #: field:tms.advance,confirmed_by:0 field:tms.expense,confirmed_by:0
@@ -202,7 +202,7 @@ msgstr "Póliza contable."
 #. module: tms
 #: model:res.groups,name:tms.group_fuelvoucher_setdraft
 msgid "Can Set to Draft Travel Fuel Vouchers"
-msgstr "Puede regresar el estado de los Vales de Combustible a Borrador "
+msgstr "Puede regresar los Vales de Combustible a estado Borrador "
 
 #. module: tms
 #: field:tms.waybill,date_up_docs_real:0
@@ -217,7 +217,7 @@ msgstr "Relacionado a Cartas Porte"
 #. module: tms
 #: help:fleet.vehicle.odometer.device,odometer_end:0
 msgid "Ending counter from device"
-msgstr "Cuenta Final del Dispositivo"
+msgstr "Cuenta Final del Medidor"
 
 #. module: tms
 #: selection:product.product,tms_category:0
@@ -248,7 +248,7 @@ msgstr "El usuario podrá Aprobar Cartas Porte"
 #: code:addons/tms/tms_expense.py:418
 #, python-format
 msgid "Fuel Voucher %s is not Confirmed..."
-msgstr "Vale de Combustible %s no está Confirmado..."
+msgstr "El Vale de Combustible %s no está Confirmado..."
 
 #. module: tms
 #: field:tms.waybill,date_down_end_sched:0
@@ -309,7 +309,7 @@ msgstr "Vale de Combustible"
 #. module: tms
 #: selection:tms.expense.line,line_type:0
 msgid "Salary Discount"
-msgstr "Desc. en Salario"
+msgstr "Descuento de Sueldo"
 
 #. module: tms
 #: help:hr.employee,tms_category:0
@@ -517,7 +517,7 @@ msgstr "Rend Full"
 #. module: tms
 #: help:tms.unit.category,mandatory:0
 msgid "This field is used only when field <Category Type> = expiry"
-msgstr "Este campo es usado solo cuando el campo <Tipo Categoría>  = Caducidad"
+msgstr "Este campo es usado solo cuando el campo <Tipo Categoría>  = Vigencia"
 
 #. module: tms
 #: code:addons/tms/tms_fuelvoucher.py:224
@@ -713,7 +713,7 @@ msgstr "Cuenta Inicial"
 #. module: tms
 #: view:product.product:0
 msgid "More groups..."
-msgstr "Mas grupos…"
+msgstr "Mas grupos..."
 
 #. module: tms
 #: view:tms.waybill:0
@@ -844,7 +844,7 @@ msgstr "Clientes"
 #. module: tms
 #: view:tms.fuelvoucher:0 view:tms.travel:0
 msgid "Driver 1"
-msgstr "Operaor 1"
+msgstr "Operador 1"
 
 #. module: tms
 #: view:tms.expense:0 view:tms.expense.loan:0
@@ -952,7 +952,7 @@ msgstr "Fecha Fin"
 #. module: tms
 #: model:res.groups,comment:tms.group_advance_confirm
 msgid "The user will be able to Confirm Money Advances for Driver."
-msgstr "Puede confirmar Anticipos a Operador"
+msgstr "Puede confirmar Anticipos de Viaje para Operador"
 
 #. module: tms
 #: field:product.product,tms_default_salary:0
@@ -990,7 +990,7 @@ msgstr "Puede poner Operaciones en Estado En Proceso "
 #: code:addons/tms/tms.py:1101
 #, python-format
 msgid "Could not create Odometer Record!"
-msgstr "No se pudo crear el Registro del Odómetro !"
+msgstr "No se pudo crear el Registro de Lectura de Odómetro !"
 
 #. module: tms
 #: field:tms.sale.shop.fuel.supplier.seq,fuel_sequence:0
@@ -1065,7 +1065,7 @@ msgstr "Productos por categoría"
 #. module: tms
 #: view:account.move.line:0
 msgid "Period"
-msgstr "Período"
+msgstr "Periodo"
 
 #. module: tms
 #: help:tms.route,distance:0
@@ -1106,7 +1106,7 @@ msgstr "Total "
 #. module: tms
 #: field:tms.waybill,date_down_docs_sched:0
 msgid "Download Docs Sched"
-msgstr "Lib. Docs Desc.  Prog."
+msgstr "Lib. Docs Desc. Prog."
 
 #. module: tms
 #: field:tms.waybill,waybill_customer_factor:0
@@ -1148,7 +1148,7 @@ msgstr "Puede cambiar al estado Borrador a los Viajes"
 #. module: tms
 #: field:hr.employee,tms_house_rent_discount_perc:0
 msgid "Monthly House Rental Discount (%)"
-msgstr "Infonavit (Porc. Desc.)"
+msgstr "Infonavit (Porc.Desc.)"
 
 #. module: tms
 #: field:tms.travel,waybill_ok_for_expense_rec:0
@@ -1240,7 +1240,7 @@ msgstr "Crear Factura de Permisionario"
 #: model:ir.model,name:tms.model_tms_factor_special
 msgid "Python Code calculate Payment (Driver/Supplier) & Client charge"
 msgstr ""
-"Código Python para calcular pagos (Operador/Proveedor) & cobro a Clientes"
+"Código Python para calcular pagos (Operador/Proveedor) & Cobro a Clientes"
 
 #. module: tms
 #: selection:tms.expense.loan,discount_type:0
@@ -1418,7 +1418,7 @@ msgstr "o"
 #: code:addons/tms/tms_expense.py:396 code:addons/tms/tms_expense.py:452
 #, python-format
 msgid "Travel: "
-msgstr "Viaje:"
+msgstr "Viaje: "
 
 #. module: tms
 #: code:addons/tms/tms_waybill.py:1304
@@ -1458,7 +1458,7 @@ msgstr ""
 #. module: tms
 #: view:tms.waybill:0
 msgid "Waybill Supplier Factors"
-msgstr "Factores de pago para Terceros"
+msgstr "Tarifas para Permisionarios"
 
 #. module: tms
 #: code:addons/tms/tms_factor.py:163
@@ -1494,7 +1494,7 @@ msgstr "Registrar Pago de Anticipos de Viaje"
 #: code:addons/tms/tms_expense.py:595
 #, python-format
 msgid "You have not defined Expense Sequence for shop "
-msgstr "No ha definido la Secuencia de Gastos de Viaje de la Tienda"
+msgstr "No ha definido la Secuencia de Gastos de Viaje de la Base"
 
 #. module: tms
 #: code:addons/tms/tms_expense.py:612
@@ -1522,7 +1522,7 @@ msgstr "Ingresos"
 #: selection:tms.factor,category:0 field:tms.travel,supplier_id:0
 #: view:tms.waybill:0
 msgid "Supplier"
-msgstr "Proveedor"
+msgstr "Permisionario"
 
 #. module: tms
 #: field:tms.waybill.extradata,type_extra:0
@@ -1597,7 +1597,7 @@ msgid ""
 "Invoice and then try again"
 msgstr ""
 "Esta Carta Porte ya se encuentra facturada. Primero cancele la Factura de "
-"proveedor e intente nuevamente..."
+"Permisionario e intente nuevamente..."
 
 #. module: tms
 #: sql_constraint:tms.waybill:0
@@ -1677,7 +1677,7 @@ msgstr "TMS Diario de Anticipos"
 #: model:ir.ui.menu,name:tms.menu_tms_config_suppliers
 #: model:ir.ui.menu,name:tms.menu_tms_procurement_management_supplier_name
 msgid "Suppliers"
-msgstr "Proveedores"
+msgstr "Permisionarios"
 
 #. module: tms
 #: sql_constraint:tms.unit.category:0
@@ -1767,24 +1767,23 @@ msgid ""
 msgstr ""
 "Tipo de Producto para usarse con el módulo TMS\n"
 "  - No TMS: No tiene relación con el TMS\n"
-"  - Transportable: Producto Transportable usado en Cartas Porte\n"
-"  - Flete: Usado en Cartas Porte\n"
-"  - Maniobra: Usado en Cartas Porte\n"
-"  - Seguro: Usado en Cartas Porte\n"
-"  - Autopistas: Usado en Cartas Porte\n"
-"  - Otro: Representa cualquier otro servicio usado en Cartas Porte\n"
+"  - Transportable: (Cartas Porte)\n"
+"  - Flete (Cartas Porte)\n"
+"  - Maniobra (Cartas Porte)\n"
+"  - Seguro (Cartas Porte)\n"
+"  - Autopistas (Cartas Porte)\n"
+"  - Otro (Cartas Porte)\n"
 "  - Gasto de Viaje: Conceptos de Gastos de Viaje usados en Registro de "
 "Gastos de Viaje.\n"
 "  - Facilidades Administrativas: Cualquier gastos que no afecta en Registro "
 "de Gastos de Viaje.\n"
 "  - Combustible: Usado para Vales de Combustible.\n"
 "  - Gastos Fijos (Acuerdos): Usado para los Acuerdos.\n"
-"  - Refacción (Mtto): Partes usadas en servicios de reparación de unidades.\n"
-"  - Tarea (Mtto): Tareas relacionadas a servicios de reparación de "
-"unidades.\n"
-"  - Tipo de Orden de Mtto (Mtto): Como su nombre lo indica\n"
-"  - Ciclos de Servicios de Mtto (Mtto): Como su nombre lo indica\n"
-"  - Programa de Mtto (Mtto): Como su nombre lo indica\n"
+"  - Refacción (Mtto)\n"
+"  - Tarea (Mtto)\n"
+"  - Tipo de Orden de Mtto (Mtto)\n"
+"  - Ciclos de Servicios de Mtto (Mtto)\n"
+"  - Programa de Mtto (Mtto)\n"
 "  Todos estos productos DEBEN ser definidos como servicio (a excepción de "
 "Combustible y Refacción) porque nunca tendrán interacción con Inventarios.\n"
 
@@ -2916,7 +2915,7 @@ msgstr "¿ Cancelar este Registro de Gastos de Viaje ?"
 #. module: tms
 #: model:ir.ui.menu,name:tms.tms_fleet_vehicle_odometer_menu
 msgid "Vehicles Odometer"
-msgstr "Odómetro de los vehículos"
+msgstr "Lecturas de Odómetros"
 
 #. module: tms
 #: field:fleet.vehicle,fleet_type:0
@@ -2946,9 +2945,9 @@ msgid ""
 msgstr ""
 "<p class=\"oe_view_nocontent_create\">\n"
 "                De clic aquí para definer nuevos productos relacionados a "
-"Fletes.\n"
+"Gestión de Fletes y Viajes.\n"
 "              </p><p>\n"
-"                Puede definer product or para todo lo relacionado a la "
+"                Puede definir producto para todo lo relacionado a la "
 "Gestión de Fletes y Viajes.\n"
 "              </p>\n"
 "            "
@@ -4493,7 +4492,7 @@ msgstr "Distancia recorrida por el operador (mi./km)"
 #. module: tms
 #: field:tms.waybill,supplier_invoiced:0
 msgid "Supplier Invoiced"
-msgstr "Facturado por el Perm."
+msgstr "Facturado"
 
 #. module: tms
 #: field:fleet.vehicle.odometer.device,odometer_end:0
@@ -5019,7 +5018,7 @@ msgstr ""
 #. module: tms
 #: field:tms.travel,trailer1_id:0
 msgid "Trailer1"
-msgstr "Rem 1"
+msgstr "Rem1"
 
 #. module: tms
 #: help:tms.waybill,arrival_address_id:0

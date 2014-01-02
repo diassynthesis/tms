@@ -570,13 +570,7 @@ class tms_waybill(osv.osv):
         return {'value': val}
 
 
-    def copy(self, cr, uid, id, default=None, values=None, context=None):
-        #print "values: ", values
-        #print "cr: ", cr
-        #print "uid: ", uid
-        #print "id: ", id
-
-
+    def copy(self, cr, uid, id, default=None, context=None):
         default = default or {}
         default.update({
                         'name'			: False, 
@@ -590,17 +584,8 @@ class tms_waybill(osv.osv):
                         'date_confirmed': False,
                         'drafted_by'    : False,
                         'date_drafted'  : False,
-
 						})
 
-        if values:
-            if 'replaced_waybill_id' in values:
-                default.update({'replaced_waybill_id': values['replaced_waybill_id'] })
-            if 'sequence_id' in values:
-                default.update({'sequence_id': values['sequence_id'] })
-            if 'date_order' in values:
-                default.update({'date_order': values['date_order'] })
-        #print "default: ", default
         return super(tms_waybill, self).copy(cr, uid, id, default, context)
 
 
@@ -1115,7 +1100,7 @@ class tms_waybill_cancel(osv.osv_memory):
                             default.update({'sequence_id': record.sequence_id.id })
                         if record.date_order:
                             default.update({'date_order': record.date_order })
-                        waybill=waybill_obj.copy(cr, uid, record_id[0], values=default)
+                        waybill=waybill_obj.copy(cr, uid, record_id[0], default=default)
         return {'type': 'ir.actions.act_window_close'}
 
 tms_waybill_cancel()

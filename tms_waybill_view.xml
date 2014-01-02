@@ -231,22 +231,19 @@ TMS.waybill.category
                     </h1>
                     <field name="company_id" readonly="1" invisible="1"/>
                     <group col="4">
+                        <field name="shop_id" />
                         <field name="date_order"/>
-                        <field name="shop_id" />                        
+                        <field name="currency_id" />
                         <field name="sequence_id" on_change="onchange_sequence_id(sequence_id)" required="1" 
                                 context="{'default_tms_waybill_sequence': 1,'default_shop_id': shop_id}"
                                 domain="[('shop_id','=',shop_id)]" />
                         <field name="operation_id" />
-                        <label string=" " colspan="2"/>
                         <field name="waybill_category" domain="['|',('shop_id','=',shop_id),('shop_id','=',False)]" />
                         <separator string="·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·" colspan="4" style="text-align: center;"/>
-                        <field name="partner_id" on_change="onchange_partner_id(partner_id)" 
-                            domain="[('customer','=',True), ('is_company', '=', True)]" 
-                            context="{'default_customer':1, 'default_is_company' : 1}" 
-                            required="1"/>
-                        <field name="currency_id" />
-                        <field name="partner_order_id" domain="[('partner_id','=',partner_id)]" />
-                        <field name="partner_invoice_id" domain="[('partner_id','=',partner_id)]" />
+                        <field name="partner_id" on_change="onchange_partner_id(partner_id)" domain="[('customer','=',True), ('is_company', '=', True)]"  colspan="4"/>
+                        
+                        <field name="partner_order_id" domain="[('partner_id','=',partner_id)]" context="{'search_default_customer':1, 'show_address': 1}"  options="{&quot;always_reload&quot;: True}"/>
+                        <field name="partner_invoice_id" domain="[('partner_id','=',partner_id)]" context="{'search_default_customer':1, 'show_address': 1}"  options="{&quot;always_reload&quot;: True}"/>
                         <field name="departure_address_id" context="{'search_default_customer':1, 'show_address': 1}" options="{&quot;always_reload&quot;: True}"/>
                         <field name="arrival_address_id" context="{'search_default_customer':1, 'show_address': 1}" options="{&quot;always_reload&quot;: True}"/>
                         <field name="upload_point" />

@@ -431,7 +431,7 @@ class tms_advance_invoice(osv.osv_memory):
                     if not period_id:
                         raise osv.except_osv(_('Warning !'),
                                 _('There is no valid account period for this date %s. Period does not exists or is already closed') % \
-                                        (expense.date,))
+                                        (line.date,))
                     
                     move_line = (0,0, {
                             'name'          : line.product_id.name + ' - ' + line.travel_id.name + ' - ' + line.name,
