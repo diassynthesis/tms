@@ -193,9 +193,9 @@ TMS.ADVANCE
 	<form string="Require payment" version="7.0">
         <separator colspan="4" string="Are you sure you want to require payment for these advances ?" />
         <footer>
-			<button icon='gtk-cancel' special="cancel" string="Cancel" />
-            or
 			<button name="makeInvoices" string="Confirm" type="object" icon="gtk-ok" />
+            or
+            <button special="cancel" string="Cancel" class="oe_link"/>
 		</footer>
 	</form>
 	</field>

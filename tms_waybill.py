@@ -1059,7 +1059,7 @@ class tms_waybill_cancel(osv.osv_memory):
                                 _('Could not cancel Waybill !'),
                                 _('This Waybill\'s Invoice is already paid'))
                         return False
-                    elif waybill.invoiced and waybill.billing_policy=='manual':
+                    elif waybill.invoiced and waybill.invoice_id and waybill.invoice_id.id and waybill.invoice_id.state != 'cancel' and waybill.billing_policy=='manual':
                         raise osv.except_osv(
                                 _('Could not cancel Waybill !'),
                                 _('This Waybill is already Invoiced'))
@@ -1153,17 +1153,21 @@ class tms_waybill_invoice(osv.osv_memory):
             data_ids = cr.fetchall()
             if not len(data_ids):
                 raise osv.except_osv(_('Warning !'),
-                                     _('Not all selected records are Confirmed yet or already invoiced...'))
+                                     _('Not all selected records are Confirmed yet or already invoiced...'))            
             #print data_ids
 
             for data in data_ids:
+                if not data[0]:
+                    raise osv.except_osv(_('Warning !'),
+                                     _('You have not defined Client account...'))            
+                    
                 partner = partner_obj.browse(cr,uid,data[0])
  
                 cr.execute("select id from tms_waybill where invoice_id is null and (state='confirmed' or (state='approved' and billing_policy='automatic')) and partner_id=" + str(data[0]) + ' and currency_id=' + str(data[1]) + " and id IN %s", (tuple(record_ids),))
                 waybill_ids = filter(None, map(lambda x:x[0], cr.fetchall()))
                 
                 inv_lines = []
-                notes = "Waybills"
+                notes = _("Waybills")
                 inv_amount = 0.0
                 empl_name = ''
                 for waybill in waybill_obj.browse(cr,uid,waybill_ids):                    
@@ -1186,7 +1190,7 @@ class tms_waybill_invoice(osv.osv_memory):
 
                             a = account_fiscal_obj.map_account(cr, uid, False, a)
                             inv_line = (0,0, {
-                                'name': line.name  + ' - ' + (line.waybill_id.travel_id.name or 'No travel') + ' - ' + line.waybill_id.name,
+                                'name': line.name  + ' - Viaje: ' + (line.waybill_id.travel_id.name or 'Sin Viaje') + ' - Carta Porte: ' + line.waybill_id.name,
                                 'origin': line.waybill_id.name,
                                 'account_id': a,
                                 'price_unit': line.price_unit,
@@ -1195,11 +1199,11 @@ class tms_waybill_invoice(osv.osv_memory):
                                 'product_id': line.product_id.id,
                                 'invoice_line_tax_id': [(6, 0, [x.id for x in line.product_id.taxes_id])],
                                 'note': line.notes,
-                                'account_analytic_id': False,
+                                #'account_analytic_id': False,
                                 })
                             inv_lines.append(inv_line)
                         
-                    notes += '\n' + line.waybill_id.name
+                    notes += ', ' + line.waybill_id.name
                     departure_address_id = waybill.departure_address_id.id
                     arrival_address_id = waybill.arrival_address_id.id
                 a = partner.property_account_receivable.id
@@ -1209,11 +1213,11 @@ class tms_waybill_invoice(osv.osv_memory):
                     pay_term = False
 
                 inv = {
-                    'name'              : 'Fact.Pendiente',
-                    'origin'            : 'TMS-Waybill',
+                    'name'              : 'Factura',
+                    'origin'            : 'Fact. de Cartas Porte',
                     'type'              : 'out_invoice',
                     'journal_id'        : journal_id,
-                    'reference'         : 'TMS-Waybills',
+                    'reference'         : 'Fact. de Cartas Porte',
                     'account_id'        : a,
                     'partner_id'        : waybill.partner_id.id,
                     'departure_address_id' : departure_address_id,
@@ -1221,32 +1225,28 @@ class tms_waybill_invoice(osv.osv_memory):
                     'address_invoice_id': self.pool.get('res.partner').address_get(cr, uid, [partner.id], ['default'])['default'],
                     'address_contact_id': self.pool.get('res.partner').address_get(cr, uid, [partner.id], ['default'])['default'],
                     'invoice_line'      : [x for x in inv_lines],
-                    'comment'           : 'TMS-Waybills',
+                    'comment'           : 'Fact. de Cartas Porte',
                     'payment_term'      : pay_term,
                     'fiscal_position'   : partner.property_account_position.id,
+                    'pay_method_id'     : partner.pay_method_id.id,
+                    'acc_payment'       : partner.bank_ids[0].id if partner.bank_ids and partner.bank_ids[0] else False,
                     'comment'           : notes,
                     'tms_type'          : 'invoice' if waybill.billing_policy == 'manual' else 'waybill'
                 }
-
-
 
                 inv_id = invoice_obj.create(cr, uid, inv)
                 invoices.append(inv_id)
    
                 waybill_obj.write(cr,uid,waybill_ids, {'invoice_id': inv_id, 'state':'confirmed', 'confirmed_by':uid, 'date_confirmed':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})               
 
-
-
-        return {
-            'domain': "[('id','in', ["+','.join(map(str,invoices))+"])]",
-            'name': _('Customer Invoices'),
-            'view_type': 'form',
-            'view_mode': 'tree,form',
-            'res_model': 'account.invoice',
-            'view_id': False,
-            'context': "{'type':'out_invoice', 'journal_type': 'sale'}",
-            'type': 'ir.actions.act_window'
-        }
+            ir_model_data = self.pool.get('ir.model.data')
+            act_obj = self.pool.get('ir.actions.act_window')
+            result = ir_model_data.get_object_reference(cr, uid, 'account', 'action_invoice_tree1')
+            id = result and result[1] or False
+            result = act_obj.read(cr, uid, [id], context=context)[0]
+            result['domain'] = "[('id','in', [" + ','.join(map(str, invoices)) + "])]"
+            return result
+    
 tms_waybill_invoice()
 
 
@@ -1294,7 +1294,7 @@ class tms_waybill_supplier_invoice(osv.osv_memory):
             journal_id = journal_id and journal_id[0]
 
 
-            prod_id = prod_obj.search(cr, uid, [('tms_category', '=', 'freight'),('tms_default_freight','=', 1),('active','=', 1)], limit=1)
+            prod_id = prod_obj.search(cr, uid, [('tms_category', '=', 'freight'),('tms_default_supplier_freight','=', 1),('active','=', 1)], limit=1)
             if not prod_id:
                 raise osv.except_osv(
                     _('Missing configuration !'),
@@ -1328,7 +1328,7 @@ class tms_waybill_supplier_invoice(osv.osv_memory):
                 cr.execute("select id from tms_waybill where waybill_type='outsourced' and supplier_invoice_id is null and (state='confirmed' or (state='approved' and billing_policy='automatic')) and supplier_id=" + str(data[0]) + ' and currency_id=' + str(data[1]) + " and id IN %s", (tuple(record_ids),))
                 waybill_ids = filter(None, map(lambda x:x[0], cr.fetchall()))
                 
-                notes = "Waybills"
+                notes = "Cartas Porte"
                 inv_amount = 0.0
                 empl_name = ''
 
@@ -1337,7 +1337,7 @@ class tms_waybill_supplier_invoice(osv.osv_memory):
                     currency_id = waybill.currency_id.id
 
                     inv_line = (0,0, {
-                            'name': product.name  + ' - ' + (waybill.travel_id.name or 'No travel') + ' - ' + waybill.name,
+                            'name': product.name  + ' - Viaje: ' + (waybill.travel_id.name or 'Sin Viaje') + ' - Carta Porte: ' + waybill.name,
                             'origin': waybill.name,
                             'account_id': prod_account,
                             'price_unit': waybill.supplier_amount,
@@ -1345,7 +1345,7 @@ class tms_waybill_supplier_invoice(osv.osv_memory):
                             'uos_id': product.uom_id.id,
                             'product_id': product.id,
                             'invoice_line_tax_id': [(6, 0, [x.id for x in product.taxes_id])],
-                            'note': 'Waybill from Outsourced travel' + (waybill.travel_id.name or _('No travel') ),
+                            'note': 'Carta Porte de Permisionario ' + (waybill.travel_id.name or _('Sin Viaje') ),
                             'account_analytic_id': False,
                             })
                     inv_lines.append(inv_line)
@@ -1366,11 +1366,11 @@ class tms_waybill_supplier_invoice(osv.osv_memory):
                         pay_term = False
 
                 inv = {
-                    'name'              : 'Outsourced Freights',
+                    'name'              : 'Fletes de Permisionario',
                     'origin'            : waybill.name,
                     'type'              : 'in_invoice',
                     'journal_id'        : journal_id,
-                    'reference'         : 'TMS-Waybills',
+                    'reference'         : 'Factura de Cartas Porte de Permisionario',
                     'account_id'        : a,
                     'partner_id'        : waybill.supplier_id.id,
                     'departure_address_id' : departure_address_id,
@@ -1378,13 +1378,13 @@ class tms_waybill_supplier_invoice(osv.osv_memory):
                     'address_invoice_id': self.pool.get('res.partner').address_get(cr, uid, [waybill.supplier_id.id], ['default'])['default'],
                     'address_contact_id': self.pool.get('res.partner').address_get(cr, uid, [waybill.supplier_id.id], ['default'])['default'],
                     'invoice_line'      : [x for x in inv_lines],
-                    'comment'           : 'TMS-Waybills from Outsourced Freights',
+                    'comment'           : 'Factura de Cartas Porte de Permisionario',
                     'payment_term'      : pay_term,
                     'fiscal_position'   : waybill.supplier_id.property_account_position.id,
                     'comment'           : notes,
                     'tms_type'          : 'invoice' if waybill.billing_policy == 'manual' else 'waybill'
                 }
-                print "inv: " , inv
+                #print "inv: " , inv
 
                 travel_obj.write(cr, uid, [waybill.travel_id.id], {'closed_by': uid, 'date_closed' : time.strftime(DEFAULT_SERVER_DATETIME_FORMAT), 'state':'closed'})
 
@@ -1393,18 +1393,13 @@ class tms_waybill_supplier_invoice(osv.osv_memory):
  
                 waybill_obj.write(cr,uid,waybill_ids, {'supplier_invoice_id': inv_id, 'supplier_invoiced_by':uid, '  supplier_invoiced_date':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})               
 
-
-        return {
-            'domain': "[('id','in', ["+','.join(map(str,invoices))+"])]",
-            'name': _('Supplier Invoices'),
-            'view_type': 'form',
-            'view_mode': 'tree,form',
-            'res_model': 'account.invoice',
-            'view_id': False,
-            'context': "{'type':'in_invoice', 'journal_type': 'purchase'}",
-            'type': 'ir.actions.act_window'
-        }
-
+            ir_model_data = self.pool.get('ir.model.data')
+            act_obj = self.pool.get('ir.actions.act_window')
+            result = ir_model_data.get_object_reference(cr, uid, 'account', 'action_invoice_tree2')
+            id = result and result[1] or False
+            result = act_obj.read(cr, uid, [id], context=context)[0]
+            result['domain'] = "[('id','in', [" + ','.join(map(str, invoices)) + "])]"
+            return result
 
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

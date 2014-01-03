@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenERP Server 7.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-12-27 22:14+0000\n"
-"PO-Revision-Date: 2013-12-27 17:03-0600\n"
+"POT-Creation-Date: 2014-01-03 16:45+0000\n"
+"PO-Revision-Date: 2014-01-03 11:29-0600\n"
 "Last-Translator: Israel CA <israel.cruz@hesatecnica.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -80,15 +80,19 @@ msgid "Percent (%)"
 msgstr "Porcentaje (%)"
 
 #. module: tms
+#: model:product.product,tms_category:0
+msgid "real_expense"
+msgstr "salary_retention"
+
+#. module: tms
 #: model:res.groups,comment:tms.group_expense_cancel
 msgid "The user will be able to Cancel Travel Expense Records."
 msgstr "El usuario podrá Cancelar el Registro de Gastos de Viaje"
 
 #. module: tms
-#: code:addons/tms/tms_waybill.py:1004
-#, python-format
-msgid "This Waybill's Invoice is already paid"
-msgstr "La Factura de la Carta Porte ya se encuentra pagada."
+#: field:tms.expense,global_fuel_efficiency_real:0
+msgid "Global Fuel Efficiency Real"
+msgstr "Rendimiento Global Real"
 
 #. module: tms
 #: field:tms.advance,confirmed_by:0 field:tms.expense,confirmed_by:0
@@ -99,6 +103,11 @@ msgid "Confirmed by"
 msgstr "Confirmado por"
 
 #. module: tms
+#: sql_constraint:fleet.vehicle:0
+msgid "Unit name number must be unique !"
+msgstr "El nombre del vehículo debe ser único !"
+
+#. module: tms
 #: view:tms.unit.red_tape:0
 msgid "Units Red Tapes"
 msgstr "Trámites de Vehiculos"
@@ -107,6 +116,11 @@ msgstr "Trámites de Vehiculos"
 #: view:tms.unit.red_tape:0 selection:tms.unit.red_tape,state:0
 msgid "Progress"
 msgstr "En Proceso"
+
+#. module: tms
+#: field:tms.waybill.taxes,account_id:0
+msgid "Tax Account"
+msgstr "Tax Account"
 
 #. module: tms
 #: view:fleet.vehicle:0 field:fleet.vehicle,unit_type_id:0
@@ -171,6 +185,18 @@ msgid "Can Approve Driver Loans"
 msgstr "Puede Aprobar Préstamos a Operador"
 
 #. module: tms
+#: code:addons/tms/tms_waybill.py:1348
+#, python-format
+msgid "Sin Viaje"
+msgstr "Sin Viaje"
+
+#. module: tms
+#: model:ir.actions.act_window,name:tms.action_view_waybill_invoice
+#: view:tms.waybill.invoice:0
+msgid "Create Customer Invoice"
+msgstr "Crear Factura de Cliente"
+
+#. module: tms
 #: field:tms.travel,done_by:0
 msgid "Ended by"
 msgstr "Finalizado por"
@@ -202,7 +228,7 @@ msgstr "Póliza contable."
 #. module: tms
 #: model:res.groups,name:tms.group_fuelvoucher_setdraft
 msgid "Can Set to Draft Travel Fuel Vouchers"
-msgstr "Puede regresar los Vales de Combustible a estado Borrador "
+msgstr "Puede regresar el estado de los Vales de Combustible a Borrador "
 
 #. module: tms
 #: field:tms.waybill,date_up_docs_real:0
@@ -215,19 +241,19 @@ msgid "Waybill Related"
 msgstr "Relacionado a Cartas Porte"
 
 #. module: tms
+#: model:ir.model,name:tms.model_tms_waybill_taxes
+msgid "Waybill Taxes"
+msgstr "Impuestos en Carta Porte"
+
+#. module: tms
 #: help:fleet.vehicle.odometer.device,odometer_end:0
 msgid "Ending counter from device"
-msgstr "Cuenta Final del Medidor"
+msgstr "Cuenta Final del Dispositivo"
 
 #. module: tms
 #: selection:product.product,tms_category:0
 msgid "Work Order Types (MRO)"
 msgstr "Tipo de Servicio (Mtto)"
-
-#. module: tms
-#: view:tms.expense:0
-msgid "Distance Resumen"
-msgstr "Resumen Distancia"
 
 #. module: tms
 #: view:tms.expense.line:0
@@ -245,10 +271,10 @@ msgid "The user will be able to Approve Waybills."
 msgstr "El usuario podrá Aprobar Cartas Porte"
 
 #. module: tms
-#: code:addons/tms/tms_expense.py:418
+#: code:addons/tms/tms_expense.py:434
 #, python-format
 msgid "Fuel Voucher %s is not Confirmed..."
-msgstr "El Vale de Combustible %s no está Confirmado..."
+msgstr "Vale de Combustible %s no está Confirmado..."
 
 #. module: tms
 #: field:tms.waybill,date_down_end_sched:0
@@ -309,7 +335,7 @@ msgstr "Vale de Combustible"
 #. module: tms
 #: selection:tms.expense.line,line_type:0
 msgid "Salary Discount"
-msgstr "Descuento de Sueldo"
+msgstr "Desc. en Salario"
 
 #. module: tms
 #: help:hr.employee,tms_category:0
@@ -411,7 +437,7 @@ msgstr "El Viaje está Cerrado o Cancelado !!!"
 #. module: tms
 #: selection:product.product,tms_category:0
 msgid "Salary (Travel Expense Related)"
-msgstr "Sueldo (Gasto de Viaje)"
+msgstr "Sueldo (Relativo a Gasto de Viaje)"
 
 #. module: tms
 #: model:ir.model,name:tms.model_tms_route_place
@@ -421,7 +447,7 @@ msgstr "Lugares Intermedios en Rutas"
 #. module: tms
 #: view:tms.waybill:0
 msgid "Outsourced and Not Invoiced"
-msgstr "Permisionado y No facturado"
+msgstr "Tercerizado y no facturado"
 
 #. module: tms
 #: help:tms.event.category,gps_code:0
@@ -463,7 +489,7 @@ msgid "Sent to GPS"
 msgstr "Enviado al GPS"
 
 #. module: tms
-#: code:addons/tms/tms_expense.py:503
+#: code:addons/tms/tms_expense.py:519
 #, python-format
 msgid "There is no information about the Travel you just selected..."
 msgstr "No hay información del Viaje que seleccionó..."
@@ -584,7 +610,7 @@ msgid "Scheduled"
 msgstr "Agendado"
 
 #. module: tms
-#: code:addons/tms/tms_travel.py:404
+#: code:addons/tms/tms_travel.py:395
 #, python-format
 msgid "There is already a Travel in progress with Unit "
 msgstr "Ya existe un Viaje en Proceso con esta Unidad"
@@ -597,7 +623,7 @@ msgstr "Gastos Indirectos (Acuerdos)"
 #. module: tms
 #: model:ir.model,name:tms.model_tms_waybill_invoice
 msgid "Make Invoices from Waybill"
-msgstr "Crear Factura de Carta Porte"
+msgstr "Crear Factura de Carta(s) Porte"
 
 #. module: tms
 #: model:res.groups,name:tms.group_expense_loan_confirm
@@ -614,12 +640,6 @@ msgstr "Rutas con este lugar"
 #, python-format
 msgid "Driver Advance Payment"
 msgstr "Pago de Anticipo de Viaje"
-
-#. module: tms
-#: code:addons/tms/tms_waybill.py:1292
-#, python-format
-msgid "No travel"
-msgstr "Sin Viaje"
 
 #. module: tms
 #: view:tms.waybill:0
@@ -684,7 +704,7 @@ msgid "Tuesday"
 msgstr "Martes"
 
 #. module: tms
-#: code:addons/tms/tms_waybill.py:639
+#: code:addons/tms/tms_waybill.py:695
 #, python-format
 msgid "Waybill: %s"
 msgstr "Carta Porte: %s"
@@ -700,7 +720,7 @@ msgid "Any"
 msgstr "Cualquier"
 
 #. module: tms
-#: code:addons/tms/tms_waybill.py:543
+#: code:addons/tms/tms_waybill.py:599
 #, python-format
 msgid "Could not set to draft this Waybill !"
 msgstr "No se pudo poner esta Carta Porte en Estado Borrador !"
@@ -713,7 +733,7 @@ msgstr "Cuenta Inicial"
 #. module: tms
 #: view:product.product:0
 msgid "More groups..."
-msgstr "Mas grupos..."
+msgstr "Mas grupos…"
 
 #. module: tms
 #: view:tms.waybill:0
@@ -731,7 +751,7 @@ msgid "Tax Real"
 msgstr "Impuestos Real"
 
 #. module: tms
-#: code:addons/tms/tms_expense.py:1077 code:addons/tms/tms_expense.py:1087
+#: code:addons/tms/tms_expense.py:1093 code:addons/tms/tms_expense.py:1103
 #, python-format
 msgid "Advance Discount"
 msgstr "Descuento de Anticipo"
@@ -745,6 +765,15 @@ msgstr "Puede regresar al estado Borrador los Anticipos de Operador"
 #: help:tms.waybill,amount_declared:0
 msgid " Load value amount declared for insurance purposes..."
 msgstr "Valor Declarado de la carga para cuestión de Seguros..."
+
+#. module: tms
+#: help:account.journal,tms_fuelvoucher_journal:0
+msgid ""
+"If set to True then it will be used to create Moves when confirming TMS Fuel "
+"Voucher. It must be a General Type Journal"
+msgstr ""
+"Usado para hacer las pólizas de Vales de Combustible. Debe ser de tipo "
+"General."
 
 #. module: tms
 #: field:tms.waybill,product_qty:0
@@ -773,7 +802,7 @@ msgid "In Progress"
 msgstr "En Proceso"
 
 #. module: tms
-#: code:addons/tms/tms_waybill.py:781
+#: code:addons/tms/tms_waybill.py:837
 #, python-format
 msgid "No Customer Defined !"
 msgstr "No se ha definido el Cliente !"
@@ -844,12 +873,12 @@ msgstr "Clientes"
 #. module: tms
 #: view:tms.fuelvoucher:0 view:tms.travel:0
 msgid "Driver 1"
-msgstr "Operador 1"
+msgstr "Operaor 1"
 
 #. module: tms
-#: view:tms.expense:0 view:tms.expense.loan:0
-msgid "Expense date"
-msgstr "Fecha"
+#: view:tms.expense:0
+msgid "Distancia Real"
+msgstr "Distancia Real"
 
 #. module: tms
 #: field:tms.event,position_real:0
@@ -857,7 +886,7 @@ msgid "Position Real"
 msgstr "Posición Real"
 
 #. module: tms
-#: code:addons/tms/tms_expense.py:626
+#: code:addons/tms/tms_expense.py:642
 #, python-format
 msgid "Could not Confirm Expense Record!"
 msgstr "No se pudo Confirmar el Registro de Gastos de Viaje !"
@@ -906,18 +935,27 @@ msgid "Amount Declared"
 msgstr "Valor Declarado"
 
 #. module: tms
-#: help:account.journal,tms_fuelvoucher_journal:0
-msgid ""
-"If set to True then it will be used to create Moves when confirming TMS Fuel "
-"Voucher. It must be a General Type Journal"
-msgstr ""
-"Usado para hacer las pólizas de Vales de Combustible. Debe ser de tipo "
-"General."
+#: code:addons/tms/tms_factor.py:162 code:addons/tms/tms_factor.py:170
+#: code:addons/tms/tms_factor.py:178 code:addons/tms/tms_factor.py:224
+#: code:addons/tms/tms_factor.py:231 code:addons/tms/tms_factor.py:238
+#, python-format
+msgid "Could calculate Freight Amount !"
+msgstr "No se pudo calcular el Monto del Flete !"
+
+#. module: tms
+#: field:tms.expense,global_fuel_efficiency_routes:0
+msgid "Global Fuel Efficiency Routes"
+msgstr "Rendimiento Global Rutas"
 
 #. module: tms
 #: field:sale.shop,tms_loan_seq:0
 msgid "Loan Sequence"
 msgstr "Secuencia de Préstamos a Operador"
+
+#. module: tms
+#: model:product.product,tms_category:0
+msgid "highway_tolls"
+msgstr "highway_tolls"
 
 #. module: tms
 #: code:addons/tms/tms_factor.py:308 constraint:tms.factor.special:0
@@ -938,7 +976,7 @@ msgid "Fuel Efficiency for this motor type"
 msgstr "Rendimiento para este tipo de motor"
 
 #. module: tms
-#: code:addons/tms/tms_expense.py:1120
+#: code:addons/tms/tms_expense.py:1136
 #, python-format
 msgid "Tax Account is not defined for Tax %s (id:%d)"
 msgstr ""
@@ -952,7 +990,7 @@ msgstr "Fecha Fin"
 #. module: tms
 #: model:res.groups,comment:tms.group_advance_confirm
 msgid "The user will be able to Confirm Money Advances for Driver."
-msgstr "Puede confirmar Anticipos de Viaje para Operador"
+msgstr "Puede confirmar Anticipos a Operador"
 
 #. module: tms
 #: field:product.product,tms_default_salary:0
@@ -987,10 +1025,15 @@ msgid "Can set Operation to Process"
 msgstr "Puede poner Operaciones en Estado En Proceso "
 
 #. module: tms
+#: model:product.product,tms_category:0
+msgid "fuel"
+msgstr "fuel"
+
+#. module: tms
 #: code:addons/tms/tms.py:1101
 #, python-format
 msgid "Could not create Odometer Record!"
-msgstr "No se pudo crear el Registro de Lectura de Odómetro !"
+msgstr "No se pudo crear el Registro del Odómetro !"
 
 #. module: tms
 #: field:tms.sale.shop.fuel.supplier.seq,fuel_sequence:0
@@ -1065,7 +1108,7 @@ msgstr "Productos por categoría"
 #. module: tms
 #: view:account.move.line:0
 msgid "Period"
-msgstr "Periodo"
+msgstr "Período"
 
 #. module: tms
 #: help:tms.route,distance:0
@@ -1106,12 +1149,12 @@ msgstr "Total "
 #. module: tms
 #: field:tms.waybill,date_down_docs_sched:0
 msgid "Download Docs Sched"
-msgstr "Lib. Docs Desc. Prog."
+msgstr "Lib. Docs Desc.  Prog."
 
 #. module: tms
 #: field:tms.waybill,waybill_customer_factor:0
 msgid "Waybill Customer Charge Factors"
-msgstr "Factores para tipo de pago del Cliente"
+msgstr "Tarifas para Cliente"
 
 #. module: tms
 #: view:fleet.vehicle:0
@@ -1148,7 +1191,7 @@ msgstr "Puede cambiar al estado Borrador a los Viajes"
 #. module: tms
 #: field:hr.employee,tms_house_rent_discount_perc:0
 msgid "Monthly House Rental Discount (%)"
-msgstr "Infonavit (Porc.Desc.)"
+msgstr "Infonavit (Porc. Desc.)"
 
 #. module: tms
 #: field:tms.travel,waybill_ok_for_expense_rec:0
@@ -1213,7 +1256,7 @@ msgstr "%s-%s-Ret"
 #. module: tms
 #: help:tms.expense.loan,state:0
 msgid "State of the Driver Loan. "
-msgstr "Estado del préstamo al Operador"
+msgstr "Estado"
 
 #. module: tms
 #: help:tms.waybill,account_analytic_id:0
@@ -1240,7 +1283,7 @@ msgstr "Crear Factura de Permisionario"
 #: model:ir.model,name:tms.model_tms_factor_special
 msgid "Python Code calculate Payment (Driver/Supplier) & Client charge"
 msgstr ""
-"Código Python para calcular pagos (Operador/Proveedor) & Cobro a Clientes"
+"Código Python para calcular pagos (Operador/Proveedor) & cobro a Clientes"
 
 #. module: tms
 #: selection:tms.expense.loan,discount_type:0
@@ -1378,7 +1421,7 @@ msgstr ""
 "tipo Compras"
 
 #. module: tms
-#: code:addons/tms/tms_expense.py:425
+#: code:addons/tms/tms_expense.py:441
 #, python-format
 msgid " from Fuel Vouchers - Travel: "
 msgstr " de Vales de Combustible - Viaje:"
@@ -1411,20 +1454,22 @@ msgstr "Casetas en esta Ruta"
 #. module: tms
 #: view:tms.advance.invoice:0 view:tms.advance.payment:0
 #: view:tms.expense.payment:0 view:tms.fuelvoucher.invoice:0
+#: view:tms.waybill.cancel:0 view:tms.waybill.invoice:0
+#: view:tms.waybill.supplier_invoice:0
 msgid "or"
 msgstr "o"
 
 #. module: tms
-#: code:addons/tms/tms_expense.py:396 code:addons/tms/tms_expense.py:452
+#: code:addons/tms/tms_expense.py:412 code:addons/tms/tms_expense.py:468
 #, python-format
 msgid "Travel: "
-msgstr "Viaje: "
+msgstr "Viaje:"
 
 #. module: tms
-#: code:addons/tms/tms_waybill.py:1304
+#: code:addons/tms/tms_waybill.py:1360
 #, python-format
 msgid "Supplier << %s >> has not Payable Account defined."
-msgstr "El Proveedor << %s >> no tiene Cuenta contable definida."
+msgstr "El Proveedor << %s >> no tiene Cuenta definida."
 
 #. module: tms
 #: constraint:product.product:0
@@ -1458,7 +1503,7 @@ msgstr ""
 #. module: tms
 #: view:tms.waybill:0
 msgid "Waybill Supplier Factors"
-msgstr "Tarifas para Permisionarios"
+msgstr "Tarifas Permisionario"
 
 #. module: tms
 #: code:addons/tms/tms_factor.py:163
@@ -1481,6 +1526,11 @@ msgid "Expense Line"
 msgstr "Línea de Gasto"
 
 #. module: tms
+#: field:tms.expense,fuel_qty:0
+msgid "Fuel Qty"
+msgstr "Cant. Combustible"
+
+#. module: tms
 #: model:res.groups,comment:tms.group_expense_confirm
 msgid "The user will be able to Confirm Travel Expense Records."
 msgstr "Puede confirmar Registro de Gastos de Viaje"
@@ -1491,13 +1541,13 @@ msgid "Make Payment for Advances"
 msgstr "Registrar Pago de Anticipos de Viaje"
 
 #. module: tms
-#: code:addons/tms/tms_expense.py:595
+#: code:addons/tms/tms_expense.py:611
 #, python-format
 msgid "You have not defined Expense Sequence for shop "
-msgstr "No ha definido la Secuencia de Gastos de Viaje de la Base"
+msgstr "No ha definido la Secuencia de Gastos de Viaje de la Tienda"
 
 #. module: tms
-#: code:addons/tms/tms_expense.py:612
+#: code:addons/tms/tms_expense.py:628
 #, python-format
 msgid "Could not approve Expense !"
 msgstr "No se pudo Aprobar el Registro de Gasto de Viaje !"
@@ -1510,7 +1560,7 @@ msgstr "Datos Extra de Unidades"
 #. module: tms
 #: field:fleet.vehicle,unit_expiry_ids:0
 msgid "Expiry Extra Data"
-msgstr "Docs. con Vigencia"
+msgstr "Datos Extra Expiración"
 
 #. module: tms
 #: field:tms.travel,waybill_income:0
@@ -1522,7 +1572,7 @@ msgstr "Ingresos"
 #: selection:tms.factor,category:0 field:tms.travel,supplier_id:0
 #: view:tms.waybill:0
 msgid "Supplier"
-msgstr "Permisionario"
+msgstr "Proveedor"
 
 #. module: tms
 #: field:tms.waybill.extradata,type_extra:0
@@ -1542,7 +1592,7 @@ msgstr "Fecha Hecho"
 #. module: tms
 #: view:tms.waybill:0 selection:tms.waybill,waybill_type:0
 msgid "Outsourced"
-msgstr "Permisionado"
+msgstr "Tercerizado"
 
 #. module: tms
 #: model:res.groups,comment:tms.group_fuelvoucher_setdraft
@@ -1555,7 +1605,7 @@ msgid "Can Cancel Drivers Loans"
 msgstr "Puede Cancelar Préstamos a Operador"
 
 #. module: tms
-#: code:addons/tms/tms_waybill.py:1265
+#: code:addons/tms/tms_waybill.py:1321
 #, python-format
 msgid ""
 "Not all selected records are Confirmed yet or already invoiced or selected "
@@ -1590,14 +1640,14 @@ msgid "Single Trailer"
 msgstr "Sencillo"
 
 #. module: tms
-#: code:addons/tms/tms_waybill.py:1030
+#: code:addons/tms/tms_waybill.py:1086
 #, python-format
 msgid ""
 "This Waybill's Supplier Invoice is already created. First, cancel Supplier "
 "Invoice and then try again"
 msgstr ""
 "Esta Carta Porte ya se encuentra facturada. Primero cancele la Factura de "
-"Permisionario e intente nuevamente..."
+"proveedor e intente nuevamente..."
 
 #. module: tms
 #: sql_constraint:tms.waybill:0
@@ -1666,7 +1716,9 @@ msgstr "Operaciones"
 #: code:addons/tms/tms_advance.py:426
 #, python-format
 msgid "There is no address created for this driver: \"%s\" (id:%d)"
-msgstr "El Operador \"%s\" (id:%d) no tiene dirección particular"
+msgstr ""
+"El Operador \"%s\" (id:%d) no tiene dirección particular en su ficha de "
+"Empleado"
 
 #. module: tms
 #: field:account.journal,tms_advance_journal:0
@@ -1677,7 +1729,7 @@ msgstr "TMS Diario de Anticipos"
 #: model:ir.ui.menu,name:tms.menu_tms_config_suppliers
 #: model:ir.ui.menu,name:tms.menu_tms_procurement_management_supplier_name
 msgid "Suppliers"
-msgstr "Permisionarios"
+msgstr "Proveedores"
 
 #. module: tms
 #: sql_constraint:tms.unit.category:0
@@ -1767,23 +1819,24 @@ msgid ""
 msgstr ""
 "Tipo de Producto para usarse con el módulo TMS\n"
 "  - No TMS: No tiene relación con el TMS\n"
-"  - Transportable: (Cartas Porte)\n"
-"  - Flete (Cartas Porte)\n"
-"  - Maniobra (Cartas Porte)\n"
-"  - Seguro (Cartas Porte)\n"
-"  - Autopistas (Cartas Porte)\n"
-"  - Otro (Cartas Porte)\n"
+"  - Transportable: Producto Transportable usado en Cartas Porte\n"
+"  - Flete: Usado en Cartas Porte\n"
+"  - Maniobra: Usado en Cartas Porte\n"
+"  - Seguro: Usado en Cartas Porte\n"
+"  - Autopistas: Usado en Cartas Porte\n"
+"  - Otro: Representa cualquier otro servicio usado en Cartas Porte\n"
 "  - Gasto de Viaje: Conceptos de Gastos de Viaje usados en Registro de "
 "Gastos de Viaje.\n"
 "  - Facilidades Administrativas: Cualquier gastos que no afecta en Registro "
 "de Gastos de Viaje.\n"
 "  - Combustible: Usado para Vales de Combustible.\n"
 "  - Gastos Fijos (Acuerdos): Usado para los Acuerdos.\n"
-"  - Refacción (Mtto)\n"
-"  - Tarea (Mtto)\n"
-"  - Tipo de Orden de Mtto (Mtto)\n"
-"  - Ciclos de Servicios de Mtto (Mtto)\n"
-"  - Programa de Mtto (Mtto)\n"
+"  - Refacción (Mtto): Partes usadas en servicios de reparación de unidades.\n"
+"  - Tarea (Mtto): Tareas relacionadas a servicios de reparación de "
+"unidades.\n"
+"  - Tipo de Orden de Mtto (Mtto): Como su nombre lo indica\n"
+"  - Ciclos de Servicios de Mtto (Mtto): Como su nombre lo indica\n"
+"  - Programa de Mtto (Mtto): Como su nombre lo indica\n"
 "  Todos estos productos DEBEN ser definidos como servicio (a excepción de "
 "Combustible y Refacción) porque nunca tendrán interacción con Inventarios.\n"
 
@@ -1833,8 +1886,8 @@ msgid "Datetime"
 msgstr "Fecha/Hora"
 
 #. module: tms
-#: code:addons/tms/tms_expense.py:631 code:addons/tms/tms_expense.py:921
-#: code:addons/tms/tms_travel.py:387
+#: code:addons/tms/tms_expense.py:647 code:addons/tms/tms_expense.py:937
+#: code:addons/tms/tms_travel.py:378
 #, python-format
 msgid "Could not Confirm Expense Record !"
 msgstr "No se pudo Confirmar el Registro de Gastos de Viaje !"
@@ -1865,12 +1918,17 @@ msgid "(update)"
 msgstr "(actualizar)"
 
 #. module: tms
+#: model:product.product,tms_category:0
+msgid "transportable"
+msgstr "transportable"
+
+#. module: tms
 #: selection:tms.route.fuelefficiency,type:0
 msgid "Double Trailer"
 msgstr "Doble Remolque"
 
 #. module: tms
-#: code:addons/tms/tms_expense.py:89 code:addons/tms/tms_expense.py:96
+#: code:addons/tms/tms_expense.py:95 code:addons/tms/tms_expense.py:102
 #, python-format
 msgid "Currency Error !"
 msgstr "Error en Moneda !"
@@ -1928,7 +1986,7 @@ msgid "Child Categories"
 msgstr "Categorías Hijo"
 
 #. module: tms
-#: code:addons/tms/tms_expense.py:1158 code:addons/tms/tms_expense.py:1169
+#: code:addons/tms/tms_expense.py:1174 code:addons/tms/tms_expense.py:1185
 #, python-format
 msgid "Credit Balance"
 msgstr "Saldo en Contra"
@@ -1936,7 +1994,7 @@ msgstr "Saldo en Contra"
 #. module: tms
 #: field:tms.expense.loan,discount_method:0
 msgid "Discount Method"
-msgstr "Discount Method"
+msgstr "Forma de Descuento"
 
 #. module: tms
 #: help:tms.waybill,distance_real:0
@@ -2004,7 +2062,7 @@ msgstr "Vale de Combustible: %s"
 #. module: tms
 #: field:tms.waybill,supplier_invoiced_by:0
 msgid "Suppl. Invoiced by"
-msgstr "Fact. Proveed. hecha por"
+msgstr "Factura Prov. por"
 
 #. module: tms
 #: model:res.groups,comment:tms.group_travel_end
@@ -2084,7 +2142,7 @@ msgid "Intermediate Places"
 msgstr "Puntos Intermedios"
 
 #. module: tms
-#: code:addons/tms/tms_waybill.py:610
+#: code:addons/tms/tms_waybill.py:666
 #, python-format
 msgid "You have not defined Income Account for product %s"
 msgstr "No ha definido la cuenta de Ingresos para el Producto: %s"
@@ -2191,7 +2249,7 @@ msgid "Cancel Expense Record"
 msgstr "Cancelar Registro de Gastos de Viaje"
 
 #. module: tms
-#: code:addons/tms/tms_waybill.py:544
+#: code:addons/tms/tms_waybill.py:600
 #, python-format
 msgid "Travel is Cancelled !!!"
 msgstr "El Viaje está Cancelado !!!"
@@ -2289,7 +2347,7 @@ msgstr "Lectura Actual"
 #. module: tms
 #: field:tms.factor,factor_type:0
 msgid "Factor Type"
-msgstr "Tipo Factor"
+msgstr "Tipo Factor/Tarifa"
 
 #. module: tms
 #: field:tms.advance,currency_id:0 field:tms.expense,currency_id:0
@@ -2347,7 +2405,7 @@ msgid ""
 " - Outsourced: Travel without our own units."
 msgstr ""
 " - Propios: Viaje con unidad propia. \n"
-" - Tercerizado: Viaje con unidad de un tercero."
+" - Permisionado: Viaje con unidad de un Permisionario."
 
 #. module: tms
 #: model:ir.ui.menu,name:tms.menu_tms_config_product_product_category
@@ -2355,7 +2413,7 @@ msgid "Product Categories"
 msgstr "Categorías de producto"
 
 #. module: tms
-#: code:addons/tms/tms_travel.py:415
+#: code:addons/tms/tms_travel.py:406
 #, python-format
 msgid "Could not End Travel !"
 msgstr "No se pudo Finalizar el Viaje !"
@@ -2364,7 +2422,7 @@ msgstr "No se pudo Finalizar el Viaje !"
 #: code:addons/tms/tms_expense_loan.py:178
 #, python-format
 msgid "Amount must be greater than zero."
-msgstr "El monto debe ser mayor que cero."
+msgstr "Amount must be greater than zero."
 
 #. module: tms
 #: model:res.groups,comment:tms.group_tms_manager
@@ -2377,8 +2435,8 @@ msgid "Previous State"
 msgstr "Estado Anterior"
 
 #. module: tms
-#: code:addons/tms/tms_advance.py:259 code:addons/tms/tms_expense.py:613
-#: code:addons/tms/tms_waybill.py:568
+#: code:addons/tms/tms_advance.py:259 code:addons/tms/tms_expense.py:629
+#: code:addons/tms/tms_waybill.py:624
 #, python-format
 msgid "Total Amount must be greater than zero."
 msgstr "El monto Total debe ser mayor a cero."
@@ -2389,7 +2447,7 @@ msgid "Confirm Advances"
 msgstr "Confirmar Anticipos"
 
 #. module: tms
-#: code:addons/tms/tms_travel.py:416
+#: code:addons/tms/tms_travel.py:407
 #, python-format
 msgid "Parameter to determine Vehicle distance origin does not exist."
 msgstr "Parámetro para registrar la Distancia recorrida al vehículo no existe."
@@ -2429,7 +2487,7 @@ msgstr "Duración Real del Viaje en horas"
 #: code:addons/tms/tms_expense_loan.py:177
 #, python-format
 msgid "Could not approve Loan !"
-msgstr "No pude Aprobar el Préstamo !"
+msgstr "No pude Aprobar Préstamo !"
 
 #. module: tms
 #: field:hr.employee,tms_house_rent_prod_id:0
@@ -2519,7 +2577,7 @@ msgid "View"
 msgstr "Vista"
 
 #. module: tms
-#: code:addons/tms/tms_waybill.py:568 code:addons/tms/tms_waybill.py:570
+#: code:addons/tms/tms_waybill.py:624 code:addons/tms/tms_waybill.py:626
 #, python-format
 msgid "Could not confirm Waybill !"
 msgstr "No se pudo Confirmar la Carta Porte !"
@@ -2530,7 +2588,7 @@ msgid "Expense Advance"
 msgstr "Anticipo de Gasto de Viaje"
 
 #. module: tms
-#: code:addons/tms/tms_waybill.py:613 code:addons/tms/tms_waybill.py:627
+#: code:addons/tms/tms_waybill.py:669 code:addons/tms/tms_waybill.py:683
 #, python-format
 msgid "Waybill: %s - Product: %s"
 msgstr "Carta Porte: %s - Producto: %s"
@@ -2702,7 +2760,7 @@ msgid "Cancel"
 msgstr "Cancelar"
 
 #. module: tms
-#: code:addons/tms/tms_waybill.py:1245
+#: code:addons/tms/tms_waybill.py:1301
 #, python-format
 msgid "There is no product defined as Freight !!!"
 msgstr "No existe ningún producto definido como Flete !!!"
@@ -2763,7 +2821,7 @@ msgid "Move (Freight Related)"
 msgstr "Maniobras (Cartas Porte)"
 
 #. module: tms
-#: code:addons/tms/tms_expense.py:1094
+#: code:addons/tms/tms_expense.py:1110
 #, python-format
 msgid "Expense Account is not defined for product %s (id:%d)"
 msgstr ""
@@ -2785,9 +2843,10 @@ msgid "Field"
 msgstr "Campo"
 
 #. module: tms
-#: model:res.groups,name:tms.group_expense_cancel
-msgid "Can Cancel Travel Expense Records"
-msgstr "Puede Cancelar Registros de Gastos de Viaje"
+#: model:ir.actions.act_window,name:tms.action_view_fuelvoucher_invoice
+#: view:tms.fuelvoucher.invoice:0
+msgid "Create Invoice"
+msgstr "Crear Factura"
 
 #. module: tms
 #: field:tms.advance,date_approved:0 field:tms.expense,date_approved:0
@@ -2798,14 +2857,14 @@ msgid "Date Approved"
 msgstr "Fecha Aprobación"
 
 #. module: tms
-#: code:addons/tms/tms_waybill.py:1003 code:addons/tms/tms_waybill.py:1008
-#: code:addons/tms/tms_waybill.py:1013 code:addons/tms/tms_waybill.py:1029
+#: code:addons/tms/tms_waybill.py:1059 code:addons/tms/tms_waybill.py:1064
+#: code:addons/tms/tms_waybill.py:1069 code:addons/tms/tms_waybill.py:1085
 #, python-format
 msgid "Could not cancel Waybill !"
 msgstr "No se pudo Cancelar la Carta Porte !"
 
 #. module: tms
-#: code:addons/tms/tms_travel.py:372
+#: code:addons/tms/tms_travel.py:363
 #, python-format
 msgid "You must first cancel all Fuel Vouchers attached to this Travel."
 msgstr ""
@@ -2818,7 +2877,7 @@ msgid "Date registered"
 msgstr "Fecha Registro"
 
 #. module: tms
-#: code:addons/tms/tms_travel.py:403
+#: code:addons/tms/tms_travel.py:394
 #, python-format
 msgid "Could not dispatch Travel !"
 msgstr "No se pudo Despachar el Viaje !"
@@ -2831,7 +2890,7 @@ msgstr "Propiedades adicionales"
 #. module: tms
 #: view:fleet.vehicle:0
 msgid "Expiry Data"
-msgstr "Docs. con Vigencia"
+msgstr "Dato de Validez"
 
 #. module: tms
 #: view:fleet.vehicle.odometer.device:0
@@ -2855,10 +2914,10 @@ msgstr "Contacto"
 #: help:tms.expense.line,sequence:0 help:tms.waybill.line,sequence:0
 #: help:tms.waybill.shipped_product,sequence:0
 msgid "Gives the sequence order when displaying a list of sales order lines."
-msgstr "Indica el orden para desplegar la lista de pedidos de venta"
+msgstr "Da el orden para desplegar la lista de pedidos de venta"
 
 #. module: tms
-#: code:addons/tms/tms_expense.py:1062
+#: code:addons/tms/tms_expense.py:1078
 #, python-format
 msgid ""
 "There is no advance account and/or Travel Expense Negative Balance account "
@@ -2870,7 +2929,7 @@ msgstr ""
 #. module: tms
 #: view:hr.employee:0
 msgid "Record Travel Expenses Related"
-msgstr "Relacionado a Gastos de Viaje"
+msgstr "Relacionado a Liquidaciones"
 
 #. module: tms
 #: view:tms.waybill:0
@@ -2915,7 +2974,7 @@ msgstr "¿ Cancelar este Registro de Gastos de Viaje ?"
 #. module: tms
 #: model:ir.ui.menu,name:tms.tms_fleet_vehicle_odometer_menu
 msgid "Vehicles Odometer"
-msgstr "Lecturas de Odómetros"
+msgstr "Odómetro de los vehículos"
 
 #. module: tms
 #: field:fleet.vehicle,fleet_type:0
@@ -2945,9 +3004,9 @@ msgid ""
 msgstr ""
 "<p class=\"oe_view_nocontent_create\">\n"
 "                De clic aquí para definer nuevos productos relacionados a "
-"Gestión de Fletes y Viajes.\n"
+"Fletes.\n"
 "              </p><p>\n"
-"                Puede definir producto para todo lo relacionado a la "
+"                Puede definer product or para todo lo relacionado a la "
 "Gestión de Fletes y Viajes.\n"
 "              </p>\n"
 "            "
@@ -3033,6 +3092,11 @@ msgid "Make Invoices from Fuel Vouchers"
 msgstr "Crear Factura de Vales de Combustible"
 
 #. module: tms
+#: model:product.product,tms_category:0
+msgid "salary"
+msgstr "real_expense"
+
+#. module: tms
 #: model:res.groups,comment:tms.group_advance_setdraft
 msgid "The user will be able to Set to Draft Money Advances for Driver."
 msgstr "Puede regresar a Estado Borrador los Anticipos de Viaje"
@@ -3057,7 +3121,7 @@ msgstr "Estado de Unidades"
 #. module: tms
 #: view:tms.factor.special:0
 msgid "Associated Factors"
-msgstr "Factores asociados"
+msgstr "Factores/Tarifas asociados"
 
 #. module: tms
 #: model:res.groups,comment:tms.group_fuelvoucher_approve
@@ -3088,12 +3152,14 @@ msgstr "Distancia de Ruta"
 
 #. module: tms
 #: view:account.invoice:0 field:account.invoice,waybill_ids:0
+#: code:addons/tms/tms_waybill.py:1170
 #: model:ir.actions.act_window,help:tms.action_tms_waybill_form
 #: model:ir.actions.act_window,name:tms.action_tms_waybill_form
 #: model:ir.model,name:tms.model_tms_waybill
 #: model:ir.ui.menu,name:tms.menu_tms_waybill view:tms.expense:0
 #: view:tms.operation:0 field:tms.operation,waybill_ids:0 view:tms.travel:0
 #: field:tms.travel,waybill_ids:0 view:tms.waybill:0
+#, python-format
 msgid "Waybills"
 msgstr "Cartas Porte"
 
@@ -3139,6 +3205,11 @@ msgid "Toll Stations"
 msgstr "Casetas"
 
 #. module: tms
+#: model:product.product,tms_category:0
+msgid "salary_retention"
+msgstr "salary_retention"
+
+#. module: tms
 #: view:tms.expense:0 field:tms.expense,amount_net_salary:0
 msgid "Net Salary"
 msgstr "Salario Neto"
@@ -3173,13 +3244,13 @@ msgid "Date Confirmed"
 msgstr "Fecha Confirmación"
 
 #. module: tms
-#: code:addons/tms/tms_expense.py:1073
+#: code:addons/tms/tms_expense.py:1089
 #, python-format
 msgid "Travel Expense Record "
 msgstr "Registro de Gastos de Viaje"
 
 #. module: tms
-#: code:addons/tms/tms_waybill.py:1014
+#: code:addons/tms/tms_waybill.py:1070
 #, python-format
 msgid "This Waybill's Supplier Invoice is already paid"
 msgstr ""
@@ -3247,8 +3318,8 @@ msgid "TMS Special Factors"
 msgstr "Factores Especiales"
 
 #. module: tms
-#: code:addons/tms/tms_expense.py:632 code:addons/tms/tms_expense.py:922
-#: code:addons/tms/tms_travel.py:388
+#: code:addons/tms/tms_expense.py:648 code:addons/tms/tms_expense.py:938
+#: code:addons/tms/tms_travel.py:379
 #, python-format
 msgid "Parameter to determine Vehicle distance update from does not exist."
 msgstr "El Parámetro para determinar el origen de la distancia no existe."
@@ -3271,12 +3342,9 @@ msgid "Cost Credit"
 msgstr "Costo a Crédito"
 
 #. module: tms
-#: code:addons/tms/tms_factor.py:162 code:addons/tms/tms_factor.py:170
-#: code:addons/tms/tms_factor.py:178 code:addons/tms/tms_factor.py:224
-#: code:addons/tms/tms_factor.py:231 code:addons/tms/tms_factor.py:238
-#, python-format
-msgid "Could calculate Freight Amount !"
-msgstr "No se pudo calcular el Monto del Flete !"
+#: field:tms.waybill.taxes,base:0
+msgid "Base"
+msgstr "Base"
 
 #. module: tms
 #: model:ir.model,name:tms.model_tms_factor
@@ -3329,6 +3397,11 @@ msgid "Account"
 msgstr "Cuenta"
 
 #. module: tms
+#: model:product.product,tms_category:0
+msgid "move"
+msgstr "move"
+
+#. module: tms
 #: field:tms.expense,vehicle_odometer:0
 msgid "Vehicle Odometer"
 msgstr "Odómetro de Unidad"
@@ -3373,7 +3446,7 @@ msgid "Taxes"
 msgstr "Impuestos"
 
 #. module: tms
-#: code:addons/tms/tms_expense.py:90
+#: code:addons/tms/tms_expense.py:96
 #, python-format
 msgid ""
 "You can not create a Travel Expense Record with Advances with different "
@@ -3392,6 +3465,12 @@ msgstr ""
 "Permisionarios. Debe ser de tipo Diario de Compras."
 
 #. module: tms
+#: code:addons/tms/tms.py:534
+#, python-format
+msgid "You can not cancel a record if is already Confirmed!!!"
+msgstr "No puede cancelar este registro si ya se encuentra Confirmado !!!"
+
+#. module: tms
 #: view:tms.unit.active_history:0
 msgid "Activation / Inactivation Record"
 msgstr "Registro de Activación / Desactivación"
@@ -3404,7 +3483,7 @@ msgid "Products"
 msgstr "Productos"
 
 #. module: tms
-#: code:addons/tms/tms_expense.py:1153
+#: code:addons/tms/tms_expense.py:1169
 #, python-format
 msgid ""
 "There is no address created for this driver or there is no payable account "
@@ -3483,9 +3562,9 @@ msgid "Shipped Product"
 msgstr "Carga"
 
 #. module: tms
-#: sql_constraint:fleet.vehicle:0
-msgid "Unit name number must be unique !"
-msgstr "El nombre del vehículo debe ser único !"
+#: field:tms.waybill.taxes,name:0 field:tms.waybill.taxes,tax_id:0
+msgid "Impuesto"
+msgstr "Impuesto"
 
 #. module: tms
 #: field:tms.route,fuel_efficiency_2trailer:0
@@ -3541,22 +3620,22 @@ msgstr "Odómetro"
 
 #. module: tms
 #: code:addons/tms/tms_advance.py:418 code:addons/tms/tms_advance.py:425
-#: code:addons/tms/tms_advance.py:432 code:addons/tms/tms_expense.py:313
-#: code:addons/tms/tms_expense.py:417 code:addons/tms/tms_expense.py:443
-#: code:addons/tms/tms_expense.py:502 code:addons/tms/tms_expense.py:1056
-#: code:addons/tms/tms_expense.py:1061 code:addons/tms/tms_expense.py:1093
-#: code:addons/tms/tms_expense.py:1119 code:addons/tms/tms_expense.py:1152
+#: code:addons/tms/tms_advance.py:432 code:addons/tms/tms_expense.py:329
+#: code:addons/tms/tms_expense.py:433 code:addons/tms/tms_expense.py:459
+#: code:addons/tms/tms_expense.py:518 code:addons/tms/tms_expense.py:1072
+#: code:addons/tms/tms_expense.py:1077 code:addons/tms/tms_expense.py:1109
+#: code:addons/tms/tms_expense.py:1135 code:addons/tms/tms_expense.py:1168
 #: code:addons/tms/tms_fuelvoucher.py:329
 #: code:addons/tms/tms_fuelvoucher.py:342
-#: code:addons/tms/tms_fuelvoucher.py:477 code:addons/tms/tms_waybill.py:584
-#: code:addons/tms/tms_waybill.py:1099 code:addons/tms/tms_waybill.py:1264
-#: code:addons/tms/tms_waybill.py:1303
+#: code:addons/tms/tms_fuelvoucher.py:477 code:addons/tms/tms_waybill.py:640
+#: code:addons/tms/tms_waybill.py:1155 code:addons/tms/tms_waybill.py:1161
+#: code:addons/tms/tms_waybill.py:1320 code:addons/tms/tms_waybill.py:1359
 #, python-format
 msgid "Warning !"
 msgstr "Advertencia !"
 
 #. module: tms
-#: code:addons/tms/tms_expense.py:314
+#: code:addons/tms/tms_expense.py:330
 #, python-format
 msgid ""
 "There is already a Travel Expense Record pending to be confirmed. You can "
@@ -3623,8 +3702,8 @@ msgstr "Rem2"
 #. module: tms
 #: code:addons/tms/tms.py:770 code:addons/tms/tms.py:956
 #: code:addons/tms/tms_fuelvoucher.py:310
-#: code:addons/tms/tms_fuelvoucher.py:496 code:addons/tms/tms_waybill.py:1122
-#: code:addons/tms/tms_waybill.py:1254
+#: code:addons/tms/tms_fuelvoucher.py:496 code:addons/tms/tms_waybill.py:1182
+#: code:addons/tms/tms_waybill.py:1310
 #, python-format
 msgid "Error !"
 msgstr "Error !"
@@ -3674,7 +3753,7 @@ msgid "The user will be able to Approve Travel Expense Records."
 msgstr "Puede Aprobar Anticipo de Viajes"
 
 #. module: tms
-#: code:addons/tms/tms_expense.py:334
+#: code:addons/tms/tms_expense.py:350
 #, python-format
 msgid "There is no product defined as Default Salary !!!"
 msgstr "No hay producto definido como Salario por Defecto !!!"
@@ -3683,6 +3762,11 @@ msgstr "No hay producto definido como Salario por Defecto !!!"
 #: model:res.groups,comment:tms.group_operation_cancel
 msgid "The user will be able to Cancel Operations."
 msgstr "Puede Cancelar Operaciones"
+
+#. module: tms
+#: model:product.product,tms_category:0
+msgid "no_tms_product"
+msgstr "no_tms_product"
 
 #. module: tms
 #: view:fleet.vehicle.odometer.device:0 view:tms.advance:0 view:tms.expense:0
@@ -3715,7 +3799,7 @@ msgstr ""
 "registro"
 
 #. module: tms
-#: code:addons/tms/tms_travel.py:377
+#: code:addons/tms/tms_travel.py:368
 #, python-format
 msgid "You must first cancel all Waybills attached to this Travel."
 msgstr ""
@@ -3755,10 +3839,12 @@ msgid "Fuel Voucher number must be unique !"
 msgstr "¡ El Número de Vale de Combustible debe ser único !"
 
 #. module: tms
-#: code:addons/tms/tms.py:534
-#, python-format
-msgid "You can not cancel a record if is already Confirmed!!!"
-msgstr "No puede cancelar este registro si ya se encuentra Confirmado !!!"
+#: field:tms.advance,paid:0 view:tms.expense:0
+#: field:tms.expense,invoice_paid:0 field:tms.expense,paid:0
+#: view:tms.expense.loan:0 field:tms.expense.loan,paid:0
+#: field:tms.fuelvoucher,invoice_paid:0 field:tms.waybill,invoice_paid:0
+msgid "Paid"
+msgstr "Pagado"
 
 #. module: tms
 #: model:res.groups,comment:tms.group_fuelvoucher_cancel
@@ -3819,7 +3905,7 @@ msgid "End Travel"
 msgstr "Finalizar Viaje"
 
 #. module: tms
-#: code:addons/tms/tms_waybill.py:1237
+#: code:addons/tms/tms_waybill.py:1293
 #, python-format
 msgid "You have not defined TMS Supplier Purchase Journal..."
 msgstr ""
@@ -3832,6 +3918,11 @@ msgid "UpLd Docs Sched"
 msgstr "Lib. Docs. Carga Prog."
 
 #. module: tms
+#: view:tms.expense:0
+msgid "Distancia"
+msgstr "Distancia"
+
+#. module: tms
 #: field:hr.employee,tms_credit_charge_prod_id:0
 msgid "Credit Charge Product"
 msgstr "Producto para Créditos"
@@ -3839,7 +3930,7 @@ msgstr "Producto para Créditos"
 #. module: tms
 #: view:tms.waybill.cancel:0
 msgid "Cancel this Waybill ?"
-msgstr "¿ Cancelar Carta Porte ?"
+msgstr "¿ Cancelar Guía/Carta Porte ?"
 
 #. module: tms
 #: view:tms.expense:0
@@ -3916,7 +4007,7 @@ msgid "Waybill %s is not assigned to a Travel"
 msgstr "La Carta Porte %s no está asignado a ningún Viaje"
 
 #. module: tms
-#: code:addons/tms/tms.py:1049 code:addons/tms/tms_expense.py:526
+#: code:addons/tms/tms.py:1049 code:addons/tms/tms_expense.py:542
 #, python-format
 msgid "Record Warning !"
 msgstr "Advertencia de Registro !"
@@ -3982,7 +4073,7 @@ msgstr "Viaje"
 #. module: tms
 #: view:tms.place:0
 msgid "Get Coords from Google"
-msgstr "Obtener Corrdenadas de  Google"
+msgstr "Obtener Coordenadas de  Google"
 
 #. module: tms
 #: field:tms.unit.active_history,state_cause_id:0
@@ -4012,7 +4103,7 @@ msgstr "Útil para definir campos a usar para datos extra"
 #. module: tms
 #: help:res.partner,tms_warehouse_id:0
 msgid "Internal Fuel Warehouse to use with Fuel Vouchers."
-msgstr "Almacén de Autoconsumo"
+msgstr "Almacén de Autoconsumo para usar con Vales de Combustible"
 
 #. module: tms
 #: view:tms.advance:0 selection:tms.advance,state:0
@@ -4026,6 +4117,11 @@ msgstr "Cerrado"
 #: help:fleet.vehicle,latitude:0 help:tms.place,latitude:0
 msgid "GPS Latitude"
 msgstr "GPS Latitud"
+
+#. module: tms
+#: model:product.product,tms_category:0
+msgid "maint_part"
+msgstr "maint_part"
 
 #. module: tms
 #: selection:fleet.vehicle,fleet_type:0 field:tms.waybill,amount_other:0
@@ -4078,7 +4174,12 @@ msgid "Discount Type"
 msgstr "Tipo de Descuento"
 
 #. module: tms
-#: code:addons/tms/tms_travel.py:357
+#: field:tms.waybill,tax_line:0
+msgid "Tax Lines"
+msgstr "Tax Lines"
+
+#. module: tms
+#: code:addons/tms/tms_travel.py:348
 #, python-format
 msgid "You have not defined Travel Sequence for shop "
 msgstr "No ha definido la Secuencias de Viaje para esta tienda."
@@ -4107,7 +4208,7 @@ msgid "Active"
 msgstr "Activo"
 
 #. module: tms
-#: code:addons/tms/tms_fuelvoucher.py:497 code:addons/tms/tms_waybill.py:1255
+#: code:addons/tms/tms_fuelvoucher.py:497 code:addons/tms/tms_waybill.py:1311
 #, python-format
 msgid "There is no expense account defined for this product: \"%s\" (id:%d)"
 msgstr "No hay cuenta de gasto definida para este producto: \"%s\" (id:%d)"
@@ -4220,13 +4321,13 @@ msgid "Process"
 msgstr "En Proceso"
 
 #. module: tms
-#: code:addons/tms/tms_waybill.py:1186
+#: code:addons/tms/tms.py:618
 #, python-format
-msgid "Customer Invoices"
-msgstr "Facturas de Cliente"
+msgid "You can not cancel a record if already Confirmed!!!"
+msgstr "No puede cancelar registros que ya se encuentren Confirmados !!!"
 
 #. module: tms
-#: code:addons/tms/tms_waybill.py:781
+#: code:addons/tms/tms_waybill.py:837
 #, python-format
 msgid ""
 "Before choosing a product,\n"
@@ -4248,11 +4349,9 @@ msgid "Unit Price"
 msgstr "Precio Unit."
 
 #. module: tms
-#: model:ir.actions.act_window,name:tms.action_view_fuelvoucher_invoice
-#: model:ir.actions.act_window,name:tms.action_view_waybill_invoice
-#: view:tms.fuelvoucher.invoice:0 view:tms.waybill.invoice:0
-msgid "Create Invoice"
-msgstr "Crear Factura"
+#: model:res.groups,name:tms.group_expense_cancel
+msgid "Can Cancel Travel Expense Records"
+msgstr "Puede Cancelar Registros de Gastos de Viaje"
 
 #. module: tms
 #: view:tms.operation:0 selection:tms.operation,state:0 view:tms.travel:0
@@ -4262,7 +4361,7 @@ msgid "Done"
 msgstr "Realizado"
 
 #. module: tms
-#: code:addons/tms/tms_waybill.py:1100
+#: code:addons/tms/tms_waybill.py:1156
 #, python-format
 msgid "Not all selected records are Confirmed yet or already invoiced..."
 msgstr ""
@@ -4302,7 +4401,7 @@ msgstr "Proveedor GPS"
 #: field:tms.expense,origin:0 field:tms.expense.loan,origin:0
 #: field:tms.waybill,origin:0
 msgid "Source Document"
-msgstr "Origen"
+msgstr "Documento Origen"
 
 #. module: tms
 #: view:tms.waybill:0
@@ -4335,7 +4434,7 @@ msgid "Factors"
 msgstr "Factores"
 
 #. module: tms
-#: code:addons/tms/tms_expense.py:97
+#: code:addons/tms/tms_expense.py:103
 #, python-format
 msgid ""
 "You can not create a Travel Expense Record with Fuel Vouchers with different "
@@ -4405,7 +4504,7 @@ msgstr "Anticipo(s) de Viaje %s"
 #. module: tms
 #: field:hr.employee,tms_supplier_driver:0
 msgid "Supplier Driver"
-msgstr "Operador de Tercero"
+msgstr "Operador de Permisionario"
 
 #. module: tms
 #: model:ir.actions.act_window,name:tms.open_view_tms_event_action_form
@@ -4413,7 +4512,7 @@ msgid "TMS Events Actions"
 msgstr "TMS Acciones"
 
 #. module: tms
-#: code:addons/tms/tms_fuelvoucher.py:556 code:addons/tms/tms_waybill.py:1343
+#: code:addons/tms/tms_fuelvoucher.py:556
 #, python-format
 msgid "Supplier Invoices"
 msgstr "Facturas de Proveedor"
@@ -4432,6 +4531,12 @@ msgstr "Producto"
 #: model:ir.actions.act_window,name:tms.open_view_tms_place_form
 msgid "TMS Places"
 msgstr "Ciudades / Lugares"
+
+#. module: tms
+#: code:addons/tms/tms_waybill.py:1060
+#, python-format
+msgid "This Waybill's Invoice is already paid"
+msgstr "La Factura de la Carta Porte ya se encuentrea pagada."
 
 #. module: tms
 #: help:tms.fuelvoucher,driver_helper:0
@@ -4492,7 +4597,7 @@ msgstr "Distancia recorrida por el operador (mi./km)"
 #. module: tms
 #: field:tms.waybill,supplier_invoiced:0
 msgid "Supplier Invoiced"
-msgstr "Facturado"
+msgstr "Facturado por el Perm."
 
 #. module: tms
 #: field:fleet.vehicle.odometer.device,odometer_end:0
@@ -4513,7 +4618,7 @@ msgstr "Sumatoria Peso"
 #: code:addons/tms/tms_expense_loan.py:243
 #, python-format
 msgid "Loan '%s' has been Closed."
-msgstr "Loan '%s' has been Closed."
+msgstr "El Préstamo '%s' ha sido Cerrado."
 
 #. module: tms
 #: field:tms.event,arrival_id:0 view:tms.route:0 field:tms.route,arrival_id:0
@@ -4549,10 +4654,10 @@ msgid "Event Categories"
 msgstr "Categoría de Eventos"
 
 #. module: tms
-#: code:addons/tms/tms_expense.py:616
+#: code:addons/tms/tms_expense.py:632
 #, python-format
 msgid "Expense '%s' is set to approved."
-msgstr "El Registro de Gastos '%s' ha sido aprobado."
+msgstr "El Registro de Gastos '%s' ha sido Aprobado."
 
 #. module: tms
 #: view:fleet.vehicle:0 view:tms.unit.active_history:0
@@ -4597,7 +4702,7 @@ msgid "Start Sched."
 msgstr "Inicio Prog."
 
 #. module: tms
-#: code:addons/tms/tms_waybill.py:1123
+#: code:addons/tms/tms_waybill.py:1183
 #, python-format
 msgid "There is no income account defined for this product: \"%s\" (id:%d)"
 msgstr ""
@@ -4614,7 +4719,7 @@ msgid "Information on a vehicle"
 msgstr "Información en un vehículo"
 
 #. module: tms
-#: code:addons/tms/tms_waybill.py:598
+#: code:addons/tms/tms_waybill.py:654
 #, python-format
 msgid ""
 "Waybill: %s\n"
@@ -4626,6 +4731,11 @@ msgstr ""
 "Viaje: %s\n"
 "Operador: (ID %s) %s\n"
 "Unidad: %s"
+
+#. module: tms
+#: field:tms.expense,loaded_fuel_efficiency:0
+msgid "Loaded Fuel Efficiency"
+msgstr "Rendimiento Cargado"
 
 #. module: tms
 #: field:tms.advance,cancelled_by:0 field:tms.expense,cancelled_by:0
@@ -4642,7 +4752,7 @@ msgid "Create copy of this waybill?"
 msgstr "¿ Crear copia de esta Carta Porte ?"
 
 #. module: tms
-#: code:addons/tms/tms_expense.py:444
+#: code:addons/tms/tms_expense.py:460
 #, python-format
 msgid "Advance %s is not Confirmed..."
 msgstr "Anticipo %s no está Confirmado…"
@@ -4741,7 +4851,7 @@ msgid "Active Odometer"
 msgstr "Odómetro Activo"
 
 #. module: tms
-#: code:addons/tms/tms_expense.py:627
+#: code:addons/tms/tms_expense.py:643
 #, python-format
 msgid ""
 "Current Vehicle Odometer is grater than this Expense Record. You will have "
@@ -4841,7 +4951,7 @@ msgid "Friday"
 msgstr "Viernes"
 
 #. module: tms
-#: code:addons/tms/tms_expense.py:874
+#: code:addons/tms/tms_expense.py:890
 #, python-format
 msgid "This Expense Record is not the last one for this driver"
 msgstr "El Registro de Gastos de Viaje no es el último para este operador"
@@ -4873,7 +4983,7 @@ msgid "Waybill Type"
 msgstr "Tipo Carta Porte"
 
 #. module: tms
-#: code:addons/tms/tms.py:1050 code:addons/tms/tms_expense.py:527
+#: code:addons/tms/tms.py:1050 code:addons/tms/tms_expense.py:543
 #, python-format
 msgid "There is no Active Odometer for vehicle %s"
 msgstr "No hay Odometro Activo para la unidad %s"
@@ -4996,7 +5106,7 @@ msgid "Last Position"
 msgstr "Última posición"
 
 #. module: tms
-#: code:addons/tms/tms_expense.py:880
+#: code:addons/tms/tms_expense.py:896
 #, python-format
 msgid "This Expense Record's is already paid"
 msgstr "Este Registro de Gastos ya se encuentra pagado"
@@ -5018,7 +5128,7 @@ msgstr ""
 #. module: tms
 #: field:tms.travel,trailer1_id:0
 msgid "Trailer1"
-msgstr "Rem1"
+msgstr "Rem 1"
 
 #. module: tms
 #: help:tms.waybill,arrival_address_id:0
@@ -5045,7 +5155,7 @@ msgid "Operation"
 msgstr "Operación"
 
 #. module: tms
-#: code:addons/tms/tms_travel.py:383
+#: code:addons/tms/tms_travel.py:374
 #, python-format
 msgid "You must first cancel all Advances for Drivers attached to this Travel."
 msgstr "Debe cancelar todos los Anticipos ligados a este Viaje."
@@ -5062,6 +5172,11 @@ msgid ""
 msgstr "."
 
 #. module: tms
+#: field:tms.expense,unloaded_fuel_efficiency:0
+msgid "Unloaded Fuel Efficiency"
+msgstr "Rendimiento Vacío"
+
+#. module: tms
 #: view:tms.advance:0 selection:tms.advance,state:0
 #: selection:tms.event,state:0 view:tms.expense:0
 #: selection:tms.expense,state:0 view:tms.expense.loan:0
@@ -5070,12 +5185,6 @@ msgstr "."
 #: view:tms.waybill:0 selection:tms.waybill,state:0
 msgid "Confirmed"
 msgstr "Confirmado"
-
-#. module: tms
-#: code:addons/tms/tms.py:618
-#, python-format
-msgid "You can not cancel a record if already Confirmed!!!"
-msgstr "No puede cancelar registros que ya se encuentren Confirmados !!!"
 
 #. module: tms
 #: model:res.groups,name:tms.group_tms_user
@@ -5110,9 +5219,9 @@ msgid "Distance Parameter"
 msgstr "Parámetro de Actualización de Odómetro"
 
 #. module: tms
-#: model:ir.model,name:tms.model_hr_job
-msgid "Job Description"
-msgstr "Descripción del trabajo"
+#: field:tms.waybill.taxes,account_analytic_id:0
+msgid "Analytic account"
+msgstr "Cuenta Analítica"
 
 #. module: tms
 #: help:tms.expense,distance_real:0
@@ -5154,7 +5263,7 @@ msgstr "travel_id"
 #. module: tms
 #: model:ir.actions.act_window,name:tms.action_view_advance_payment
 msgid "Make Driver Advance Payment"
-msgstr "Make Driver Advance Payment"
+msgstr "Registrar Pago de Anticipo"
 
 #. module: tms
 #: view:account.move.line:0 model:ir.model,name:tms.model_hr_employee
@@ -5162,7 +5271,7 @@ msgid "Employee"
 msgstr "Empleado"
 
 #. module: tms
-#: code:addons/tms/tms_expense.py:1179
+#: code:addons/tms/tms_expense.py:1195
 #, python-format
 msgid "TMS-Travel Expense Record"
 msgstr "Registro de Gastos de Viaje"
@@ -5182,12 +5291,18 @@ msgid "Motor Brand"
 msgstr "Marca Motor"
 
 #. module: tms
-#: view:tms.factor:0
-msgid "Billing Factors"
-msgstr "Factores de Cobro/Pago"
+#: code:addons/tms/tms_waybill.py:1162
+#, python-format
+msgid "You have not defined Client account..."
+msgstr "No ha definido la cuenta contable del Cliente..."
 
 #. module: tms
-#: code:addons/tms/tms_expense.py:1138 code:addons/tms/tms_expense.py:1148
+#: view:tms.factor:0
+msgid "Billing Factors"
+msgstr "Tarifas de Cobro/Pago"
+
+#. module: tms
+#: code:addons/tms/tms_expense.py:1154 code:addons/tms/tms_expense.py:1164
 #, python-format
 msgid "Debit Balance"
 msgstr "Balance"
@@ -5213,7 +5328,7 @@ msgid "Loan record must be unique !"
 msgstr "El Préstamo debe ser único !"
 
 #. module: tms
-#: code:addons/tms/tms_waybill.py:570
+#: code:addons/tms/tms_waybill.py:626
 #, python-format
 msgid "Waybill must be assigned to a Travel before confirming."
 msgstr "La Carta Porte debe ser asignada a un Viaje antes de confirmarla."
@@ -5321,6 +5436,11 @@ msgid "Place"
 msgstr "Lugar"
 
 #. module: tms
+#: view:tms.expense:0
+msgid "Global Performance"
+msgstr "Desempeño Global"
+
+#. module: tms
 #: help:tms.factor,factor_type:0
 msgid ""
 "\n"
@@ -5354,8 +5474,13 @@ msgstr ""
 "                        "
 
 #. module: tms
-#: code:addons/tms/tms_advance.py:433 code:addons/tms/tms_expense.py:1057
-#: code:addons/tms/tms_fuelvoucher.py:343 code:addons/tms/tms_waybill.py:585
+#: view:tms.expense:0 view:tms.expense.loan:0
+msgid "Expense date"
+msgstr "Fecha"
+
+#. module: tms
+#: code:addons/tms/tms_advance.py:433 code:addons/tms/tms_expense.py:1073
+#: code:addons/tms/tms_fuelvoucher.py:343 code:addons/tms/tms_waybill.py:641
 #, python-format
 msgid ""
 "There is no valid account period for this date %s. Period does not exists or "
@@ -5392,7 +5517,7 @@ msgid "Weight"
 msgstr "Peso"
 
 #. module: tms
-#: code:addons/tms/tms_expense.py:595
+#: code:addons/tms/tms_expense.py:611
 #, python-format
 msgid "Expense Sequence Error !"
 msgstr "Error de Secuencia de Registros de Gastos de Viaje"
@@ -5407,6 +5532,11 @@ msgstr "Dato Extra"
 #: model:res.groups,comment:tms.group_travel_cancel
 msgid "The user will be able to Cancel Travels."
 msgstr "Puede Cancelar Viajes."
+
+#. module: tms
+#: model:product.product,tms_category:0
+msgid "madeup_expense"
+msgstr "madeup_expense"
 
 #. module: tms
 #: model:ir.actions.act_window,name:tms.open_view_tms_unit_category_form
@@ -5436,7 +5566,7 @@ msgid "Loan '%s' is set to Approved."
 msgstr "El Préstamo ‘%s’ ha sido Aprobado."
 
 #. module: tms
-#: code:addons/tms/tms_expense.py:975
+#: code:addons/tms/tms_expense.py:991
 #, python-format
 msgid "Travel Expense Payment"
 msgstr "Travel Expense Payment"
@@ -5448,7 +5578,7 @@ msgid "Fuel Efficiency Drive Unit"
 msgstr "Rendimiento Unidad"
 
 #. module: tms
-#: code:addons/tms/tms_expense.py:873 code:addons/tms/tms_expense.py:879
+#: code:addons/tms/tms_expense.py:889 code:addons/tms/tms_expense.py:895
 #, python-format
 msgid "Could not cancel Expense Record!"
 msgstr "No se pudo Cancelar el Registro de Gastos de Viaje !"
@@ -5473,7 +5603,7 @@ msgstr "Fin Descarga Real"
 #: model:ir.ui.menu,name:tms.menu_tms_config_waybill
 #: field:tms.event,waybill_id:0 field:tms.factor,waybill_id:0
 #: view:tms.waybill:0 field:tms.waybill.extradata,waybill_id:0
-#: field:tms.waybill.line,waybill_id:0
+#: field:tms.waybill.line,waybill_id:0 field:tms.waybill.taxes,waybill_id:0
 msgid "Waybill"
 msgstr "Carta Porte"
 
@@ -5509,7 +5639,7 @@ msgstr "Active si el Anticipo es para Segundo Operador"
 #. module: tms
 #: field:tms.waybill,waybill_supplier_factor:0
 msgid "Waybill Supplier Payment Factors"
-msgstr "Factores para pago de Tercero"
+msgstr "Tarifas Permisionario"
 
 #. module: tms
 #: model:res.groups,name:tms.group_travel_cancel
@@ -5527,8 +5657,8 @@ msgid "Intermediate places in Route"
 msgstr "Lugares Intermedios en Rutas"
 
 #. module: tms
-#: code:addons/tms/tms_expense.py:333 code:addons/tms/tms_waybill.py:389
-#: code:addons/tms/tms_waybill.py:1244
+#: code:addons/tms/tms_expense.py:349 code:addons/tms/tms_waybill.py:459
+#: code:addons/tms/tms_waybill.py:1300
 #, python-format
 msgid "Missing configuration !"
 msgstr "Falta configuración !"
@@ -5556,12 +5686,9 @@ msgid "Draft"
 msgstr "Borrador"
 
 #. module: tms
-#: field:tms.advance,paid:0 view:tms.expense:0
-#: field:tms.expense,invoice_paid:0 field:tms.expense,paid:0
-#: view:tms.expense.loan:0 field:tms.expense.loan,paid:0
-#: field:tms.fuelvoucher,invoice_paid:0 field:tms.waybill,invoice_paid:0
-msgid "Paid"
-msgstr "Pagado"
+#: view:tms.waybill:0
+msgid "Impuestos"
+msgstr "Impuestos"
 
 #. module: tms
 #: model:res.groups,name:tms.group_waybill_confirm
@@ -5607,7 +5734,7 @@ msgid "You have not defined Advance Sequence for shop "
 msgstr "No ha definido Secuencia en la tienda para los Anticipos"
 
 #. module: tms
-#: code:addons/tms/tms_waybill.py:389
+#: code:addons/tms/tms_waybill.py:459
 #, python-format
 msgid "There is no product defined as Default Freight !!!"
 msgstr "No existe producto definido como Flete por defecto !!!"
@@ -5620,7 +5747,7 @@ msgstr "Despachado Por"
 #. module: tms
 #: model:ir.model,name:tms.model_sale_shop
 msgid "Sales Shop"
-msgstr "Base"
+msgstr "Tienda ventas"
 
 #. module: tms
 #: field:tms.factor,variable_amount:0
@@ -5658,8 +5785,8 @@ msgid "Python Expression"
 msgstr "Código Python"
 
 #. module: tms
-#: code:addons/tms/tms_travel.py:371 code:addons/tms/tms_travel.py:376
-#: code:addons/tms/tms_travel.py:382
+#: code:addons/tms/tms_travel.py:362 code:addons/tms/tms_travel.py:367
+#: code:addons/tms/tms_travel.py:373
 #, python-format
 msgid "Could not cancel Travel !"
 msgstr "No se pudo Cancelar el Viaje !"
@@ -5716,7 +5843,7 @@ msgid "Invoice address for current Waybill."
 msgstr "Dirección de Facturación para la Carta Porte"
 
 #. module: tms
-#: code:addons/tms/tms_advance.py:216 code:addons/tms/tms_travel.py:357
+#: code:addons/tms/tms_advance.py:216 code:addons/tms/tms_travel.py:348
 #, python-format
 msgid "Travel Sequence Error !"
 msgstr "Error en Secuencia de Viajes !"
@@ -5724,7 +5851,7 @@ msgstr "Error en Secuencia de Viajes !"
 #. module: tms
 #: view:tms.waybill:0
 msgid "Factor Supplier"
-msgstr "Factor de Pago para Proveedor."
+msgstr "Tarifa Permisionario"
 
 #. module: tms
 #: field:tms.expense,amount_balance:0 field:tms.expense,amount_balance2:0
@@ -5736,6 +5863,11 @@ msgstr "Balance"
 #: selection:fleet.vehicle,fleet_type:0
 msgid "Trailer"
 msgstr "Remolque"
+
+#. module: tms
+#: model:ir.model,name:tms.model_hr_job
+msgid "Job Description"
+msgstr "Descripción del trabajo"
 
 #. module: tms
 #: view:tms.advance:0 view:tms.fuelvoucher:0 view:tms.operation:0
@@ -5900,7 +6032,7 @@ msgstr "Retenciones y Descuentos de Salario"
 #. module: tms
 #: field:tms.route.tollstation.costperaxis,cost_cash:0
 msgid "Cost Cash"
-msgstr "Costo en Efectivo"
+msgstr "Costo Efectivo"
 
 #. module: tms
 #: model:ir.ui.menu,name:tms.menu_tms_factor_special_form
@@ -5961,6 +6093,11 @@ msgstr ""
 "No tiene definida la cuenta de Anticipo para este operador: \"%s\" (id:%d)"
 
 #. module: tms
+#: model:product.product,tms_category:0
+msgid "insurance"
+msgstr "insurance"
+
+#. module: tms
 #: field:account.invoice,arrival_address_id:0
 #: field:tms.waybill,arrival_address_id:0
 msgid "Arrival Address"
@@ -5970,6 +6107,11 @@ msgstr "Dirección Destino"
 #: constraint:fleet.vehicle.odometer:0 constraint:tms.expense:0
 msgid "You can not have Current Reading <= Last Reading !"
 msgstr "No puede tener la Lectura Actual <= Última Lectura !"
+
+#. module: tms
+#: model:product.product,tms_category:0
+msgid "other"
+msgstr "other"
 
 #. module: tms
 #: help:product.category,tms_property_account_expense_categ:0
@@ -6014,7 +6156,7 @@ msgid "Travel history"
 msgstr "Historial de Viaje"
 
 #. module: tms
-#: code:addons/tms/tms_waybill.py:1009
+#: code:addons/tms/tms_waybill.py:1065
 #, python-format
 msgid "This Waybill is already Invoiced"
 msgstr "Esta Carta Porte ya se encuentra Facturada"
@@ -6149,6 +6291,11 @@ msgstr ""
 "continuar de clic en el botón Cancelar."
 
 #. module: tms
+#: field:tms.waybill.taxes,tax_amount:0
+msgid "Monto Impuesto"
+msgstr "Monto Impuesto"
+
+#. module: tms
 #: view:tms.waybill:0
 msgid "Supplier Invoice Data"
 msgstr "Factura Permisionario"
@@ -6210,7 +6357,7 @@ msgid "Odometer Readings"
 msgstr "Lecturas de Odómetros"
 
 #. module: tms
-#: code:addons/tms/tms_expense.py:988
+#: code:addons/tms/tms_expense.py:1004
 #, python-format
 msgid "Travel Expense(s) %s"
 msgstr "Gasto(s) de Viaje %s"

@@ -144,18 +144,21 @@ TMS.waybill.category
           <field name="model">tms.waybill.cancel</field>
           <field name="type">form</field>
           <field name="arch" type="xml">
-	        <form string="Create a copy">
-              <field name="copy_waybill" />
-              <newline />
-              <field name="company_id" invisible="1"/>
-              <field name="date_order" attrs="{'invisible':[('copy_waybill','=',0)]}" />
-              <field name="sequence_id" attrs="{'invisible':[('copy_waybill','=',0)]}" domain="[('tms_waybill_sequence','=',1),('company_id','=',company_id)]" />
-	          
-              <separator colspan="4" string="Cancel this Waybill ?" />
-              <group col="2" colspan="4">
-                <button icon='gtk-cancel' special="cancel" string="Cancel" />
-                <button name="make_copy" string="Confirm Cancellation" colspan="1" type="object" icon="gtk-ok" groups="tms.group_waybill_cancel" />
-              </group>
+	        <form string="Create a copy" version="7.0">
+                <separator colspan="4" string="Cancel this Waybill ?" />
+                <group colspan="4" col="4">
+                    <field name="copy_waybill" />
+                    <newline />
+                    <field name="company_id" invisible="1"/>
+                    <field name="date_order" attrs="{'invisible':[('copy_waybill','=',0)]}" />
+                    <field name="sequence_id" attrs="{'invisible':[('copy_waybill','=',0)]}" domain="[('tms_waybill_sequence','=',1),('company_id','=',company_id)]" />	          
+                </group>
+                <footer>
+                    <button name="make_copy" string="Confirm Cancellation" colspan="1" type="object" icon="gtk-ok" groups="tms.group_waybill_cancel" />
+                    or
+                    <button special="cancel" string="Cancel" class="oe_link"/>
+                
+                </footer>
 	        </form>
           </field>
         </record>
@@ -609,19 +612,18 @@ TMS.waybill.category
       <field name="model">tms.waybill.invoice</field>
       <field name="type">form</field>
       <field name="arch" type="xml">
-	<form string="Create Invoice">
-	  <separator colspan="4" string="Create Customer Invoice from selected Waybills ?" />
-	  <group col="2" colspan="4">
-	    <button icon='gtk-cancel' special="cancel"
-		    string="Cancel" />
-	    <button name="makeWaybillInvoices" string="Confirm"
-		    colspan="1" type="object" icon="gtk-ok"  groups="tms.group_waybill_confirm" />
-	  </group>
-	</form>
+        <form string="Create Customer Invoice" version="7.0">
+            <separator colspan="4" string="Create Customer Invoice from selected Waybills ?" />
+            <footer>
+                <button name="makeWaybillInvoices" string="Confirm" type="object" icon="gtk-ok" groups="tms.group_waybill_confirm"/>
+                or
+                <button special="cancel" string="Cancel" class="oe_link"/>
+            </footer>
+        </form>
       </field>
     </record>
     
-    <act_window name="Create Invoice"		    
+    <act_window name="Create Customer Invoice"		    
 		res_model="tms.waybill.invoice"
 		src_model="tms.waybill"
 		view_mode="form"
@@ -637,15 +639,14 @@ TMS.waybill.category
       <field name="model">tms.waybill.supplier_invoice</field>
       <field name="type">form</field>
       <field name="arch" type="xml">
-	<form string="Create Supplier Invoice">
-	  <separator colspan="4" string="Create Supplier Invoice from selected Waybills ?" />
-	  <group col="2" colspan="4">
-	    <button icon='gtk-cancel' special="cancel"
-		    string="Cancel" />
-	    <button name="makeWaybillInvoices" string="Confirm"
-		    colspan="1" type="object" icon="gtk-ok"  groups="tms.group_waybill_confirm"/>
-	  </group>
-	</form>
+        <form string="Create Supplier Invoice" version="7.0">
+            <separator colspan="4" string="Create Supplier Invoice from selected Waybills ?" />
+            <footer>
+                <button name="makeWaybillInvoices" string="Confirm" type="object" icon="gtk-ok" groups="tms.group_waybill_confirm"/>
+                or
+                <button special="cancel" string="Cancel" class="oe_link"/>
+            </footer>
+        </form>
       </field>
     </record>
     

@@ -152,15 +152,8 @@ class tms_travel(osv.osv):
                                                             help="Travel Scheduled duration in hours"),
         'travel_duration_real': fields.function(_travel_duration, string='Duration Real', method=True, store=True, type='float', digits=(18,6), multi='travel_duration',
                                                                 help="Travel Real duration in hours"),
-        'distance_route': fields.function(_route_data, string='Route Distance (mi./km)', method=True, store=True, type='float', multi=True), #digits=(18,6), multi=True),
-        'fuel_efficiency_expected': fields.function(_route_data, string='Fuel Efficiency Expected', method=True, store=True, type='float', multi=True), #digits=(18,6), multi=True),
-
-        
-        #****'balance'       : fields.function(_balance, method=True, digits_compute=dp.get_precision('Sale Price'), string='Balance', type='float', multi=True,
-        #                                  store={
-        #                                         'tms.expense.loan': (lambda self, cr, uid, ids, c={}: ids, ['notes', 'amount','state','expense_line_ids'], 10),
-        #                                         'tms.expense.line': (_get_loan_discounts_from_expense_lines, ['product_uom_qty', 'price_unit'], 10),
-        #                                         }),****
+        'distance_route': fields.function(_route_data, string='Route Distance (mi./km)', method=True, store=True, type='float', multi=True), 
+        'fuel_efficiency_expected': fields.function(_route_data, string='Fuel Efficiency Expected', method=True, store=True, type='float', multi=True, digits=(14,4)), 
         
         'advance_ok_for_expense_rec': fields.function(_validate_for_expense_rec, string='Advance OK', method=True, type='boolean',  multi=True),
                                             #store={
@@ -180,11 +173,9 @@ class tms_travel(osv.osv):
         'fuel_efficiency_extraction': fields.float('Fuel Efficiency Extraction', required=False, digits=(14,4), states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
         'departure': fields.related('route_id', 'departure_id', type='many2one', relation='tms.place', string='Departure', store=True, readonly=True),                
         'arrival': fields.related('route_id', 'arrival_id', type='many2one', relation='tms.place', string='Arrival', store=True, readonly=True),                
-#        'loaded': fields.boolean('Cargado'),
+
         'notes': fields.text('Descripción', required=False, states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
 
-        #'expense_id': fields.many2one('tms.expense', 'Travel Expenses Record', required=False),
-        #'expense2_id': fields.many2one('tms.expense', 'Travel Expenses Record for Driver Helper', required=False),
         'fuelvoucher_ids':fields.one2many('tms.fuelvoucher', 'travel_id', string='Fuel Vouchers', states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
         'advance_ids':fields.one2many('tms.advance', 'travel_id', string='Advances', states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
         'framework': fields.function(_get_framework, string='Framework', method=True, store=True, type='char', size=15, multi='framework'),

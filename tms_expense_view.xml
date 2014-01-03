@@ -83,8 +83,8 @@ TMS.EXPENSE
                     <field name="name" class="oe_inline" readonly="1"/>
                 </h1>
                 <group col="4">
-                    <field name="date"/>
                     <field name="shop_id" />
+                    <field name="date"/>
                     <field name="employee_id_control" required="1" context="{'default_tms_category': 'driver'}" 
                          domain="[('tms_supplier_driver','=', False)]" 
                          on_change="on_change_employee_id(employee_id_control)"
@@ -121,17 +121,6 @@ TMS.EXPENSE
                                 </group>
                             </div>
                             <div>
-                                <group>
-                                    <separator string="Distance Resumen"  colspan="2"/>
-                                    <field name="vehicle_id" class="oe_text_right" attrs="{'invisible':[('odometer_log_id','=',False)]}"/>
-                                    <field name="odometer_id" class="oe_text_right"  attrs="{'invisible':[('odometer_log_id','=',False)]}"/>
-                                    <field name="last_odometer" class="oe_text_right" invisible="1" /> 
-                                    <field name="vehicle_odometer" class="oe_text_right" on_change="on_change_vehicle_odometer(vehicle_id, last_odometer, vehicle_odometer)" invisible="1"/>
-                                    <field name="current_odometer" class="oe_text_right" on_change="on_change_current_odometer(vehicle_id, last_odometer, current_odometer, distance_real)"/>
-                                    <field name="distance_real" class="oe_text_right" on_change="on_change_distance_real(vehicle_id, last_odometer, distance_real)"/>
-                                    <field name="distance_routes" class="oe_text_right"/>
-                                    <field name="odometer_log_id" class="oe_text_right" attrs="{'invisible':[('odometer_log_id','=',False)]}"/>
-                                </group>
                             </div>
                         </group>
                     </page>
@@ -150,7 +139,10 @@ TMS.EXPENSE
                                 <field name="dolly_id" />
                                 <field name="trailer2_id" />
                                 <field name="route_id" />
-                                <field name="user_id" />
+                                <field name="fuel_efficiency_travel" avg="Rend"/>
+                                <field name="distance_route" sum="Distancia"/>
+                                <field name="fuel_efficiency_extraction" avg="Rendx"/>
+                                <field name="distance_extraction" sum="Distancia Real"/>
                             </tree>
                         </field>
                         <separator string="Travels for Driver Helper" colspan="4" attrs="{'invisible':[('driver_helper','=',False)]}"/>
@@ -167,10 +159,40 @@ TMS.EXPENSE
                                 <field name="dolly_id" />
                                 <field name="trailer2_id" />
                                 <field name="route_id" />
-                                <field name="user_id" />
                             </tree>
                         </field>
-
+                        <newline />
+                        <newline />
+                        <separator string="Global Performance" colspan="4"/>
+                            <group col="4">
+                                <div style='text-align:center;word-wrap: break-word;background-color:#BBBBBB'><label for="current_odometer" /></div>
+                                <div style='text-align:center;word-wrap: break-word;background-color:#BBBBBB'><label for="distance_real"/></div>
+                                <div style='text-align:center;word-wrap: break-word;background-color:#BBBBBB'><label for="distance_routes"/></div>
+                                <div style='text-align:center;word-wrap: break-word;background-color:#BBBBBB'><label for="fuel_qty"/></div>
+                                <div style='text-align:center;border: black 1px solid;'><field name="current_odometer"  on_change="on_change_current_odometer(vehicle_id, last_odometer, current_odometer, distance_real)" nolabel="1"/></div>
+                                <div style='text-align:center;border: black 1px solid;'><field name="distance_real"  on_change="on_change_distance_real(vehicle_id, last_odometer, distance_real)" nolabel="1"/></div>
+                                <div style='text-align:center;border: black 1px solid;'><field name="distance_routes"  nolabel="1"/></div>
+                                <div style='text-align:center;border: black 1px solid;'><field name="fuel_qty" nolabel="1"/></div>
+                            </group>
+                            <group col="4">
+                                <div style='text-align:center;word-wrap: break-word;background-color:#BBBBBB'><label for="global_fuel_efficiency_routes"/></div>
+                                <div style='text-align:center;word-wrap: break-word;background-color:#BBBBBB'><label for="global_fuel_efficiency_real"/></div>
+                                <div style='text-align:center;word-wrap: break-word;background-color:#BBBBBB'><label for="loaded_fuel_efficiency"/></div>
+                                <div style='text-align:center;word-wrap: break-word;background-color:#BBBBBB'><label for="unloaded_fuel_efficiency"/></div>                                
+                                <div style='text-align:center;border: black 1px solid;'><field name="global_fuel_efficiency_routes"  nolabel="1"/></div>
+                                <div style='text-align:center;border: black 1px solid;'><field name="global_fuel_efficiency_real"  nolabel="1"/></div>
+                                <div style='text-align:center;border: black 1px solid;'><field name="loaded_fuel_efficiency"  nolabel="1"/></div>
+                                <div style='text-align:center;border: black 1px solid;'><field name="unloaded_fuel_efficiency"  nolabel="1"/></div>
+                            </group>
+                            <group>
+                                <!--<separator string="Distance Resumen"  colspan="2"/>-->
+                                <field name="vehicle_id" class="oe_text_right" attrs="{'invisible':[('odometer_log_id','=',False)]}"/>
+                                <field name="odometer_id" class="oe_text_right"  attrs="{'invisible':[('odometer_log_id','=',False)]}"/>
+                                <field name="last_odometer" class="oe_text_right" invisible="1" /> 
+                                <field name="vehicle_odometer" class="oe_text_right" on_change="on_change_vehicle_odometer(vehicle_id, last_odometer, vehicle_odometer)" invisible="1"/>
+                                <field name="odometer_log_id" class="oe_text_right" attrs="{'invisible':[('odometer_log_id','=',False)]}"/>
+                            </group>
+                        
                     </page>
                     <page string="Expense Lines">
                         <field name="expense_line" context="{'default_expense_id': active_id, 'group_by_line_type': 1}" colspan="4" nolabel="1" />

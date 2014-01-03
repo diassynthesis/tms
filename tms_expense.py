@@ -58,7 +58,12 @@ class tms_expense(osv.osv):
             res[expense.id] = distance
         return res
 
-
+    def _get_fuel_efficiency(self, cr, uid, ids, field_name, arg, context=None):
+        res = {}
+        for expense in self.browse(cr, uid, ids, context=context):
+            res[expense.id] = (expense.distance_routes / expense.fuel_qty) if expense.fuel_qty > 0.0 else 0.0
+        return res
+            
     def _amount_all(self, cr, uid, ids, field_name, arg, context=None):
         cur_obj = self.pool.get('res.currency')
         res = {}
@@ -66,6 +71,7 @@ class tms_expense(osv.osv):
             res[expense.id] = {
                 'amount_real_expense'       : 0.0,
                 'amount_madeup_expense'     : 0.0,
+                'fuel_qty'                  : 0.0,
                 'amount_fuel'               : 0.0,
                 'amount_fuel_voucher'       : 0.0,
                 'amount_salary'             : 0.0,
@@ -82,7 +88,7 @@ class tms_expense(osv.osv):
                 'amount_advance'            : 0.0,
                 }            
             cur = expense.currency_id
-            advance = fuel_voucher =  0.0
+            advance = fuel_voucher = fuel_qty = 0.0
             for _advance in expense.advance_ids:
                 if _advance.currency_id.id != cur.id:
                     raise osv.except_osv(
@@ -96,15 +102,17 @@ class tms_expense(osv.osv):
                          _('Currency Error !'), 
                          _('You can not create a Travel Expense Record with Fuel Vouchers with different Currency. This Expense record was created with %s and Fuel Voucher is with %s ') % (expense.currency_id.name, _advance.currency_id.name))
                 fuel_voucher += _fuelvoucher.price_subtotal
+                fuel_qty += _fuelvoucher.product_uom_qty
 
             real_expense = madeup_expense = fuel = salary = salary_retention = salary_discount = tax_real = tax_total = subtotal_real = subtotal_total = total_real = total_total = balance = 0.0
-            for line in expense.expense_line:
+            for line in expense.expense_line:                    
                     madeup_expense  += line.price_subtotal if line.product_id.tms_category == 'madeup_expense' else 0.0
                     real_expense    += line.price_subtotal if line.product_id.tms_category == 'real_expense' else 0.0
                     salary          += line.price_subtotal if line.product_id.tms_category == 'salary' else 0.0
                     salary_retention += line.price_subtotal if line.product_id.tms_category == 'salary_retention' else 0.0
                     salary_discount += line.price_subtotal if line.product_id.tms_category == 'salary_discount' else 0.0
                     fuel            += line.price_subtotal if (line.product_id.tms_category == 'fuel' and not line.fuel_voucher) else 0.0
+                    fuel_qty        += line.product_uom_qty if (line.product_id.tms_category == 'fuel' and not line.fuel_voucher) else 0.0 
                     tax_total       += line.tax_amount if line.product_id.tms_category != 'madeup_expense' else 0.0
                     tax_real        += line.tax_amount if (line.product_id.tms_category == 'real_expense' or (line.product_id.tms_category == 'fuel' and not line.fuel_voucher)) else 0.0            
 
@@ -118,6 +126,7 @@ class tms_expense(osv.osv):
             res[expense.id] = { 
                 'amount_real_expense'       : cur_obj.round(cr, uid, cur, real_expense),
                 'amount_madeup_expense'     : cur_obj.round(cr, uid, cur, madeup_expense),
+                'fuel_qty'                  : cur_obj.round(cr, uid, cur, fuel_qty),
                 'amount_fuel'               : cur_obj.round(cr, uid, cur, fuel),
                 'amount_fuel_voucher'       : cur_obj.round(cr, uid, cur, fuel_voucher),
                 'amount_salary'             : cur_obj.round(cr, uid, cur, salary),
@@ -132,7 +141,7 @@ class tms_expense(osv.osv):
                 'amount_total_total'        : cur_obj.round(cr, uid, cur, total_total),
                 'amount_advance'            : cur_obj.round(cr, uid, cur, advance),
                 'amount_balance'            : cur_obj.round(cr, uid, cur, balance),
-                'amount_balance2'            : cur_obj.round(cr, uid, cur, balance),
+                'amount_balance2'           : cur_obj.round(cr, uid, cur, balance),
                               }
 
         return res
@@ -200,6 +209,7 @@ class tms_expense(osv.osv):
 
         'amount_madeup_expense': fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='Fake Expenses', type='float', multi=True), 
 
+        'fuel_qty'  : fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='Fuel Qty', type='float', multi=True),
         'amount_fuel': fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='Fuel (Cash)', type='float', multi=True),
 
         'amount_fuel_voucher': fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='Fuel (Voucher)', type='float', multi=True),
@@ -228,17 +238,23 @@ class tms_expense(osv.osv):
         'amount_subtotal_real': fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='SubTotal (Real)', type='float', multi=True),
 
         'amount_subtotal_total': fields.function(_amount_all, method=True, digits_compute= dp.get_precision('Sale Price'), string='SubTotal (All)', type='float', multi=True),
+        
 
 
         'vehicle_id'        : fields.many2one('fleet.vehicle', 'Vehicle'),
         'odometer_id'       : fields.many2one('fleet.vehicle.odometer.device', 'Odometer'),
-        'last_odometer'     : fields.float('Last Read', digits=(16,2)),        
+        'last_odometer'     : fields.float('Last Read', digits=(16,2)),
         'vehicle_odometer'  : fields.float('Vehicle Odometer', digits=(16,2)),
         'current_odometer'  : fields.float('Current Read', digits=(16,2)),
         'distance_routes'   : fields.function(_get_route_distance, string='Distance from routes', method=True, type='float', digits=(16,2), help="Routes Distance"),
         'distance_real'     : fields.float('Distance Real', digits=(16,2), help="Route obtained by electronic reading and/or GPS"),
         'odometer_log_id'   : fields.many2one('fleet.vehicle.odometer', 'Odometer Record'),
-
+        
+        'global_fuel_efficiency_routes': fields.function(_get_fuel_efficiency, string='Global Fuel Efficiency Routes', method=True, type='float', digits=(16,4)),
+        'global_fuel_efficiency_real': fields.float('Global Fuel Efficiency Real', required=False, digits=(14,4)),
+        'loaded_fuel_efficiency': fields.float('Loaded Fuel Efficiency', required=False, digits=(14,4)),
+        'unloaded_fuel_efficiency': fields.float('Unloaded Fuel Efficiency', required=False, digits=(14,4)),
+    
         'create_uid' : fields.many2one('res.users', 'Created by', readonly=True),
         'create_date': fields.datetime('Creation Date', readonly=True, select=True),
         'cancelled_by' : fields.many2one('res.users', 'Cancelled by', readonly=True),
