@@ -138,25 +138,17 @@ For next option you only have to type Special Python Code:
         result = 0.0
 
         if record_type == 'waybill':
-            #print "==================================="
-            #print "Calculando"
             waybill_obj = self.pool.get('tms.waybill')
             for waybill in waybill_obj.browse(cr, uid, record_ids, context=context):  # No soporta segundo operador
-                print "Recorriendo Waybills"
                 for factor in (waybill.waybill_customer_factor if calc_type=='client' else waybill.expense_driver_factor if calc_type=='driver' else waybill.waybill_supplier_factor):
-                    print "Recorriendo factors"
-                    print "Tipo de factor: ", factor.factor_type
                     if factor.factor_type in ('distance', 'distance_real'): 
-                        print "Tipo Distancia"
                         if not waybill.travel_id.id:
                             raise osv.except_osv(
                                 _('Could calculate Amount for Waybill !'),
                                 _('Waybill %s is not assigned to a Travel') % (waybill.name))
-                        print waybill.travel_id.route_id.distance
                         x = (float(waybill.travel_id.route_id.distance) if factor.factor_type=='distance' else float(waybill.travel_id.distance_extraction)) if factor.framework == 'Any' or factor.framework == waybill.travel_id.framework else 0.0
 
                     elif factor.factor_type == 'weight':
-                        print "waybill.product_weight", waybill.product_weight
                         if not waybill.product_weight:
                             raise osv.except_osv(
                                 _('Could calculate Freight Amount !'),
@@ -191,18 +183,8 @@ For next option you only have to type Special Python Code:
 
                     
                     result += ((factor.fixed_amount if (factor.mixed or factor.factor_type=='travel') else 0.0)+ (factor.factor * x if factor.factor_type != 'special' else x)) if (((x >= factor.range_start and x <= factor.range_end) or (factor.range_start == factor.range_end == 0.0)) and factor.driver_helper==driver_helper) else 0.0
-                    #print "factor.fixed_amount : ", factor.fixed_amount
-                    #print "factor.mixed : ", factor.mixed
-                    #print "factor.factor_type : ", factor.factor_type
-                    #print "factor.factor : ", factor.factor
-                    #print "x : ", x
 
         elif record_type == 'expense' and travel_ids:
-            print "====================="
-            print "Tipo expense"
-            print "travel_ids: ", travel_ids
-            print "driver_helper: ", driver_helper
-            print "====================="
             travel_obj = self.pool.get('tms.travel')
             for travel in travel_obj.browse(cr, uid, travel_ids, context=context):
                 res1 = res2 = weight = qty = volume = x = 0.0
@@ -214,7 +196,6 @@ For next option you only have to type Special Python Code:
                         volume  += waybill.product_volume
                 if not res1:
                     for factor in travel.expense_driver_factor:
-                        print "= = = = = = = = = = ="
                         if factor.factor_type == 'distance':
                             x = (float(travel.route_id.distance) if factor.factor_type=='distance' else float(travel.route_id.distance_extraction)) if factor.framework == 'Any' or factor.framework == travel.framework else 0.0
 
@@ -246,17 +227,8 @@ For next option you only have to type Special Python Code:
                             exec factor.factor_special_id.python_code
                             
                         res2 += ((factor.fixed_amount if (factor.mixed or factor.factor_type=='travel') else 0.0) + (factor.factor * x if factor.factor_type != 'special' else x)) if (((x >= factor.range_start and x <= factor.range_end) or (factor.range_start == factor.range_end == 0.0)) and factor.driver_helper==driver_helper) else 0.0
-                        print "factor.fixed_amount: ", factor.fixed_amount
-                        print "factor.factor_type: ", factor.factor_type
-                        print "factor.factor: ", factor.factor
-                        print "factor.driver_helper: ", factor.driver_helper
-                        print "res1: ", res1
-                        print "res2: ", res2
-                        print "= = = = = = = = = = ="
                         
                 result += res1 + res2
-                print "= = = = = = = = = = ="
-        print "result :", result
 
         return result
     

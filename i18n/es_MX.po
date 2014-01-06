@@ -4169,9 +4169,14 @@ msgid "Travel Info"
 msgstr "Info de Viaje"
 
 #. module: tms
-#: field:tms.expense.loan,discount_type:0 field:tms.expense.loan,product_id:0
+#: field:tms.expense.loan,discount_type:0
 msgid "Discount Type"
 msgstr "Tipo de Descuento"
+
+#. module: tms
+#: field:tms.expense.loan,product_id:0
+msgid "Discount Product"
+msgstr "Producto de Descuento"
 
 #. module: tms
 #: field:tms.waybill,tax_line:0

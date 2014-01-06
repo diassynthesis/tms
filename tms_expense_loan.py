@@ -44,12 +44,10 @@ class tms_expense_loan(osv.osv):
 
 
     def _balance(self, cr, uid, ids, field_name, args, context=None):
-        print "Entrando a _balance..."
         res = {}
         for record in self.browse(cr, uid, ids, context=context):
             cr.execute('select sum(coalesce(price_total, 0.0))::float from tms_expense_line where loan_id = %s' % (record.id))
             data = filter(None, map(lambda x:x[0], cr.fetchall())) or [0.0]
-            #print "data: ", data
             res[record.id] =   {
                             'balance' : record.amount + data[0],
                             'paid'    : not (record.amount + data[0]) > 0,
@@ -61,11 +59,9 @@ class tms_expense_loan(osv.osv):
         for line in self.pool.get('tms.expense.line').browse(cr, uid, ids, context=context):           
             expense_line[line.loan_id.id] = True            
 
-        #print "expense_line: ", expense_line
         expense_line_ids = []
         if expense_line:
             expense_line_ids = self.pool.get('tms.expense.loan').search(cr, uid, [('id','in',expense_line.keys())], context=context)
-            #print "expense_line_ids: ", expense_line_ids
         return expense_line_ids
 
     
@@ -130,7 +126,7 @@ class tms_expense_loan(osv.osv):
                                                  }),
                                         #store = {'tms.expense.line': (_get_loan_discounts_from_expense_lines, None, 50)}),
 
-        'product_id'    : fields.many2one('product.product', 'Discount Type', readonly=True, states={'draft':[('readonly',False)], 'approved':[('readonly',False)]},
+        'product_id'    : fields.many2one('product.product', 'Discount Product', readonly=True, states={'draft':[('readonly',False)], 'approved':[('readonly',False)]},
                                           required=True, domain=[('tms_category', '=', ('salary_discount'))]),
         'shop_id'       : fields.related('employee_id', 'shop_id', type='many2one', relation='sale.shop', string='Shop', store=True, readonly=True),
         'company_id'    : fields.related('shop_id', 'company_id', type='many2one', relation='res.company', string='Company', store=True, readonly=True),
@@ -210,13 +206,15 @@ class tms_expense_loan(osv.osv):
 
     def get_loan_discounts(self, cr, uid, employee_id, expense_id, context=None):
         expense_line_obj = self.pool.get('tms.expense.line')
+        expense_obj = self.pool.get('tms.expense')
         prod_obj = self.pool.get('product.product')
         loan_ids = self.search(cr, uid, [('employee_id', '=', employee_id),('state','=','confirmed'),('balance', '>', 0.0)])
         for rec in self.browse(cr, uid, loan_ids, context=context):
             cr.execute('select date from tms_expense_line where loan_id = %s order by date desc limit 1' % (rec.id))
             data = filter(None, map(lambda x:x[0], cr.fetchall()))
-            data = data[0] if data else [rec.date]
-            dur = datetime.now() - datetime.strptime(data[0], '%Y-%m-%d')
+            date = data[0] if data else rec.date
+            fecha_liq = expense_obj.read(cr, uid, [expense_id], ['date'])[0]['date']
+            dur = datetime.strptime(fecha_liq, '%Y-%m-%d') - datetime.strptime(date, '%Y-%m-%d')
             product = prod_obj.browse(cr, uid, [rec.product_id.id])[0]
             for x in range(int(dur.days / (7.5 if rec.discount_method == 'weekly' else 15.0 if rec.discount_method == 'fortnightly' else 29.0))):
                 discount = rec.fixed_discount if rec.discount_type == 'fixed' else rec.amount * rec.percent_discount / 100.0
