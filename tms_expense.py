@@ -305,6 +305,8 @@ class tms_expense(osv.osv):
 
     def _check_odometer(self, cr, uid, ids, context=None):         
         for record in self.browse(cr, uid, ids, context=context):
+            print "record.current_odometer: ", record.current_odometer
+            print "record.last_odometer: ", record.last_odometer
             if record.current_odometer <= record.last_odometer:
                 return False
             return True
@@ -617,7 +619,14 @@ class tms_expense(osv.osv):
                     distance_real += travel.distance_extraction
                     distance_routes += travel.distance_route
                 for travel in expense.travel_ids:
-                    xdistance = (travel.distance_route / distance_routes) * distance_real if distance_real != expense.distance_real else travel.distance_extraction
+                    print "====\nTravel: ", travel.name
+                    print "travel.distance_route : ", travel.distance_route
+                    print "distance_routes: ", distance_routes
+                    print "distance_real: ", distance_real
+                    print "expense.distance_real: ", expense.distance_real
+                    print "travel.distance_extraction: ", travel.distance_extraction 
+                    xdistance = (travel.distance_route / distance_routes) * expense.distance_real if distance_real != expense.distance_real else travel.distance_extraction
+                    print "xdistance: ", xdistance
                     odom_obj.create_odometer_log(cr, uid, expense.id, travel.id, expense.vehicle_id.id, xdistance)
                     if travel.trailer1_id and travel.trailer1_id.id:
                         odom_obj.create_odometer_log(cr, uid, expense.id, travel.id, travel.trailer1_id.id, xdistance)
@@ -1037,6 +1046,10 @@ class tms_expense_invoice(osv.osv_memory):
                                 _('There is no advance account and/or Travel Expense Negative Balance account defined ' \
                                         'for this driver: "%s" (id:%d)') % \
                                         (expense.employee_id.name, expense.employee_id.id,))
+                    if not (expense.employee_id.address_home_id and expense.employee_id.address_home_id.id):
+                        raise osv.except_osv(_('Warning !'),
+                                _('There is no Address defined for this driver: "%s" (id:%d)') % \
+                                        (expense.employee_id.name, expense.employee_id.id,))
                     advance_account = expense.employee_id.tms_advance_account_id.id
                     negative_balance_account = expense.employee_id.tms_expense_negative_balance_account_id.id
                     
@@ -1057,6 +1070,7 @@ class tms_expense_invoice(osv.osv_memory):
                                 'period_id'     : period_id[0],
                                 'vehicle_id'    : expense.unit_id.id,
                                 'employee_id'   : expense.employee_id.id,
+                                'partner_id'    : expense.employee_id.address_home_id.id,
                                 })
                         move_lines.append(move_line)
                         notes += '\n' + _('Advance Discount')

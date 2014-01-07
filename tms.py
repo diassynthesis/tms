@@ -1024,6 +1024,8 @@ class fleet_vehicle_odometer(osv.osv):
 
     def _check_values(self, cr, uid, ids, context=None):         
         for record in self.browse(cr, uid, ids, context=context):
+            print "record.current_odometer: ", record.current_odometer
+            print "record.last_odometer: ", record.last_odometer
             if record.current_odometer <= record.last_odometer:
                 return False
             return True

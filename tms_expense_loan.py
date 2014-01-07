@@ -208,13 +208,16 @@ class tms_expense_loan(osv.osv):
         expense_line_obj = self.pool.get('tms.expense.line')
         expense_obj = self.pool.get('tms.expense')
         res = expense_line_obj.search(cr, uid, [('expense_id', '=', expense_id),('control','=', 1),('loan_id','!=',False)])
+        print "res: ", res
         if len(res):
             loan_ids = []
-            for x in expense_obj.browse(cr, uid, [expense_id])[0].expense_line:                    
+            expense_line_ids = []
+            for x in expense_obj.browse(cr, uid, [expense_id])[0].expense_line:
                 if x.loan_id.id:
                     loan_ids.append(x.loan_id.id)
-            expense_line_obj.unlink(cr, uid, [x.id for x in expense_obj.browse(cr, uid, [expense_id])[0].expense_line])
+                    expense_line_ids.append(x.id)
             if len(loan_ids):
+                expense_line_obj.unlink(cr, uid, expense_line_ids)
                 self.write(cr, uid,loan_ids, {'state':'confirmed', 'closed_by' : False, 'date_closed':False} )
 
         prod_obj = self.pool.get('product.product')
