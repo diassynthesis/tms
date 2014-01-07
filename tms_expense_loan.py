@@ -207,6 +207,16 @@ class tms_expense_loan(osv.osv):
     def get_loan_discounts(self, cr, uid, employee_id, expense_id, context=None):
         expense_line_obj = self.pool.get('tms.expense.line')
         expense_obj = self.pool.get('tms.expense')
+        res = expense_line_obj.search(cr, uid, [('expense_id', '=', expense_id),('control','=', 1),('loan_id','!=',False)])
+        if len(res):
+            loan_ids = []
+            for x in expense_obj.browse(cr, uid, [expense_id])[0].expense_line:                    
+                if x.loan_id.id:
+                    loan_ids.append(x.loan_id.id)
+            expense_line_obj.unlink(cr, uid, [x.id for x in expense_obj.browse(cr, uid, [expense_id])[0].expense_line])
+            if len(loan_ids):
+                self.write(cr, uid,loan_ids, {'state':'confirmed', 'closed_by' : False, 'date_closed':False} )
+
         prod_obj = self.pool.get('product.product')
         loan_ids = self.search(cr, uid, [('employee_id', '=', employee_id),('state','=','confirmed'),('balance', '>', 0.0)])
         for rec in self.browse(cr, uid, loan_ids, context=context):
@@ -214,13 +224,18 @@ class tms_expense_loan(osv.osv):
             data = filter(None, map(lambda x:x[0], cr.fetchall()))
             date = data[0] if data else rec.date
             fecha_liq = expense_obj.read(cr, uid, [expense_id], ['date'])[0]['date']
+            print "fecha_liq: ", fecha_liq
             dur = datetime.strptime(fecha_liq, '%Y-%m-%d') - datetime.strptime(date, '%Y-%m-%d')
             product = prod_obj.browse(cr, uid, [rec.product_id.id])[0]
-            for x in range(int(dur.days / (7.5 if rec.discount_method == 'weekly' else 15.0 if rec.discount_method == 'fortnightly' else 29.0))):
+            xfactor = 7 if rec.discount_method == 'weekly' else 14.0 if rec.discount_method == 'fortnightly' else 28.0
+            rango = 1 if not int(dur.days / xfactor) else int(dur.days / xfactor) + 1
+            balance = rec.balance
+            while rango and balance:
+                rango -= 1
                 discount = rec.fixed_discount if rec.discount_type == 'fixed' else rec.amount * rec.percent_discount / 100.0
-                discount = rec.balance if discount > rec.balance else discount
+                discount = balance if discount > balance else discount
+                balance -= discount
                 xline = {
-                    #'travel_id'         : travel.id,
                     'expense_id'        : expense_id,
                     'line_type'         : product.tms_category,
                     'name'              : product.name + ' - ' + rec.name, 

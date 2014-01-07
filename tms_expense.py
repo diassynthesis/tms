@@ -356,7 +356,7 @@ class tms_expense(osv.osv):
         fuelvoucher_obj = self.pool.get('tms.fuelvoucher')
         advance_obj     = self.pool.get('tms.advance')
 
-        res = expense_line_obj.search(cr, uid, [('expense_id', '=', ids[0]),('control','=', 1)])
+        res = expense_line_obj.search(cr, uid, [('expense_id', '=', ids[0]),('control','=', 1),('loan_id','=',False)])
         if len(res):
             res = expense_line_obj.unlink(cr, uid, res)
         fuel = 0.0
@@ -802,6 +802,16 @@ class tms_expense_line(osv.osv):
                }
         return res
 
+#    def unlink(self, cr, uid, ids, context=None):        
+#        for rec in self.browse(cr, uid, ids):
+#            if rec.control
+#            if ('state' in vals and vals['state'] not in ('cancel', 'confirmed')) ^ (rec.state not in  ('cancel', 'confirmed')):
+#                self.get_salary_advances_and_fuel_vouchers(cr, uid, ids, vals)
+#                self.get_salary_retentions(cr, uid, ids, vals)
+#                self.pool.get('tms.expense.loan').get_loan_discounts(cr, uid, rec.employee_id.id, rec.id)
+#        return super(tms_expense_line, self).unlink(cr, uid, ids, context=context)
+        
+
 
 
 # Wizard que permite validar la cancelacion de una Liquidacion
@@ -849,10 +859,14 @@ class tms_expense_cancel(osv.osv_memory):
                 move_id = expense.move_id.id
                 move_state = expense.move_id.state
                 expense_obj.write(cr, uid, record_id, {'state':'cancel', 'cancelled_by':uid,'date_cancelled':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT), 'move_id': False})
-                for x in expense_obj.browse(cr, uid, record_id)[0].expense_line:
+                loan_ids = []
+                for x in expense_obj.browse(cr, uid, record_id)[0].expense_line:                    
                     if x.loan_id.id:
-                        expense_loan_obj.write(cr, uid,[x.loan_id.id], {'state':'confirmed', 'closed_by' : False, 'date_closed':False} )
+                        loan_ids.append(x.loan_id.id)
                 expense_line_obj.unlink(cr, uid, [x.id for x in expense_obj.browse(cr, uid, record_id)[0].expense_line])
+                if len(loan_ids):
+                    expense_loan_obj.write(cr, uid,loan_ids, {'state':'confirmed', 'closed_by' : False, 'date_closed':False} )
+
                 
                 if move_id:
                     move_obj = self.pool.get('account.move')
