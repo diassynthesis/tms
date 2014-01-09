@@ -614,6 +614,9 @@ TMS.waybill.category
       <field name="arch" type="xml">
         <form string="Create Customer Invoice" version="7.0">
             <separator colspan="4" string="Create Customer Invoice from selected Waybills ?" />
+            <group col="4" colspan="4">
+                <field name="group_line_product" />
+            </group>
             <footer>
                 <button name="makeWaybillInvoices" string="Confirm" type="object" icon="gtk-ok" groups="tms.group_waybill_confirm"/>
                 or

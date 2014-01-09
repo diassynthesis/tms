@@ -77,11 +77,6 @@ class tms_waybill_taxes(osv.osv):
             company_currency = self.pool['res.company'].browse(cr, uid, waybill.company_id.id).currency_id.id
             for line in waybill.waybill_line: 
                 for tax in tax_obj.compute_all(cr, uid, line.tax_id, line.price_unit, line.product_uom_qty, line.product_id, waybill.partner_id)['taxes']:
-                    print "line.price_unit : ", line.price_unit
-                    print "line.product_uom_qty : ", line.product_uom_qty
-                    print "line.product_id : ", line.product_id.name
-                    print "waybill.partner_id : ", waybill.partner_id
-                    print "tax: ", tax
                     val={}
                     val['waybill_id'] = waybill.id
                     val['name'] = tax['name']
@@ -1105,6 +1100,7 @@ class tms_waybill_cancel(osv.osv_memory):
 
 tms_waybill_cancel()
 
+
 # Wizard que permite crear la factura de cliente de la(s) cartas porte(s) seleccionadas
 class tms_waybill_invoice(osv.osv_memory):
 
@@ -1112,6 +1108,12 @@ class tms_waybill_invoice(osv.osv_memory):
 
     _name = 'tms.waybill.invoice'
     _description = 'Make Invoices from Waybill'
+    
+    _columns = {'group_line_product'    : fields.boolean('Group Waybill Lines', help='Group Waybill Lines Quantity & Subtotal by Product'),
+                }
+    
+    _defaults ={'group_line_product'    : True,
+                }
 
     def makeWaybillInvoices(self, cr, uid, ids, context=None):
 
@@ -1128,10 +1130,14 @@ class tms_waybill_invoice(osv.osv_memory):
             record_ids = ids
         else:
             record_ids =  context.get('active_ids',[])
-
+        
+        
+        group_lines = self.browse(cr,uid, ids)[0].group_line_product
+            
         if record_ids:
             res = False
             invoices = []
+            shipped_grouped_obj = self.pool.get('tms.waybill.shipped_grouped')
             property_obj=self.pool.get('ir.property')
             partner_obj=self.pool.get('res.partner')
             user_obj=self.pool.get('res.users')
@@ -1141,13 +1147,8 @@ class tms_waybill_invoice(osv.osv_memory):
             invoice_obj=self.pool.get('account.invoice')
             waybill_obj=self.pool.get('tms.waybill')
 
-
             journal_id = account_jrnl_obj.search(cr, uid, [('type', '=', 'sale')], context=None)
             journal_id = journal_id and journal_id[0] or False
-
-
-#            partner = partner_obj.browse(cr,uid,user_obj.browse(cr,uid,[uid])[0].company_id.partner_id.id)
-
 
             cr.execute("select distinct partner_id, currency_id from tms_waybill where invoice_id is null and (state='confirmed' or (state='approved' and billing_policy='automatic')) and id IN %s",(tuple(record_ids),))
             data_ids = cr.fetchall()
@@ -1170,7 +1171,22 @@ class tms_waybill_invoice(osv.osv_memory):
                 notes = _("Waybills")
                 inv_amount = 0.0
                 empl_name = ''
-                for waybill in waybill_obj.browse(cr,uid,waybill_ids):                    
+                product_shipped_grouped = {}
+                for waybill in waybill_obj.browse(cr,uid,waybill_ids):
+                    for shipped_prod in waybill.waybill_shipped_product:
+                        # *****                            
+                        val={'product_name' : shipped_prod.product_id.name,
+                            'product_id'    : shipped_prod.product_id.id,
+                            'product_uom'   : shipped_prod.product_uom.id,
+                            'quantity'      : shipped_prod.product_uom_qty,
+                            }
+                        key = (val['product_id'], val['product_uom'], val['product_name'])
+                        if not key in product_shipped_grouped:
+                            product_shipped_grouped[key] = val
+                        else:
+                            product_shipped_grouped[key]['quantity'] += val['quantity']
+                        # *****
+
                     currency_id = waybill.currency_id.id
                     for line in waybill.waybill_line:
                         if line.line_type=='product':
@@ -1179,31 +1195,78 @@ class tms_waybill_invoice(osv.osv_memory):
                                 if not a:
                                     a = line.product_id.categ_id.property_account_income_categ.id
                                 if not a:
+                                    a = property_obj.get(cr, uid,
+                                        'property_account_income_categ', 'product.category',
+                                        context=context).id
+                                if not a:
                                     raise osv.except_osv(_('Error !'),
                                             _('There is no income account defined ' \
                                                     'for this product: "%s" (id:%d)') % \
                                                     (line.product_id.name, line.product_id.id,))
-                            else:
-                                a = property_obj.get(cr, uid,
-                                        'property_account_expense_categ', 'product.category',
-                                        context=context).id
 
-                            a = account_fiscal_obj.map_account(cr, uid, False, a)
-                            inv_line = (0,0, {
-                                'name': line.name  + ' - Viaje: ' + (line.waybill_id.travel_id.name or 'Sin Viaje') + ' - Carta Porte: ' + line.waybill_id.name,
-                                'origin': line.waybill_id.name,
-                                'account_id': a,
-                                'price_unit': line.price_unit,
-                                'quantity': line.product_uom_qty,
-                                'uos_id': line.product_uom.id,
-                                'product_id': line.product_id.id,
-                                'invoice_line_tax_id': [(6, 0, [x.id for x in line.product_id.taxes_id])],
-                                'note': line.notes,
-                                #'account_analytic_id': False,
-                                })
-                            inv_lines.append(inv_line)
+                                a = account_fiscal_obj.map_account(cr, uid, False, a)
+                                inv_line = (0,0, {
+                                    'name': line.name,
+                                    'origin': line.waybill_id.name,
+                                    'account_id': a,
+                                    'price_unit': line.price_unit,
+                                    'quantity': line.product_uom_qty,
+                                    'uos_id': line.product_uom.id,
+                                    'product_id': line.product_id.id,
+                                    'invoice_line_tax_id': [(6, 0, [x.id for x in line.product_id.taxes_id])],
+                                    'note': line.notes,
+                                    #'account_analytic_id': False,
+                                    })
+                                inv_lines.append(inv_line)
+                                
                         
-                    notes += ', ' + line.waybill_id.name
+                        notes += ', ' + line.waybill_id.name
+                    # ***** 
+                    print "group_lines: ", group_lines
+                    if group_lines:
+                        print "Si entra a agrupar lineas de Cartas Porte"
+                        line_grouped = {}
+                        for xline in inv_lines:
+                            val={
+                                    'name': xline[2]['name'],
+                                    'origin': xline[2]['origin'],
+                                    'account_id': xline[2]['account_id'],
+                                    'price_unit': xline[2]['price_unit'],
+                                    'quantity': xline[2]['quantity'],
+                                    'uos_id': xline[2]['uos_id'],
+                                    'product_id': xline[2]['product_id'],
+                                    'invoice_line_tax_id': xline[2]['invoice_line_tax_id'],
+                                    'note': xline[2]['note']
+                                }
+                            key = (val['product_id'], val['uos_id'])
+                            if not key in line_grouped:
+                                line_grouped[key] = val
+                            else:
+                                line_grouped[key]['price_unit'] += val['price_unit']
+                                        # ******
+                        print "line_grouped: ", product_shipped_grouped
+                        inv_lines = []
+                        for t in line_grouped.values():
+                            print "t: ", t
+                            vals = (0,0, {
+                                    'name': t['name'],
+                                    'origin': t['origin'],
+                                    'account_id': t['account_id'],
+                                    'price_unit': t['price_unit'],
+                                    'quantity': t['quantity'],
+                                    'uos_id': t['uos_id'],
+                                    'product_id': t['product_id'],
+                                    'invoice_line_tax_id': t['invoice_line_tax_id'],
+                                    'note': t['note']
+                                        }
+                                    )
+                            inv_lines.append(vals)
+                            
+                # ******
+
+
+                    # ****
+
                     departure_address_id = waybill.departure_address_id.id
                     arrival_address_id = waybill.arrival_address_id.id
                 a = partner.property_account_receivable.id
@@ -1236,7 +1299,18 @@ class tms_waybill_invoice(osv.osv_memory):
 
                 inv_id = invoice_obj.create(cr, uid, inv)
                 invoices.append(inv_id)
-   
+                # ******
+                print "product_shipped_grouped: ", product_shipped_grouped
+                for t in product_shipped_grouped.values():
+                    print "t: ", t
+                    vals = {
+                            'invoice_id'  : inv_id,
+                            'product_id'  : t['product_id'],
+                            'product_uom' : t['product_uom'],
+                            'quantity'    : t['quantity'],
+                            }
+                    res = shipped_grouped_obj.create(cr, uid, vals)
+                # ******
                 waybill_obj.write(cr,uid,waybill_ids, {'invoice_id': inv_id, 'state':'confirmed', 'confirmed_by':uid, 'date_confirmed':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})               
 
             ir_model_data = self.pool.get('ir.model.data')

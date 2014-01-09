@@ -46,6 +46,7 @@ class account_invoice(osv.osv):
         'travel_id': openerp.osv.fields.many2one('tms.travel', 'Travel', readonly=True, required=False),
         'vehicle_id': openerp.osv.fields.many2one('fleet.vehicle', 'Vehicle', readonly=True, required=False),
         'employee_id': openerp.osv.fields.many2one('hr.employee', 'Driver', readonly=True, required=False),
+        'waybill_shipped_ids': openerp.osv.fields.one2many('tms.waybill.shipped_grouped', 'invoice_id', 'Group Shipped Qty by Product', readonly=True, required=False),
     }
     
     _defaults = {
@@ -75,6 +76,21 @@ class account_invoice(osv.osv):
         
 account_invoice()
 
+# Grouped Shipped Quantity by Product
+class tms_waybill_shipped_grouped(osv.osv):
+    _name = "tms.waybill.shipped_grouped"
+    _description = "Waybill Grouped Shipped Qty by Product"
+
+    _columns = {        
+        'invoice_id': fields.many2one('account.invoice', 'Invoice', required=True, ondelete='cascade'),
+        'product_id': fields.many2one('product.product', 'Product', required=True), 
+        'quantity': fields.float('Quantity', digits=(16, 2),required=True),
+        'product_uom': fields.many2one('product.uom', 'Unit of Measure ',required=True),
+        }
+
+    _defaults = {
+        'quantity': 0,
+    }
 
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

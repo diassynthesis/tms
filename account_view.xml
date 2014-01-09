@@ -52,8 +52,17 @@
                         <field name="arrival_address_id"  context="{'search_default_customer':1, 'show_address': 1}"  options="{&quot;always_reload&quot;: True}"/>
                     </group>
                     <group colspan="4" col="4">
-                          <separator colspan="4" string="Waybills" />
+                        <separator colspan="4" string="Waybills" />
                         <field name="waybill_ids" nolabel="1"  colspan="4"/>
+                        
+                        <separator colspan="4" string="Grouped Products from Waybills" />
+                        <field name="waybill_shipped_ids" nolabel="1"  colspan="4">
+                            <tree>
+                                <field name="product_id" />
+                                <field name="quantity" />
+                                <field name="product_uom" />
+                            </tree>
+                        </field>
                     </group>
 		          </page>
 	           </notebook>
