@@ -26,7 +26,7 @@ from osv import osv, fields
 import time
 from datetime import datetime, date
 import decimal_precision as dp
-
+from tools.translate import _
 
 # Add special tax calculation for Mexico
 class stock_move(osv.osv):
