@@ -127,7 +127,7 @@ class tms_expense_loan(osv.osv):
                                         #store = {'tms.expense.line': (_get_loan_discounts_from_expense_lines, None, 50)}),
 
         'product_id'    : fields.many2one('product.product', 'Discount Product', readonly=True, states={'draft':[('readonly',False)], 'approved':[('readonly',False)]},
-                                          required=True, domain=[('tms_category', '=', ('salary_discount'))]),
+                                          required=True, domain=[('tms_category', '=', ('salary_discount'))], ondelete='restrict'),
         'shop_id'       : fields.related('employee_id', 'shop_id', type='many2one', relation='sale.shop', string='Shop', store=True, readonly=True),
         'company_id'    : fields.related('shop_id', 'company_id', type='many2one', relation='res.company', string='Company', store=True, readonly=True),
         

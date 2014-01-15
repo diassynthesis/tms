@@ -787,12 +787,8 @@ class tms_waybill_line(osv.osv):
         'sequence': fields.integer('Sequence', help="Gives the sequence order when displaying a list of sales order lines."),
         'product_id': fields.many2one('product.product', 'Product', 
                             domain=[('sale_ok', '=', True),
-                                    ('tms_category', '=','freight'), 
-                                    ('tms_category', '=','move'), 
-                                    ('tms_category', '=','insurance'), 
-                                    ('tms_category', '=','highway_tolls'), 
-                                    ('tms_category', '=','other'),
-                                    ], change_default=True),
+                                    ('tms_category', 'in',('freight','move','insurance','highway_tolls','other')),
+                                    ], change_default=True, ondelete='restrict'),
         'price_unit': fields.float('Unit Price', required=True, digits_compute= dp.get_precision('Sale Price')),
         'price_subtotal': fields.function(_amount_line, method=True, string='Subtotal', type='float', digits_compute= dp.get_precision('Sale Price'),  store=True, multi='price_subtotal'),
         'price_amount': fields.function(_amount_line, method=True, string='Price Amount', type='float', digits_compute= dp.get_precision('Sale Price'),  store=True, multi='price_subtotal'),
@@ -1300,9 +1296,9 @@ class tms_waybill_invoice(osv.osv_memory):
                 inv_id = invoice_obj.create(cr, uid, inv)
                 invoices.append(inv_id)
                 # ******
-                print "product_shipped_grouped: ", product_shipped_grouped
+                #print "product_shipped_grouped: ", product_shipped_grouped
                 for t in product_shipped_grouped.values():
-                    print "t: ", t
+                    #print "t: ", t
                     vals = {
                             'invoice_id'  : inv_id,
                             'product_id'  : t['product_id'],

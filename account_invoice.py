@@ -28,25 +28,63 @@ from datetime import datetime, date
 import decimal_precision as dp
 import openerp
 
-# Add special tax calculation for Mexico
+
 class account_invoice(osv.osv):
     _inherit ='account.invoice'
 
+    def _get_waybill_info(self, cr, uid, ids, field_name, args, context=None):
+        if context is None:
+            context = {}
+        res = {}            
+        for invoice in self.browse(cr, uid, ids, context=context):
+            waybill_rate = invoice_positive_taxes = invoice_negative_taxes = 0
+            product = ''
+            arrival_id = departure_id = unit_id = False
+            for waybill in invoice.waybill_ids:
+                product = waybill.waybill_shipped_product[0].product_id.name.split(' ')[0]
+                arrival_id = waybill.travel_id.route_id.arrival_id.id
+                departure_id = waybill.travel_id.route_id.departure_id.id
+                unit_id = waybill.unit_id.id
+                for factor in waybill.waybill_customer_factor:
+                    waybill_rate = factor.factor if factor.factor_type=='weight' else factor.fixed_amount
+                    continue
+                continue
+            for taxes in invoice.tax_line:
+                invoice_positive_taxes += taxes.amount if taxes.amount > 0.0 else 0.0 
+                invoice_negative_taxes += taxes.amount if taxes.amount < 0.0 else 0.0 
+            res[invoice.id] =  {'product'       : product,
+                                'waybill_rate'  : waybill_rate,
+                                'departure_id'    : departure_id,
+                                'arrival_id'    : arrival_id,
+                                'unit_id'       : unit_id,
+                                'invoice_positive_taxes_sum'  : invoice_positive_taxes,
+                                'invoice_negative_taxes_sum'  : invoice_negative_taxes,
+                                }
+        return res
+
 
     _columns = {
-        'tms_type'      : openerp.osv.fields.selection([
+        'tms_type'      : fields.selection([
                         ('none', 'N/A'),
                         ('waybill', 'Waybill'),
                         ('invoice', 'Invoice'),
                         ], 'TMS Type', help="Waybill -> This invoice results from one Waybill (Mexico - Carta Porte/Guia con valor fiscal)\nInvoice -> This Invoice results from several Waybills (México - Carta Porte/Guia sin valor Fiscal)", require=False),
-        'waybill_ids': openerp.osv.fields.one2many('tms.waybill', 'invoice_id', 'Waybills', readonly=True, required=False),
-        'departure_address_id': openerp.osv.fields.many2one('res.partner', 'Departure Address', readonly=True, required=False),
-        'arrival_address_id': openerp.osv.fields.many2one('res.partner', 'Arrival Address', readonly=True, required=False),
-        'expense_ids': openerp.osv.fields.one2many('tms.expense', 'invoice_id', 'Travel Expenses', readonly=True, required=False),
-        'travel_id': openerp.osv.fields.many2one('tms.travel', 'Travel', readonly=True, required=False),
-        'vehicle_id': openerp.osv.fields.many2one('fleet.vehicle', 'Vehicle', readonly=True, required=False),
-        'employee_id': openerp.osv.fields.many2one('hr.employee', 'Driver', readonly=True, required=False),
-        'waybill_shipped_ids': openerp.osv.fields.one2many('tms.waybill.shipped_grouped', 'invoice_id', 'Group Shipped Qty by Product', readonly=True, required=False),
+        'waybill_ids': fields.one2many('tms.waybill', 'invoice_id', 'Waybills', readonly=True, required=False),
+        'departure_address_id': fields.many2one('res.partner', 'Departure Address', readonly=True, required=False),
+        'arrival_address_id': fields.many2one('res.partner', 'Arrival Address', readonly=True, required=False),
+        'expense_ids': fields.one2many('tms.expense', 'invoice_id', 'Travel Expenses', readonly=True, required=False),
+        'travel_id': fields.many2one('tms.travel', 'Travel', readonly=True, required=False),
+        'vehicle_id': fields.many2one('fleet.vehicle', 'Vehicle', readonly=True, required=False),
+        'employee_id': fields.many2one('hr.employee', 'Driver', readonly=True, required=False),
+        'waybill_shipped_ids': fields.one2many('tms.waybill.shipped_grouped', 'invoice_id', 'Group Shipped Qty by Product', readonly=True, required=False),
+        'product'       : fields.function(_get_waybill_info, string='Product',  type='char',  size='128', multi=True, method=True),
+        'waybill_rate'  : fields.function(_get_waybill_info, string='Waybill Rate', type='float', digits_compute= dp.get_precision('Sale Price'),  multi=True, method=True),
+        'departure_id'  : fields.function(_get_waybill_info, string='Departure', type='many2one', relation='tms.place',  multi=True, method=True),
+        'arrival_id'    : fields.function(_get_waybill_info, string='Arrival', type='many2one', relation='tms.place',  multi=True, method=True),
+        'unit_id'       : fields.function(_get_waybill_info, string='Unit', type='many2one', relation='fleet.vehicle',  multi=True, method=True),
+        'invoice_positive_taxes_sum'  : fields.function(_get_waybill_info, string='Positive Taxes', type='float', digits_compute= dp.get_precision('Sale Price'),  multi=True, method=True),
+        'invoice_negative_taxes_sum'  : fields.function(_get_waybill_info, string='Negative Taxes', type='float', digits_compute= dp.get_precision('Sale Price'),  multi=True, method=True),
+        
     }
     
     _defaults = {

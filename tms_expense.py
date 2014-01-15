@@ -103,9 +103,10 @@ class tms_expense(osv.osv):
                 fuel_qty += _fuelvoucher.product_uom_qty
 
 
-            real_expense = madeup_expense = fuel = salary = salary_retention = salary_discount = tax_real = tax_total = subtotal_real = subtotal_total = total_real = total_total = balance = 0.0
+            negative_balance = real_expense = madeup_expense = fuel = salary = salary_retention = salary_discount = tax_real = tax_total = subtotal_real = subtotal_total = total_real = total_total = balance = 0.0
             for line in expense.expense_line:                    
                     madeup_expense  += line.price_subtotal if line.product_id.tms_category == 'madeup_expense' else 0.0
+                    negative_balance += line.price_subtotal if line.product_id.tms_category == 'negative_balance' else 0.0
                     real_expense    += line.price_subtotal if line.product_id.tms_category == 'real_expense' else 0.0
                     salary          += line.price_subtotal if line.product_id.tms_category == 'salary' else 0.0
                     salary_retention += line.price_subtotal if line.product_id.tms_category == 'salary_retention' else 0.0
@@ -116,7 +117,7 @@ class tms_expense(osv.osv):
                     tax_real        += line.tax_amount if (line.product_id.tms_category == 'real_expense' or (line.product_id.tms_category == 'fuel' and not line.fuel_voucher)) else 0.0            
 
 
-            subtotal_real = real_expense + fuel + salary + salary_retention + salary_discount
+            subtotal_real = real_expense + fuel + salary + salary_retention + salary_discount + negative_balance
             total_real = subtotal_real + tax_real
             subtotal_total = subtotal_real + fuel_voucher
             total_total = subtotal_total + tax_total
@@ -305,8 +306,8 @@ class tms_expense(osv.osv):
 
     def _check_odometer(self, cr, uid, ids, context=None):         
         for record in self.browse(cr, uid, ids, context=context):
-            print "record.current_odometer: ", record.current_odometer
-            print "record.last_odometer: ", record.last_odometer
+            #print "record.current_odometer: ", record.current_odometer
+            #print "record.last_odometer: ", record.last_odometer
             if record.current_odometer <= record.last_odometer:
                 return False
             return True
@@ -423,7 +424,7 @@ class tms_expense(osv.osv):
                         xline = {
                                 'travel_id'         : travel.id,
                                 'expense_id'        : expense.id,
-                                'line_type'         : fuelvoucher.product_id.tms_category,
+                                'line_type'         : 'fuel',
                                 'name'              : fuelvoucher.product_id.name + _(' from Fuel Vouchers - Travel: ') + travel.name,
                                 'sequence'          : 5,
                                 'product_id'        : fuelvoucher.product_id.id,
@@ -474,10 +475,10 @@ class tms_expense(osv.osv):
                 data = filter(None, map(lambda x:x[0], cr.fetchall()))
                 if len(data):
                     rec = self.browse(cr, uid, data)[0]
-                    print "=======\nLiquidación: ", rec.name
-                    print "Saldo: ", rec.amount_balance
+                    #print "=======\nLiquidación: ", rec.name
+                    #print "Saldo: ", rec.amount_balance
                     if rec.amount_balance < 0:
-                        print "Si entra a intentar crear la linea de Saldo en contra arrastrado..."
+                        #print "Si entra a intentar crear la linea de Saldo en contra arrastrado..."
                         red_balance_id = prod_obj.search(cr, uid, [('tms_category', '=', 'negative_balance'),('active','=', 1)], limit=1)
                         if not red_balance_id:
                             raise osv.except_osv(
@@ -648,14 +649,14 @@ class tms_expense(osv.osv):
                     distance_real += travel.distance_extraction
                     distance_routes += travel.distance_route
                 for travel in expense.travel_ids:
-                    print "====\nTravel: ", travel.name
-                    print "travel.distance_route : ", travel.distance_route
-                    print "distance_routes: ", distance_routes
-                    print "distance_real: ", distance_real
-                    print "expense.distance_real: ", expense.distance_real
-                    print "travel.distance_extraction: ", travel.distance_extraction 
+                    #print "====\nTravel: ", travel.name
+                    #print "travel.distance_route : ", travel.distance_route
+                    #print "distance_routes: ", distance_routes
+                    #print "distance_real: ", distance_real
+                    #print "expense.distance_real: ", expense.distance_real
+                    #print "travel.distance_extraction: ", travel.distance_extraction 
                     xdistance = (travel.distance_route / distance_routes) * expense.distance_real if distance_real != expense.distance_real else travel.distance_extraction
-                    print "xdistance: ", xdistance
+                    #print "xdistance: ", xdistance
                     odom_obj.create_odometer_log(cr, uid, expense.id, travel.id, expense.vehicle_id.id, xdistance)
                     if travel.trailer1_id and travel.trailer1_id.id:
                         odom_obj.create_odometer_log(cr, uid, expense.id, travel.id, travel.trailer1_id.id, xdistance)
@@ -756,7 +757,8 @@ class tms_expense_line(osv.osv):
         'name'              : fields.char('Description', size=256, required=True),
         'sequence'          : fields.integer('Sequence', help="Gives the sequence order when displaying a list of sales order lines."),
         'product_id'        : fields.many2one('product.product', 'Product', 
-                                    domain=[('tms_category', 'in', ('expense_real', 'madeup_expense', 'salary','salary_retention' ,'salary_discount'))]),
+                                    domain=[('tms_category', 'in', ('expense_real', 'madeup_expense', 'salary','salary_retention' ,'salary_discount'))],
+                                    ondelete='restrict'),
         'price_unit'        : fields.float('Price Unit', required=True, digits=(16, 4)),
         'price_unit_control': fields.float('Price Unit', digits_compute= dp.get_precision('Sale Price')),
         'price_subtotal'    : fields.function(_amount_line, method=True, string='SubTotal', type='float', digits_compute= dp.get_precision('Sale Price'),  store=True, multi='price_subtotal'),
@@ -1194,6 +1196,7 @@ class tms_expense_invoice(osv.osv_memory):
                         'date'              : expense.date,
                         'period_id'         : period_id[0],
                         }
+                    print "move: ", move
                     move_id = move_obj.create(cr, uid, move)
                     if move_id:
                         move_obj.button_validate(cr, uid, [move_id])                            

@@ -46,9 +46,15 @@
 		          <page string="TMS" attrs="{'invisible':[('waybill_ids','=',False)]  }">
                     <group colspan="4" col="4">
                         <field name="tms_type"  />
-                          <newline />
-                        <field name="departure_address_id" context="{'search_default_customer':1, 'show_address': 1}"  options="{&quot;always_reload&quot;: True}"/>
+                        <field name="unit_id" />
+                        <field name="product" />
+                        <field name="waybill_rate" />
+                        <field name="departure_id" />
+                        <field name="arrival_id" />
+                        <field name="invoice_positive_taxes_sum"/>
+                        <field name="invoice_negative_taxes_sum"/>
                         <newline />
+                        <field name="departure_address_id" context="{'search_default_customer':1, 'show_address': 1}"  options="{&quot;always_reload&quot;: True}"/>
                         <field name="arrival_address_id"  context="{'search_default_customer':1, 'show_address': 1}"  options="{&quot;always_reload&quot;: True}"/>
                     </group>
                     <group colspan="4" col="4">
