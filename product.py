@@ -23,6 +23,7 @@ from osv import osv, fields
 import time
 from datetime import datetime, date
 import decimal_precision as dp
+from tools.translate import _
 
 
 # Products => We need flags for some process with TMS Module
@@ -81,7 +82,7 @@ class product_product(osv.osv):
         }
 
 
-    def _check_tms_product(self,cr,uid,ids,context=None):
+    def _check_tms_product(self, cr, uid, ids, context=None):
         for record in self.browse(cr, uid, ids, context=context): 
             if record.tms_category in ['transportable']:
                 return (record.type=='service' and record.procure_method == 'make_to_stock' and record.supply_method =='buy' and not record.sale_ok and not record.purchase_ok)
@@ -131,6 +132,15 @@ class product_product(osv.osv):
         (_check_default_salary, 'Error ! You can not have two or more products defined as Default Salary', ['tms_default_salary']),
         
         ]
+    
+    
+    def write(self, cr, uid, ids, values, context=None):
+        if context is None:
+            context = {}
+        if 'tms_category' in values:
+            raise osv.except_osv(_('Warning !'), _('You can not change TMS Category for any product...'))
+        return super(product_product, self).write(cr, uid, ids, values, context=context)
+        
 
     def onchange_tms_category(self, cr, uid, ids, tms_category):
         val = {}

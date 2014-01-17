@@ -40,9 +40,9 @@ class tms_expense(osv.osv):
         for record in self.browse(cr, uid, ids, context=context):
             invoiced = (record.invoice_id.id)
             paid = (record.invoice_id.state == 'paid') if record.invoice_id.id else False
-            res[record.id] =  { 'invoiced': invoiced,
-                                'invoice_paid': paid,
-                                'invoice_name': record.invoice_id.supplier_invoice_number
+            res[record.id] =  { 'invoiced'     : invoiced,
+                                'invoice_paid' : paid,
+                                'invoice_name' : record.invoice_id.supplier_invoice_number
                                 }
         return res
 
@@ -1196,7 +1196,7 @@ class tms_expense_invoice(osv.osv_memory):
                         'date'              : expense.date,
                         'period_id'         : period_id[0],
                         }
-                    print "move: ", move
+                    #print "move: ", move
                     move_id = move_obj.create(cr, uid, move)
                     if move_id:
                         move_obj.button_validate(cr, uid, [move_id])                            
