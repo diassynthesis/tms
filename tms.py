@@ -686,7 +686,7 @@ class tms_place(osv.osv):
                 #print 'latitude: ', result['results'][0]['geometry']['location']['lat']
                 #print 'longitude: ', result['results'][0]['geometry']['location']['lng']
                 self.write(cr, uid, ids, {'latitude': result['results'][0]['geometry']['location']['lat'], 'longitude' : result['results'][0]['geometry']['location']['lng'] })
-            else:
+            #else:
                 #print result['status']
         return True
 
@@ -764,7 +764,7 @@ class tms_route(osv.osv):
                     #print "duration: ", duration
 
                     self.write(cr, uid, ids, {'distance': distance, 'travel_time' : duration })
-                else:
+                #else:
                     #print result['status']
             else:
                 raise osv.except_osv(_('Error !'), _('You cannot get route info because one of the places has no coordinates.'))
