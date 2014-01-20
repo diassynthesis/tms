@@ -148,7 +148,7 @@ class fleet_vehicle(osv.osv):
         for record in self.browse(cr, uid, ids, context=context):            
             odom_obj = self.pool.get('fleet.vehicle.odometer.device')
             result = odom_obj.search(cr, uid, [('vehicle_id', '=', record.id),('state', '=', 'active')], limit=1, context=None)
-            print "result: ", result
+            ##print "result: ", result
             if result and result[0]:
                 res[record.id] = result[0]
         return res
@@ -511,7 +511,7 @@ class tms_unit_active_history(osv.osv):
                                 'prev_state' : 'active' if rec.active else 'inactive',
                                 'new_state'  : 'inactive' if rec.active else 'active' }
                             )
-        print vals
+        ##print vals
         return super(tms_unit_active_history, self).create(cr, uid, values, context=context)
 
 
@@ -538,7 +538,7 @@ class tms_unit_active_history(osv.osv):
 
     def action_confirm(self, cr, uid, ids, context=None):
         for rec in self.browse(cr, uid, ids):
-            print rec.new_state == 'active'
+            ##print rec.new_state == 'active'
             self.pool.get('fleet.vehicle').write(cr, uid, [rec.unit_id.id], {'active' : (rec.new_state == 'active')} )
         self.write(cr, uid, ids, {'state':'confirmed', 'confirmed_by' : uid, 'date_confirmed':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
         return True
@@ -680,14 +680,14 @@ class tms_place(osv.osv):
             address = rec.name + "," + rec.state_id.name + "," + rec.country_id.name
             google_url = 'http://maps.googleapis.com/maps/api/geocode/json?address=' + address.encode('utf-8') + '&sensor=false'
             result = json.load(my_urllib.urlopen(google_url))
-            print google_url
-            print result
+            #print google_url
+            #print result
             if result['status'] == 'OK':
-                print 'latitude: ', result['results'][0]['geometry']['location']['lat']
-                print 'longitude: ', result['results'][0]['geometry']['location']['lng']
+                #print 'latitude: ', result['results'][0]['geometry']['location']['lat']
+                #print 'longitude: ', result['results'][0]['geometry']['location']['lng']
                 self.write(cr, uid, ids, {'latitude': result['results'][0]['geometry']['location']['lat'], 'longitude' : result['results'][0]['geometry']['location']['lng'] })
             else:
-                print result['status']
+                #print result['status']
         return True
 
 
@@ -734,13 +734,13 @@ class tms_route(osv.osv):
                 origins = str(rec.departure_id.latitude) + ',' + str(rec.departure_id.longitude)
 
                 places = [str(x.place_id.latitude) + ',' + str(x.place_id.longitude) for x in rec.places_ids if x.place_id.latitude and x.place_id.longitude]                        
-                print "places: ", places
+                #print "places: ", places
                 for place in places:
                     origins += "|" + place
                     destinations += place + "|"
                 destinations += str(rec.arrival_id.latitude) +',' + str(rec.arrival_id.longitude)
-                print "origins: ", origins
-                print "destinations: ", destinations
+                #print "origins: ", origins
+                #print "destinations: ", destinations
                 google_url = 'http://maps.googleapis.com/maps/api/distancematrix/json?origins=' + origins + \
                                                                                 '&destinations=' + destinations + \
                                                                                 '&mode=driving' + \
@@ -752,7 +752,7 @@ class tms_route(osv.osv):
                     if len(rec.places_ids):
                         i = 0
                         for row in result['rows']:
-                            print row
+                            #print row
                             distance += row['elements'][i]['distance']['value'] / 1000.0
                             duration += row['elements'][i]['duration']['value'] / 3600.0
                             i += 1
@@ -760,12 +760,12 @@ class tms_route(osv.osv):
                         distance = result['rows'][0]['elements'][0]['distance']['value'] / 1000.0
                         duration = result['rows'][0]['elements'][0]['duration']['value'] / 3600.0
 
-                    print "distance: ", distance
-                    print "duration: ", duration
+                    #print "distance: ", distance
+                    #print "duration: ", duration
 
                     self.write(cr, uid, ids, {'distance': distance, 'travel_time' : duration })
                 else:
-                    print result['status']
+                    #print result['status']
             else:
                 raise osv.except_osv(_('Error !'), _('You cannot get route info because one of the places has no coordinates.'))
 
@@ -777,7 +777,7 @@ class tms_route(osv.osv):
             points = str(route.departure_id.latitude) + ','+ str(route.departure_id.longitude) + (',' if len(route.places_ids) else '') +  \
                         ','.join([str(x.place_id.latitude) + ',' + str(x.place_id.longitude) for x in route.places_ids if x.place_id.latitude and x.place_id.longitude]) + \
                         ',' + str(route.arrival_id.latitude) + ','+ str(route.arrival_id.longitude)
-            print points
+            #print points
             url="/tms/static/src/googlemaps/get_route.html?" + points
         return { 'type': 'ir.actions.act_url', 'url': url, 'nodestroy': True, 'target': 'new' }
     
@@ -929,33 +929,33 @@ class fleet_vehicle_odometer_device(osv.osv):
         } 
 
     def _check_state(self, cr, uid, ids, context=None):
-        print "Entrando a _check_state "
+        #print "Entrando a _check_state "
         hubod_obj = self.pool.get('fleet.vehicle.odometer.device')
         for record in self.browse(cr, uid, ids, context=context):
-            print "ID: ", record.id
-            print "State: ", record.state
+            #print "ID: ", record.id
+            #print "State: ", record.state
             res = hubod_obj.search(cr, uid, [('vehicle_id', '=', record.vehicle_id.id),('state', 'not in', ('cancel','inactive')),('state','=',record.state)], context=None)
             if res and res[0] and res[0] != record.id:
                 return False
             return True
 
     def _check_odometer(self, cr, uid, ids, context=None):
-        print "Entrando a _check_odometer"
+        #print "Entrando a _check_odometer"
         for rec in self.browse(cr, uid, ids, context=context):
-            print "rec.odometer_end: ", rec.odometer_end
-            print "rec.odometer_start: ", rec.odometer_start
+            #print "rec.odometer_end: ", rec.odometer_end
+            #print "rec.odometer_start: ", rec.odometer_start
             if rec.odometer_end < rec.odometer_start:
                 return False
             return True
 
     def _check_dates(self, cr, uid, ids, context=None):
-        print "Entrando a _check_dates"
+        #print "Entrando a _check_dates"
         hubod_obj = self.pool.get('fleet.vehicle.odometer.device')
         for record in self.browse(cr, uid, ids, context=context):
             if record.date_end and record.date_end < record.date_start:            
                 raise osv.except_osv(_('Error !'), _('Ending Date (%s) is less than Starting Date (%s)')%(record.date_end, record.date_start))
             res = hubod_obj.search(cr, uid, [('vehicle_id', '=', record.vehicle_id.id),('state', '!=', 'cancel'),('date_end','>',record.date_start)], context=None)
-            print "res: ", res
+            #print "res: ", res
             if res and res[0] and res[0] != record.id:
                 return False
             return True
@@ -970,7 +970,7 @@ class fleet_vehicle_odometer_device(osv.osv):
 
     def write(self, cr, uid, ids, vals, context=None):
         values = vals
-        print self._name, " vals: ", vals
+        #print self._name, " vals: ", vals
         return super(fleet_vehicle_odometer_device, self).write(cr, uid, ids, values, context=context)
 
 
@@ -979,7 +979,7 @@ class fleet_vehicle_odometer_device(osv.osv):
         res = odom_obj.search(cr, uid, [('vehicle_id', '=', vehicle_id),('state', '!=', 'cancel'),('date_end','<',date_start)], limit=1, order="date_end desc", context=None)
         odometer_id = False
         accumulated = 0.0
-        print "res: ", res
+        #print "res: ", res
         if res and res[0]:
             for rec in odom_obj.browse(cr, uid, res):
                 odometer_id = rec.id
@@ -1024,8 +1024,8 @@ class fleet_vehicle_odometer(osv.osv):
 
     def _check_values(self, cr, uid, ids, context=None):         
         for record in self.browse(cr, uid, ids, context=context):
-            print "record.current_odometer: ", record.current_odometer
-            print "record.last_odometer: ", record.last_odometer
+            #print "record.current_odometer: ", record.current_odometer
+            #print "record.last_odometer: ", record.last_odometer
             if record.current_odometer <= record.last_odometer:
                 return False
             return True
@@ -1083,7 +1083,7 @@ class fleet_vehicle_odometer(osv.osv):
 
     def create(self, cr, uid, vals, context=None):
         values = vals
-        print "vals: ", vals
+        #print "vals: ", vals
         if 'odometer_id' in vals and vals['odometer_id']:
             odom_obj = self.pool.get('fleet.vehicle.odometer.device')
             odometer_end = odom_obj.browse(cr, uid, [vals['odometer_id']])[0].odometer_end + vals['distance']
@@ -1118,28 +1118,28 @@ class fleet_vehicle_odometer(osv.osv):
         return
 
     def unlink_odometer_rec(self, cr, uid, ids, travel_ids, unit_id, context=None):
-        print "Entrando a: unlink_odometer_rec "
+        #print "Entrando a: unlink_odometer_rec "
         unit_obj = self.pool.get('fleet.vehicle')
         odom_dev_obj = self.pool.get('fleet.vehicle.odometer.device')
         res = self.search(cr, uid, [('tms_travel_id', 'in', tuple(travel_ids),), ('vehicle_id', '=', unit_id)])
-        print "Registros de lecturas de odometro especificando unidad: ", res
+        #print "Registros de lecturas de odometro especificando unidad: ", res
         res1 = self.search(cr, uid, [('tms_travel_id', 'in', tuple(travel_ids),)])
-        print "Registros de lecturas de odometro sin especificar unidad: ", res1
-        print "Recorriendo las lecturas de odometro..."
+        #print "Registros de lecturas de odometro sin especificar unidad: ", res1
+        #print "Recorriendo las lecturas de odometro..."
         for odom_rec in self.browse(cr, uid, res):
-            print "===================================="
-            print "Vehiculo: ", odom_rec.vehicle_id.name
+            #print "===================================="
+            #print "Vehiculo: ", odom_rec.vehicle_id.name
             unit_odometer = unit_obj.browse(cr, uid, [odom_rec.vehicle_id.id])[0].current_odometer_read
-            print "unit_odometer: ", unit_odometer
-            print "odom_rec.distance: ",odom_rec.distance
-            print "Valor a descontar: ", round(unit_odometer, 2) - round(odom_rec.distance, 2)
+            #print "unit_odometer: ", unit_odometer
+            #print "odom_rec.distance: ",odom_rec.distance
+            #print "Valor a descontar: ", round(unit_odometer, 2) - round(odom_rec.distance, 2)
             unit_obj.write(cr, uid, [unit_id],  {'current_odometer_read': round(unit_odometer, 2) - round(odom_rec.distance, 2)})
-            print "Después de actualizar el odometro de la unidad..."
+            #print "Después de actualizar el odometro de la unidad..."
             #device_odometer = odom_dev_obj.browse(cr, uid, [odom_rec.odometer_id.id])[0].odometer_end
-            #print "device_odometer: ", device_odometer
-            #print "device_odometer - odom_rec.distance : ", round(device_odometer, 2) - round(odom_rec.distance, 2)
+            ##print "device_odometer: ", device_odometer
+            ##print "device_odometer - odom_rec.distance : ", round(device_odometer, 2) - round(odom_rec.distance, 2)
             #odom_dev_obj.write(cr, uid, [odom_rec.odometer_id.id],  {'odometer_end': round(device_odometer, 2) - round(odom_rec.distance, 2)})
-            print "===================================="
+            #print "===================================="
         self.unlink(cr, uid, res1)
         return
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

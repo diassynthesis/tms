@@ -470,34 +470,34 @@ class tms_expense(osv.osv):
                     travel_obj.write(cr, uid, [travel.id], {'expense2_id': expense.id})
                 self.pool.get('tms.expense.loan').get_loan_discounts(cr, uid, expense.employee_id.id, expense.id)
                 
-                #Revisamos si tiene un Balance en contra
-                cr.execute("select id from tms_expense where employee_id = %s and state = 'confirmed' order by date desc limit 1" % (expense.employee_id.id))
-                data = filter(None, map(lambda x:x[0], cr.fetchall()))
-                if len(data):
-                    rec = self.browse(cr, uid, data)[0]
-                    #print "=======\nLiquidación: ", rec.name
-                    #print "Saldo: ", rec.amount_balance
-                    if rec.amount_balance < 0:
-                        #print "Si entra a intentar crear la linea de Saldo en contra arrastrado..."
-                        red_balance_id = prod_obj.search(cr, uid, [('tms_category', '=', 'negative_balance'),('active','=', 1)], limit=1)
-                        if not red_balance_id:
-                            raise osv.except_osv(
-                                _('Missing configuration !'),
-                                _('There is no product defined as Negative Balance !!!'))
-                        red_balance = prod_obj.browse(cr, uid, red_balance_id, context=None)[0]
-                        xline = {                                
-                            'expense_id'        : expense.id,
-                            'line_type'         : red_balance.tms_category,
-                            'name'              : red_balance.name + ' - ' + _('Travel Expense: ') + rec.name, 
-                            'sequence'          : 200,
-                            'product_id'        : red_balance.id,
-                            'product_uom'       : red_balance.uom_id.id,
-                            'product_uom_qty'   : 1,
-                            'price_unit'        : rec.amount_balance,
-                            'control'           : True,
-                            'tax_id'            : [(6, 0, [x.id for x in red_balance.supplier_taxes_id])],                                
-                            }
-                        res = expense_line_obj.create(cr, uid, xline)
+            #Revisamos si tiene un Balance en contra
+            cr.execute("select id from tms_expense where employee_id = %s and state = 'confirmed' order by date desc limit 1" % (expense.employee_id.id))
+            data = filter(None, map(lambda x:x[0], cr.fetchall()))
+            if len(data):
+                rec = self.browse(cr, uid, data)[0]
+                #print "=======\nLiquidación: ", rec.name
+                #print "Saldo: ", rec.amount_balance
+                if rec.amount_balance < 0:
+                    #print "Si entra a intentar crear la linea de Saldo en contra arrastrado..."
+                    red_balance_id = prod_obj.search(cr, uid, [('tms_category', '=', 'negative_balance'),('active','=', 1)], limit=1)
+                    if not red_balance_id:
+                        raise osv.except_osv(
+                            _('Missing configuration !'),
+                            _('There is no product defined as Negative Balance !!!'))
+                    red_balance = prod_obj.browse(cr, uid, red_balance_id, context=None)[0]
+                    xline = {                                
+                        'expense_id'        : expense.id,
+                        'line_type'         : red_balance.tms_category,
+                        'name'              : red_balance.name + ' - ' + _('Travel Expense: ') + rec.name, 
+                        'sequence'          : 200,
+                        'product_id'        : red_balance.id,
+                        'product_uom'       : red_balance.uom_id.id,
+                        'product_uom_qty'   : 1,
+                        'price_unit'        : rec.amount_balance,
+                        'control'           : True,
+                        'tax_id'            : [(6, 0, [x.id for x in red_balance.supplier_taxes_id])],                                
+                        }
+                    res = expense_line_obj.create(cr, uid, xline)
         return
 
     def on_change_travel_ids(self, cr, uid, ids, travel_ids, driver_helper, context=None):
@@ -609,6 +609,10 @@ class tms_expense(osv.osv):
         if 'vehicle_id' in vals and vals['vehicle_id']:
             values['unit_id'] = vals['vehicle_id']
 
+        cr.execute("select id from tms_expense where state in ('draft', 'approved') and employee_id = " + str(vals['employee_id']))
+        data = filter(None, map(lambda x:x[0], cr.fetchall()))
+        if data:
+            raise osv.except_osv(_('Warning !'), _('You can not have more than one Travel Expense Record in  Draft / Approved State'))                    
         res = super(tms_expense, self).create(cr, uid, values, context=context)
         self.get_salary_advances_and_fuel_vouchers(cr, uid, [res], vals)
         self.get_salary_retentions(cr, uid, [res])
