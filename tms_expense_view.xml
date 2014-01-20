@@ -9,12 +9,13 @@
 	<field name="model">tms.expense.cancel</field>
 	<field name="type">form</field>
 	<field name="arch" type="xml">
-	<form string="Create a copy">  
+	<form string="Cancel" version="7.0">  
         <separator colspan="4" string="Cancel this Expense Record ?" />
-        <group col="2" colspan="4">
-            <button icon='gtk-cancel' special="cancel" string="Cancel" />
+        <footer>
             <button name="action_cancel" string="Confirm Cancellation" colspan="1" type="object" icon="gtk-ok" groups="tms.group_expense_cancel"/>
-        </group>
+            or
+            <button icon='gtk-cancel' special="cancel" string="Cancel" />
+		</footer>
 	</form>
 	</field>
 	</record>
@@ -42,7 +43,7 @@ TMS.EXPENSE
             <field name="type">tree</field>
             <field name="priority">2</field>
             <field name="arch" type="xml">
-                <tree string="Waybills" colors="red:state=='cancel';green:state=='approve';blue:state=='confirm';">
+                <tree string="Waybills" colors="gray:state=='cancel';green:state=='approved';blue:state=='confirmed';">
 		            <button name="action_approve" states="draft" string="Approve" type="object" icon="gtk-go-forward" groups="tms.group_expense_approve"/>
 		            <button name="action_confirm" states="approved" string="Confirm" type="object" icon="gtk-ok" groups="tms.group_expense_confirm"/>
                     <field name="name"/>
