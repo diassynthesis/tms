@@ -89,6 +89,7 @@ TMS.EXPENSE
                     <field name="employee_id_control" required="1" context="{'default_tms_category': 'driver'}" 
                          domain="[('tms_supplier_driver','=', False)]" 
                          on_change="on_change_employee_id(employee_id_control)"
+                         attrs="{'readonly':[('state','!=','draft')]}" 
                          />
                     <field name="driver_helper" />
                     <field name="unit_id" />

@@ -153,8 +153,8 @@ class tms_expense(osv.osv):
             if record.move_id.id:
                 for ml in record.move_id.line_id:
                     if ml.credit > 0 and record.employee_id.address_home_id.id == ml.partner_id.id:
-                        val = (ml.reconcile_id.id or ml.reconcile_partial_id.id)
-            res[record.id] = val
+                        res[record.id]  = (ml.reconcile_id.id or ml.reconcile_partial_id.id)
+                        return res
         return res
 
     
@@ -175,8 +175,8 @@ class tms_expense(osv.osv):
         'name': fields.char('Name', size=64, readonly=True, select=True),
         'shop_id': fields.many2one('sale.shop', 'Shop', required=True, readonly=True, states={'draft': [('readonly', False)]}),
         'company_id': fields.related('shop_id','company_id',type='many2one',relation='res.company',string='Company',store=True,readonly=True),
-        'employee_id': fields.many2one('hr.employee', 'Driver', required=True, domain=[('tms_category', '=', 'driver')]),
-        'employee_id_control': fields.many2one('hr.employee', 'Driver', required=True, domain=[('tms_category', '=', 'driver')], states={'cancel':[('readonly',True)], 'approved':[('readonly',True)], 'closed':[('readonly',True)]}),
+        'employee_id': fields.many2one('hr.employee', 'Driver', required=True, domain=[('tms_category', '=', 'driver')], readonly=True, states={'draft': [('readonly', False)]}),
+        'employee_id_control': fields.many2one('hr.employee', 'Driver', required=True, domain=[('tms_category', '=', 'driver')], readonly=True, states={'draft': [('readonly', False)]}),
         'travel_ids': fields.many2many('tms.travel', 'tms_expense_travel_rel', 'expense_id', 'travel_id', 'Travels', readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
         'travel_ids2': fields.many2many('tms.travel', 'tms_expense_travel_rel2', 'expense_id', 'travel_id', 'Travels for Driver Helper', readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
         'unit_id': fields.many2one('fleet.vehicle', 'Unit', required=False, readonly=True),
@@ -266,11 +266,12 @@ class tms_expense(osv.osv):
         'drafted_by' : fields.many2one('res.users', 'Drafted by', readonly=True),
         'date_drafted': fields.datetime('Date Drafted', readonly=True),
 
-        'notes': fields.text('Notes', readonly=False, states={'confirmed': [('readonly', True)],'closed':[('readonly',True)]}),
+        'notes': fields.text('Notes', readonly=False, states={'closed':[('readonly',True)]}),
         'move_id'       : fields.many2one('account.move', 'Journal Entry', readonly=True, select=1, ondelete='restrict', help="Link to the automatically generated Journal Items."),
 
         'paid'          : fields.function(_paid, method=True, string='Paid', type='boolean', multi=False,
-                                          store = {'account.move.reconcile': (_get_move_line_from_reconcile, None, 50)}),
+                                          store = {'tms.expense': (lambda self, cr, uid, ids, c={}: ids, None, 10),
+                                                   'account.move.reconcile': (_get_move_line_from_reconcile, None, 50)}),
 
         
         'fuelvoucher_ids':fields.one2many('tms.fuelvoucher', 'expense_id', string='Fuel Vouchers', readonly=True),
