@@ -240,7 +240,7 @@ class tms_waybill(osv.osv):
         return res
 
     def _get_waybill_type(self, cr, uid, ids, field_name, arg, context=None):
-        print "Entrando aqui..."
+        #print "Entrando aqui..."
         res = {}
         for waybill in self.browse(cr, uid, ids, context=context):
             waybill_type = 'self'

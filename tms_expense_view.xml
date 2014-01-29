@@ -56,6 +56,7 @@ TMS.EXPENSE
                     <field name="amount_subtotal_real" sum="SubTotal (Real)"/>
                     <field name="amount_tax_real" sum="Tax Real"/>
                     <field name="amount_total_real" sum="Total Real"/>
+                    <field name="balance" sum="Balance"/>
                     <field name="move_id" invisible="1"/>
                     <field name="shop_id" />
                     <field name="driver_helper" />
