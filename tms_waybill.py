@@ -740,6 +740,7 @@ class tms_travel(osv.osv):
         'waybill_ids': fields.many2many('tms.waybill', 'tms_waybill_travel_rel', 'travel_id', 'waybill_id', 'Waybills'),
         'default_waybill_id': fields.one2many('tms.waybill', 'travel_id', 'Waybill', readonly=True),
         'partner_id' : fields.related('default_waybill_id', 'partner_id', type='many2one', relation='res.partner', string='Customer', store=True),
+        'arrival_address_id' : fields.related('default_waybill_id', 'arrival_address_id', type='many2one', relation='res.partner', string='Arrival Address', store=True),
     }
 
 tms_travel()

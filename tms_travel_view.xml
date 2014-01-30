@@ -50,6 +50,7 @@ TMS.travel
                        <filter string='Unit' icon="terp-gdu-smart-failing" domain="[]" context="{'group_by' : 'unit_id'}" />
                        <filter string='Driver 1' icon="terp-personal" domain="[]" context="{'group_by' : 'employee_id'}" />
                        <filter string='Customer' icon="terp-go-home" domain="[]" context="{'group_by' : 'partner_id'}" />
+                       <filter string='Destination' icon="terp-go-home" domain="[]" context="{'group_by' : 'arrival_address_id'}" />
                        <!--<filter string='Driver 2' icon="terp-personal" domain="[]" context="{'group_by' : 'employee2_id'}" /> -->
                        <separator orientation="vertical"/>                                                                
                        <filter string='Departure' icon="terp-gtk-go-back-rtl" domain="[]" context="{'group_by' : 'departure'}" />
@@ -86,6 +87,7 @@ TMS.travel
                 <field name="departure" invisible="1"/>
                 <field name="arrival" invisible="1"/>
                 <field name="partner_id" />
+                <field name="arrival_address_id" />
                 <field name="date_start" string="Start Sched." invisible="1"/>
                 <field name="date_end" string="End Sched." invisible="1"/>
                 <field name="shop_id" invisible="1"/>
