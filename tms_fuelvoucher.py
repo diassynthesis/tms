@@ -248,7 +248,7 @@ class tms_fuelvoucher(osv.osv):
                 if fuelvoucher.move_id.state != 'draft':
                     move_obj.button_cancel(cr, uid, [fuelvoucher.move_id.id]) 
                 self.write(cr, uid, ids, {'state':'cancel', 'invoice_id':False, 'move_id': False, 'picking_id': False, 'cancelled_by':uid,'date_cancelled':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
-                move_obj.unlink(cr, uid, [move_id])
+                #move_obj.unlink(cr, uid, [move_id])
 
             elif fuelvoucher.picking_id and fuelvoucher.picking_id.id:                
                 picking_id = self.create_picking(cr, uid, fuelvoucher, 'return', fuelvoucher.picking_id.id)
