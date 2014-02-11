@@ -1133,6 +1133,7 @@ class tms_expense_invoice(osv.osv_memory):
                                 'period_id'         : period_id[0],
                                 'vehicle_id'        : expense.unit_id.id,
                                 'employee_id'       : expense.employee_id.id,
+                                'partner_id'        : expense.employee_id.address_home_id.id,
                                 })
                             move_lines.append(move_line)
                             notes += '\n' + line.name
@@ -1146,13 +1147,13 @@ class tms_expense_invoice(osv.osv_memory):
                                 tax_amount = round(line.price_subtotal * tax.amount, precision)
 
                                 move_line = (0,0, {
-                                    'name'              : expense.name + ' - ' + tax.name + ' - ' + line.name + ' - ' + line.employee_id.name + ' (' + str(line.employee_id.id) + ')',
+                                    'name'          : expense.name + ' - ' + tax.name + ' - ' + line.name + ' - ' + line.employee_id.name + ' (' + str(line.employee_id.id) + ')',
                                     'ref'           : expense.name,
-                                    'account_id'        : account_fiscal_obj.map_account(cr, uid, False, tax_account),
-                                    'debit'             : round(tax_amount, precision) if tax_amount > 0.0 else 0.0,
-                                    'credit'            : round(abs(tax_amount), precision) if tax_amount <= 0.0 else 0.0,
-                                    'journal_id'        : journal_id,
-                                    'period_id'         : period_id[0],
+                                    'account_id'    : account_fiscal_obj.map_account(cr, uid, False, tax_account),
+                                    'debit'         : round(tax_amount, precision) if tax_amount > 0.0 else 0.0,
+                                    'credit'        : round(abs(tax_amount), precision) if tax_amount <= 0.0 else 0.0,
+                                    'journal_id'    : journal_id,
+                                    'period_id'     : period_id[0],
                                     })
                                 move_lines.append(move_line)
 
@@ -1168,6 +1169,7 @@ class tms_expense_invoice(osv.osv_memory):
                                     'period_id'     : period_id[0],
                                     'vehicle_id'    : expense.unit_id.id,
                                     'employee_id'   : expense.employee_id.id,
+                                    'partner_id'    : expense.employee_id.address_home_id.id,
                                     })
                         notes += '\n' + _('Debit Balance')
                     else:
@@ -1197,7 +1199,7 @@ class tms_expense_invoice(osv.osv_memory):
                         'ref'               : expense.name,
                         'journal_id'        : journal_id,
                         'narration'         : _('TMS-Travel Expense Record') + ' - ' + expense.name + ' - ' + expense.employee_id.name + ' (' + str(expense.employee_id.id) + ')',
-                        'line_id'         : [x for x in move_lines],
+                        'line_id'           : [x for x in move_lines],
                         'date'              : expense.date,
                         'period_id'         : period_id[0],
                         }

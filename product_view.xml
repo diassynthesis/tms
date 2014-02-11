@@ -81,7 +81,15 @@
                     <field name="tms_property_account_expense"                            
                            domain="[('type','=','other')]"/> <!-- attrs="{'required':[('tms_category','in',('fuel'))], 'invisible' : [('tms_category','not in',('fuel'))]}" -->
                 </field>
-
+                <field name="property_stock_procurement" position="replace">
+                    <field name="property_stock_procurement" domain="[('usage','=','procurement')]"/>
+                </field>
+                <field name="property_stock_production"position="replace">
+                    <field name="property_stock_production" domain="[('usage','=','production')]"/>
+                </field>
+                <field name="property_stock_inventory" position="replace">
+                    <field name="property_stock_inventory" domain="[('usage','=','inventory')]"/>
+                </field>
             </field>
         </record>
 
