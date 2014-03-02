@@ -49,7 +49,35 @@ class hr_employee(osv.osv):
     _name='hr.employee'
     _inherit='hr.employee'
 
+    def name_get(self, cr, uid, ids, context=None):
+        reads = self.read(cr, uid, ids, ['name'], context=context)
+        res = []
+        for record in reads:
+            name = ('(%s) ' % record['id']) + record['name']
+            res.append((record['id'], name))
+        return res
 
+    def name_search(self, cr, user, name='', args=None, operator='ilike', context=None, limit=100):
+        if not args:
+            args = []
+        if name:
+            ids = self.search(cr, user, [('name','=',name)]+ args, limit=limit, context=context)
+            if not ids:
+                try:
+                    int_name = int(name)
+                    ids = self.search(cr, user, [('id','=', int_name)]+ args, limit=limit, context=context)
+                except:
+                    ids = []
+            if not ids:
+                ids = set()
+                ids.update(self.search(cr, user, args + [('name',operator,name)], limit=limit, context=context))
+                ids = list(ids)
+        else:
+            ids = self.search(cr, user, args, limit=limit, context=context)
+        result = self.name_get(cr, user, ids, context=context)
+        return result
+
+    
     _columns = {
         'tms_category': fields.selection([('none','N/A'),('driver','Driver'), ('mechanic','Mechanic'),], 'TMS Category', help='Used to define if this person will be used as a Driver (Frieghts related) or Mechanic (Maintenance related)',required=False),
         'tms_advance_account_id': fields.many2one('account.account', 'Advance Account', domain=[('type', '=', 'other')]), 

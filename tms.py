@@ -712,7 +712,6 @@ class tms_route(osv.osv):
         'arrival_id': openerp.osv.fields.many2one('tms.place', 'Arrival', required=True),
         'distance':openerp.osv.fields.float('Distance (mi./kms)', required=True, digits=(14,4), help='Route distance (mi./kms)'),
         'places_ids' : openerp.osv.fields.one2many('tms.route.place', 'route_id', 'Intermediate places in Route'),
-#        'place_ids':openerp.osv.fields.many2many('tms.place', 'tms_route_places_rel', 'route_id', 'place_id', 'Places in this Route'),
         'travel_time':openerp.osv.fields.float('Travel Time (hrs)', required=True, digits=(14,4), help='Route travel time (hours)'),
         'route_fuelefficiency_ids' : openerp.osv.fields.one2many('tms.route.fuelefficiency', 'tms_route_id', 'Fuel Efficiency by Motor type'),
         'fuel_efficiency_drive_unit': openerp.osv.fields.float('Fuel Efficiency Drive Unit', required=False, digits=(14,4)),
@@ -726,6 +725,15 @@ class tms_route(osv.osv):
     _defaults = {
         'active': True,
     }
+    
+    
+        
+    def _check_distance(self, cr, uid, ids, context=None):
+        return (self.browse(cr, uid, ids, context=context)[0].distance > 0)
+
+    _constraints = [
+        (_check_distance, 'You can not save New Route without Distance!', ['distance']),
+        ]
 
     def  button_get_route_info(self, cr, uid, ids, context=None):
         for rec in self.browse(cr, uid, ids):

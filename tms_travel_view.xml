@@ -227,7 +227,17 @@ TMS.travel
                             <page string="History">
                                 <group>
                                     <separator string="Travel history" colspan="4"/>
-                                    <field name="event_ids" nolabel="1"/>
+                                    <field name="event_ids" nolabel="1" context="{'default_travel_id': active_id}" >
+                                        <tree>
+                                            <field name="date"/>
+                                            <field name="category_id"/>
+                                            <field name="name"/>
+                                            <field name="position_real" />
+                                            <field name="position_pi" />
+                                            <field name="message" />
+                                            <field name="state"/>
+                                        </tree>
+                                    </field>
                                     <separator string="Notes" colspan="4"/>
                                     <field name="notes" nolabel="1" />
                                 </group>
