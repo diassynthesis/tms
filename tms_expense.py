@@ -440,12 +440,16 @@ class tms_expense(osv.osv):
                         res = expense_line_obj.create(cr, uid, xline)
                         fuelvoucher_obj.write(cr, uid, [fuelvoucher.id], {'expense_id': expense.id, 'state':'closed','closed_by':uid,'date_closed':time.strftime(DEFAULT_SERVER_DATETIME_FORMAT)})
                         
-                for advance in travel.advance_ids:
+                for advance in travel.advance_ids:                    
                     if advance.state == 'cancel':
                         continue
                     elif advance.state in ('draft', 'approved'):
                         raise osv.except_osv(_('Warning !'),
                                      _('Advance %s is not Confirmed...') % (advance.name)
+                                     )
+                    elif not advance.paid and advance.state == 'confirmed':
+                        raise osv.except_osv(_('Warning !'),
+                                     _('Advance %s is Confirmed but is not Paid yet...') % (advance.name)
                                      )
                     elif advance.employee_id.id == expense.employee_id.id:
                         if advance.auto_expense:
