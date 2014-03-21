@@ -222,7 +222,7 @@ class tms_waybill(osv.osv):
                 factor_special_ids = factor_special_obj.search(cr, uid, [('type', '=', 'supplier'), ('active', '=', True)])
                 if len(factor_special_ids):
                     exec factor_special_obj.browse(cr, uid, factor_special_ids)[0].python_code
-                    print result
+                    #print result
                 else:
                     factor_obj = self.pool.get('tms.factor')
                     result = factor_obj.calculate(cr, uid, 'waybill', ids, 'supplier', False)                
@@ -1165,7 +1165,7 @@ class tms_waybill_invoice(osv.osv_memory):
  
                 cr.execute("select id from tms_waybill where (invoice_id is null or (select account_invoice.state from account_invoice where account_invoice.id = tms_waybill.invoice_id)='cancel') and (state='confirmed' or (state='approved' and billing_policy='automatic')) and partner_id=" + str(data[0]) + ' and currency_id=' + str(data[1]) + " and id IN %s", (tuple(record_ids),))
                 waybill_ids = filter(None, map(lambda x:x[0], cr.fetchall()))
-                print "waybill_ids : ", waybill_ids
+                #print "waybill_ids : ", waybill_ids
                 inv_lines = []
                 notes = _("Waybills")
                 inv_amount = 0.0
@@ -1221,9 +1221,9 @@ class tms_waybill_invoice(osv.osv_memory):
                         
                         notes += ', ' + line.waybill_id.name
                     # ***** 
-                    print "group_lines: ", group_lines
+                    #print "group_lines: ", group_lines
                     if group_lines:
-                        print "Si entra a agrupar lineas de Cartas Porte"
+                        #print "Si entra a agrupar lineas de Cartas Porte"
                         line_grouped = {}
                         for xline in inv_lines:
                             val={
@@ -1243,10 +1243,10 @@ class tms_waybill_invoice(osv.osv_memory):
                             else:
                                 line_grouped[key]['price_unit'] += val['price_unit']
                                         # ******
-                        print "line_grouped: ", product_shipped_grouped
+                        #print "line_grouped: ", product_shipped_grouped
                         inv_lines = []
                         for t in line_grouped.values():
-                            print "t: ", t
+                            #print "t: ", t
                             vals = (0,0, {
                                     'name': t['name'],
                                     'origin': t['origin'],
@@ -1375,7 +1375,7 @@ class tms_waybill_supplier_invoice(osv.osv_memory):
             
             product = prod_obj.browse(cr, uid, prod_id,	 context=None)[0]
             
-            print "product.name : ", product.name
+            #print "product.name : ", product.name
             prod_account = product.product_tmpl_id.property_account_expense.id
             if not prod_account:
                 prod_account = product.categ_id.property_account_expense_categ.id
