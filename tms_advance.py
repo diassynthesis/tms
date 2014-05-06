@@ -307,7 +307,7 @@ class tms_advance_payment(osv.osv_memory):
 
         dummy, view_id = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'account_voucher', 'view_vendor_receipt_dialog_form')
 
-        cr.execute("select count(distinct(employee_id, currency_id)) from tms_advance where state in ('confirmed') and id IN %s",(tuple(ids),))
+        cr.execute("select count(distinct(employee_id, currency_id)) from tms_advance where state in ('confirmed', 'closed') and not paid and id IN %s",(tuple(ids),))
         xids = filter(None, map(lambda x:x[0], cr.fetchall()))
         if len(xids) > 1:
             raise osv.except_osv('Error !',
@@ -316,7 +316,7 @@ class tms_advance_payment(osv.osv_memory):
         move_line_ids = []
         advance_names = ""
         for advance in self.pool.get('tms.advance').browse(cr, uid, ids, context=context):
-            if advance.state=='confirmed' and not advance.paid:
+            if advance.state in ('confirmed', 'closed') and not advance.paid:
                 advance_names += ", " + advance.name
                 amount += advance.total                
                 for move_line in advance.move_id.line_id:

@@ -37,11 +37,12 @@ TMS.ADVANCE
           <field name="operation_id"/>
           <newline/>
           <group  expand='0' string='Group by...'>
-            <filter string='travel_id' icon="terp-gdu-smart-failing" domain="[]" context="{'group_by' : 'travel_id'}" />
+            <filter string='Travel' icon="terp-gdu-smart-failing" domain="[]" context="{'group_by' : 'travel_id'}" />
             <filter string='Unit' icon="terp-gdu-smart-failing" domain="[]" context="{'group_by' : 'unit_id'}" />
             <filter string='Driver' icon="terp-personal" domain="[]" context="{'group_by' : 'employee_id'}" />
             <separator orientation="vertical"/>                                                                
             <filter string='State' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'state'}" />
+            <filter string='Period' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'date'}" />
             <separator orientation="vertical"/>                                                                
             <filter string='Product' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'product_id'}" />
             <filter string='Operation' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'operation_id'}" />

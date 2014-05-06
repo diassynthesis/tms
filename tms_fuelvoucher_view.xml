@@ -49,6 +49,7 @@ TMS.FUELVOUCHER
                        <separator orientation="vertical"/>                                                                
                        <filter string='State' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'state'}" />
                        <filter string='Operation' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'operation_id'}" />
+                       <filter string='Period' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'date'}" />
                    </group>
                 </search>
             </field>

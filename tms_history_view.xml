@@ -165,7 +165,7 @@ TMS.EVENT
 					</group>
                    <newline/>
                    <group  expand='0' string='Group by...'> <!--groups="base.group_extended" -->
-						<filter string="Date" icon="terp-go-month" domain="[]" context="{'group_by':'date'}"/>
+						<filter string="Period" icon="terp-go-month" domain="[]" context="{'group_by':'date'}"/>
                         <filter string='Category' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'category_id'}" />
                         <filter string='Travel' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'travel_id'}" />
 						<separator orientation="vertical"/>

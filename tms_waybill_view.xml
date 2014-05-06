@@ -192,11 +192,11 @@ TMS.waybill.category
               <field name="travel_id" />
               <field name="client_order_ref"/>
               <field name="partner_id"/>              
-              <field name="product_qty" sum="Product Quantity"/>
+              <field name="product_qty" /><!--sum="Product Quantity"/> -->
               <field name="amount_untaxed" sum="Amount Untaxed"/>
-              <field name="amount_tax" sum="Taxes"/>
-              <field name="amount_total" sum="Total "/>
-              <field name="supplier_amount" sum="Amount Supplier"/>
+              <field name="amount_tax" /> <!--sum="Taxes"/> -->
+              <field name="amount_total" /><!--sum="Total "/> -->
+              <field name="supplier_amount" /> <!--sum="Amount Supplier"/>-->
               <field name="invoice_id" invisible="1"/>
               <field name="invoice_name" invisible="1"/>
               <field name="supplier_id" invisible="1"/>
@@ -558,7 +558,8 @@ TMS.waybill.category
             <filter string="Salesman" icon="terp-personal" domain="[]" context="{'group_by':'user_id'}"/>
             <filter string='Shop' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'shop_id'}" />	    
             <filter string='Supplier' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'supplier_id'}" />	    
-            <filter string='Operation' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'operation_id'}" />	    
+            <filter string='Operation' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'operation_id'}" />
+            <filter string='Period' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'date'}" />
 
           </group>
         </search>

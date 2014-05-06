@@ -171,8 +171,8 @@ class tms_travel(osv.osv):
         
         'fuel_efficiency_travel': fields.float('Fuel Efficiency Travel', required=False, digits=(14,4), states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
         'fuel_efficiency_extraction': fields.float('Fuel Efficiency Extraction', required=False, digits=(14,4), states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
-        'departure': fields.related('route_id', 'departure_id', type='many2one', relation='tms.place', string='Departure', store=True, readonly=True),                
-        'arrival': fields.related('route_id', 'arrival_id', type='many2one', relation='tms.place', string='Arrival', store=True, readonly=True),                
+        'departure_id': fields.related('route_id', 'departure_id', type='many2one', relation='tms.place', string='Departure', store=True, readonly=True),                
+        'arrival_id': fields.related('route_id', 'arrival_id', type='many2one', relation='tms.place', string='Arrival', store=True, readonly=True),                
 
         'notes': fields.text('Descripción', required=False, states={'cancel':[('readonly',True)], 'closed':[('readonly',True)]}),
 
@@ -232,7 +232,7 @@ class tms_travel(osv.osv):
                        (travel_id, employee1_id, travel_id, employee2_id,travel_id, employee1_id, travel_id, employee2_id)
                        )
             data_ids = cr.fetchall()
-            print data_ids
+            #print data_ids
             return (not len(data_ids))
 
     _constraints = [

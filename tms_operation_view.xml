@@ -30,6 +30,7 @@ TMS.Operation
                 <group  expand='0' string='Group by...'>
                     <filter string='State' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'state'}" />
                     <filter string='Customer' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'partner_id'}" />
+                    <filter string='Period' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'date'}" />
                 </group>
             </search>
         </field>

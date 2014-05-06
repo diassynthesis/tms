@@ -447,10 +447,10 @@ class tms_expense(osv.osv):
                         raise osv.except_osv(_('Warning !'),
                                      _('Advance %s is not Confirmed...') % (advance.name)
                                      )
-                    elif not advance.paid and advance.state == 'confirmed':
-                        raise osv.except_osv(_('Warning !'),
-                                     _('Advance %s is Confirmed but is not Paid yet...') % (advance.name)
-                                     )
+                    #elif not advance.paid and advance.state == 'confirmed':
+                    #    raise osv.except_osv(_('Warning !'),
+                    #                 _('Advance %s is Confirmed but is not Paid yet...') % (advance.name)
+                    #                 )
                     elif advance.employee_id.id == expense.employee_id.id:
                         if advance.auto_expense:
                             xline = {

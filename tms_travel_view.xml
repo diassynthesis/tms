@@ -24,13 +24,12 @@ TMS.travel
                    <filter string="Cancelled" icon="terp-dialog-close" domain="[('state','=','cancel')]"/>
                    <filter string="Not Cancelled" icon="terp-dialog-close" domain="[('state','!=','cancel')]"/>
                    <newline/>
-                   <field name="date"/>
                    <field name="name"/>
                    <field name="unit_id" string="Unit"/>
                    <field name="employee_id"/>
                    <field name="route_id"/>
-                   <field name="departure"/>
-                   <field name="arrival"/>
+                   <field name="departure_id"/>
+                   <field name="arrival_id"/>
                    <field name="operation_id"/>
                    <newline/>
                    <group expand="0" string="More filters..." colspan="4" col="8">
@@ -53,8 +52,8 @@ TMS.travel
                        <filter string='Destination' icon="terp-go-home" domain="[]" context="{'group_by' : 'arrival_address_id'}" />
                        <!--<filter string='Driver 2' icon="terp-personal" domain="[]" context="{'group_by' : 'employee2_id'}" /> -->
                        <separator orientation="vertical"/>                                                                
-                       <filter string='Departure' icon="terp-gtk-go-back-rtl" domain="[]" context="{'group_by' : 'departure'}" />
-                       <filter string='Arrival' icon="terp-gtk-jump-to-ltr" domain="[]" context="{'group_by' : 'arrival'}" />
+                       <filter string='Departure' icon="terp-gtk-go-back-rtl" domain="[]" context="{'group_by' : 'departure_id'}" />
+                       <filter string='Arrival' icon="terp-gtk-jump-to-ltr" domain="[]" context="{'group_by' : 'arrival_id'}" />
                        <separator orientation="vertical"/>                                                                
                        <filter string='Company' icon="terp-go-home" domain="[]" context="{'group_by' : 'company_id'}" />
                        <filter string='Shop' icon="terp-go-home" domain="[]" context="{'group_by' : 'shop_id'}" />
@@ -62,6 +61,7 @@ TMS.travel
                        <filter string='State' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'state'}" />
                        <filter string='Framework' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'framework'}" />
                        <filter string='Operation  ' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'operation_id'}" />
+                       <filter string='Period' icon="terp-stock_symbol-selection" domain="[]" context="{'group_by' : 'date'}" />
                    </group>
                 </search>
             </field>
@@ -83,9 +83,10 @@ TMS.travel
                 <field name="framework" invisible="1"/> 
                 <field name="employee_id" />
                 <field name="employee2_id" />
+                <field name="waybill_income" sum="Ingresos"/>
                 <field name="route_id" />
-                <field name="departure" invisible="1"/>
-                <field name="arrival" invisible="1"/>
+                <field name="departure_id" invisible="1"/>
+                <field name="arrival_id" invisible="1"/>
                 <field name="partner_id" />
                 <field name="arrival_address_id" />
                 <field name="date_start" string="Start Sched." invisible="1"/>
@@ -99,6 +100,20 @@ TMS.travel
 		</field>
 	</record>
 
+
+    <record id="view_tms_travel_graph" model="ir.ui.view">
+        <field name="name">tms.travel.graph</field>
+        <field name="model">tms.travel</field>
+        <field name="type">graph</field>
+        <field name="arch" type="xml">
+        <graph string="Travels" type="bar">
+          <field name="unit_id"/>
+          <field name="waybill_income" operator="+"/>
+        </graph>
+      </field>
+    </record>
+
+    
 <!-- FORM View for tms.travel -->
         <record id="view_tms_travel_form" model="ir.ui.view">
             <field name="name">tms.travel.form</field>
@@ -151,8 +166,8 @@ TMS.travel
                                      attrs="{'required':[('supplier_id','!=',False)], 'invisible':[('supplier_id','=',False)]}"/>
                             </group>
                             <field name="route_id" on_change="onchange_route_id(route_id, unit_id, trailer1_id, dolly_id, trailer2_id)" colspan="4"/>
-                            <field name="departure" readonly="1" />
-                            <field name="arrival" readonly="1" />
+                            <field name="departure_id" readonly="1" />
+                            <field name="arrival_id" readonly="1" />
 			                 <field name="user_id" />
                         </group>                    
                         <notebook colspan="4">
@@ -319,7 +334,7 @@ TMS.travel
                 <field name="name" />
                 <field name="unit_id" />
                 <field name="employee_id" />
-                <field name="arrival" />
+                <field name="arrival_id" />
               </calendar>
             </field>
         </record>
