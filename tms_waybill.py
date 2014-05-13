@@ -225,7 +225,7 @@ class tms_waybill(osv.osv):
                     #print result
                 else:
                     factor_obj = self.pool.get('tms.factor')
-                    result = factor_obj.calculate(cr, uid, 'waybill', ids, 'supplier', False)                
+                    result = factor_obj.calculate(cr, uid, 'waybill', [waybill.id], 'supplier', False)                
             res[waybill.id] = result
         return res
 
@@ -360,7 +360,7 @@ class tms_waybill(osv.osv):
         'drafted_by'       : fields.many2one('res.users', 'Drafted by', readonly=True),
         'date_drafted'     : fields.datetime('Date Drafted', readonly=True),
 
-        'notes'            : fields.text('Notes', readonly=False, states={'confirmed': [('readonly', True)]}),
+        'notes'            : fields.text('Notes', readonly=False),
         
         'payment_term'     : fields.many2one('account.payment.term', 'Payment Term', readonly=False, states={'confirmed': [('readonly', True)]}),
         'fiscal_position'  : fields.many2one('account.fiscal.position', 'Fiscal Position', readonly=False, states={'confirmed': [('readonly', True)]}),
