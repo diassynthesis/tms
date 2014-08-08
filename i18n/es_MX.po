@@ -6,16 +6,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenERP Server 7.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-14 23:32+0000\n"
-"PO-Revision-Date: 2014-04-14 19:02-0600\n"
-"Last-Translator: Israel CA <israel.cruz@hesatecnica.com>\n"
+"POT-Creation-Date: 2014-08-07 19:01+0000\n"
+"PO-Revision-Date: 2014-08-07 16:37-0600\n"
+"Last-Translator: Israel Cruz Argil <israel.cruz@argil.mx>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: \n"
 "Language: es_MX\n"
-"X-Generator: Poedit 1.6.4\n"
+"X-Generator: Poedit 1.6.7\n"
 
 #. module: tms
 #: view:tms.fuelvoucher:0
@@ -120,7 +120,7 @@ msgstr "En Proceso"
 #. module: tms
 #: field:tms.waybill.taxes,account_id:0
 msgid "Tax Account"
-msgstr "Cuenta de Impuesto"
+msgstr "Cuenta Impuestos"
 
 #. module: tms
 #: view:fleet.vehicle:0 field:fleet.vehicle,unit_type_id:0
@@ -243,7 +243,7 @@ msgstr "Relacionado a Cartas Porte"
 #. module: tms
 #: model:ir.model,name:tms.model_tms_waybill_taxes
 msgid "Waybill Taxes"
-msgstr "Impuestos Carta Porte"
+msgstr "Impuestos en Carta Porte"
 
 #. module: tms
 #: help:fleet.vehicle.odometer.device,odometer_end:0
@@ -399,9 +399,9 @@ msgid "Salary Retention"
 msgstr "Retención Sueldo"
 
 #. module: tms
-#: code:addons/tms/tms.py:506 code:addons/tms/tms.py:523
-#: code:addons/tms/tms.py:533 code:addons/tms/tms.py:598
-#: code:addons/tms/tms.py:607 code:addons/tms/tms.py:617
+#: code:addons/tms/tms.py:505 code:addons/tms/tms.py:522
+#: code:addons/tms/tms.py:532 code:addons/tms/tms.py:597
+#: code:addons/tms/tms.py:606 code:addons/tms/tms.py:616
 #, python-format
 msgid "Warning!"
 msgstr "Advertencia!"
@@ -447,7 +447,7 @@ msgstr "Lugares Intermedios en Rutas"
 #. module: tms
 #: view:tms.waybill:0
 msgid "Outsourced and Not Invoiced"
-msgstr "Tercerizado y no facturado"
+msgstr "Permisionado y no facturado"
 
 #. module: tms
 #: help:tms.event.category,gps_code:0
@@ -559,7 +559,7 @@ msgstr "Reg. Gasto de Viajes"
 #. module: tms
 #: field:fleet.vehicle,current_odometer_read:0
 msgid "Last Odometer Read"
-msgstr "Última Lectura del Hubodómetro"
+msgstr "Última Lectura del Odómetro"
 
 #. module: tms
 #: model:ir.ui.menu,name:tms.menu_tms_config_route_place_form view:tms.place:0
@@ -606,7 +606,7 @@ msgstr ""
 #. module: tms
 #: view:tms.waybill:0
 msgid "Scheduled"
-msgstr "Agendado"
+msgstr "Programado"
 
 #. module: tms
 #: code:addons/tms/tms_travel.py:395
@@ -1035,10 +1035,10 @@ msgid "fuel"
 msgstr "fuel"
 
 #. module: tms
-#: code:addons/tms/tms.py:1111
+#: code:addons/tms/tms.py:1110
 #, python-format
 msgid "Could not create Odometer Record!"
-msgstr "No se pudo crear el Registro del Hubodómetro !"
+msgstr "No se pudo crear el Registro del Odómetro !"
 
 #. module: tms
 #: model:product.product,tms_category:0
@@ -1051,10 +1051,10 @@ msgid "Fuel Sequence"
 msgstr "Secuencia de Combustible"
 
 #. module: tms
-#: code:addons/tms/tms.py:1112
+#: code:addons/tms/tms.py:1111
 #, python-format
 msgid "There is no Active Odometer for Vehicle %s"
-msgstr "La Unidad %s no tiene Hubodómetro Activo"
+msgstr "La Unidad %s no tiene Odómetro Activo"
 
 #. module: tms
 #: model:ir.model,name:tms.model_tms_route
@@ -1066,7 +1066,7 @@ msgstr "Rutas"
 #. module: tms
 #: view:fleet.vehicle.odometer.device:0
 msgid "Odometer History"
-msgstr "Historial del Hubodómetro"
+msgstr "Historial del Odómetro"
 
 #. module: tms
 #: view:fleet.vehicle:0
@@ -1268,7 +1268,7 @@ msgstr "%s-%s-Ret"
 #. module: tms
 #: help:tms.expense.loan,state:0
 msgid "State of the Driver Loan. "
-msgstr "State of the Driver Loan. "
+msgstr "Estado del Préstamo del Operador"
 
 #. module: tms
 #: help:tms.waybill,account_analytic_id:0
@@ -1515,7 +1515,7 @@ msgstr ""
 #. module: tms
 #: field:tms.waybill.invoice,group_line_product:0
 msgid "Group Waybill Lines"
-msgstr "Group Waybill Lines"
+msgstr "Agrupar Líneas de Carta Porte"
 
 #. module: tms
 #: view:tms.waybill:0
@@ -2010,7 +2010,7 @@ msgstr "Saldo en Contra"
 #. module: tms
 #: field:tms.expense.loan,discount_method:0
 msgid "Discount Method"
-msgstr "Discount Method"
+msgstr "Forma de Descuento"
 
 #. module: tms
 #: help:tms.waybill,distance_real:0
@@ -2071,7 +2071,7 @@ msgid ""
 "odometer"
 msgstr ""
 "Distancia (mi/kms) acumulada del vehículo al momento de la activación de "
-"este Hubodómetro"
+"este odómetro"
 
 #. module: tms
 #: code:addons/tms/tms_fuelvoucher.py:364
@@ -2092,7 +2092,7 @@ msgid "The user will be able to Confirm Travels."
 msgstr "Puede confirmar Viajes"
 
 #. module: tms
-#: code:addons/tms/tms.py:964
+#: code:addons/tms/tms.py:963
 #, python-format
 msgid "Ending Date (%s) is less than Starting Date (%s)"
 msgstr "Fecha Final (%s) es menor que la Fecha Inicial (%s)"
@@ -2524,7 +2524,7 @@ msgstr "Lunes"
 #. module: tms
 #: selection:tms.expense.line,line_type:0
 msgid "Negative Balance"
-msgstr "Balance en Contra"
+msgstr "Saldo en Contra"
 
 #. module: tms
 #: selection:tms.expense.line,line_type:0
@@ -2590,9 +2590,7 @@ msgstr "Remolque 2"
 msgid ""
 "You can not have more than one Travel Expense Record in  Draft / Approved "
 "State"
-msgstr ""
-"You can not have more than one Travel Expense Record in  Draft / Approved "
-"State"
+msgstr "No puede tener mas de un registro en Estado Borrador / Aprobado"
 
 #. module: tms
 #: view:fleet.vehicle.odometer.device:0
@@ -2885,12 +2883,12 @@ msgstr ""
 #. module: tms
 #: field:account.invoice,waybill_shipped_ids:0
 msgid "Group Shipped Qty by Product"
-msgstr "Agrupar Producto Embarcado por Producto"
+msgstr "Sumarizar Cantidades del mismo Producto"
 
 #. module: tms
 #: model:ir.model,name:tms.model_fleet_vehicle_odometer
 msgid "Odometer log for a vehicle"
-msgstr "Registro del Hubodómetro para un vehículo"
+msgstr "Registro del odómetro para un vehículo"
 
 #. module: tms
 #: field:tms.waybill,supplier_invoice_id:0
@@ -2950,14 +2948,14 @@ msgstr "Propiedades adicionales"
 #. module: tms
 #: view:fleet.vehicle:0
 msgid "Expiry Data"
-msgstr "Dato de Vigencia"
+msgstr "Dato de Validez"
 
 #. module: tms
 #: view:fleet.vehicle.odometer.device:0
 #: model:ir.actions.act_window,name:tms.open_view_fleet_vehicle_odometer_device_form
 #: model:ir.ui.menu,name:tms.menu_tms_config_fleet_vehicle_odometer_device_form
 msgid "Vehicle Odometer Device"
-msgstr "Hubodómetro de Unidad"
+msgstr "Medidor de Unidad"
 
 #. module: tms
 #: code:addons/tms/tms_factor.py:131 selection:tms.factor,factor_type:0
@@ -3034,7 +3032,7 @@ msgstr "¿ Cancelar este Registro de Gastos de Viaje ?"
 #. module: tms
 #: model:ir.ui.menu,name:tms.tms_fleet_vehicle_odometer_menu
 msgid "Vehicles Odometer"
-msgstr "Hubodómetro de los vehículos"
+msgstr "Odómetro de los vehículos"
 
 #. module: tms
 #: field:fleet.vehicle,fleet_type:0
@@ -3107,7 +3105,7 @@ msgid "The user will be able to Set to Draft Drivers Loans Records."
 msgstr "El usuario puede regresar a Borrador los Préstamos a Operador"
 
 #. module: tms
-#: code:addons/tms/tms.py:507 code:addons/tms/tms.py:599
+#: code:addons/tms/tms.py:506 code:addons/tms/tms.py:598
 #, python-format
 msgid ""
 "You can not create a new record for this unit because theres is already a "
@@ -3241,7 +3239,7 @@ msgstr "Sencillo"
 #. module: tms
 #: field:account.invoice,waybill_rate:0
 msgid "Waybill Rate"
-msgstr "Tarifa Carta Porte"
+msgstr "Tarifa"
 
 #. module: tms
 #: selection:tms.expense.line,line_type:0
@@ -3460,8 +3458,8 @@ msgid "Red Tape"
 msgstr "Trámite"
 
 #. module: tms
-#: code:addons/tms/tms.py:390 code:addons/tms/tms.py:402
-#: code:addons/tms/tms.py:411 code:addons/tms/tms.py:422
+#: code:addons/tms/tms.py:389 code:addons/tms/tms.py:401
+#: code:addons/tms/tms.py:410 code:addons/tms/tms.py:421
 #, python-format
 msgid "Validity Error !"
 msgstr "Error en Vigencia !"
@@ -3479,10 +3477,10 @@ msgstr "move"
 #. module: tms
 #: field:tms.expense,vehicle_odometer:0
 msgid "Vehicle Odometer"
-msgstr "Hubodómetro de Unidad"
+msgstr "Odómetro de Unidad"
 
 #. module: tms
-#: code:addons/tms/tms.py:778
+#: code:addons/tms/tms.py:777
 #, python-format
 msgid "You cannot get route info because one of the places has no coordinates."
 msgstr ""
@@ -3540,7 +3538,7 @@ msgstr ""
 "Permisionarios. Debe ser de tipo Diario de Compras."
 
 #. module: tms
-#: code:addons/tms/tms.py:534
+#: code:addons/tms/tms.py:533
 #, python-format
 msgid "You can not cancel a record if is already Confirmed!!!"
 msgstr "No puede cancelar este registro si ya se encuentra Confirmado !!!"
@@ -3570,7 +3568,7 @@ msgstr ""
 #. module: tms
 #: constraint:tms.unit.kit:0
 msgid "The expiration is overlaping an existing Kit for this unit!"
-msgstr "¡ La vigencia se traslapa con un Kit existente de la unidad !"
+msgstr "¡ La expiración se traslapa con un Kit existente de la unidad !"
 
 #. module: tms
 #: sql_constraint:tms.operation:0
@@ -3603,7 +3601,7 @@ msgstr "SubTotal (Real)"
 #. module: tms
 #: model:ir.model,name:tms.model_stock_move
 msgid "Stock Move"
-msgstr "Movimiento de stock"
+msgstr "Moviemiento de stock"
 
 #. module: tms
 #: field:tms.unit.red_tape,done_by:0
@@ -3655,7 +3653,7 @@ msgstr "No puede crear Registro de Gastos de Viaje para varias unidades"
 #. module: tms
 #: view:account.invoice:0
 msgid "Grouped Products from Waybills"
-msgstr "Productos Agrupados de las Cartas Porte"
+msgstr "Agrupar Productos de Cartas Porte"
 
 #. module: tms
 #: field:tms.waybill,date_up_end_sched:0
@@ -3691,7 +3689,7 @@ msgstr "Costo por eje de Casetas"
 #: field:fleet.vehicle,active_odometer:0 help:fleet.vehicle,active_odometer:0
 #: field:fleet.vehicle.odometer,odometer_id:0 field:tms.expense,odometer_id:0
 msgid "Odometer"
-msgstr "Hubodómetro"
+msgstr "Odómetro"
 
 #. module: tms
 #: code:addons/tms/product.py:141 code:addons/tms/tms_advance.py:418
@@ -3722,7 +3720,7 @@ msgstr ""
 "haber confirmado el anterior.!!!"
 
 #. module: tms
-#: code:addons/tms/tms.py:411 code:addons/tms/tms.py:422
+#: code:addons/tms/tms.py:410 code:addons/tms/tms.py:421
 #, python-format
 msgid ""
 "You cannot have overlaping expiration dates for trailer %s !\n"
@@ -3776,7 +3774,7 @@ msgid "Trailer2"
 msgstr "Rem2"
 
 #. module: tms
-#: code:addons/tms/tms.py:778 code:addons/tms/tms.py:964
+#: code:addons/tms/tms.py:777 code:addons/tms/tms.py:963
 #: code:addons/tms/tms_fuelvoucher.py:310
 #: code:addons/tms/tms_fuelvoucher.py:496 code:addons/tms/tms_waybill.py:1201
 #: code:addons/tms/tms_waybill.py:1383
@@ -3936,7 +3934,7 @@ msgstr "Mecánico"
 #. module: tms
 #: constraint:fleet.vehicle.odometer.device:0
 msgid "You can not have Odometer End less than Odometer Start"
-msgstr "No puede tener el Hubodómetro Final menor que el Hubodómetro Inicial"
+msgstr "No puede tener el Odómetro Final menor que el Odómetro Inicial"
 
 #. module: tms
 #: code:addons/tms/tms_factor.py:127 selection:tms.factor,factor_type:0
@@ -4084,7 +4082,7 @@ msgid "Waybill %s is not assigned to a Travel"
 msgstr "La Carta Porte %s no está asignado a ningún Viaje"
 
 #. module: tms
-#: code:addons/tms/tms.py:1059 code:addons/tms/tms_expense.py:554
+#: code:addons/tms/tms.py:1058 code:addons/tms/tms_expense.py:554
 #, python-format
 msgid "Record Warning !"
 msgstr "Advertencia de Registro !"
@@ -4165,7 +4163,7 @@ msgstr "Nota"
 #. module: tms
 #: view:hr.employee:0
 msgid "Related User"
-msgstr "Usuario OpenERP"
+msgstr "Usuario"
 
 #. module: tms
 #: field:tms.waybill,replaced_waybill_id:0
@@ -4180,7 +4178,7 @@ msgstr "Útil para definir campos a usar para datos extra"
 #. module: tms
 #: help:res.partner,tms_warehouse_id:0
 msgid "Internal Fuel Warehouse to use with Fuel Vouchers."
-msgstr "Internal Fuel Warehouse to use with Fuel Vouchers."
+msgstr "Almacén Interno a usar para Vales de Combustible"
 
 #. module: tms
 #: view:tms.advance:0 selection:tms.advance,state:0
@@ -4228,12 +4226,12 @@ msgstr "Remolques"
 #: code:addons/tms/product.py:141
 #, python-format
 msgid "You can not change TMS Category for any product..."
-msgstr "You can not change TMS Category for any product..."
+msgstr "No es posible modificar la Categoría TMS para cualquier producto..."
 
 #. module: tms
 #: model:ir.model,name:tms.model_tms_waybill_shipped_grouped
 msgid "Waybill Grouped Shipped Qty by Product"
-msgstr "Waybill Grouped Shipped Qty by Product"
+msgstr "Carta Porte agrupando Cantidad de Productos"
 
 #. module: tms
 #: model:ir.model,name:tms.model_tms_event_category
@@ -4269,7 +4267,7 @@ msgstr "Tipo de Descuento"
 #. module: tms
 #: field:tms.waybill,tax_line:0
 msgid "Tax Lines"
-msgstr "Impuestos"
+msgstr "Tax Lines"
 
 #. module: tms
 #: code:addons/tms/tms_travel.py:348
@@ -4418,7 +4416,7 @@ msgid "Process"
 msgstr "En Proceso"
 
 #. module: tms
-#: code:addons/tms/tms.py:618
+#: code:addons/tms/tms.py:617
 #, python-format
 msgid "You can not cancel a record if already Confirmed!!!"
 msgstr "No puede cancelar registros que ya se encuentren Confirmados !!!"
@@ -4735,7 +4733,7 @@ msgid "Motor"
 msgstr "Motor"
 
 #. module: tms
-#: code:addons/tms/tms.py:390
+#: code:addons/tms/tms.py:389
 #, python-format
 msgid ""
 "You cannot have overlaping expiration dates for unit %s !\n"
@@ -4910,7 +4908,7 @@ msgstr "Mas Filtros..."
 #. module: tms
 #: field:product.product,tms_activity_duration:0
 msgid "Duration"
-msgstr "Duración"
+msgstr "Duraciónn"
 
 #. module: tms
 #: field:tms.travel,travel_duration_real:0
@@ -4939,7 +4937,7 @@ msgstr "Lugares en esta Ruta"
 #. module: tms
 #: field:tms.expense,odometer_log_id:0
 msgid "Odometer Record"
-msgstr "Registro de Lectura de Hubodómetro"
+msgstr "Registro de Lectura de Odómetro"
 
 #. module: tms
 #: view:tms.event:0 field:tms.event,category_id:0 view:tms.unit.category:0
@@ -4950,7 +4948,7 @@ msgstr "Categoría"
 #. module: tms
 #: field:fleet.vehicle,active_odometer_id:0
 msgid "Active Odometer"
-msgstr "Hubodómetro Activo"
+msgstr "Odómetro Activo"
 
 #. module: tms
 #: code:addons/tms/tms_expense.py:647
@@ -4960,10 +4958,10 @@ msgid ""
 "to cancel this Record and create a new one. Current Vehicle Odometer: %s "
 "Expense Record Odometer: %s"
 msgstr ""
-"El Hubodómetro de la unidad es mayor que el indicado en este Registro de "
+"El Odómetro de la unidad es mayor que el indicado en este Registro de "
 "Gastos. Debe cancelar este registro y crear uno nuevo.\n"
-"Hubodómetro Actual de la unidad:: %s Lectura de Hubodómetro del Registro de "
-"Viaje: %s"
+"Odómetro Actual de la unidad:: %s Lectura de Odómetro del Registro de Viaje: "
+"%s"
 
 #. module: tms
 #: view:tms.fuelvoucher:0 field:tms.fuelvoucher,special_tax_amount:0
@@ -5090,7 +5088,7 @@ msgid "Waybill Type"
 msgstr "Tipo Carta Porte"
 
 #. module: tms
-#: code:addons/tms/tms.py:1060 code:addons/tms/tms_expense.py:555
+#: code:addons/tms/tms.py:1059 code:addons/tms/tms_expense.py:555
 #, python-format
 msgid "There is no Active Odometer for vehicle %s"
 msgstr "No hay Odometro Activo para la unidad %s"
@@ -5168,7 +5166,7 @@ msgstr "El Préstamo ‘%s’ ha sido Cerrado aún sin estar pagado."
 #. module: tms
 #: selection:fleet.vehicle,odometer_uom:0
 msgid "Distance (mi./km)"
-msgstr "Distance (mi./km)"
+msgstr "Distancia (mi./km)"
 
 #. module: tms
 #: selection:fleet.vehicle.odometer.device,state:0 view:tms.advance:0
@@ -5243,7 +5241,7 @@ msgid "Arrival address for current Waybill."
 msgstr "Dirección Destino de la Carta Porte"
 
 #. module: tms
-#: code:addons/tms/tms.py:402
+#: code:addons/tms/tms.py:401
 #, python-format
 msgid ""
 "You cannot have overlaping expiration dates for dolly %s !\n"
@@ -5323,7 +5321,7 @@ msgstr "Anticipos de Viaje"
 #: field:tms.expense,parameter_distance:0
 #: field:tms.travel,parameter_distance:0
 msgid "Distance Parameter"
-msgstr "Parámetro de Actualización de Hubodómetro"
+msgstr "Parámetro de Actualización de Odómetro"
 
 #. module: tms
 #: field:tms.waybill.taxes,account_analytic_id:0
@@ -5365,7 +5363,7 @@ msgstr "Seguidores"
 #. module: tms
 #: model:ir.actions.act_window,name:tms.action_view_advance_payment
 msgid "Make Driver Advance Payment"
-msgstr "Realizar Pago de Anticipo"
+msgstr "Registrar Pago de Anticipo de Viaje"
 
 #. module: tms
 #: view:account.move.line:0 model:ir.model,name:tms.model_hr_employee
@@ -5671,7 +5669,7 @@ msgstr "El Préstamo ‘%s’ ha sido Aprobado."
 #: code:addons/tms/tms_expense.py:1002
 #, python-format
 msgid "Travel Expense Payment"
-msgstr "Pago de Registro de Gastos de Viaje"
+msgstr "Travel Expense Payment"
 
 #. module: tms
 #: field:tms.route,fuel_efficiency_drive_unit:0
@@ -5769,12 +5767,12 @@ msgstr "Falta configuración !"
 #. module: tms
 #: field:account.invoice,invoice_negative_taxes_sum:0
 msgid "Negative Taxes"
-msgstr "Impuestos Retenidos"
+msgstr "Retenciones de Impuesto"
 
 #. module: tms
 #: field:fleet.vehicle,odometer_uom:0 help:fleet.vehicle,odometer_uom:0
 msgid "Odometer UoM"
-msgstr "Odometer UoM"
+msgstr "UdM Hubodómetro"
 
 #. module: tms
 #: field:res.partner,tms_fuel_internal:0
@@ -5890,7 +5888,7 @@ msgstr "Cargar en"
 #. module: tms
 #: help:tms.waybill.invoice,group_line_product:0
 msgid "Group Waybill Lines Quantity & Subtotal by Product"
-msgstr "Agrupar de las Cartas Porte la Cantidad y Subtotal por Producto"
+msgstr "Agrupa las Cantidades de Producto"
 
 #. module: tms
 #: view:tms.event.action:0
@@ -6255,7 +6253,7 @@ msgid "Product quantity must be greater than zero."
 msgstr "La Cantidad de Producto debe ser mayor a cero."
 
 #. module: tms
-#: code:addons/tms/tms.py:258
+#: code:addons/tms/tms.py:257
 #, python-format
 msgid "Odometer device created when vehicle %s was created"
 msgstr "Medidor creado cuando la unidad %s fue creada"
@@ -6413,7 +6411,7 @@ msgid "Loan '%s' is set to Confirmed."
 msgstr "El Préstamo ‘%s’ ha sido Confirmado."
 
 #. module: tms
-#: code:addons/tms/tms.py:524 code:addons/tms/tms.py:608
+#: code:addons/tms/tms.py:523 code:addons/tms/tms.py:607
 #, python-format
 msgid ""
 "You can not delete a record if is already Confirmed!!! Click Cancel button "
@@ -6486,7 +6484,7 @@ msgstr "Unidades"
 #: view:fleet.vehicle.odometer.device:0
 #: field:fleet.vehicle.odometer.device,odometer_reading_ids:0
 msgid "Odometer Readings"
-msgstr "Lecturas de Hubodómetros"
+msgstr "Lecturas de Odómetros"
 
 #. module: tms
 #: code:addons/tms/tms_expense.py:1015
@@ -6507,4 +6505,4 @@ msgstr "Vehículos"
 #. module: tms
 #: model:res.groups,name:tms.group_fuelvoucher_cancel
 msgid "Can Cancel Travel Fuel Vouchers"
-msgstr "Puede Cancelar Vales de Combustible."
+msgstr "Puede Cancelar Vales de Combustible"

@@ -63,12 +63,12 @@ class tms_unit_category(osv.osv):
         return dict(res)
 
     _columns = {
-        'name': openerp.osv.fields.char('Name', size=30, required=True, translate=True),
-        'complete_name': openerp.osv.fields.function(_name_get_fnc, method=True, type="char", size=300, string='Complete Name', store=True),
-        'parent_id': openerp.osv.fields.many2one('tms.unit.category','Parent Category', select=True),
-        'child_id': openerp.osv.fields.one2many('tms.unit.category', 'parent_id', string='Child Categories'),
-        'sequence': openerp.osv.fields.integer('Sequence', help="Gives the sequence order when displaying this list of categories."),
-        'type': openerp.osv.fields.selection([
+        'name': fields.char('Name', size=30, required=True, translate=True),
+        'complete_name': fields.function(_name_get_fnc, method=True, type="char", size=300, string='Complete Name', store=True),
+        'parent_id': fields.many2one('tms.unit.category','Parent Category', select=True),
+        'child_id': fields.one2many('tms.unit.category', 'parent_id', string='Child Categories'),
+        'sequence': fields.integer('Sequence', help="Gives the sequence order when displaying this list of categories."),
+        'type': fields.selection([
                             ('view','View'), 
                             ('unit_type','Unit Type'), 
                             ('brand','Motor Brand'), 
@@ -89,13 +89,13 @@ class tms_unit_category(osv.osv):
  - Red Tape Types: Use it to define all kind of Red Tapes like Unit registration, Traffic Violations, etc.
 """
                 ),
-        'fuel_efficiency_drive_unit': openerp.osv.fields.float('Fuel Efficiency Drive Unit', required=False, digits=(14,4)),
-        'fuel_efficiency_1trailer': openerp.osv.fields.float('Fuel Efficiency One Trailer', required=False, digits=(14,4)),
-        'fuel_efficiency_2trailer': openerp.osv.fields.float('Fuel Efficiency Two Trailer', required=False, digits=(14,4)),
-        'notes': openerp.osv.fields.text('Notes'),
-        'active': openerp.osv.fields.boolean('Active'),
-        'mandatory': openerp.osv.fields.boolean('Mandatory', help="This field is used only when field <Category Type> = expiry"),
-        'company_id': openerp.osv.fields.many2one('res.company', 'Company', required=False),
+        'fuel_efficiency_drive_unit': fields.float('Fuel Efficiency Drive Unit', required=False, digits=(14,4)),
+        'fuel_efficiency_1trailer': fields.float('Fuel Efficiency One Trailer', required=False, digits=(14,4)),
+        'fuel_efficiency_2trailer': fields.float('Fuel Efficiency Two Trailer', required=False, digits=(14,4)),
+        'notes': fields.text('Notes'),
+        'active': fields.boolean('Active'),
+        'mandatory': fields.boolean('Mandatory', help="This field is used only when field <Category Type> = expiry"),
+        'company_id': fields.many2one('res.company', 'Company', required=False),
     }
 
     _defaults = {
@@ -155,17 +155,17 @@ class fleet_vehicle(osv.osv):
 
 
     _columns = {
-        'shop_id': openerp.osv.fields.many2one('sale.shop', 'Shop', required=True, readonly=False),
-#        'company_id': openerp.osv.fields.related('shop_id','company_id',type='many2one',relation='res.company',string='Company',store=True,readonly=True),
-        'name': openerp.osv.fields.char('Unit Name', size=64, required=True),
-        'year_model':openerp.osv.fields.char('Year Model', size=64), 
-        'unit_type_id':openerp.osv.fields.many2one('tms.unit.category', 'Unit Type', domain="[('type','=','unit_type')]"),
-#        'unit_brand_id':openerp.osv.fields.many2one('tms.unit.category', 'Brand', domain="[('type','=','brand')]"),
-#        'unit_model_id':openerp.osv.fields.many2one('tms.unit.category', 'Model', domain="[('type','=','model')]"),
-        'unit_motor_id':openerp.osv.fields.many2one('tms.unit.category', 'Motor', domain="[('type','=','motor')]"),
-        'serial_number': openerp.osv.fields.char('Serial Number', size=64),
-        'vin': openerp.osv.fields.char('VIN', size=64),
-        'day_no_circulation': openerp.osv.fields.selection([
+        'shop_id': fields.many2one('sale.shop', 'Shop', required=True, readonly=False),
+#        'company_id': fields.related('shop_id','company_id',type='many2one',relation='res.company',string='Company',store=True,readonly=True),
+        'name': fields.char('Unit Name', size=64, required=True),
+        'year_model':fields.char('Year Model', size=64), 
+        'unit_type_id':fields.many2one('tms.unit.category', 'Unit Type', domain="[('type','=','unit_type')]"),
+#        'unit_brand_id':fields.many2one('tms.unit.category', 'Brand', domain="[('type','=','brand')]"),
+#        'unit_model_id':fields.many2one('tms.unit.category', 'Model', domain="[('type','=','model')]"),
+        'unit_motor_id':fields.many2one('tms.unit.category', 'Motor', domain="[('type','=','motor')]"),
+        'serial_number': fields.char('Serial Number', size=64),
+        'vin': fields.char('VIN', size=64),
+        'day_no_circulation': fields.selection([
                             ('sunday','Sunday'), 
                             ('monday','Monday'), 
                             ('tuesday','Tuesday'), 
@@ -175,35 +175,34 @@ class fleet_vehicle(osv.osv):
                             ('saturday','Saturday'), 
                             ('none','Not Applicable'), 
                            ], string="Day no Circulation", translate=True),
-        'registration': openerp.osv.fields.char('Registration', size=64), # Tarjeta de Circulacion
-        'gps_supplier_id': openerp.osv.fields.many2one('res.partner', 'GPS Supplier', required=False, readonly=False, 
+        'registration': fields.char('Registration', size=64), # Tarjeta de Circulacion
+        'gps_supplier_id': fields.many2one('res.partner', 'GPS Supplier', required=False, readonly=False, 
                                             domain="[('tms_category','=','gps'),('is_company', '=', True)]"),
-        'gps_id': openerp.osv.fields.char('GPS Id', size=64),
-        'employee_id': openerp.osv.fields.many2one('hr.employee', 'Driver', required=False, domain=[('tms_category', '=', 'driver')], help="This is used in TMS Module..."),
-        'fleet_type': openerp.osv.fields.selection([('tractor','Motorized Unit'), ('trailer','Trailer'), ('dolly','Dolly'), ('other','Other')], 'Unit Fleet Type', required=True),
-        'avg_odometer_uom_per_day'  :openerp.osv.fields.float('Avg Distance/Time per day', required=False, digits=(16,2), help='Specify average distance traveled (mi./kms) or Time (Days, hours) of use per day for this'),
+        'gps_id': fields.char('GPS Id', size=64),
+        'employee_id': fields.many2one('hr.employee', 'Driver', required=False, domain=[('tms_category', '=', 'driver')], help="This is used in TMS Module..."),
+        'fleet_type': fields.selection([('tractor','Motorized Unit'), ('trailer','Trailer'), ('dolly','Dolly'), ('other','Other')], 'Unit Fleet Type', required=True),
+        'avg_odometer_uom_per_day'  :fields.float('Avg Distance/Time per day', required=False, digits=(16,2), help='Specify average distance traveled (mi./kms) or Time (Days, hours) of use per day for this'),
         
-        'notes'                 : openerp.osv.fields.text('Notes'),
-        'active'                : openerp.osv.fields.boolean('Active'),
-        'unit_extradata_ids'    : openerp.osv.fields.one2many('tms.unit.extradata', 'unit_id', 'Extra Data'),
-        'unit_expiry_ids'       : openerp.osv.fields.one2many('tms.unit.expiry', 'unit_id', 'Expiry Extra Data'), 
-        'unit_photo_ids'        : openerp.osv.fields.one2many('tms.unit.photo', 'unit_id', 'Photos'), 
-        'unit_active_history_ids' : openerp.osv.fields.one2many('tms.unit.active_history', 'unit_id', 'Active/Inactive History'), 
-        'unit_red_tape_ids'     : openerp.osv.fields.one2many('tms.unit.red_tape', 'unit_id', 'Unit Red Tapes'), 
-        'supplier_unit'         : openerp.osv.fields.boolean('Supplier Unit'),
-        'supplier_id'           : openerp.osv.fields.many2one('res.partner', 'Supplier', required=False, readonly=False, 
+        'notes'                 : fields.text('Notes'),
+        'active'                : fields.boolean('Active'),
+        'unit_extradata_ids'    : fields.one2many('tms.unit.extradata', 'unit_id', 'Extra Data'),
+        'unit_expiry_ids'       : fields.one2many('tms.unit.expiry', 'unit_id', 'Expiry Extra Data'), 
+        'unit_photo_ids'        : fields.one2many('tms.unit.photo', 'unit_id', 'Photos'), 
+        'unit_active_history_ids' : fields.one2many('tms.unit.active_history', 'unit_id', 'Active/Inactive History'), 
+        'unit_red_tape_ids'     : fields.one2many('tms.unit.red_tape', 'unit_id', 'Unit Red Tapes'), 
+        'supplier_unit'         : fields.boolean('Supplier Unit'),
+        'supplier_id'           : fields.many2one('res.partner', 'Supplier', required=False, readonly=False, 
                                             domain="[('tms_category','=','none'),('is_company', '=', True)]"),
-        'latitude'              : openerp.osv.fields.float('Lat', required=False, digits=(20,10), help='GPS Latitude'),
-        'longitude'             : openerp.osv.fields.float('Lng', required=False, digits=(20,10), help='GPS Longitude'),
-        'last_position'         : openerp.osv.fields.char('Last Position', size=250),
-        'last_position_update'  : openerp.osv.fields.datetime('Last GPS Update'),
-        'active_odometer'       : openerp.osv.fields.float('Odometer', required=False, digits=(20,10), help='Odometer'),
-        'active_odometer_id'    : openerp.osv.fields.function(_get_current_odometer, type='many2one', relation="fleet.vehicle.odometer.device", string="Active Odometer"),
-        'current_odometer_read' : openerp.osv.fields.related('active_odometer_id', 'odometer_end', type='float', string='Last Odometer Read', readonly=True),
-        'odometer_uom'          : openerp.osv.fields.selection([('distance','Distance (mi./km)'),
+        'latitude'              : fields.float('Lat', required=False, digits=(20,10), help='GPS Latitude'),
+        'longitude'             : fields.float('Lng', required=False, digits=(20,10), help='GPS Longitude'),
+        'last_position'         : fields.char('Last Position', size=250),
+        'last_position_update'  : fields.datetime('Last GPS Update'),
+        'active_odometer'       : fields.float('Odometer', required=False, digits=(20,10), help='Odometer'),
+        'active_odometer_id'    : fields.function(_get_current_odometer, type='many2one', relation="fleet.vehicle.odometer.device", string="Active Odometer"),
+        'current_odometer_read' : fields.related('active_odometer_id', 'odometer_end', type='float', string='Last Odometer Read', readonly=True),
+        'odometer_uom'          : fields.selection([('distance','Distance (mi./km)'),
                                                                 ('hours','Time (Hours)'),
                                                                 ('days','Time (Days)')], 'Odometer UoM', help="Odometer UoM"),
-        
 
     }
 
@@ -290,9 +289,9 @@ class tms_unit_photo(osv.osv):
     _description = "Units Photos"
 
     _columns = {
-        'unit_id' : openerp.osv.fields.many2one('fleet.vehicle', 'Unit Name', required=True, ondelete='cascade'),
-        'name': openerp.osv.fields.char('Description', size=64, required=True),
-        'photo': openerp.osv.fields.binary('Photo'),
+        'unit_id' : fields.many2one('fleet.vehicle', 'Unit Name', required=True, ondelete='cascade'),
+        'name': fields.char('Description', size=64, required=True),
+        'photo': fields.binary('Photo'),
         }
 
     _sql_constraints = [
@@ -310,9 +309,9 @@ class tms_unit_extradata(osv.osv):
     _rec_name = "extra_value"
 
     _columns = {
-        'unit_id'       : openerp.osv.fields.many2one('fleet.vehicle', 'Unit Name', required=True, ondelete='cascade', select=True,),        
-        'extra_data_id' :openerp.osv.fields.many2one('tms.unit.category', 'Field', domain="[('type','=','extra_data')]", required=True),
-        'extra_value'   : openerp.osv.fields.char('Valor', size=64, required=True),
+        'unit_id'       : fields.many2one('fleet.vehicle', 'Unit Name', required=True, ondelete='cascade', select=True,),        
+        'extra_data_id' :fields.many2one('tms.unit.category', 'Field', domain="[('type','=','extra_data')]", required=True),
+        'extra_value'   : fields.char('Valor', size=64, required=True),
         }
 
     _sql_constraints = [
@@ -328,10 +327,10 @@ class tms_unit_expiry(osv.osv):
     _description = "Expiry Extra Data for Units"
 
     _columns = {
-        'unit_id'       : openerp.osv.fields.many2one('fleet.vehicle', 'Unit Name', required=True, ondelete='cascade', select=True,),        
-        'expiry_id'     :openerp.osv.fields.many2one('tms.unit.category', 'Field', domain="[('type','=','expiry')]", required=True),
-        'extra_value'   : openerp.osv.fields.date('Value', required=True),
-        'name'          : openerp.osv.fields.char('Valor', size=10, required=True),
+        'unit_id'       : fields.many2one('fleet.vehicle', 'Unit Name', required=True, ondelete='cascade', select=True,),        
+        'expiry_id'     :fields.many2one('tms.unit.category', 'Field', domain="[('type','=','expiry')]", required=True),
+        'extra_value'   : fields.date('Value', required=True),
+        'name'          : fields.char('Valor', size=10, required=True),
         }
 
     _sql_constraints = [
@@ -354,20 +353,20 @@ class tms_unit_kit(osv.osv):
     _description = "Units Kits"
 
     _columns = {
-        'name'          : openerp.osv.fields.char('Name', size=64, required=True),
-        'unit_id'       : openerp.osv.fields.many2one('fleet.vehicle', 'Unit', required=True),
-        'unit_type'     : openerp.osv.fields.related('unit_id', 'unit_type_id', type='many2one', relation='tms.unit.category', string='Unit Type', store=True, readonly=True),
-        'trailer1_id'   : openerp.osv.fields.many2one('fleet.vehicle', 'Trailer 1', required=True),
-        'trailer1_type' : openerp.osv.fields.related('trailer1_id', 'unit_type_id', type='many2one', relation='tms.unit.category', string='Trailer 1 Type', store=True, readonly=True),
-        'dolly_id'      : openerp.osv.fields.many2one('fleet.vehicle', 'Dolly'),
-        'dolly_type'    : openerp.osv.fields.related('dolly_id', 'unit_type_id', type='many2one', relation='tms.unit.category', string='Dolly Type', store=True, readonly=True),
-        'trailer2_id'   : openerp.osv.fields.many2one('fleet.vehicle', 'Trailer 2'),
-        'trailer2_type' : openerp.osv.fields.related('trailer2_id', 'unit_type_id', type='many2one', relation='tms.unit.category', string='Trailer 2 Type', store=True, readonly=True),
-        'employee_id'   : openerp.osv.fields.many2one('hr.employee', 'Driver', domain=[('tms_category', '=', 'driver')]),
-        'date_start'    : openerp.osv.fields.datetime('Date start', required=True),
-        'date_end'      : openerp.osv.fields.datetime('Date end', required=True),
-        'notes'         : openerp.osv.fields.text('Notes'),
-        'active'            : openerp.osv.fields.boolean('Active'),        
+        'name'          : fields.char('Name', size=64, required=True),
+        'unit_id'       : fields.many2one('fleet.vehicle', 'Unit', required=True),
+        'unit_type'     : fields.related('unit_id', 'unit_type_id', type='many2one', relation='tms.unit.category', string='Unit Type', store=True, readonly=True),
+        'trailer1_id'   : fields.many2one('fleet.vehicle', 'Trailer 1', required=True),
+        'trailer1_type' : fields.related('trailer1_id', 'unit_type_id', type='many2one', relation='tms.unit.category', string='Trailer 1 Type', store=True, readonly=True),
+        'dolly_id'      : fields.many2one('fleet.vehicle', 'Dolly'),
+        'dolly_type'    : fields.related('dolly_id', 'unit_type_id', type='many2one', relation='tms.unit.category', string='Dolly Type', store=True, readonly=True),
+        'trailer2_id'   : fields.many2one('fleet.vehicle', 'Trailer 2'),
+        'trailer2_type' : fields.related('trailer2_id', 'unit_type_id', type='many2one', relation='tms.unit.category', string='Trailer 2 Type', store=True, readonly=True),
+        'employee_id'   : fields.many2one('hr.employee', 'Driver', domain=[('tms_category', '=', 'driver')]),
+        'date_start'    : fields.datetime('Date start', required=True),
+        'date_end'      : fields.datetime('Date end', required=True),
+        'notes'         : fields.text('Notes'),
+        'active'            : fields.boolean('Active'),        
         }
 
     _defaults = {
@@ -463,21 +462,21 @@ class tms_unit_active_history(osv.osv):
     _description = "Units Active / Inactive history"
 
     _columns = {
-        'state'             : openerp.osv.fields.selection([('draft','Draft'), ('confirmed','Confirmed'), ('cancel','Cancelled')], 'State', readonly=True),
-        'unit_id'           : openerp.osv.fields.many2one('fleet.vehicle', 'Unit Name', required=True, ondelete='cascade', domain=[('active', 'in', ('true', 'false'))]),
-        'unit_type_id'      : openerp.osv.fields.related('unit_id', 'unit_type_id', type='many2one', relation='tms.unit.category', store=True, string='Unit Type'),
-        'prev_state'        : openerp.osv.fields.selection([('active','Active'), ('inactive','Inactive')], 'Previous State', readonly=True),
-        'new_state'         : openerp.osv.fields.selection([('active','Active'), ('inactive','Inactive')], 'New State', readonly=True),
-        'date'              : openerp.osv.fields.datetime('Date', states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)]}, required=True),
-        'state_cause_id'    : openerp.osv.fields.many2one('tms.unit.category', 'Active/Inactive Cause', domain="[('type','=','active_cause')]", states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)]}, required=True),
-        'name'              : openerp.osv.fields.char('Description', size=64, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)]}, required=True),
-        'notes'             : openerp.osv.fields.text('Notes', states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)]}, required=False),
-        'create_uid'        : openerp.osv.fields.many2one('res.users', 'Created by', readonly=True),
-        'create_date'       : openerp.osv.fields.datetime('Creation Date', readonly=True, select=True),
-        'confirmed_by'      : openerp.osv.fields.many2one('res.users', 'Confirmed by', readonly=True),
-        'date_confirmed'    : openerp.osv.fields.datetime('Date Confirmed', readonly=True),
-        'cancelled_by'      : openerp.osv.fields.many2one('res.users', 'Cancelled by', readonly=True),
-        'date_cancelled'    : openerp.osv.fields.datetime('Date Cancelled', readonly=True),
+        'state'             : fields.selection([('draft','Draft'), ('confirmed','Confirmed'), ('cancel','Cancelled')], 'State', readonly=True),
+        'unit_id'           : fields.many2one('fleet.vehicle', 'Unit Name', required=True, ondelete='cascade', domain=[('active', 'in', ('true', 'false'))]),
+        'unit_type_id'      : fields.related('unit_id', 'unit_type_id', type='many2one', relation='tms.unit.category', store=True, string='Unit Type'),
+        'prev_state'        : fields.selection([('active','Active'), ('inactive','Inactive')], 'Previous State', readonly=True),
+        'new_state'         : fields.selection([('active','Active'), ('inactive','Inactive')], 'New State', readonly=True),
+        'date'              : fields.datetime('Date', states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)]}, required=True),
+        'state_cause_id'    : fields.many2one('tms.unit.category', 'Active/Inactive Cause', domain="[('type','=','active_cause')]", states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)]}, required=True),
+        'name'              : fields.char('Description', size=64, states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)]}, required=True),
+        'notes'             : fields.text('Notes', states={'cancel':[('readonly',True)], 'confirmed':[('readonly',True)]}, required=False),
+        'create_uid'        : fields.many2one('res.users', 'Created by', readonly=True),
+        'create_date'       : fields.datetime('Creation Date', readonly=True, select=True),
+        'confirmed_by'      : fields.many2one('res.users', 'Confirmed by', readonly=True),
+        'date_confirmed'    : fields.datetime('Date Confirmed', readonly=True),
+        'cancelled_by'      : fields.many2one('res.users', 'Cancelled by', readonly=True),
+        'date_cancelled'    : fields.datetime('Date Cancelled', readonly=True),
 
         }
 
@@ -551,32 +550,32 @@ class tms_unit_red_tape(osv.osv):
     _description = "Units Red Tape history"
 
     _columns = {
-        'state'             : openerp.osv.fields.selection([('draft','Draft'), ('pending','Pending'), ('progress','Progress'), ('done','Done'), ('cancel','Cancelled')], 'State', readonly=True),
-        'unit_id'           : openerp.osv.fields.many2one('fleet.vehicle', 'Unit Name', required=True, ondelete='cascade', domain=[('active', 'in', ('true', 'false'))],
+        'state'             : fields.selection([('draft','Draft'), ('pending','Pending'), ('progress','Progress'), ('done','Done'), ('cancel','Cancelled')], 'State', readonly=True),
+        'unit_id'           : fields.many2one('fleet.vehicle', 'Unit Name', required=True, ondelete='cascade', domain=[('active', 'in', ('true', 'false'))],
                                                             readonly=True, states={'draft':[('readonly',False)]} ),
-        'unit_type_id'      : openerp.osv.fields.related('unit_id', 'unit_type_id', type='many2one', relation='tms.unit.category', store=True, string='Unit Type', readonly=True),
-        'date'              : openerp.osv.fields.datetime('Date', required=True, readonly=True, states={'draft':[('readonly',False)], 'pending':[('readonly',False)]} ),
-        'date_start'        : openerp.osv.fields.datetime('Date Start', readonly=True),
-        'date_end'          : openerp.osv.fields.datetime('Date End', readonly=True),
-        'red_tape_id'       : openerp.osv.fields.many2one('tms.unit.category', 'Red Tape', domain="[('type','=','red_tape')]",  required=True,
+        'unit_type_id'      : fields.related('unit_id', 'unit_type_id', type='many2one', relation='tms.unit.category', store=True, string='Unit Type', readonly=True),
+        'date'              : fields.datetime('Date', required=True, readonly=True, states={'draft':[('readonly',False)], 'pending':[('readonly',False)]} ),
+        'date_start'        : fields.datetime('Date Start', readonly=True),
+        'date_end'          : fields.datetime('Date End', readonly=True),
+        'red_tape_id'       : fields.many2one('tms.unit.category', 'Red Tape', domain="[('type','=','red_tape')]",  required=True,
                                 readonly=True, states={'draft':[('readonly',False)]} ),
-        'partner_id'        : openerp.osv.fields.many2one('res.partner', 'Partner', states={'cancel':[('readonly',True)], 'done':[('readonly',True)]}, required=False),
-        'name'              : openerp.osv.fields.char('Description', size=64, required=True, readonly=True, states={'draft':[('readonly',False)], 'pending':[('readonly',False)]} ),
-        'notes'             : openerp.osv.fields.text('Notes', states={'cancel':[('readonly',True)], 'done':[('readonly',True)]}, required=False),
-        'amount'            : openerp.osv.fields.float('Amount', required=True, digits_compute= dp.get_precision('Sale Price'), readonly=False, states={'cancel':[('readonly',True)], 'done':[('readonly',True)]} ),
-        'amount_paid'       : openerp.osv.fields.float('Amount Paid', required=True, digits_compute= dp.get_precision('Sale Price'), readonly=False, states={'cancel':[('readonly',True)], 'done':[('readonly',True)]} ),
-        'create_uid'        : openerp.osv.fields.many2one('res.users', 'Created by', readonly=True),
-        'create_date'       : openerp.osv.fields.datetime('Creation Date', readonly=True, select=True),
-        'pending_by'        : openerp.osv.fields.many2one('res.users', 'Pending by', readonly=True),
-        'date_pending'      : openerp.osv.fields.datetime('Date Pending', readonly=True),
-        'progress_by'       : openerp.osv.fields.many2one('res.users', 'Progress by', readonly=True),
-        'date_progress'     : openerp.osv.fields.datetime('Date Progress', readonly=True),
-        'done_by'           : openerp.osv.fields.many2one('res.users', 'Done by', readonly=True),
-        'date_done'         : openerp.osv.fields.datetime('Date Done', readonly=True),
-        'cancelled_by'      : openerp.osv.fields.many2one('res.users', 'Cancelled by', readonly=True),
-        'date_cancelled'    : openerp.osv.fields.datetime('Date Cancelled', readonly=True),
-        'drafted_by'        : openerp.osv.fields.many2one('res.users', 'Drafted by', readonly=True),
-        'date_drafted'      : openerp.osv.fields.datetime('Date Drafted', readonly=True),
+        'partner_id'        : fields.many2one('res.partner', 'Partner', states={'cancel':[('readonly',True)], 'done':[('readonly',True)]}, required=False),
+        'name'              : fields.char('Description', size=64, required=True, readonly=True, states={'draft':[('readonly',False)], 'pending':[('readonly',False)]} ),
+        'notes'             : fields.text('Notes', states={'cancel':[('readonly',True)], 'done':[('readonly',True)]}, required=False),
+        'amount'            : fields.float('Amount', required=True, digits_compute= dp.get_precision('Sale Price'), readonly=False, states={'cancel':[('readonly',True)], 'done':[('readonly',True)]} ),
+        'amount_paid'       : fields.float('Amount Paid', required=True, digits_compute= dp.get_precision('Sale Price'), readonly=False, states={'cancel':[('readonly',True)], 'done':[('readonly',True)]} ),
+        'create_uid'        : fields.many2one('res.users', 'Created by', readonly=True),
+        'create_date'       : fields.datetime('Creation Date', readonly=True, select=True),
+        'pending_by'        : fields.many2one('res.users', 'Pending by', readonly=True),
+        'date_pending'      : fields.datetime('Date Pending', readonly=True),
+        'progress_by'       : fields.many2one('res.users', 'Progress by', readonly=True),
+        'date_progress'     : fields.datetime('Date Progress', readonly=True),
+        'done_by'           : fields.many2one('res.users', 'Done by', readonly=True),
+        'date_done'         : fields.datetime('Date Done', readonly=True),
+        'cancelled_by'      : fields.many2one('res.users', 'Cancelled by', readonly=True),
+        'date_cancelled'    : fields.datetime('Date Cancelled', readonly=True),
+        'drafted_by'        : fields.many2one('res.users', 'Drafted by', readonly=True),
+        'date_drafted'      : fields.datetime('Date Drafted', readonly=True),
 
         }
 
@@ -662,14 +661,14 @@ class tms_place(osv.osv):
 
 
     _columns = {
-        'company_id'    : openerp.osv.fields.many2one('res.company', 'Company', required=False),
-        'name'          : openerp.osv.fields.char('Place', size=64, required=True, select=True),
-        'complete_name' : openerp.osv.fields.function(_get_place_and_state, method=True, type="char", size=100, string='Complete Name', store=True),
-        'state_id'      : openerp.osv.fields.many2one('res.country.state', 'State Name', required=True),
-        'country_id'    : openerp.osv.fields.related('state_id', 'country_id', type='many2one', relation='res.country', string='Country'),
-        'latitude'      : openerp.osv.fields.float('Latitude', required=False, digits=(20,10), help='GPS Latitude'),
-        'longitude'     : openerp.osv.fields.float('Longitude', required=False, digits=(20,10), help='GPS Longitude'),
-        'route_ids'     : openerp.osv.fields.many2many('tms.route', 'tms_route_places_rel', 'place_id', 'route_id', 'Routes with this Place'),        
+        'company_id'    : fields.many2one('res.company', 'Company', required=False),
+        'name'          : fields.char('Place', size=64, required=True, select=True),
+        'complete_name' : fields.function(_get_place_and_state, method=True, type="char", size=100, string='Complete Name', store=True),
+        'state_id'      : fields.many2one('res.country.state', 'State Name', required=True),
+        'country_id'    : fields.related('state_id', 'country_id', type='many2one', relation='res.country', string='Country'),
+        'latitude'      : fields.float('Latitude', required=False, digits=(20,10), help='GPS Latitude'),
+        'longitude'     : fields.float('Longitude', required=False, digits=(20,10), help='GPS Longitude'),
+        'route_ids'     : fields.many2many('tms.route', 'tms_route_places_rel', 'place_id', 'route_id', 'Routes with this Place'),        
     }
 
     _rec_name = 'complete_name'
@@ -706,19 +705,19 @@ class tms_route(osv.osv):
     _description = 'Routes'
     
     _columns = {
-        'company_id': openerp.osv.fields.many2one('res.company', 'Company', required=False),
-        'name' : openerp.osv.fields.char('Route Name', size=64, required=True, select=True),
-        'departure_id': openerp.osv.fields.many2one('tms.place', 'Departure', required=True),
-        'arrival_id': openerp.osv.fields.many2one('tms.place', 'Arrival', required=True),
-        'distance':openerp.osv.fields.float('Distance (mi./kms)', required=True, digits=(14,4), help='Route distance (mi./kms)'),
-        'places_ids' : openerp.osv.fields.one2many('tms.route.place', 'route_id', 'Intermediate places in Route'),
-        'travel_time':openerp.osv.fields.float('Travel Time (hrs)', required=True, digits=(14,4), help='Route travel time (hours)'),
-        'route_fuelefficiency_ids' : openerp.osv.fields.one2many('tms.route.fuelefficiency', 'tms_route_id', 'Fuel Efficiency by Motor type'),
-        'fuel_efficiency_drive_unit': openerp.osv.fields.float('Fuel Efficiency Drive Unit', required=False, digits=(14,4)),
-        'fuel_efficiency_1trailer': openerp.osv.fields.float('Fuel Efficiency One Trailer', required=False, digits=(14,4)),
-        'fuel_efficiency_2trailer': openerp.osv.fields.float('Fuel Efficiency Two Trailer', required=False, digits=(14,4)),
-        'notes': openerp.osv.fields.text('Notes'),
-        'active':openerp.osv.fields.boolean('Active'),
+        'company_id': fields.many2one('res.company', 'Company', required=False),
+        'name' : fields.char('Route Name', size=64, required=True, select=True),
+        'departure_id': fields.many2one('tms.place', 'Departure', required=True),
+        'arrival_id': fields.many2one('tms.place', 'Arrival', required=True),
+        'distance':fields.float('Distance (mi./kms)', required=True, digits=(14,4), help='Route distance (mi./kms)'),
+        'places_ids' : fields.one2many('tms.route.place', 'route_id', 'Intermediate places in Route'),
+        'travel_time':fields.float('Travel Time (hrs)', required=True, digits=(14,4), help='Route travel time (hours)'),
+        'route_fuelefficiency_ids' : fields.one2many('tms.route.fuelefficiency', 'tms_route_id', 'Fuel Efficiency by Motor type'),
+        'fuel_efficiency_drive_unit': fields.float('Fuel Efficiency Drive Unit', required=False, digits=(14,4)),
+        'fuel_efficiency_1trailer': fields.float('Fuel Efficiency One Trailer', required=False, digits=(14,4)),
+        'fuel_efficiency_2trailer': fields.float('Fuel Efficiency Two Trailer', required=False, digits=(14,4)),
+        'notes': fields.text('Notes'),
+        'active':fields.boolean('Active'),
 
         }
 
@@ -796,11 +795,11 @@ class tms_route_place(osv.osv):
     _description = 'Intermediate Places in Routes'
 
     _columns = {
-        'route_id'  : openerp.osv.fields.many2one('tms.route', 'Route', required=True),
-        'place_id'  : openerp.osv.fields.many2one('tms.place', 'Place', required=True),
-        'state_id'  : openerp.osv.fields.related('place_id', 'state_id', type='many2one', relation='res.country.state', string='State', store=True, readonly=True),
-        'country_id': openerp.osv.fields.related('place_id', 'country_id', type='many2one', relation='res.country', string='Country', store=True, readonly=True),
-        'sequence'  : openerp.osv.fields.integer('Sequence', help="Gives the sequence order when displaying this list."),
+        'route_id'  : fields.many2one('tms.route', 'Route', required=True),
+        'place_id'  : fields.many2one('tms.place', 'Place', required=True),
+        'state_id'  : fields.related('place_id', 'state_id', type='many2one', relation='res.country.state', string='State', store=True, readonly=True),
+        'country_id': fields.related('place_id', 'country_id', type='many2one', relation='res.country', string='Country', store=True, readonly=True),
+        'sequence'  : fields.integer('Sequence', help="Gives the sequence order when displaying this list."),
     }
 
     _defaults = {
@@ -816,10 +815,10 @@ class tms_route_fuelefficiency(osv.osv):
     _description = "Fuel Efficiency by Motor"
 
     _columns = {
-        'tms_route_id' : openerp.osv.fields.many2one('tms.route', 'Route', required=True),        
-        'motor_id':openerp.osv.fields.many2one('tms.unit.category', 'Motor', domain="[('type','=','motor')]", required=True),
-        'type': openerp.osv.fields.selection([('tractor','Drive Unit'), ('one_trailer','Single Trailer'), ('two_trailer','Double Trailer')], 'Type', required=True),
-        'performance' :openerp.osv.fields.float('Performance', required=True, digits=(14,4), help='Fuel Efficiency for this motor type'),
+        'tms_route_id' : fields.many2one('tms.route', 'Route', required=True),        
+        'motor_id':fields.many2one('tms.unit.category', 'Motor', domain="[('type','=','motor')]", required=True),
+        'type': fields.selection([('tractor','Drive Unit'), ('one_trailer','Single Trailer'), ('two_trailer','Double Trailer')], 'Type', required=True),
+        'performance' :fields.float('Performance', required=True, digits=(14,4), help='Fuel Efficiency for this motor type'),
         }
     
     _sql_constraints = [
@@ -835,13 +834,13 @@ class tms_route_tollstation(osv.osv):
     _description = 'Routes toll stations'
     
     _columns = {
-        'company_id': openerp.osv.fields.many2one('res.company', 'Company', required=False),
-        'name' : openerp.osv.fields.char('Name', size=64, required=True),
-        'place_id':openerp.osv.fields.many2one('tms.place', 'Place', required=True),
-        'partner_id':openerp.osv.fields.many2one('res.partner', 'Partner', required=True),
-        'credit': openerp.osv.fields.boolean('Credit'),
-        'tms_route_ids':openerp.osv.fields.many2many('tms.route', 'tms_route_tollstation_route_rel', 'route_id', 'tollstation_id', 'Routes with this Toll Station'),
-        'active': openerp.osv.fields.boolean('Active'),
+        'company_id': fields.many2one('res.company', 'Company', required=False),
+        'name' : fields.char('Name', size=64, required=True),
+        'place_id':fields.many2one('tms.place', 'Place', required=True),
+        'partner_id':fields.many2one('res.partner', 'Partner', required=True),
+        'credit': fields.boolean('Credit'),
+        'tms_route_ids':fields.many2many('tms.route', 'tms_route_tollstation_route_rel', 'route_id', 'tollstation_id', 'Routes with this Toll Station'),
+        'active': fields.boolean('Active'),
     }
    
     _defaults = {
@@ -856,11 +855,11 @@ class tms_route_tollstation_costperaxis(osv.osv):
     _description = 'Routes toll stations cost per axis'
 
     _columns = {
-        'tms_route_tollstation_id' : openerp.osv.fields.many2one('tms.route.tollstation', 'Toll Station', required=True),
-        'unit_type_id':openerp.osv.fields.many2one('tms.unit.category', 'Unit Type', domain="[('type','=','unit_type')]", required=True),        
-        'axis':openerp.osv.fields.integer('Axis', required=True),
-        'cost_credit':openerp.osv.fields.float('Cost Credit', required=True, digits=(14,4)),
-        'cost_cash':openerp.osv.fields.float('Cost Cash', required=True, digits=(14,4)),
+        'tms_route_tollstation_id' : fields.many2one('tms.route.tollstation', 'Toll Station', required=True),
+        'unit_type_id':fields.many2one('tms.unit.category', 'Unit Type', domain="[('type','=','unit_type')]", required=True),        
+        'axis':fields.integer('Axis', required=True),
+        'cost_credit':fields.float('Cost Credit', required=True, digits=(14,4)),
+        'cost_cash':fields.float('Cost Cash', required=True, digits=(14,4)),
         }
     
 tms_route_tollstation_costperaxis()
@@ -870,7 +869,7 @@ class tms_route_tollstation(osv.osv):
     _inherit ='tms.route.tollstation'
     
     _columns = {
-        'tms_route_tollstation_costperaxis_ids' : openerp.osv.fields.one2many('tms.route.tollstation.costperaxis', 'tms_route_tollstation_id', 'Toll Cost per Axis', required=True),
+        'tms_route_tollstation_costperaxis_ids' : fields.one2many('tms.route.tollstation.costperaxis', 'tms_route_tollstation_id', 'Toll Cost per Axis', required=True),
         }
     
 tms_route_tollstation()
@@ -881,7 +880,7 @@ class tms_route(osv.osv):
     _inherit ='tms.route'
     
     _columns = {
-        'tms_route_tollstation_ids' : openerp.osv.fields.many2many('tms.route.tollstation', 'tms_route_tollstation_route_rel', 'tollstation_id', 'route_id', 'Toll Station in this Route'),
+        'tms_route_tollstation_ids' : fields.many2many('tms.route.tollstation', 'tms_route_tollstation_route_rel', 'tollstation_id', 'route_id', 'Toll Station in this Route'),
         }
     
 tms_route()
@@ -894,10 +893,10 @@ class tms_route_fuelefficiency(osv.osv):
     _description = "Fuel Efficiency by Motor"
 
     _columns = {
-        'tms_route_id' : openerp.osv.fields.many2one('tms.route', 'Route', required=True),        
-        'motor_id':openerp.osv.fields.many2one('tms.unit.category', 'Motor', domain="[('type','=','motor')]", required=True),
-        'type': openerp.osv.fields.selection([('tractor','Drive Unit'), ('one_trailer','Single Trailer'), ('two_trailer','Double Trailer')], 'Type', required=True),
-        'performance' :openerp.osv.fields.float('Performance', required=True, digits=(14,4), help='Fuel Efficiency for this motor type'),
+        'tms_route_id' : fields.many2one('tms.route', 'Route', required=True),        
+        'motor_id':fields.many2one('tms.unit.category', 'Motor', domain="[('type','=','motor')]", required=True),
+        'type': fields.selection([('tractor','Drive Unit'), ('one_trailer','Single Trailer'), ('two_trailer','Double Trailer')], 'Type', required=True),
+        'performance' :fields.float('Performance', required=True, digits=(14,4), help='Fuel Efficiency for this motor type'),
         }
     
     _sql_constraints = [
@@ -915,16 +914,16 @@ class fleet_vehicle_odometer_device(osv.osv):
 
 
     _columns = {
-        'state'             : openerp.osv.fields.selection([('draft','Draft'), ('active','Active'), ('inactive','Inactive'), ('cancel','Cancelled')], 'State', readonly=True),
-        'date'              : openerp.osv.fields.datetime('Date', required=True, states={'cancel':[('readonly',True)], 'active':[('readonly',True)], 'inactive':[('readonly',True)]} ),
-        'date_start'        : openerp.osv.fields.datetime('Date Start', required=True, states={'cancel':[('readonly',True)], 'active':[('readonly',True)], 'inactive':[('readonly',True)]} ),
-        'date_end'          : openerp.osv.fields.datetime('Date End', readonly=True),
-        'name'              : openerp.osv.fields.char('Name', size=128, required=True, states={'cancel':[('readonly',True)], 'active':[('readonly',True)], 'inactive':[('readonly',True)]} ),
-        'vehicle_id'        : openerp.osv.fields.many2one('fleet.vehicle', 'Vehicle', required=True, ondelete='cascade', states={'cancel':[('readonly',True)], 'active':[('readonly',True)], 'inactive':[('readonly',True)]} ),
-        'replacement_of'    : openerp.osv.fields.many2one('fleet.vehicle.odometer.device', 'Replacement of', required=False, digits=(16, 2), states={'cancel':[('readonly',True)], 'active':[('readonly',True)], 'inactive':[('readonly',True)]} ),
-        'accumulated_start' : openerp.osv.fields.float('Original Accumulated', help="Kms /Miles Accumulated from vehicle at the moment of activation of this odometer", readonly=True ),
-        'odometer_start'    : openerp.osv.fields.float('Start count', required=True, help="Initial counter from device", digits=(16, 2), states={'cancel':[('readonly',True)], 'active':[('readonly',True)], 'inactive':[('readonly',True)]} ),
-        'odometer_end'      : openerp.osv.fields.float('End count', required=True, help="Ending counter from device", digits=(16, 2), states={'cancel':[('readonly',True)], 'active':[('readonly',True)], 'inactive':[('readonly',True)]} ),
+        'state'             : fields.selection([('draft','Draft'), ('active','Active'), ('inactive','Inactive'), ('cancel','Cancelled')], 'State', readonly=True),
+        'date'              : fields.datetime('Date', required=True, states={'cancel':[('readonly',True)], 'active':[('readonly',True)], 'inactive':[('readonly',True)]} ),
+        'date_start'        : fields.datetime('Date Start', required=True, states={'cancel':[('readonly',True)], 'active':[('readonly',True)], 'inactive':[('readonly',True)]} ),
+        'date_end'          : fields.datetime('Date End', readonly=True),
+        'name'              : fields.char('Name', size=128, required=True, states={'cancel':[('readonly',True)], 'active':[('readonly',True)], 'inactive':[('readonly',True)]} ),
+        'vehicle_id'        : fields.many2one('fleet.vehicle', 'Vehicle', required=True, ondelete='cascade', states={'cancel':[('readonly',True)], 'active':[('readonly',True)], 'inactive':[('readonly',True)]} ),
+        'replacement_of'    : fields.many2one('fleet.vehicle.odometer.device', 'Replacement of', required=False, digits=(16, 2), states={'cancel':[('readonly',True)], 'active':[('readonly',True)], 'inactive':[('readonly',True)]} ),
+        'accumulated_start' : fields.float('Original Accumulated', help="Kms /Miles Accumulated from vehicle at the moment of activation of this odometer", readonly=True ),
+        'odometer_start'    : fields.float('Start count', required=True, help="Initial counter from device", digits=(16, 2), states={'cancel':[('readonly',True)], 'active':[('readonly',True)], 'inactive':[('readonly',True)]} ),
+        'odometer_end'      : fields.float('End count', required=True, help="Ending counter from device", digits=(16, 2), states={'cancel':[('readonly',True)], 'active':[('readonly',True)], 'inactive':[('readonly',True)]} ),
         'odometer_reading_ids': fields.one2many('fleet.vehicle.odometer', 'odometer_id', 'Odometer Readings', readonly=True),
         }
 
@@ -1022,12 +1021,12 @@ class fleet_vehicle_odometer(osv.osv):
 ### PENDIENTES
 # - CALCULAR LA DISTANCIA RECORRIDA ENTRE EL REGISTRO ACTUAL Y EL ANTERIOR BASADA EN EL ODOMETRO ACTIVO. NO SE PUEDEN GUARDAR
     _columns = {
-        'odometer_id'       : openerp.osv.fields.many2one('fleet.vehicle.odometer.device', 'Odometer', required=True),
-        'last_odometer'     : openerp.osv.fields.float('Last Read', digits=(16,2), required=True),        
-        'current_odometer'  : openerp.osv.fields.float('Current Read', digits=(16,2), required=True),
-        'distance'          : openerp.osv.fields.float('Distance', digits=(16,2), required=True),
-        'tms_expense_id'    : openerp.osv.fields.many2one('tms.expense', 'Expense Rec'),
-        'tms_travel_id'     : openerp.osv.fields.many2one('tms.travel', 'Travel'),
+        'odometer_id'       : fields.many2one('fleet.vehicle.odometer.device', 'Odometer', required=True),
+        'last_odometer'     : fields.float('Last Read', digits=(16,2), required=True),        
+        'current_odometer'  : fields.float('Current Read', digits=(16,2), required=True),
+        'distance'          : fields.float('Distance', digits=(16,2), required=True),
+        'tms_expense_id'    : fields.many2one('tms.expense', 'Expense Rec'),
+        'tms_travel_id'     : fields.many2one('tms.travel', 'Travel'),
     }
 
     def _check_values(self, cr, uid, ids, context=None):         

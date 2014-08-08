@@ -206,7 +206,7 @@ class tms_waybill(osv.osv):
 
     def _get_route_distance(self, cr, uid, ids, field_name, arg, context=None):
         res = {}
-        distance=0.0
+        distance=1.0
         for waybill in self.browse(cr, uid, ids, context=context):
             distance = waybill.route_id.distance
             res[waybill.id] = distance
@@ -799,7 +799,7 @@ class tms_waybill_line(osv.osv):
         'price_total'   : fields.function(_amount_line, method=True, string='Total Amount', type='float', digits_compute= dp.get_precision('Sale Price'),  store=True, multi='price_subtotal'),
         'tax_amount'   : fields.function(_amount_line, method=True, string='Tax Amount', type='float', digits_compute= dp.get_precision('Sale Price'),  store=True, multi='price_subtotal'),
         'tax_id'            : fields.many2many('account.tax', 'waybill_tax', 'waybill_line_id', 'tax_id', 'Taxes'),
-        'product_uom_qty': fields.float('Quantity (UoM)', digits=(16, 2)),
+        'product_uom_qty': fields.float('Quantity (UoM)', digits=(16, 4)),
         'product_uom': fields.many2one('product.uom', 'Unit of Measure '),
         'discount': fields.float('Discount (%)', digits=(16, 2), help="Please use 99.99 format..."),
         'notes': fields.text('Notes'),
