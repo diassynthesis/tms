@@ -52,9 +52,9 @@ class account_journal(osv.osv):
     _inherit ='account.journal'
 
     _columns = {
-        'tms_advance_journal': fields.boolean('TMS Advance Journal', help= 'If set to True then it will be used for TMS Advance Invoices. It must be a Purchase Type Journal'),
+        'tms_advance_journal': fields.boolean('TMS Advance Journal', help= 'If set to True then it will be used for TMS Advance Invoices. It must be a General Type Journal'),
         'tms_fuelvoucher_journal': fields.boolean('TMS Fuel Voucher Journal', help= 'If set to True then it will be used to create Moves when confirming TMS Fuel Voucher. It must be a General Type Journal'),
-        'tms_expense_journal': fields.boolean('TMS Expense Journal', help= 'If set to True then it will be used for TMS Expense Invoices. It must be a Purchase Type Journal'),
+        'tms_expense_journal': fields.boolean('TMS Expense Journal', help= 'If set to True then it will be used for TMS Expense Invoices. It must be a General Type Journal'),
         'tms_supplier_journal': fields.boolean('TMS Freight Supplier Journal', help= 'If set to True then it will be used for TMS Waybill Supplier Invoices. It must be a Purchase Type Journal'),
         'tms_waybill_journal': fields.boolean('TMS Waybill Journal', help= 'If set to True then it will be used to create Moves when confirming TMS Waybill . It must be a General Type Journal'),
         }
@@ -74,13 +74,15 @@ class account_account(osv.osv):
     _inherit ='account.account'
 
     _columns = {
-        'tms_vehicle_mandatory': fields.boolean('TMS Vehicle Mandatory', help= 'If set to True then it will require to add Vehicle to Move Line'),
+        'tms_vehicle_mandatory' : fields.boolean('TMS Vehicle Mandatory', help= 'If set to True then it will require to add Vehicle to Move Line'),
         'tms_employee_mandatory': fields.boolean('TMS Employee Mandatory', help= 'If set to True then it will require to add Employee to Move Line'),
+        'tms_sale_shop_mandatory'    : fields.boolean('TMS Sale Shop Mandatory', help= 'If set to True then it will require to add Sale Shop to Move Line'),
         }
 
     _defaults = {
         'tms_vehicle_mandatory' : lambda *a :False,
         'tms_employee_mandatory' : lambda *a :False,
+        'tms_sale_shop_mandatory' : lambda *a :False,
         }
 
 account_journal()
@@ -92,8 +94,9 @@ class account_move_line(osv.osv):
     _inherit ='account.move.line'
 
     _columns = {
-        'vehicle_id': fields.many2one('fleet.vehicle', 'Vehicle', required=False),
-        'employee_id': fields.many2one('hr.employee', 'Driver', required=False),
+        'vehicle_id'  : fields.many2one('fleet.vehicle', 'Vehicle', required=False),
+        'employee_id' : fields.many2one('hr.employee', 'Driver', required=False),
+        'sale_shop_id': fields.many2one('sale.shop', 'Shop', required=False),
         }
     
     def _check_mandatory_vehicle(self, cr, uid, ids, context=None):
@@ -106,10 +109,16 @@ class account_move_line(osv.osv):
             return (record.account_id.tms_employee_mandatory and record.employee_id.id) if record.account_id.tms_employee_mandatory else True
         return True
 
+    def _check_mandatory_sale_shop(self, cr, uid, ids, context=None):
+        for record in self.browse(cr, uid, ids, context=context):
+            return (record.account_id.tms_sale_shop_mandatory and record.sale_shop_id.id) if record.account_id.tms_sale_shop_mandatory else True
+        return True
+
     
     _constraints = [
         (_check_mandatory_vehicle, 'Error ! You have not added Vehicle to Move Line', ['vehicle_id']),
         (_check_mandatory_employee, 'Error ! You have not added Employee to Move Line', ['employee_id']),
+        (_check_mandatory_sale_shop, 'Error ! You have not added Sale Shop to Move Line', ['sale_shop_id']),
         ]
 
 account_move_line()

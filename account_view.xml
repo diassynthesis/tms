@@ -13,9 +13,9 @@
             <field name="arch" type="xml">
                 <field name="entry_posted" position="after">
                     <field name="tms_waybill_journal"  attrs="{'invisible':[('type','!=','general')]  }"/>
-                    <field name="tms_advance_journal"  attrs="{'invisible':[('type','!=','purchase')]  }"/>
-                    <field name="tms_fuelvoucher_journal"  attrs="{'invisible':[('type','!=','purchase')]  }"/>
-                    <field name="tms_expense_journal"  attrs="{'invisible':[('type','!=','purchase')]  }"/>
+                    <field name="tms_advance_journal"  attrs="{'invisible':[('type','!=','general')]  }"/>
+                    <field name="tms_fuelvoucher_journal"  attrs="{'invisible':[('type','!=','general')]  }"/>
+                    <field name="tms_expense_journal"  attrs="{'invisible':[('type','!=','general')]  }"/>
                     <field name="tms_supplier_journal"  attrs="{'invisible':[('type','!=','purchase')]  }"/>
                 </field>
             </field>
@@ -31,6 +31,7 @@
                 <field name="active" position="after">
                     <field name="tms_vehicle_mandatory"  attrs="{'invisible':[('type','!=','other')]  }"/>
                     <field name="tms_employee_mandatory"  attrs="{'invisible':[('type','not in',('payable', 'other'))]}"/>
+                    <field name="tms_sale_shop_mandatory"  attrs="{'invisible':[('type','not in',('other'))]}"/>
                 </field>
             </field>
         </record>
@@ -84,6 +85,7 @@
             <field name="inherit_id" ref="account.view_move_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//tree/field[@name='reconcile_partial_id']" position="after">
+                    <field name="sale_shop_id" />
                     <field name="vehicle_id" />
                     <field name="employee_id" />
                 </xpath>
@@ -99,6 +101,7 @@
             <field name="inherit_id" ref="account.view_move_line_form"/>
             <field name="arch" type="xml">
                 <field name="quantity" position="after">
+                    <field name="sale_shop_id" />
                     <field name="vehicle_id" />
                     <field name="employee_id" />
                 </field>
@@ -113,6 +116,7 @@
             <field name="inherit_id" ref="account.view_move_line_tree"/>
             <field name="arch" type="xml">
                 <field name="company_id" position="before">
+                    <field name="sale_shop_id" />
                     <field name="vehicle_id" />
                     <field name="employee_id" />
                 </field>
@@ -126,12 +130,14 @@
             <field name="inherit_id" ref="account.view_account_move_line_filter"/>
             <field name="arch" type="xml">
                 <field name="period_id" position="after">
+                    <field name="sale_shop_id" />
                     <field name="vehicle_id" />
                     <field name="employee_id" />
                 </field>
                 <filter string="Period" position="after">
                     <filter string="Vehicle" icon="terp-partner" domain="[]" context="{'group_by':'vehicle_id'}"/>
                     <filter string="Employee" icon="terp-partner" domain="[]" context="{'group_by':'employee_id'}"/>
+                    <filter string="Sale Shop" icon="terp-partner" domain="[]" context="{'group_by':'sale_shop_id'}"/>
                 </filter>
             </field>
         </record>
