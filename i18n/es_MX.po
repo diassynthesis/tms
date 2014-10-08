@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: OpenERP Server 7.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-08-07 19:01+0000\n"
-"PO-Revision-Date: 2014-08-07 16:37-0600\n"
+"PO-Revision-Date: 2014-10-06 16:51-0600\n"
 "Last-Translator: Israel Cruz Argil <israel.cruz@argil.mx>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: \n"
 "Language: es_MX\n"
-"X-Generator: Poedit 1.6.7\n"
+"X-Generator: Poedit 1.6.9\n"
 
 #. module: tms
 #: view:tms.fuelvoucher:0
@@ -6028,7 +6028,7 @@ msgstr "Historial de Trámites de Unidades"
 #: field:tms.expense,driver_helper:0 field:tms.factor,driver_helper:0
 #: field:tms.fuelvoucher,driver_helper:0
 msgid "For Driver Helper"
-msgstr "Para Segundo Operador"
+msgstr "Segundo Operador"
 
 #. module: tms
 #: code:addons/tms/tms_expense_loan.py:164

@@ -614,6 +614,11 @@ class tms_waybill(osv.osv):
 
     def action_confirm(self, cr, uid, ids, context=None):
         #print "action_confirm"
+        # *******************
+        move_obj = self.pool.get('account.move')
+        period_obj = self.pool.get('account.period')
+        account_jrnl_obj=self.pool.get('account.journal')
+
         for waybill in self.browse(cr, uid, ids, context=None):
             if waybill.amount_untaxed <= 0.0:
                 raise osv.except_osv(_('Could not confirm Waybill !'),_('Total Amount must be greater than zero.'))
@@ -624,10 +629,6 @@ class tms_waybill(osv.osv):
                 wb_invoice = self.pool.get('tms.waybill.invoice')
                 wb_invoice.makeWaybillInvoices(cr, uid, ids, context=None)
             
-            # *******************
-            move_obj = self.pool.get('account.move')
-            period_obj = self.pool.get('account.period')
-            account_jrnl_obj=self.pool.get('account.journal')
             
             period_id = period_obj.search(cr, uid, [('date_start', '<=', waybill.date_order),('date_stop','>=', waybill.date_order), ('state','=','draft')], context=None)
             
@@ -672,9 +673,9 @@ class tms_waybill(osv.osv):
                                 'vehicle_id'    : waybill.travel_id.unit_id.id,
                                 'employee_id'   : waybill.travel_id.employee_id.id,
                                 })
-            move_lines.append(move_line)
+                move_lines.append(move_line)
             
-            move_line = (0,0, {
+                move_line = (0,0, {
                                 'name'          : _('Waybill: %s - Product: %s') % (waybill.name, waybill_line.name),
                                 'account_id'    : prod_income_account,
                                 'debit'         : round(waybill_line.price_subtotal, precision),
@@ -684,7 +685,7 @@ class tms_waybill(osv.osv):
                                 #'vehicle_id'    : waybill.travel_id.unit_id.id,
                                 #'employee_id'   : waybill.travel_id.employee_id.id,
                                 })
-            move_lines.append(move_line)
+                move_lines.append(move_line)
 
             move = {
                     'ref'        : _('Waybill: %s') % (waybill.name),

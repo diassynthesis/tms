@@ -104,7 +104,7 @@ class tms_expense(osv.osv):
 
 
             negative_balance = real_expense = madeup_expense = fuel = salary = salary_retention = salary_discount = tax_real = tax_total = subtotal_real = subtotal_total = total_real = total_total = balance = 0.0
-            for line in expense.expense_line:                    
+            for line in expense.expense_line:
                     madeup_expense  += line.price_subtotal if line.product_id.tms_category == 'madeup_expense' else 0.0
                     negative_balance += line.price_subtotal if line.product_id.tms_category == 'negative_balance' else 0.0
                     real_expense    += line.price_subtotal if line.product_id.tms_category == 'real_expense' else 0.0
@@ -114,7 +114,8 @@ class tms_expense(osv.osv):
                     fuel            += line.price_subtotal if (line.product_id.tms_category == 'fuel' and not line.fuel_voucher) else 0.0
                     fuel_qty        += line.product_uom_qty if (line.product_id.tms_category == 'fuel' and not line.fuel_voucher) else 0.0 
                     tax_total       += line.tax_amount if line.product_id.tms_category != 'madeup_expense' else 0.0
-                    tax_real        += line.tax_amount if (line.product_id.tms_category == 'real_expense' or (line.product_id.tms_category == 'fuel' and not line.fuel_voucher)) else 0.0            
+                    tax_real        += line.tax_amount if (line.product_id.tms_category == 'real_expense' or (line.product_id.tms_category == 'fuel' and not line.fuel_voucher)) else 0.0
+                    
 
 
             subtotal_real = real_expense + fuel + salary + salary_retention + salary_discount + negative_balance
