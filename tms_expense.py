@@ -1060,7 +1060,7 @@ class tms_expense_invoice(osv.osv_memory):
             period_obj = self.pool.get('account.period')
             move_obj = self.pool.get('account.move')
 
-            journal_id = account_jrnl_obj.search(cr, uid, [('type', '=', 'purchase'),('tms_expense_journal','=', 1)], context=None)
+            journal_id = account_jrnl_obj.search(cr, uid, [('type', '=', 'general'),('tms_expense_journal','=', 1)], context=None)
             if not journal_id:
                 raise osv.except_osv('Error !',
                                  'You have not defined Travel Expense Purchase Journal...')
@@ -1112,6 +1112,7 @@ class tms_expense_invoice(osv.osv_memory):
                                 'period_id'     : period_id[0],
                                 'vehicle_id'    : expense.unit_id.id,
                                 'employee_id'   : expense.employee_id.id,
+                                'sale_shop_id'  : expense.shop_id.id,
                                 'partner_id'    : expense.employee_id.address_home_id.id,
                                 })
                         move_lines.append(move_line)
@@ -1138,6 +1139,7 @@ class tms_expense_invoice(osv.osv_memory):
                                 'period_id'         : period_id[0],
                                 'vehicle_id'        : expense.unit_id.id,
                                 'employee_id'       : expense.employee_id.id,
+                                'sale_shop_id'      : expense.shop_id.id,
                                 'partner_id'        : expense.employee_id.address_home_id.id,
                                 })
                             move_lines.append(move_line)

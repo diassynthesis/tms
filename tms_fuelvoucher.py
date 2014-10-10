@@ -367,8 +367,9 @@ class tms_fuelvoucher(osv.osv):
                                     'credit'        : round(fuelvoucher.price_subtotal, precision),
                                     'journal_id'    : journal_id,
                                     'period_id'     : period_id[0],
-                                    'vehicle_id'    : fuelvoucher.travel_id.unit_id.id,
-                                    'employee_id'   : fuelvoucher.travel_id.employee_id.id,
+                                    'vehicle_id'    : fuelvoucher.unit_id.id,
+                                    'employee_id'   : fuelvoucher.employee_id.id,
+                                    'sale_shop_id'  : fuelvoucher.shop_id.id,
                                     'product_id'    : fuelvoucher.product_id.id,
                                     'product_uom_id': fuelvoucher.product_id.uom_id.id,
                                     'quantity'      : fuelvoucher.product_uom_qty
@@ -386,8 +387,9 @@ class tms_fuelvoucher(osv.osv):
                                     'credit'        : 0.0,
                                     'journal_id'    : journal_id,
                                     'period_id'     : period_id[0],
-                                    'vehicle_id'    : fuelvoucher.travel_id.unit_id.id,
-                                    'employee_id'   : fuelvoucher.travel_id.employee_id.id,
+                                    'vehicle_id'    : fuelvoucher.unit_id.id,
+                                    'employee_id'   : fuelvoucher.employee_id.id,
+                                    'sale_shop_id'  : fuelvoucher.shop_id.id,
                                     'product_id'    : fuelvoucher.product_id.id,
                                     'product_uom_id': fuelvoucher.product_id.uom_id.id,
                                     'quantity'      : fuelvoucher.product_uom_qty                                    

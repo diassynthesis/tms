@@ -14,7 +14,7 @@
                 <field name="entry_posted" position="after">
                     <field name="tms_waybill_journal"  attrs="{'invisible':[('type','!=','general')]  }"/>
                     <field name="tms_advance_journal"  attrs="{'invisible':[('type','!=','general')]  }"/>
-                    <field name="tms_fuelvoucher_journal"  attrs="{'invisible':[('type','!=','general')]  }"/>
+                    <field name="tms_fuelvoucher_journal"  attrs="{'invisible':[('type','!=','purchase')]  }"/>
                     <field name="tms_expense_journal"  attrs="{'invisible':[('type','!=','general')]  }"/>
                     <field name="tms_supplier_journal"  attrs="{'invisible':[('type','!=','purchase')]  }"/>
                 </field>

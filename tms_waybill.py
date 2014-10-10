@@ -648,7 +648,7 @@ class tms_waybill(osv.osv):
             
             precision = self.pool.get('decimal.precision').precision_get(cr, uid, 'Account')
             notes = _("Waybill: %s\nTravel: %s\nDriver: (ID %s) %s\nVehicle: %s") % (waybill.name, waybill.travel_id.name, waybill.travel_id.employee_id.id, waybill.travel_id.employee_id.name, waybill.travel_id.unit_id.name)
-            # print "notes: ", notes
+            # #print "notes: ", notes
             
             for waybill_line in waybill.waybill_line:
                 if not waybill_line.line_type == "product":
@@ -669,7 +669,7 @@ class tms_waybill(osv.osv):
                                 'journal_id'    : journal_id,
                                 'period_id'     : period_id[0],
                                 'product_id'    : waybill_line.product_id.id,
-                                ''
+                                'sale_shop_id'  : waybill.travel_id.shop_id.id,
                                 'vehicle_id'    : waybill.travel_id.unit_id.id,
                                 'employee_id'   : waybill.travel_id.employee_id.id,
                                 })
@@ -682,8 +682,9 @@ class tms_waybill(osv.osv):
                                 'credit'        : 0.0,
                                 'journal_id'    : journal_id,
                                 'period_id'     : period_id[0],
-                                #'vehicle_id'    : waybill.travel_id.unit_id.id,
-                                #'employee_id'   : waybill.travel_id.employee_id.id,
+                                'sale_shop_id'  : waybill.travel_id.shop_id.id,
+                                'vehicle_id'    : waybill.travel_id.unit_id.id,
+                                'employee_id'   : waybill.travel_id.employee_id.id,
                                 })
                 move_lines.append(move_line)
 
@@ -1214,6 +1215,9 @@ class tms_waybill_invoice(osv.osv_memory):
                                     'uos_id': line.product_uom.id,
                                     'product_id': line.product_id.id,
                                     'invoice_line_tax_id': [(6, 0, [x.id for x in line.product_id.taxes_id])],
+                                    'vehicle_id'    : line.waybill_id.travel_id.unit_id.id if line.waybill_id.travel_id else False,
+                                    'employee_id'   : line.waybill_id.travel_id.employee_id.id if line.waybill_id.travel_id else False,
+                                    'sale_shop_id'  : line.waybill_id.shop_id.id,
                                     'note': line.notes,
                                     #'account_analytic_id': False,
                                     })
@@ -1222,7 +1226,7 @@ class tms_waybill_invoice(osv.osv_memory):
                         
                         notes += ', ' + line.waybill_id.name
                     # ***** 
-                    #print "group_lines: ", group_lines
+                    #print "inv_lines: ", inv_lines
                     if group_lines:
                         #print "Si entra a agrupar lineas de Cartas Porte"
                         line_grouped = {}
@@ -1236,31 +1240,40 @@ class tms_waybill_invoice(osv.osv_memory):
                                     'uos_id': xline[2]['uos_id'],
                                     'product_id': xline[2]['product_id'],
                                     'invoice_line_tax_id': xline[2]['invoice_line_tax_id'],
-                                    'note': xline[2]['note']
+                                    'note': xline[2]['note'],
+                                    #'vehicle_id': xline[2]['vehicle_id'],
+                                    #'employee_id': xline[2]['employee_id'],
+                                    #'sale_shop_id': xline[2]['sale_shop_id'],
                                 }
-                            key = (val['product_id'], val['uos_id'])
+                            #print "val: ", val
+                            key = (val['product_id'], val['uos_id'])#, val['vehicle_id'], val['employee_id'], val['sale_shop_id'])
+                            #print "key: ", key
                             if not key in line_grouped:
                                 line_grouped[key] = val
                             else:
                                 line_grouped[key]['price_unit'] += val['price_unit']
-                                        # ******
-                        #print "line_grouped: ", product_shipped_grouped
+                                        
+                        #print "line_grouped: ", line_grouped
                         inv_lines = []
                         for t in line_grouped.values():
                             #print "t: ", t
                             vals = (0,0, {
-                                    'name': t['name'],
-                                    'origin': t['origin'],
-                                    'account_id': t['account_id'],
-                                    'price_unit': t['price_unit'],
-                                    'quantity': t['quantity'],
-                                    'uos_id': t['uos_id'],
-                                    'product_id': t['product_id'],
+                                    'name'          : t['name'],
+                                    'origin'        : t['origin'],
+                                    'account_id'    : t['account_id'],
+                                    'price_unit'    : t['price_unit'],
+                                    'quantity'      : t['quantity'],
+                                    'uos_id'        : t['uos_id'],
+                                    'product_id'    : t['product_id'],
                                     'invoice_line_tax_id': t['invoice_line_tax_id'],
-                                    'note': t['note']
+                                    'note'          : t['note'],
+                                    #'vehicle_id'    : t['vehicle_id'],
+                                    #'employee_id'   : t['employee_id'],
+                                    #'sale_shop_id'  : t['sale_shop_id'],
                                         }
                                     )
                             inv_lines.append(vals)
+                        #print "inv_lines: ", inv_lines
                             
                 # ******
 

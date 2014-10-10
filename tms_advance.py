@@ -387,10 +387,10 @@ class tms_advance_invoice(osv.osv_memory):
             advance_obj=self.pool.get('tms.advance')
             adv_line_obj=self.pool.get('tms.advance.line')
 
-            journal_id = account_jrnl_obj.search(cr, uid, [('type', '=', 'purchase'),('tms_advance_journal','=', 1)], context=None)
+            journal_id = account_jrnl_obj.search(cr, uid, [('type', '=', 'general'),('tms_advance_journal','=', 1)], context=None)
             if not journal_id:
                 raise osv.except_osv('Error !',
-                                 'You have not defined Advance Purchase Journal...')
+                                 'You have not defined Account Journal for Travel Advances...')
             journal_id = journal_id and journal_id[0]
 
             #partner = partner_obj.browse(cr,uid,user_obj.browse(cr,uid,[uid])[0].company_id.partner_id.id)
@@ -443,6 +443,7 @@ class tms_advance_invoice(osv.osv_memory):
                             'period_id'     : period_id[0],
                             'vehicle_id'    : line.unit_id.id,
                             'employee_id'   : line.employee_id.id,
+                            'sale_shop_id'  : line.shop_id.id,
                             'partner_id'    : line.employee_id.address_home_id.id,
                             })
                     
@@ -456,8 +457,9 @@ class tms_advance_invoice(osv.osv_memory):
                             'credit'        : round(line.total, precision),
                             'journal_id'    : journal_id,
                             'period_id'     : period_id[0],
-                            'vehicle_id'    : line.unit_id.id,
-                            'employee_id'   : line.employee_id.id,
+                            #'vehicle_id'    : line.unit_id.id,
+                            #'employee_id'   : line.employee_id.id,
+                            #'sale_shop_id'  : line.shop_id.id,
                             'partner_id'    : line.employee_id.address_home_id.id,
                             })
                     move_lines.append(move_line)                    

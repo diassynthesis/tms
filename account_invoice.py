@@ -111,7 +111,35 @@ class account_invoice(osv.osv):
 #            if invoice.employee_id.id:
 #                move_line_obj.write(cr, uid, lines, {'employee_id': invoice.employee_id.id})                    
 #        return res
-        
+
+
+
+    def line_get_convert(self, cr, uid, x, part, date, context=None):
+        print "x: ", x
+        return {
+            'date_maturity': x.get('date_maturity', False),
+            'partner_id': part,
+            'name': x['name'][:64],
+            'date': date,
+            'debit': x['price']>0 and x['price'],
+            'credit': x['price']<0 and -x['price'],
+            'account_id': x['account_id'],
+            'analytic_lines': x.get('analytic_lines', []),
+            'amount_currency': x['price']>0 and abs(x.get('amount_currency', False)) or -abs(x.get('amount_currency', False)),
+            'currency_id': x.get('currency_id', False),
+            'tax_code_id': x.get('tax_code_id', False),
+            'tax_amount': x.get('tax_amount', False),
+            'ref': x.get('ref', False),
+            'quantity': x.get('quantity',1.00),
+            'product_id': x.get('product_id', False),
+            'product_uom_id': x.get('uos_id', False),
+            'analytic_account_id': x.get('account_analytic_id', False),
+            'vehicle_id' : x.get('vehicle_id', False),
+            'employee_id': x.get('employee_id', False),
+            'sale_shop_id': x.get('sale_shop_id', False),
+        }
+
+    
 account_invoice()
 
 # Grouped Shipped Quantity by Product
@@ -129,6 +157,33 @@ class tms_waybill_shipped_grouped(osv.osv):
     _defaults = {
         'quantity': 0,
     }
+
+    
+class account_invoice_line(osv.osv):
+    _inherit ='account.invoice.line'
+    
+    _columns = {
+            'vehicle_id'    : fields.many2one('fleet.vehicle', 'Vehicle', readonly=True, required=False),
+            'employee_id'   : fields.many2one('hr.employee', 'Driver', readonly=True, required=False),
+            'sale_shop_id'  : fields.many2one('sale.shop', 'Shop', readonly=True, required=False),
+    }
+
+    def move_line_get_item(self, cr, uid, line, context=None):
+        return {
+            'type':'src',
+            'name': line.name.split('\n')[0][:64],
+            'price_unit':line.price_unit,
+            'quantity':line.quantity,
+            'price':line.price_subtotal,
+            'account_id':line.account_id.id,
+            'product_id':line.product_id.id,
+            'uos_id':line.uos_id.id,
+            'account_analytic_id':line.account_analytic_id.id,
+            'taxes':line.invoice_line_tax_id,
+            'vehicle_id' : line.vehicle_id.id if line.vehicle_id else False,
+            'employee_id': line.employee_id.id if line.employee_id else False,
+            'sale_shop_id': line.sale_shop_id.id if line.sale_shop_id else False,
+        }
 
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
