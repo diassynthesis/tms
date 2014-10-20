@@ -1345,7 +1345,7 @@ class tms_waybill_supplier_invoice(osv.osv_memory):
     _name = 'tms.waybill.supplier_invoice'
     _description = 'Make Supplier Invoices from Waybill'
 
-    def makeWaybillInvoices(self, cr, uid, ids, context=None):
+    def makeWaybillSupplierInvoices(self, cr, uid, ids, context=None):
 
         """
              To get Waybills and create Invoices
@@ -1424,14 +1424,14 @@ class tms_waybill_supplier_invoice(osv.osv_memory):
                     currency_id = waybill.currency_id.id
 
                     inv_line = (0,0, {
-                            'name': product.name  + ' - Viaje: ' + (waybill.travel_id.name or 'Sin Viaje') + ' - Carta Porte: ' + waybill.name,
+                            'name': product.name  + ' - Viaje: ' + (waybill.travel_id.name or _('Sin Viaje')) + ' - ' + _('Waybill: ') + waybill.name,
                             'origin': waybill.name,
                             'account_id': prod_account,
                             'price_unit': waybill.supplier_amount,
                             'quantity': 1.0,
                             'uos_id': product.uom_id.id,
                             'product_id': product.id,
-                            'invoice_line_tax_id': [(6, 0, [x.id for x in product.taxes_id])],
+                            'invoice_line_tax_id': [(6, 0, [x.id for x in product.supplier_taxes_id])],
                             'note': 'Carta Porte de Permisionario ' + (waybill.travel_id.name or _('Sin Viaje') ),
                             'account_analytic_id': False,
                             })

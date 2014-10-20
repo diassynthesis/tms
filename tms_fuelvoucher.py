@@ -517,7 +517,11 @@ class tms_fuelvoucher_invoice(osv.osv_memory):
                         'invoice_line_tax_id': [(6, 0, [x.id for x in line.product_id.supplier_taxes_id])],
                         'note': line.notes,
                         'account_analytic_id': False,
+                        'vehicle_id'    : line.unit_id.id,
+                        'employee_id'   : line.employee_id.id,
+                        'sale_shop_id'  : line.shop_id.id,
                         })
+                    print "inv_line: ", inv_line
                     inv_lines.append(inv_line)
                 
                     notes += '\n' + line.name
@@ -529,15 +533,15 @@ class tms_fuelvoucher_invoice(osv.osv_memory):
                     pay_term = False
 
                 inv = {
-                    'name'              : 'Fact.Pendiente',
-                    'origin'            : 'TMS-Fuel Voucher',
+                    'name'              : _('Fuel Vouchers Invoice'),
+                    'origin'            : _('Invoice from Fuel Vouchers'),
                     'type'              : 'in_invoice',
                     'journal_id'        : journal_id,
-                    'reference'         : 'TMS-Vales de Comb',
+                    'reference'         : _('Fuel Vouchers Invoice'),
                     'account_id'        : a,
                     'partner_id'        : partner.id,
-                    'address_invoice_id': self.pool.get('res.partner').address_get(cr, uid, [partner.id], ['default'])['default'],
-                    'address_contact_id': self.pool.get('res.partner').address_get(cr, uid, [partner.id], ['default'])['default'],
+                    #'address_invoice_id': self.pool.get('res.partner').address_get(cr, uid, [partner.id], ['default'])['default'],
+                    #'address_contact_id': self.pool.get('res.partner').address_get(cr, uid, [partner.id], ['default'])['default'],
                     'invoice_line'      : [x for x in inv_lines],
                     'currency_id'       : data[1],
                     'comment'           : 'TMS-Conciliacion de Vales de Combustible',

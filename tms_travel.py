@@ -49,7 +49,6 @@ class tms_travel(osv.osv):
             
             distance  = record.route_id.distance
             fuel_efficiency_expected = record.route_id.fuel_efficiency_drive_unit if not record.trailer1_id else record.route_id.fuel_efficiency_1trailer if not record.trailer2_id else record.route_id.fuel_efficiency_2trailer
-            
             res[record.id] = {
                 'distance_route': distance,
                 'fuel_efficiency_expected': fuel_efficiency_expected,
@@ -152,8 +151,12 @@ class tms_travel(osv.osv):
                                                             help="Travel Scheduled duration in hours"),
         'travel_duration_real': fields.function(_travel_duration, string='Duration Real', method=True, store=True, type='float', digits=(18,6), multi='travel_duration',
                                                                 help="Travel Real duration in hours"),
-        'distance_route': fields.function(_route_data, string='Route Distance (mi./km)', method=True, store=True, type='float', multi=True), 
-        'fuel_efficiency_expected': fields.function(_route_data, string='Fuel Efficiency Expected', method=True, store=True, type='float', multi=True, digits=(14,4)), 
+        'distance_route': fields.function(_route_data, string='Route Distance (mi./km)', method=True, 
+                                          store = {'tms.travel': (lambda self, cr, uid, ids, c={}: ids, None, 10)},
+                                          type='float', multi=True), 
+        'fuel_efficiency_expected': fields.function(_route_data, string='Fuel Efficiency Expected', method=True, 
+                                                    store = {'tms.travel': (lambda self, cr, uid, ids, c={}: ids, None, 10)},
+                                                    type='float', multi=True, digits=(14,4)), 
         
         'advance_ok_for_expense_rec': fields.function(_validate_for_expense_rec, string='Advance OK', method=True, type='boolean',  multi=True),
                                             #store={

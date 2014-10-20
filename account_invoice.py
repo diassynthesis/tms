@@ -113,32 +113,55 @@ class account_invoice(osv.osv):
 #        return res
 
 
-
     def line_get_convert(self, cr, uid, x, part, date, context=None):
-        print "x: ", x
-        return {
-            'date_maturity': x.get('date_maturity', False),
-            'partner_id': part,
-            'name': x['name'][:64],
-            'date': date,
-            'debit': x['price']>0 and x['price'],
-            'credit': x['price']<0 and -x['price'],
-            'account_id': x['account_id'],
-            'analytic_lines': x.get('analytic_lines', []),
-            'amount_currency': x['price']>0 and abs(x.get('amount_currency', False)) or -abs(x.get('amount_currency', False)),
-            'currency_id': x.get('currency_id', False),
-            'tax_code_id': x.get('tax_code_id', False),
-            'tax_amount': x.get('tax_amount', False),
-            'ref': x.get('ref', False),
-            'quantity': x.get('quantity',1.00),
-            'product_id': x.get('product_id', False),
-            'product_uom_id': x.get('uos_id', False),
-            'analytic_account_id': x.get('account_analytic_id', False),
-            'vehicle_id' : x.get('vehicle_id', False),
-            'employee_id': x.get('employee_id', False),
-            'sale_shop_id': x.get('sale_shop_id', False),
-        }
+        res = super(account_invoice, self).line_get_convert(cr, uid, x, part, date, context=context)
+        res.update({
+            'vehicle_id'    : x.get('vehicle_id', False),
+            'employee_id'   : x.get('employee_id', False),
+            'sale_shop_id'  : x.get('sale_shop_id', False),
+            })
+        return res
+    
+    
+    def _get_analytic_lines(self, cr, uid, id, context=None):
+        if context is None:
+            context = {}
+        inv = self.browse(cr, uid, id)
+        cur_obj = self.pool.get('res.currency')
 
+        company_currency = self.pool['res.company'].browse(cr, uid, inv.company_id.id).currency_id.id
+        if inv.type in ('out_invoice', 'in_refund'):
+            sign = 1
+        else:
+            sign = -1
+
+        iml = self.pool.get('account.invoice.line').move_line_get(cr, uid, inv.id, context=context)
+        for il in iml:
+            if not il['account_id'] or il['account_id']==None:
+                il['account_id']=il['account_id2']
+            if il['account_analytic_id']:
+                if inv.type in ('in_invoice', 'in_refund'):
+                    ref = inv.reference
+                else:
+                    ref = self._convert_ref(cr, uid, inv.number)
+                if not inv.journal_id.analytic_journal_id:
+                    raise osv.except_osv(_('No Analytic Journal!'),_("You have to define an analytic journal on the '%s' journal!") % (inv.journal_id.name,))
+                il['analytic_lines'] = [(0,0, {
+                    'name': il['name'],
+                    'date': inv['date_invoice'],
+                    'account_id': il['account_analytic_id'],
+                    'unit_amount': il['quantity'],
+                    'amount': cur_obj.compute(cr, uid, inv.currency_id.id, company_currency, il['price'], context={'date': inv.date_invoice}) * sign,
+                    'product_id': il['product_id'],
+                    'product_uom_id': il['uos_id'],
+                    'general_account_id': il['account_id'],
+                    'journal_id': inv.journal_id.analytic_journal_id.id,
+                    'ref': ref,
+                })]
+        return iml
+    
+    
+    
     
 account_invoice()
 
@@ -169,21 +192,15 @@ class account_invoice_line(osv.osv):
     }
 
     def move_line_get_item(self, cr, uid, line, context=None):
-        return {
-            'type':'src',
-            'name': line.name.split('\n')[0][:64],
-            'price_unit':line.price_unit,
-            'quantity':line.quantity,
-            'price':line.price_subtotal,
-            'account_id':line.account_id.id,
-            'product_id':line.product_id.id,
-            'uos_id':line.uos_id.id,
-            'account_analytic_id':line.account_analytic_id.id,
-            'taxes':line.invoice_line_tax_id,
-            'vehicle_id' : line.vehicle_id.id if line.vehicle_id else False,
-            'employee_id': line.employee_id.id if line.employee_id else False,
-            'sale_shop_id': line.sale_shop_id.id if line.sale_shop_id else False,
-        }
+        res = super(account_invoice_line, self).move_line_get_item(cr, uid, line, context=context)
+        res.update({
+            'vehicle_id'    : line.vehicle_id.id if line.vehicle_id else False,
+            'employee_id'   : line.employee_id.id if line.employee_id else False,
+            'sale_shop_id'  : line.sale_shop_id.id if line.sale_shop_id else False,
+            'line_id'       : line.id,
+            'account_id2'   : line.account_id.id,
+            })
+        return res
 
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
