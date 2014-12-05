@@ -57,13 +57,15 @@ class account_journal(osv.osv):
         'tms_expense_journal': fields.boolean('TMS Expense Journal', help= 'If set to True then it will be used for TMS Expense Invoices. It must be a General Type Journal'),
         'tms_supplier_journal': fields.boolean('TMS Freight Supplier Journal', help= 'If set to True then it will be used for TMS Waybill Supplier Invoices. It must be a Purchase Type Journal'),
         'tms_waybill_journal': fields.boolean('TMS Waybill Journal', help= 'If set to True then it will be used to create Moves when confirming TMS Waybill . It must be a General Type Journal'),
+        'tms_expense_suppliers_journal' : fields.boolean('TMS Default Suppliers Expense Journal', help= 'If set to True then it will be used to create Supplier Invoices when confirming TMS Travel Expense Record and when Creating Invoices from Fuel Vouchers. It must be a Purchase Type Journal'),
         }
 
     _defaults = {
-        'tms_advance_journal' : lambda *a :False,
-        'tms_fuelvoucher_journal':lambda *a :False,
-        'tms_expense_journal':lambda *a :False,
-        'tms_supplier_journal':lambda *a :False,
+        'tms_advance_journal'           : lambda *a :False,
+        'tms_fuelvoucher_journal'       : lambda *a :False,
+        'tms_expense_journal'           : lambda *a :False,
+        'tms_supplier_journal'          : lambda *a :False,
+        'tms_expense_suppliers_journal' : lambda *a :False,
         }
 
 account_journal()

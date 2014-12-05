@@ -339,62 +339,72 @@ TMS.EXPENSE
 TMS.EXPENSE.LINE
 #################################
 -->
-    <record id="view_tms_expense_line_tree" model="ir.ui.view">
-      <field name="name">tms.expense.line.tree</field>
-      <field name="model">tms.expense.line</field>
-      <field name="type">tree</field>
-      <field name="priority">2</field>
-      <field name="arch" type="xml">
+<record id="view_tms_expense_line_tree" model="ir.ui.view">
+    <field name="name">tms.expense.line.tree</field>
+    <field name="model">tms.expense.line</field>
+    <field name="type">tree</field>
+    <field name="priority">2</field>
+    <field name="arch" type="xml">
         <tree string="Expense Lines" colors="blue:line_type=='salary';gray:line_type=='madeup_expense';red:price_total&lt;0;">
-	  <field name="travel_id" />
-	  <field name="line_type" />
-	  <field name="name" />
-	  <field name="product_id" />
-	  <field name="product_uom" />
-	  <field name="product_uom_qty" />
-	  <field name="price_unit" />
-	  <field name="price_subtotal" sum="Price Subtotal" />
-	  <field name="tax_amount" sum="Tax Amount"/>
-	  <field name="price_total" sum="Price Total"/>
-	  <field name="sequence" />
-      <field name="operation_id" />
-	</tree>
-      </field>
-    </record>
+            <field name="travel_id" />
+            <field name="line_type" />
+            <field name="name" />
+            <field name="product_id" />
+            <field name="product_uom" />
+            <field name="product_uom_qty" />
+            <field name="price_unit" />
+            <field name="price_subtotal" sum="Price Subtotal" />
+            <field name="tax_amount" sum="Tax Amount"/>
+            <field name="price_total" sum="Price Total"/>
+            <field name="sequence" />
+            <field name="operation_id" />
+            <field name="is_invoice" />
+        </tree>
+    </field>
+</record>
 
 
     <record id="view_tms_expense_line_form" model="ir.ui.view">
-      <field name="name">tms.expense.line.form</field>
-      <field name="model">tms.expense.line</field>
-      <field name="type">form</field>
-      <field name="arch" type="xml">
-        <form string="Expense Lines">
-	  <field name="travel_id" domain="[('id','in', tuple(parent.travel_ids[0][2]),)]" /> 
-          <field name="operation_id" domain="[('state','not in', ('draft', 'cancel'))]" />
-          <field name="control" invisible="1" />
-	  <field name="line_type" required="1" attrs="{'readonly':[('control','!=',False)]}"/>
-	  <newline />
-	  <field name="product_id"
-		 on_change="on_change_product_id(product_id)" required="1"
-		 domain="[('tms_category','=', line_type)]"
-		 context="{'default_tms_category': 'real_expense','default_type': 'service', 'default_procure_method':'make_to_stock', 'default_supply_method': 'buy'}"
-                 attrs="{'readonly':[('control','!=',False)]}" />
-	  <field name="product_uom" required="1" attrs="{'readonly':[('control','!=',False)]}" />
-	  <field name="product_uom_qty" on_change="on_change_qty(product_id, product_uom_qty, price_unit)" required="1" attrs="{'readonly':[('control','!=',False)]}"/>
-	  <newline />
-	  <field name="price_unit" invisible="1"  />
-	  <field name="price_unit_control" readonly="1"  />
-	  <newline />
-	  <field name="price_subtotal" readonly="1"  />
-	  <newline />
-	  <field name="tax_amount" readonly="1" />
-	  <newline />
-	  <field name="price_total" on_change="on_change_price_total(product_id, product_uom_qty, price_total)" required="1" attrs="{'readonly':[('control','!=',False)]}"/>
-	  <newline />
-	  <field name="name" colspan="4" attrs="{'readonly':[('control','!=',False)]}"/>
-	  <field name="sequence" attrs="{'readonly':[('control','!=',False)]}" />
-	</form>
-      </field>
+        <field name="name">tms.expense.line.form</field>
+        <field name="model">tms.expense.line</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Expense Lines">
+                <field name="travel_id" domain="[('id','in', tuple([x.id for x in paren.travel_ids]),)]" /> 
+                <field name="operation_id" domain="[('state','not in', ('draft', 'cancel'))]" />
+                <field name="control" invisible="1" />
+                <field name="line_type" required="1" attrs="{'readonly':[('control','!=',False)]}"/>
+                <newline />
+                <field name="product_id"
+                 on_change="on_change_product_id(product_id)" required="1"
+                 domain="[('tms_category','=', line_type)]"
+                 context="{'default_tms_category': 'real_expense','default_type': 'service', 'default_procure_method':'make_to_stock', 'default_supply_method': 'buy'}"
+                         attrs="{'readonly':[('control','!=',False)]}" />
+                <field name="product_uom" required="1" attrs="{'readonly':[('control','!=',False)]}" />
+                <field name="product_uom_qty" on_change="on_change_qty(product_id, product_uom_qty, price_unit)" required="1" attrs="{'readonly':[('control','!=',False)]}"/>
+                <newline />
+                <field name="price_unit" invisible="1"  />
+                <field name="price_unit_control" readonly="1"  />
+                <newline />
+                <field name="price_subtotal" readonly="1"  />
+                <newline />
+                <field name="tax_amount" readonly="1" />
+                <newline />
+                <field name="price_total" on_change="on_change_price_total(product_id, product_uom_qty, price_total, special_tax_amount)" required="1" attrs="{'readonly':[('control','!=',False)]}"/>
+                <newline />
+                <field name="special_tax_amount" attrs="{'invisible':['|',('is_invoice','=',0),('line_type','!=','fuel')],
+                                                        'required':[('is_invoice','=',True)]}"
+                       on_change="on_change_price_total(product_id, product_uom_qty, price_total, special_tax_amount)"/>
+                <newline />                
+                <field name="name" colspan="4" attrs="{'readonly':[('control','!=',False)]}"/>
+                <field name="is_invoice" attrs="{'invisible':[('line_type','not in',('fuel','real_expense'))]}" colspan="4"/>
+                <field name="partner_id"    attrs="{'invisible':[('is_invoice','=',False)],'required':[('is_invoice','=',True)]}" colspan="4"/>
+                <field name="invoice_number"  attrs="{'invisible':[('is_invoice','=',False)],'required':[('is_invoice','=',True)]}" colspan="2"/>
+                <field name="invoice_date"  attrs="{'invisible':[('is_invoice','=',False)],'required':[('is_invoice','=',True)]}" colspan="2"/>
+                <field name="invoice_id"  attrs="{'invisible':[('is_invoice','=',False)]}" colspan="2"/><newline />
+                <field name="sequence" attrs="{'readonly':[('control','!=',False)]}" />
+            </form>
+        </field>
     </record>
 	
         <record id="view_tms_expense_line_filter" model="ir.ui.view">

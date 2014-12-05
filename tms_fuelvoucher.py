@@ -343,7 +343,7 @@ class tms_fuelvoucher(osv.osv):
                             _('There is no valid account period for this date %s. Period does not exists or is already closed') % \
                                     (fuelvoucher.date,))
                 
-                journal_id = account_jrnl_obj.search(cr, uid, [('type', '=', 'purchase'),('tms_fuelvoucher_journal','=', 1)], context=None)
+                journal_id = account_jrnl_obj.search(cr, uid, [('type', '=', 'general'),('tms_fuelvoucher_journal','=', 1)], context=None)
                 if not journal_id:
                     raise osv.except_osv('Error !',
                                      'You have not defined Fuel Voucher Journal...')
@@ -469,7 +469,7 @@ class tms_fuelvoucher_invoice(osv.osv_memory):
             invoice_obj=self.pool.get('account.invoice')
             fuelvoucher_obj=self.pool.get('tms.fuelvoucher')
 
-            journal_id = account_jrnl_obj.search(cr, uid, [('type', '=', 'purchase'),('tms_fuelvoucher_journal', '=', 1)], context=None)
+            journal_id = account_jrnl_obj.search(cr, uid, [('type', '=', 'purchase'),('tms_expense_suppliers_journal', '=', 1)], context=None)
             journal_id = journal_id and journal_id[0] or False
 
             cr.execute("select distinct partner_id, currency_id from tms_fuelvoucher where invoice_id is null and state in ('confirmed', 'closed') and id IN %s",(tuple(record_ids),))
