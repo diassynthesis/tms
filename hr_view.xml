@@ -28,8 +28,10 @@
                         <div attrs="{'invisible':[('tms_category','!=','driver')]}">
                         <group colspan="4" col="4" >
                             <separator string="Record Travel Expenses Related" colspan="4" />
-						    <!--<field name="tms_global_salary" />
-                            <newline /> -->
+                            <field name="tms_social_security_discount" />
+						    <field name="tms_social_security_prod_id" />
+                            <field name="tms_salary_tax_discount" />
+						    <field name="tms_salary_tax_prod_id" />
 						    <field name="tms_house_rent_discount" />
                             <newline />
 						    <field name="tms_house_rent_discount_perc" />

@@ -457,9 +457,9 @@ class tms_advance_invoice(osv.osv_memory):
                             'credit'        : round(line.total, precision),
                             'journal_id'    : journal_id,
                             'period_id'     : period_id[0],
-                            #'vehicle_id'    : line.unit_id.id,
-                            #'employee_id'   : line.employee_id.id,
-                            #'sale_shop_id'  : line.shop_id.id,
+                            'vehicle_id'    : line.unit_id.id,
+                            'employee_id'   : line.employee_id.id,
+                            'sale_shop_id'  : line.shop_id.id,
                             'partner_id'    : line.employee_id.address_home_id.id,
                             })
                     move_lines.append(move_line)                    

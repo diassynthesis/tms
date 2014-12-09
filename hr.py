@@ -93,6 +93,12 @@ class hr_employee(osv.osv):
         'tms_credit_charge_discount' : fields.float('Monthly Credit Amount Discount', digits=(18,6)),
         'tms_credit_charge_prod_id':fields.many2one('product.product', 'Credit Charge Product', domain=[('tms_category', '=', 'salary_discount')]),
 
+        'tms_social_security_discount' : fields.float('Social Security Discount', digits=(18,6)),
+        'tms_social_security_prod_id':fields.many2one('product.product', 'Social Security Product', domain=[('tms_category', '=', 'salary_discount')]),
+        'tms_salary_tax_discount' : fields.float('Salary Tax Discount', digits=(18,6)),
+        'tms_salary_tax_prod_id':fields.many2one('product.product', 'Salary Tax Product', domain=[('tms_category', '=', 'salary_retention')]),
+        
+        
         'tms_global_salary' : fields.float('Global Salary', digits=(18,6)),
         'shop_id' : fields.many2one('sale.shop', 'Shop'), #, domain=[('company_id', '=', user.company_id.id)]),
 
