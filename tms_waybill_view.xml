@@ -245,8 +245,8 @@ TMS.waybill.category
                         <separator string="·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·" colspan="4" style="text-align: center;"/>
                         <field name="partner_id" on_change="onchange_partner_id(partner_id)" domain="[('customer','=',True), ('is_company', '=', True)]"  colspan="4"/>
                         
-                        <field name="partner_order_id" domain="[('partner_id','=',partner_id)]" context="{'search_default_customer':1, 'show_address': 1}"  options="{&quot;always_reload&quot;: True}"/>
-                        <field name="partner_invoice_id" domain="[('partner_id','=',partner_id)]" context="{'search_default_customer':1, 'show_address': 1}"  options="{&quot;always_reload&quot;: True}"/>
+                        <field name="partner_order_id" domain="[('parent_id','=',partner_id)]" context="{'search_default_customer':1, 'show_address': 1}"  options="{&quot;always_reload&quot;: True}"/>
+                        <field name="partner_invoice_id" domain="[('parent_id','=',partner_id)]" context="{'search_default_customer':1, 'show_address': 1}"  options="{&quot;always_reload&quot;: True}"/>
                         <field name="departure_address_id" context="{'search_default_customer':1, 'show_address': 1}" options="{&quot;always_reload&quot;: True}"/>
                         <field name="arrival_address_id" context="{'search_default_customer':1, 'show_address': 1}" options="{&quot;always_reload&quot;: True}"/>
                         <field name="upload_point" />

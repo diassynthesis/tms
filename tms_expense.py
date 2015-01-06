@@ -172,6 +172,17 @@ class tms_expense(osv.osv):
             expense_ids = self.pool.get('tms.expense').search(cr, uid, [('move_id','in',move.keys())], context=context)
         return expense_ids
 
+    def _get_fuel_diff(self, cr, uid, ids, field_name, args, context=None):
+        res = {}
+        for expense in self.browse(cr, uid, ids, context=context):
+            fuel=0.0
+            if expense.fuel_qty_real and expense.fuel_qty:                
+                res[expense.id] = {'fuel_diff': float(expense.fuel_qty) - float(expense.fuel_qty_real),
+                                   'global_fuel_efficiency_real': (expense.distance_real / expense.fuel_qty_real) if expense.fuel_qty_real else 0.0,
+                                  }
+        return res
+    
+    
     _columns = {
         'name': fields.char('Name', size=64, readonly=True, select=True),
         'shop_id': fields.many2one('sale.shop', 'Shop', required=True, readonly=True, states={'draft': [('readonly', False)]}),
@@ -251,10 +262,9 @@ class tms_expense(osv.osv):
         'distance_real'     : fields.float('Distance Real', digits=(16,2), help="Route obtained by electronic reading and/or GPS"),
         'odometer_log_id'   : fields.many2one('fleet.vehicle.odometer', 'Odometer Record'),
         
-        'global_fuel_efficiency_routes': fields.function(_get_fuel_efficiency, string='Global Fuel Efficiency Routes', method=True, type='float', digits=(16,4)),
-        'global_fuel_efficiency_real': fields.float('Global Fuel Efficiency Real', required=False, digits=(14,4)),
-        'loaded_fuel_efficiency': fields.float('Loaded Fuel Efficiency', required=False, digits=(14,4)),
-        'unloaded_fuel_efficiency': fields.float('Unloaded Fuel Efficiency', required=False, digits=(14,4)),
+        'global_fuel_efficiency_routes': fields.function(_get_fuel_efficiency, string='Global Fuel Efficiency Routes', method=True, type='float', digits=(16,2)),        
+        'loaded_fuel_efficiency': fields.float('Loaded Fuel Efficiency', required=False, digits=(14,2)),
+        'unloaded_fuel_efficiency': fields.float('Unloaded Fuel Efficiency', required=False, digits=(14,2)),
     
         'create_uid' : fields.many2one('res.users', 'Created by', readonly=True),
         'create_date': fields.datetime('Creation Date', readonly=True, select=True),
@@ -279,6 +289,14 @@ class tms_expense(osv.osv):
         'advance_ids':fields.one2many('tms.advance', 'expense_id', string='Advances', readonly=True),
         'parameter_distance': fields.integer('Distance Parameter', help="1 = Travel, 2 = Travel Expense, 3 = Manual, 4 = Tyre"),
         'driver_helper' : fields.boolean('For Driver Helper', help="Check this if you want to make record for Driver Helper.", states={'cancel':[('readonly',True)], 'approved':[('readonly',True)], 'confirmed':[('readonly',True)]}),
+        'fuel_qty_real' : fields.float('Fuel Qty Real', digits=(16,2), 
+                                          help="Fuel Qty computed based on Distance Real and Global Fuel Efficiency Real obtained by electronic reading and/or GPS"),
+        'fuel_diff'     : fields.function(_get_fuel_diff, string="Fuel Difference", type='float', digits=(16,2), method=True, multi=True,
+                                          store = {'tms.expense': (lambda self, cr, uid, ids, c={}: ids, [], 10)},
+                                          help="Fuel Qty Difference between Fuel Vouchers + Fuel Paid in Cash versus Fuel qty computed based on Distance Real and Global Fuel Efficiency Real obtained by electronic reading and/or GPS"),
+        'global_fuel_efficiency_real': fields.function(_get_fuel_diff, string='Global Fuel Efficiency Real', type='float', digits=(16,2), method=True, multi=True,
+                                                       store = {'tms.expense': (lambda self, cr, uid, ids, c={}: ids, [], 10)},
+                                                       ),
 
     }
     _defaults = {
@@ -308,8 +326,6 @@ class tms_expense(osv.osv):
 
     def _check_odometer(self, cr, uid, ids, context=None):         
         for record in self.browse(cr, uid, ids, context=context):
-            #print "record.current_odometer: ", record.current_odometer
-            #print "record.last_odometer: ", record.last_odometer
             if record.current_odometer <= record.last_odometer:
                 return False
             return True
@@ -505,8 +521,54 @@ class tms_expense(osv.osv):
                         'tax_id'            : [(6, 0, [x.id for x in red_balance.supplier_taxes_id])],                                
                         }
                     res = expense_line_obj.create(cr, uid, xline)
-        return
 
+                    
+            # Revisamos si se tiene que hacer Descuento por Rendimiento bajo
+            if int(self.pool.get('ir.config_parameter').get_param(cr, uid, 'tms_property_discount_for_low_fuel_efficiency_performance', context=context)[0]) \
+                and expense.fuel_qty_real and expense.fuel_qty and expense.fuel_qty_real > expense.fuel_qty:
+                fuel_qty_diff = expense.fuel_qty - expense.fuel_qty_real
+                fuel_id_closed = fuelvoucher_obj.search(cr, uid, [('state','=','closed')], limit=1, order="date desc")
+                fuel_id_confirmed = fuelvoucher_obj.search(cr, uid, [('state','=','confirmed')], limit=1, order="date desc")
+                fuel_cost = 0
+                if fuel_id_closed and fuel_id_confirmed:
+                    fuelvoucher_closed = fuelvoucher_obj.browse(cr, uid, fuel_id_closed)[0]
+                    fuelvoucher_confirmed = fuelvoucher_obj.browse(cr, uid, fuel_id_confirmed)[0]
+                    fuel_cost = fuelvoucher_closed.price_unit if fuelvoucher_confirmed.date < fuelvoucher_closed.date else fuelvoucher_confirmed.price_unit
+                elif fuel_id_closed and not fuel_id_confirmed:
+                    fuelvoucher_closed = fuelvoucher_obj.browse(cr, uid, fuel_id_closed)[0]
+                    fuel_cost = fuelvoucher_closed.price_unit
+                elif fuel_id_confirmed and not fuel_id_closed:
+                    fuelvoucher_confirmed = fuelvoucher_obj.browse(cr, uid, fuel_id_confirmed)[0]
+                    fuel_cost = fuelvoucher_confirmed.price_unit
+                
+                if not fuel_cost:
+                    fuel_cost = float(self.pool.get('ir.config_parameter').get_param(cr, uid, 'tms_property_fuel_cost_for_discount', context=context)[0])
+                print "fuel_qty_diff: ", fuel_qty_diff
+                if fuel_qty_diff < 0.0: 
+                    fuel_discount_prod_id = prod_obj.search(cr, uid, [('tms_category', '=', 'salary_discount'),('tms_default_fuel_discount','=', 1),('active','=', 1)], limit=1)
+                    if not fuel_discount_prod_id:
+                        raise osv.except_osv(
+                            _('Missing configuration !'),
+                            _('There is no product defined as Default Fuel Discount !!!'))
+                    fuel_discount_prod = prod_obj.browse(cr, uid, fuel_discount_prod_id, context=None)[0]
+                    xline = {                                
+                        'expense_id'        : expense.id,
+                        'line_type'         : fuel_discount_prod.tms_category,
+                        'name'              : fuel_discount_prod.name + ' - ' + _('Travel Expense: ') + rec.name, 
+                        'sequence'          : 200,
+                        'product_id'        : fuel_discount_prod.id,
+                        'product_uom'       : fuel_discount_prod.uom_id.id,
+                        'product_uom_qty'   : fuel_qty_diff,
+                        'price_unit'        : fuel_cost,
+                        'control'           : True,
+                        'tax_id'            : [(6, 0, [x.id for x in fuel_discount_prod.supplier_taxes_id])],                                
+                        }
+                    res = expense_line_obj.create(cr, uid, xline)
+        
+        return
+    
+    
+    
     def on_change_travel_ids(self, cr, uid, ids, travel_ids, driver_helper, context=None):
         res = {'value' : 
                            {'unit_id'          : False,
@@ -556,32 +618,50 @@ class tms_expense(osv.osv):
                         _('Record Warning !'),
                         _('There is no Active Odometer for vehicle %s') % (travel.unit_id.name))     
         return res
+    
+    
+    def on_change_fuel_qty_real(self, cr, uid, ids, distance_real, fuel_qty_real, fuel_qty):
+        res = {}
+        if fuel_qty_real:
+            res = {'value': 
+                   {'global_fuel_efficiency_real' : float(distance_real) / float(fuel_qty_real),
+                    'fuel_diff'     : (fuel_qty - fuel_qty_real) if fuel_qty_real else 0.0,
+                   }
+                  }
+        return res
 
-    def on_change_current_odometer(self, cr, uid, ids, vehicle_id, last_odometer, current_odometer, distance_real, context=None):
+    
+    def on_change_current_odometer(self, cr, uid, ids, vehicle_id, last_odometer, current_odometer, distance_real, global_fuel_efficiency_real, fuel_qty_real, context=None):
         distance = round(current_odometer - last_odometer, 2)
         accum = round(self.pool.get('fleet.vehicle').browse(cr, uid, [vehicle_id], context=context)[0].odometer + distance , 2)
         res =  {'value': {'vehicle_odometer' : accum }} 
         if round(distance, 2) != round(distance_real, 2):
-            res['value']['distance_real'] = round(distance, 2)
+            res = {'value': {'distance_real' : round(distance, 2),
+                             'global_fuel_efficiency_real' : (float(distance_real) / float(fuel_qty_real)) if fuel_qty_real else 0.0,
+                            }
+                  }
         return res
         
-    def on_change_distance_real(self, cr, uid, ids, vehicle_id, last_odometer, distance_real, context=None):
+    def on_change_distance_real(self, cr, uid, ids, vehicle_id, last_odometer, distance_real, fuel_qty_real, context=None):
         current_odometer = last_odometer + distance_real
         accum = self.pool.get('fleet.vehicle').browse(cr, uid, [vehicle_id], context=context)[0].odometer + distance_real
-        return {'value': {
+        res =  {'value': {
                         'current_odometer' : round(current_odometer, 2),
                         'vehicle_odometer' : round(accum, 2),
+                        'global_fuel_efficiency_real'    : (float(distance_real) / float(fuel_qty_real)) if fuel_qty_real else 0.0,
                         }    
                 }
+        return res
 
 
-    def on_change_vehicle_odometer(self, cr, uid, ids, vehicle_id, last_odometer, vehicle_odometer, context=None):
+    def on_change_vehicle_odometer(self, cr, uid, ids, vehicle_id, last_odometer, vehicle_odometer, global_fuel_efficiency_real, context=None):
         return {}
         distance = vehicle_odometer - self.pool.get('fleet.vehicle').browse(cr, uid, [vehicle_id], context=context)[0].odometer
         current_odometer = last_odometer + distance
         return {'value': {
                         'current_odometer' : round(current_odometer, 2),
                         'distance_real'    : round(distance, 2),
+                        'fuel_qty_real'    : round(distance / global_fuel_efficiency_real, 2) if global_fuel_efficiency_real and distance else 0.0,
                         }    
                 }
 

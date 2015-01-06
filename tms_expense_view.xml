@@ -165,36 +165,32 @@ TMS.EXPENSE
                             </tree>
                         </field>
                         <newline />
-                        <newline />
                         <separator string="Global Performance" colspan="4"/>
-                            <group col="4">
-                                <div style='text-align:center;word-wrap: break-word;background-color:#BBBBBB'><label for="current_odometer" /></div>
-                                <div style='text-align:center;word-wrap: break-word;background-color:#BBBBBB'><label for="distance_real"/></div>
-                                <div style='text-align:center;word-wrap: break-word;background-color:#BBBBBB'><label for="distance_routes"/></div>
-                                <div style='text-align:center;word-wrap: break-word;background-color:#BBBBBB'><label for="fuel_qty"/></div>
-                                <div style='text-align:center;border: black 1px solid;'><field name="current_odometer"  on_change="on_change_current_odometer(vehicle_id, last_odometer, current_odometer, distance_real)" nolabel="1"/></div>
-                                <div style='text-align:center;border: black 1px solid;'><field name="distance_real"  on_change="on_change_distance_real(vehicle_id, last_odometer, distance_real)" nolabel="1"/></div>
-                                <div style='text-align:center;border: black 1px solid;'><field name="distance_routes"  nolabel="1"/></div>
-                                <div style='text-align:center;border: black 1px solid;'><field name="fuel_qty" nolabel="1"/></div>
+                        <group col="4" colspan="4">
+                            <group col="2" colspan="2">
+                                <separator string="Distances" colspan="2"/>
+                                <field name="distance_routes"/>
+                                <field name="distance_real"  on_change="on_change_distance_real(vehicle_id, last_odometer, distance_real, fuel_qty_real)" />
+                                <field name="current_odometer"  on_change="on_change_current_odometer(vehicle_id, last_odometer, current_odometer, distance_real, global_fuel_efficiency_real, fuel_qty_real)" />
+                                <field name="vehicle_id" attrs="{'invisible':[('odometer_log_id','=',False)]}" />
+                                <field name="odometer_id" attrs="{'invisible':[('odometer_log_id','=',False)]}" />
+                                <field name="last_odometer" attrs="{'invisible': True}" /> 
+                                <field name="vehicle_odometer"  attrs="{'invisible': True}" /> 
+                                       <!--on_change="on_change_vehicle_odometer(vehicle_id, last_odometer, vehicle_odometer, global_fuel_efficiency_real)" /> -->
+                                <field name="odometer_log_id" attrs="{'invisible':[('odometer_log_id','=',False)]}" />
                             </group>
-                            <group col="4">
-                                <div style='text-align:center;word-wrap: break-word;background-color:#BBBBBB'><label for="global_fuel_efficiency_routes"/></div>
-                                <div style='text-align:center;word-wrap: break-word;background-color:#BBBBBB'><label for="global_fuel_efficiency_real"/></div>
-                                <div style='text-align:center;word-wrap: break-word;background-color:#BBBBBB'><label for="loaded_fuel_efficiency"/></div>
-                                <div style='text-align:center;word-wrap: break-word;background-color:#BBBBBB'><label for="unloaded_fuel_efficiency"/></div>                                
-                                <div style='text-align:center;border: black 1px solid;'><field name="global_fuel_efficiency_routes"  nolabel="1"/></div>
-                                <div style='text-align:center;border: black 1px solid;'><field name="global_fuel_efficiency_real"  nolabel="1"/></div>
-                                <div style='text-align:center;border: black 1px solid;'><field name="loaded_fuel_efficiency"  nolabel="1"/></div>
-                                <div style='text-align:center;border: black 1px solid;'><field name="unloaded_fuel_efficiency"  nolabel="1"/></div>
+                            <group col="2" colspan="2">
+                                <separator string="Fuel Performance" colspan="2" />
+                                <field name="fuel_qty" /> 
+                                <field name="fuel_qty_real" on_change="on_change_fuel_qty_real(distance_real, fuel_qty_real, fuel_qty)"/>
+                                <field name="fuel_diff" /> 
+                                <field name="global_fuel_efficiency_routes" /> 
+                                <field name="global_fuel_efficiency_real"/> 
+                                <field name="loaded_fuel_efficiency" /> 
+                                <field name="unloaded_fuel_efficiency" /> 
+
                             </group>
-                            <group>
-                                <!--<separator string="Distance Resumen"  colspan="2"/>-->
-                                <field name="vehicle_id" class="oe_text_right" attrs="{'invisible':[('odometer_log_id','=',False)]}"/>
-                                <field name="odometer_id" class="oe_text_right"  attrs="{'invisible':[('odometer_log_id','=',False)]}"/>
-                                <field name="last_odometer" class="oe_text_right"  /> 
-                                <field name="vehicle_odometer" class="oe_text_right" on_change="on_change_vehicle_odometer(vehicle_id, last_odometer, vehicle_odometer)" />
-                                <field name="odometer_log_id" class="oe_text_right" attrs="{'invisible':[('odometer_log_id','=',False)]}"/>
-                            </group>
+                        </group>
                         
                     </page>
                     <page string="Expense Lines">

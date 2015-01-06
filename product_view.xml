@@ -65,6 +65,8 @@
                     <field name="tms_default_supplier_freight" attrs="{'invisible':[('tms_category','!=','freight')]}"/>
                     <newline />
                     <field name="tms_default_salary" attrs="{'invisible':[('tms_category','!=','salary')]}"/>
+                    <new_line />
+                    <field name="tms_default_fuel_discount" attrs="{'invisible':[('tms_category','!=','salary_discount')]}"/>
                     <newline />
                     <field name="tms_activity_duration" attrs="{'invisible':[('tms_category','!=','maint_activity')], 'required':[('tms_category','=','maint_activity')]}" widget="float_time"/>
                 </field>

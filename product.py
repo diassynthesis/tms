@@ -73,8 +73,8 @@ class product_product(osv.osv):
                                                                 required=False),
             'tms_default_freight'          : fields.boolean('Default Freight', help='Use this as default product for Freight in Waybills'),
             'tms_default_supplier_freight' : fields.boolean('Default Supplier Freight', help='Use this as default product for Supplier Freight in Waybills'),
-            'tms_default_salary'           : fields.boolean('Default', help='Use this as default product for Salary in Travel Expense Records'),
-
+            'tms_default_salary'           : fields.boolean('Default Salary', help='Use this as default product for Salary in Travel Expense Records'),
+            'tms_default_fuel_discount'    : fields.boolean('Default Fuel Discount', help='Use this as default product for Fuel Difference Discount in Travel Expense Records'),
         }
 
     _default = {
@@ -95,6 +95,16 @@ class product_product(osv.osv):
 
         return True
 
+
+    def _check_default_fuel_discount(self, cr, uid, ids, context=None):
+        prod_obj = self.pool.get('product.product')
+        for record in self.browse(cr, uid, ids, context=context):
+            if record.tms_category == 'salary_discount' and record.tms_default_fuel_discount:
+                res = prod_obj.search(cr, uid, [('tms_default_fuel_discount', '=', 1)], context=None)                
+                if res and res[0] and res[0] != record.id:
+                    return False
+        return True
+    
     
     def _check_default_freight(self, cr, uid, ids, context=None):
         prod_obj = self.pool.get('product.product')
@@ -130,7 +140,7 @@ class product_product(osv.osv):
         (_check_default_freight, 'Error ! You can not have two or more products defined as Default Freight', ['tms_default_freight']),
         (_check_default_supplier_freight, 'Error ! You can not have two or more products defined as Default Supplier Freight', ['tms_default_supplier_freight']),
         (_check_default_salary, 'Error ! You can not have two or more products defined as Default Salary', ['tms_default_salary']),
-        
+        (_check_default_fuel_discount, 'Error ! You can not have two or more products defined as Default Fuel Discount', ['tms_default_fuel_discount']),
         ]
     
     

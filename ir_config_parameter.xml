@@ -54,7 +54,20 @@
       <field name="value">0.0</field>              
     </record>
 
+	<!-- Parameter Flag for Automatic Fuel Discount when Fuel Efficiency Performance is below expected.
+    -->
+	<record model="ir.config_parameter" id="tms_property_discount_for_low_fuel_efficiency_performance">               
+      <field name="key">tms_property_discount_for_low_fuel_efficiency_performance</field> 
+      <field name="value">1</field>              
+    </record>
 
+	<!-- Parameter for Fuel Cost for Automatic Fuel Discount when Fuel Efficiency Performance is below expected.
+    -->
+	<record model="ir.config_parameter" id="tms_property_fuel_cost_for_discount">               
+      <field name="key">tms_property_fuel_cost_for_discount</field> 
+      <field name="value">14.00</field>              
+    </record>
+        
 
 </data>
 </openerp>
